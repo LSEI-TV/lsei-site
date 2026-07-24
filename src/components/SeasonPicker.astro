@@ -1,0 +1,24 @@
+---
+// Sélecteur de saison. Navigue vers la même sous-page dans la saison choisie.
+// onlyPlayed = n'afficher que les saisons qui ont des résultats (pages de stats).
+import { getSeasons, type Season } from '../data/billard/seasons';
+interface Props { current: string; sub?: string; onlyPlayed?: boolean; root?: string; seasons?: Season[] }
+const { current, sub = '', onlyPlayed = false, root = '/billard', seasons } = Astro.props;
+const src = seasons ?? getSeasons();
+const list = onlyPlayed ? src.filter((s) => s.results) : src;
+---
+<div class="season-bar">
+  <span class="season-lab">Saison</span>
+  <select class="season-pick" data-sub={sub} data-root={root} aria-label="Choisir la saison">
+    {list.map((s) => <option value={s.slug} selected={s.slug === current}>{s.label}{s.status === 'upcoming' ? ' · à venir' : ''}</option>)}
+  </select>
+</div>
+<script>
+  document.querySelectorAll('.season-pick').forEach((sel) => {
+    sel.addEventListener('change', () => {
+      const el = sel as HTMLSelectElement;
+      const root = el.getAttribute('data-root') || '/billard';
+      location.href = root + '/saison/' + el.value + (el.getAttribute('data-sub') || '');
+    });
+  });
+</script>

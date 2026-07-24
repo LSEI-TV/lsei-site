@@ -1,0 +1,30 @@
+---
+// Bannière d'information cookies. Le site ne dépose aucun cookie de suivi par
+// défaut : les vidéos YouTube ne sont chargées qu'au clic (voir VideoPlayer).
+// Le choix est mémorisé et pourra plus tard conditionner d'éventuels outils de mesure.
+---
+<div class="cookie" id="cookie" role="dialog" aria-label="Information cookies" hidden>
+  <p>
+    Ce site ne dépose aucun cookie de suivi. Les vidéos YouTube ne se chargent qu'à votre demande, en cliquant sur « lecture ».
+    <a href="/confidentialite">En savoir plus</a>.
+  </p>
+  <div class="c-actions">
+    <button class="btn" data-consent="yes">J'ai compris</button>
+    <button class="btn ghost" data-consent="no">Continuer sans accepter</button>
+  </div>
+</div>
+<script is:inline>
+  (function () {
+    var el = document.getElementById('cookie');
+    if (!el) return;
+    var stored;
+    try { stored = localStorage.getItem('lsei-consent'); } catch (e) {}
+    if (!stored) el.hidden = false;
+    el.querySelectorAll('[data-consent]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        try { localStorage.setItem('lsei-consent', b.getAttribute('data-consent')); } catch (e) {}
+        el.hidden = true;
+      });
+    });
+  })();
+</script>

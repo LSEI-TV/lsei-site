@@ -1,0 +1,16 @@
+---
+import { getTicker } from '../lib/youtube';
+const items = await getTicker();
+---
+{items.length > 0 && (
+  <div class="ticker">
+    <div class="wrap">
+      <span class="lbl"><span class="pulse"></span>En direct</span>
+      <div class="items mono">
+        {items.map((it) => (
+          <span>{it.label} · <b>{it.main}</b> <i>{it.status}</i></span>
+        ))}
+      </div>
+    </div>
+  </div>
+)}

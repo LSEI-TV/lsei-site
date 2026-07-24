@@ -1,0 +1,51 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { disciplines } from '../../data/site';
+import { articleCover } from '../../lib/articles';
+
+const articles = (await getCollection('articles', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const discOf = (slug?: string) => disciplines.find((d) => d.slug === slug);
+const fmtDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+---
+<Base title="Actualités" description="Comptes-rendus, portraits et coulisses des disciplines LSEI." active="actualites">
+  <section class="disc-hero">
+    <div class="wrap">
+      <div class="kick" style="color:var(--accent)">Le mag</div>
+      <h1>Actualités</h1>
+      <p>Comptes-rendus, portraits et coulisses : l'actualité de nos disciplines, racontée par LSEI.</p>
+      <div class="bar" style="background:var(--accent)"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      {articles.length > 0 ? (
+        <div class="cards">
+          {articles.map((a) => {
+            const d = discOf(a.data.discipline);
+            const cover = articleCover(a);
+            return (
+              <a href={`/actualites/${a.id}`} class="card" style={d ? `--dc:${d.colorVar}` : ''}>
+                <div class="frame">
+                  {cover
+                    ? <img class="photo" src={cover.src} alt="" loading="lazy" onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />
+                    : <div class="duo" style={d ? `background:linear-gradient(135deg,${d.from},${d.to})` : 'background:linear-gradient(135deg,#1E40E5,#0a1a6b)'}></div>}
+                  <div class="grad"></div>
+                  {d && <div class="cap"><div class="disc">{d.label}</div></div>}
+                </div>
+                <div class="kicker">{fmtDate(a.data.date)}</div>
+                <h3>{a.data.title}</h3>
+                <p class="ex">{a.data.excerpt}</p>
+              </a>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="dek">Les premiers articles arrivent bientôt.</p>
+      )}
+    </div>
+  </section>
+</Base>

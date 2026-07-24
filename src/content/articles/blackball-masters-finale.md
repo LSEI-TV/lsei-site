@@ -1,0 +1,11 @@
+---
+title: "Blackball Masters : Alexis Klinka remporte le titre"
+date: 2026-06-22
+excerpt: Le Masters a livré son verdict au terme de la finale qui a opposé
+  Alexis Klinka à Christophe Lambert.
+cover: ""
+coverFrame: default
+discipline: billard
+author: ""
+---
+<h1><span style="color: rgb(187, 187, 187);">Klinka tout en or</span></h1><p><span style="color: rgb(187, 187, 187);">Alexis Klinka décroche le titre qui manquait à son palmarès</span></p><p><span style="color: rgb(187, 187, 187);">Le voilà Champion de France Blackball Master 2026. Un titre qu'Alexis Klinka n'avait encore jamais accroché : « un tournoi très difficile, qui réunit les meilleurs joueurs de France ». Sa motivation du week-end ? Son fils, venu à ses côtés.</span></p><p><span style="color: rgb(187, 187, 187);">Lucide, le champion reconnaît un jeu en deçà de son niveau, faute d'entraînement récent. Il repart néanmoins en vacances avec la couronne, avant un retour à fond en septembre. Merci aux Herbiers pour l'organisation, à ses sponsors, à sa femme et ses enfants — et une dédicace à Toto.</span></p><blockquote><em style="color: rgb(187, 187, 187);">Ça fait du bien de partir en vacances avec un titre comme celui-là.</em></blockquote><blockquote><span style="color: rgb(187, 187, 187);">— Alexis Klinka, Champion de France Master 2026</span></blockquote><p><br></p><ul><li><span style="color: rgb(187, 187, 187);">TOUR 1: 8-4 face à Léonardo Moreira</span></li><li><span style="color: rgb(187, 187, 187);">TOUR 2: 8-5 face à Alexandre Buscetti</span></li><li><span style="color: rgb(187, 187, 187);">1/2 FINALE: 8-2 Damien Joly</span></li><li><span style="color: rgb(187, 187, 187);">FINALE: 8-4 Christophe Lambert</span></li></ul><h2><span style="color: rgb(187, 187, 187);">À revoir</span></h2><p><span style="color: rgb(187, 187, 187);">L'intégralité de la finale est disponible en replay dans la discipline </span><strong style="color: rgb(187, 187, 187);">Billard</strong><span style="color: rgb(187, 187, 187);">, catégorie </span><strong style="color: rgb(187, 187, 187);">Masters</strong><span style="color: rgb(187, 187, 187);">.</span></p><p><span style="color: rgb(187, 187, 187);">https://youtu.be/8b1Vw_605mE</span></p>

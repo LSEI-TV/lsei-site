@@ -1,0 +1,46 @@
+---
+// Sous-navigation d'un hub billard (Masters, Féminin ou Para), liée à une saison.
+import { LANDING_SEASON } from '../data/billard/seasons';
+import { FEMMES_LANDING_SEASON } from '../data/billard/seasonsFemmes';
+import { PARA_LANDING_SEASON } from '../data/billard/seasonsPara';
+// « Accueil » (et le logo) ramènent toujours à la SAISON D'ARRIVÉE du hub (ex. 2026/2027),
+// pas à la saison de la page courante — sinon, depuis Classement/Joueurs (saison de données
+// 2025/2026), « Accueil » renverrait par erreur vers 2025/2026.
+const LANDING: Record<string, string> = {
+  '/billard': LANDING_SEASON,
+  '/femmes': FEMMES_LANDING_SEASON,
+  '/para-billard': PARA_LANDING_SEASON,
+};
+interface Props {
+  season: string;
+  active?: string;
+  root?: string;        // préfixe de route, ex. '/billard' (Masters) ou '/femmes'
+  brand?: string;       // libellé principal, ex. 'Billard'
+  sub?: string;         // sous-titre, ex. '· Blackball Master'
+  videosHref?: string | null; // lien Vidéothèque (null = onglet masqué)
+  joueursLabel?: string;      // 'Joueurs' (Masters) ou 'Joueuses' (Féminin)
+  archivesHref?: string | null; // lien Archives joueurs (null = onglet masqué)
+  dataSeason?: string;  // saison à cibler pour Classement/Joueurs/Comparateur (déf. = season).
+                        // Sur une saison « à venir » (sans données), on pointe vers la dernière
+                        // saison jouée pour éviter une page vide et un clic de plus.
+}
+const { season, active, root = '/billard', brand = 'Billard', sub = '· Blackball Master', videosHref = '/disciplines/billard/categorie/masters', joueursLabel = 'Joueurs', archivesHref = null, dataSeason } = Astro.props;
+const base = `${root}/saison/${LANDING[root] ?? season}`;
+const dbase = `${root}/saison/${dataSeason ?? season}`;
+const items = [
+  { key: 'accueil', label: 'Accueil', href: base },
+  ...(videosHref ? [{ key: 'videos', label: 'Vidéothèque', href: videosHref }] : []),
+  { key: 'classement', label: 'Classement', href: `${dbase}/classement` },
+  { key: 'joueurs', label: joueursLabel, href: `${dbase}/joueurs` },
+  { key: 'comparateur', label: 'Comparateur', href: `${dbase}/comparateur` },
+  ...(archivesHref ? [{ key: 'archives', label: 'Archives joueurs', href: archivesHref }] : []),
+];
+---
+<div class="hub-nav" style="--dc:var(--c-billard)">
+  <div class="wrap">
+    <a href={base} class="hub-brand"><span class="hub-dot"></span>{brand} <em>{sub}</em></a>
+    <nav class="hub-links">
+      {items.map((n) => <a href={n.href} class={active === n.key ? 'active' : ''}>{n.label}</a>)}
+    </nav>
+  </div>
+</div>

@@ -1,0 +1,129 @@
+---
+// Page d'entrée du Billard : on choisit la compétition (Masters ou Féminin),
+// avec un résumé de chacune (chiffres, podium, palmarès en titre).
+import Base from '../../layouts/Base.astro';
+import { getReplays } from '../../lib/youtube';
+import { defaultSeason, getPalmares, DEFAULT_SEASON, LANDING_SEASON } from '../../data/billard/seasons';
+import { femmesDefaultSeason, getFemmesPalmares, FEMMES_DEFAULT_SEASON } from '../../data/billard/seasonsFemmes';
+import { paraDefaultSeason, getParaPalmares, PARA_DEFAULT_SEASON } from '../../data/billard/seasonsPara';
+
+const vidCount = (await getReplays({ discipline: 'billard' })).length;
+const m = defaultSeason();
+const f = femmesDefaultSeason();
+const pa = paraDefaultSeason();
+const mPalm = getPalmares().find((p) => p.slug === DEFAULT_SEASON);
+const fPalm = getFemmesPalmares().find((p) => p.slug === FEMMES_DEFAULT_SEASON);
+const paPalm = getParaPalmares().find((p) => p.slug === PARA_DEFAULT_SEASON);
+
+const comps = [
+  {
+    href: `/billard/saison/${LANDING_SEASON}`,
+    ficheBase: '/billard/joueur/',
+    accent: '#7C4DD6', accentInk: '#ffffff', // violet (Masters)
+    eyebrow: 'Compétition masculine',
+    title: 'Blackball Masters',
+    noun: 'joueurs',
+    desc: 'Le circuit national masculin : 8 Tournois Nationaux et le Championnat de France, où s’affrontent les meilleurs joueurs français.',
+    R: m.results!, season: m.label,
+    champSeasonLabel: 'Champion de saison', champFranceLabel: 'Champion de France',
+    palm: mPalm,
+  },
+  {
+    href: `/femmes`,
+    ficheBase: '/femmes/joueur/',
+    accent: '#F2B90A', accentInk: '#2a2205', // jaune (Femmes) — distingue la compétition
+    eyebrow: 'Compétition féminine',
+    title: 'Blackball Femmes',
+    noun: 'joueuses',
+    desc: 'Le circuit national féminin : 8 Tournois Nationaux et le Championnat de France, qui réunit les meilleures joueuses françaises.',
+    R: f.results!, season: f.label,
+    champSeasonLabel: 'Championne de saison', champFranceLabel: 'Championne de France',
+    palm: fPalm,
+  },
+  {
+    href: `/para-billard`,
+    ficheBase: '/para-billard/joueur/',
+    accent: '#14A38B', accentInk: '#ffffff', // turquoise (Para-billard)
+    eyebrow: 'Compétition handi-billard',
+    title: 'Blackball Para-billard',
+    noun: 'joueurs',
+    desc: 'Le blackball para-billard (handi-billard) de la FFB : le circuit national des joueurs en situation de handicap.',
+    R: pa.results!, season: pa.label,
+    champSeasonLabel: 'Champion de saison', champFranceLabel: 'Champion de France',
+    palm: paPalm,
+  },
+].map((c) => {
+  const players = c.R.players as any[];
+  const top3 = [...players].sort((a, b) => a.rank - b.rank).slice(0, 3);
+  // Champion à la une : le Champion de France s'il existe (titre suprême), sinon le champion de saison.
+  const feat = c.palm?.cdf
+    ? { icon: '🏆', label: c.champFranceLabel, name: c.palm.cdf.name, id: c.palm.cdf.id }
+    : c.palm?.champ
+    ? { icon: '⭐', label: c.champSeasonLabel, name: c.palm.champ.name, id: c.palm.champ.id }
+    : null;
+  return { ...c, players: players.length, tourns: c.R.tournaments.length, matches: c.R.matches.length, top3, feat };
+});
+---
+<Base title="Billard — Blackball Masters & Femmes" description="Le hub Billard de LSEI : choisissez la compétition Blackball Masters (hommes) ou Blackball Femmes (femmes)." active="disciplines">
+  <section class="disc-hero" style="--dc:var(--c-billard)">
+    <div class="wrap">
+      <div class="kick" style="color:var(--c-billard)">LSEI · Billard</div>
+      <h1>Le hub Blackball</h1>
+      <p>Deux compétitions, un même univers. Choisissez le circuit national que vous voulez suivre — classements, joueurs, fiches carrière et confrontations.</p>
+      <div class="bar" style="background:var(--c-billard)"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <a href="/disciplines/billard" class="bchoose-video">
+        <span class="bchoose-video-ic">🎬</span>
+        <span class="bchoose-video-txt">
+          <span class="bchoose-video-t">Vidéothèque billard</span>
+          <span class="bchoose-video-s">Toutes les vidéos billard, toutes compétitions confondues · {vidCount} vidéos</span>
+        </span>
+        <span class="bchoose-video-cta">Voir toutes les vidéos →</span>
+      </a>
+
+      <div class="bchoose">
+        {comps.map((c) => (
+          <div class="bchoose-card" style={`--cc:${c.accent};--cc-ink:${c.accentInk}`}>
+            <div class="bchoose-eyebrow">{c.eyebrow}</div>
+            <a href={c.href} class="bchoose-title-link"><h2 class="bchoose-title">{c.title}</h2></a>
+            <p class="bchoose-desc">{c.desc}</p>
+
+            {c.feat && (
+              <a href={`${c.ficheBase}${c.feat.id}`} class="champ-feature">
+                <span class="champ-trophy">{c.feat.icon}</span>
+                <span class="champ-body">
+                  <span class="champ-lab">{c.feat.label} en titre</span>
+                  <span class="champ-name">{c.feat.name}</span>
+                </span>
+                <span class="champ-go">→</span>
+              </a>
+            )}
+
+            <div class="bchoose-sublab">Podium de la saison {c.season}</div>
+            <div class="bchoose-podium">
+              {c.top3.map((p) => (
+                <a href={`${c.ficheBase}${p.id}`} class="bchoose-pod">
+                  <span class={`bchoose-pod-r r${p.rank}`}>{p.rank}</span>
+                  <span class="bchoose-pod-n"><span class="pod-name">{p.name}</span>{p.rank === 1 && <em class="pod-tag">{c.champSeasonLabel}</em>}</span>
+                  <span class="bchoose-pod-p">{p.points}<small>pts</small></span>
+                </a>
+              ))}
+            </div>
+
+            <div class="bchoose-stats">
+              <div><b>{c.players}</b><span>{c.noun}</span></div>
+              <div><b>{c.tourns}</b><span>étapes</span></div>
+              <div><b>{c.matches}</b><span>matchs</span></div>
+            </div>
+
+            <a href={c.href} class="bchoose-cta">Entrer dans le hub →</a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

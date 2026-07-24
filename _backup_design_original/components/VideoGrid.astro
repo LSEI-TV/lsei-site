@@ -1,0 +1,36 @@
+---
+import Thumb from './Thumb.astro';
+import { getDiscipline } from '../data/site';
+import type { Video } from '../lib/youtube';
+import type { Page } from 'astro';
+
+interface Props { page: Page<Video> }
+const { page } = Astro.props;
+const videos = page.data;
+---
+<div class="cards">
+  {videos.map((v) => {
+    const d = getDiscipline(v.discipline);
+    return (
+      <a href={`/replay/${v.id}`} class="card" style={`--dc:${d.colorVar}`}>
+        <Thumb from={d.from} to={d.to} caption={v.caption} image={v.thumb} />
+        <div class="kicker">{v.kicker}</div>
+        <h3>{v.title}</h3>
+        {v.excerpt && <p class="ex">{v.excerpt}</p>}
+        <div class="meta"><span>{v.when}</span>{v.views && <Fragment><span class="sep"></span><span class="mono">{v.views} vues</span></Fragment>}</div>
+      </a>
+    );
+  })}
+</div>
+
+{page.lastPage > 1 && (
+  <nav class="pager" aria-label="Pagination">
+    {page.url.prev
+      ? <a href={page.url.prev} class="pager-btn">← Précédent</a>
+      : <span class="pager-btn is-off">← Précédent</span>}
+    <span class="pager-info mono">Page {page.currentPage} / {page.lastPage}</span>
+    {page.url.next
+      ? <a href={page.url.next} class="pager-btn">Suivant →</a>
+      : <span class="pager-btn is-off">Suivant →</span>}
+  </nav>
+)}

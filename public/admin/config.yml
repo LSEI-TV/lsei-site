@@ -1,0 +1,84 @@
+# Configuration de l'interface d'admin (Decap CMS) pour écrire les articles sans code.
+#
+# ⚠️ Le "backend" (où sont enregistrés les articles) sera finalisé à la MISE EN LIGNE :
+#    il faut un dépôt Git (GitHub/GitLab) + une authentification. On réglera ça au déploiement.
+#    En attendant, pour tester en local : mettre `local_backend: true` (déjà activé) et lancer
+#    `npx decap-server` dans un terminal, puis ouvrir http://localhost:4321/admin/
+
+backend:
+  name: git-gateway   # à adapter au déploiement (ex. github)
+  branch: main
+
+# Test en local sans authentification (nécessite `npx decap-server`)
+local_backend: true
+
+# Où sont stockées les images téléversées via l'admin
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+locale: "fr"
+
+collections:
+  - name: "articles"
+    label: "Actualités"
+    label_singular: "Article"
+    folder: "src/content/articles"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    summary: "{{title}} — {{date}}"
+    sortable_fields: ["date", "title"]
+    fields:
+      - { label: "Titre", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", date_format: "DD/MM/YYYY", time_format: false, format: "YYYY-MM-DD" }
+      - { label: "Résumé (chapô)", name: "excerpt", widget: "text" }
+      - { label: "Image de couverture (téléversez la vôtre)", name: "cover", widget: "image", required: false }
+      - label: "…ou image de la vidéo (si couverture vide)"
+        name: "coverFrame"
+        widget: "select"
+        required: false
+        default: "default"
+        options:
+          - { label: "Miniature YouTube (défaut)", value: "default" }
+          - { label: "Image du début", value: "start" }
+          - { label: "Image du milieu", value: "middle" }
+          - { label: "Image de la fin", value: "end" }
+      - label: "Discipline (optionnel)"
+        name: "discipline"
+        widget: "select"
+        required: false
+        options:
+          - { label: "Basketball", value: "basket" }
+          - { label: "Billard", value: "billard" }
+          - { label: "Palets bretons", value: "palets" }
+          - { label: "Football", value: "football" }
+          - { label: "Beach-volley", value: "beach" }
+          - { label: "Bowling", value: "bowling" }
+          - { label: "Subbuteo", value: "subbuteo" }
+      - { label: "Auteur", name: "author", widget: "string", default: "La rédaction LSEI", required: false }
+      - { label: "Brouillon (ne pas publier)", name: "draft", widget: "boolean", default: false, required: false }
+      - { label: "Contenu", name: "body", widget: "richtext" }
+
+  - name: "social"
+    label: "Publications réseaux"
+    label_singular: "Publication"
+    folder: "src/content/social"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{platform}}"
+    extension: "md"
+    format: "frontmatter"
+    summary: "{{platform}} — {{date}}"
+    sortable_fields: ["date"]
+    fields:
+      - label: "Réseau social"
+        name: "platform"
+        widget: "select"
+        options:
+          - { label: "Facebook", value: "facebook" }
+          - { label: "Instagram", value: "instagram" }
+      - { label: "Date", name: "date", widget: "datetime", date_format: "DD/MM/YYYY", time_format: false, format: "YYYY-MM-DD" }
+      - { label: "Légende (texte du post)", name: "caption", widget: "text" }
+      - { label: "Lien vers la publication", name: "link", widget: "string", hint: "Collez l'adresse (URL) du post Facebook ou Instagram" }
+      - { label: "Image du post (téléversez-la)", name: "image", widget: "image", required: false }
+      - { label: "Brouillon (ne pas publier)", name: "draft", widget: "boolean", default: false, required: false }

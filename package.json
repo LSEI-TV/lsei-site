@@ -1,0 +1,22 @@
+{
+  "name": "lsei-site",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LSEI — Le Sport en Image · site de la web TV associative",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "cms": "decap-server",
+    "gen:season": "node scripts/generate-season.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.13.0",
+    "unist-util-visit": "^5.1.0"
+  },
+  "devDependencies": {
+    "decap-server": "^3.9.1"
+  }
+}

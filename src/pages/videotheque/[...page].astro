@@ -1,0 +1,43 @@
+---
+import Base from '../../layouts/Base.astro';
+import VideoGrid from '../../components/VideoGrid.astro';
+import FilterMenu from '../../components/FilterMenu.astro';
+import DisciplineNav from '../../components/DisciplineNav.astro';
+import { getReplays, getSeasonCounts, seasonSlug, seasonShort, type Video } from '../../lib/youtube';
+import type { GetStaticPaths, Page } from 'astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const videos = await getReplays();
+  return paginate(videos, { pageSize: 24 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props as { page: Page<Video> };
+
+const seasonCounts = await getSeasonCounts();
+const seasonOptions = [
+  { label: 'Toutes les saisons', value: '/videotheque', selected: true },
+  ...seasonCounts.map((s) => ({ label: `${s.season} · ${s.count}`, value: `/videotheque/saison/${seasonSlug(s.season)}` })),
+];
+---
+<Base title="Vidéothèque" description="Tous les replays LSEI, par discipline et par saison." active="replays">
+  <section class="disc-hero">
+    <div class="wrap">
+      <div class="kick" style="color:var(--accent)">À revoir</div>
+      <h1>Vidéothèque</h1>
+      <p>Tous les directs et replays, réunis au même endroit. Filtrez par saison ou par discipline.</p>
+      <div class="bar" style="background:var(--accent)"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="filter-bar"><FilterMenu label="Saison" options={seasonOptions} /></div>
+      <div class="sec-head">
+        <div class="eyebrow">{page.total} vidéos</div>
+        <DisciplineNav />
+      </div>
+
+      <VideoGrid page={page} />
+    </div>
+  </section>
+</Base>

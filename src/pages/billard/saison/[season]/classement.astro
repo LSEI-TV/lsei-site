@@ -1,0 +1,73 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import HubNav from '../../../../components/HubNav.astro';
+import SeasonPicker from '../../../../components/SeasonPicker.astro';
+import { photoOf, playerSlugs } from '../../../../lib/billardStats';
+import { getSeasons, type Season } from '../../../../data/billard/seasons';
+const { slugOf } = playerSlugs(getSeasons());
+
+export function getStaticPaths() {
+  return getSeasons().filter((s) => s.results).map((s) => ({ params: { season: s.slug }, props: { season: s } }));
+}
+const { season } = Astro.props as { season: Season };
+const R = season.results!;
+const players = R.players as any[];
+const base = `/billard/saison/${season.slug}`;
+const cnt = { tourns: R.tournaments.length, players: players.length, matches: R.matches.length };
+---
+<Base title={`Classement ${season.label} — Blackball Master`} description={`Classement officiel FFB du Blackball Master, saison ${season.label}.`} active="disciplines">
+  <HubNav season={season.slug} active="classement" archivesHref="/billard/archives" />
+  <section class="disc-hero" style="--dc:var(--c-billard)">
+    <div class="wrap">
+      <div class="kick" style="color:var(--c-billard)">Blackball Master · Classement</div>
+      <h1>Classement de la saison</h1>
+      <p>Classement officiel FFB · saison {season.label} — {cnt.tourns} étapes, {cnt.players} joueurs, {cnt.matches} matchs.</p>
+      <div class="bar" style="background:var(--c-billard)"></div>
+      <div class="bstat-nav">
+        <SeasonPicker current={season.slug} sub="/classement" onlyPlayed={true} />
+        <span class="bstat-src">Source : FFB / Cuescore</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="btable-wrap">
+        <table class="btable">
+          <thead>
+            <tr><th>#</th><th class="l">Joueur</th><th>Points</th><th>Tournois</th><th>Joués</th><th>V</th><th>D</th><th>%</th><th>Diff</th></tr>
+          </thead>
+          <tbody>
+            {players.map((p) => {
+              const src = photoOf(p, season.slug);
+              return (
+                <tr class="brow" data-href={`/billard/joueur/${slugOf(p.id)}`}>
+                  <td class="brank">{p.rank}</td>
+                  <td class="l">
+                    <a href={`/billard/joueur/${slugOf(p.id)}`} class="bplayer">
+                      <span class="bphoto"><span class="bavatar">{p.name.slice(0, 1)}</span>{src && <img src={src} alt="" loading="lazy" onerror="this.remove()" />}</span>
+                      <span class="bname">{p.name}</span>
+                    </a>
+                  </td>
+                  <td class="mono bpts">{p.points}</td>
+                  <td class="mono">{p.tourns}</td>
+                  <td class="mono">{p.played}</td>
+                  <td class="mono bwin">{p.wins}</td>
+                  <td class="mono">{p.losses}</td>
+                  <td class="mono">{p.winPct}%</td>
+                  <td class={`mono ${p.diff >= 0 ? 'bpos' : 'bneg'}`}>{p.diff >= 0 ? '+' : ''}{p.diff}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    document.querySelectorAll('.brow[data-href]').forEach(function (r) {
+      r.addEventListener('click', function (e) { if (e.target.closest('a')) return; location.href = r.getAttribute('data-href'); });
+    });
+  </script>
+</Base>

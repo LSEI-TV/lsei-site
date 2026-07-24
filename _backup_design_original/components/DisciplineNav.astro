@@ -1,0 +1,12 @@
+---
+// Rangée de liens vers les disciplines (comme dans la vidéothèque).
+// Réutilisée sur la vidéothèque et les pages disciplines/saison.
+import { disciplines } from '../data/site';
+interface Props { active?: string }
+const { active } = Astro.props;
+---
+<nav class="main disc-nav" aria-label="Disciplines">
+  {disciplines.map((d) => (
+    <a href={`/disciplines/${d.slug}`} class={active === d.slug ? 'active' : ''}>{d.name}</a>
+  ))}
+</nav>

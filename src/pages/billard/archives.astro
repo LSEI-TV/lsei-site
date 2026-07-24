@@ -1,0 +1,72 @@
+---
+import Base from '../../layouts/Base.astro';
+import HubNav from '../../components/HubNav.astro';
+import PlayerSearch from '../../components/PlayerSearch.astro';
+import { photoOf, playerSlugs, photoOnlySeasons, playersByPhotoKey } from '../../lib/billardStats';
+import { getSeasons, LANDING_SEASON, DEFAULT_SEASON } from '../../data/billard/seasons';
+
+const seasons = getSeasons().filter((s) => s.results); // saisons avec données (récent → ancien)
+const { slugOf } = playerSlugs(getSeasons());
+const byPhotoKey = playersByPhotoKey(getSeasons()); // relier une photo d'archive à une fiche connue
+
+// Une galerie par saison AVEC données : effectif de la saison (photo de l'année + nom + lien fiche).
+const dataGal = seasons.map((s) => ({
+  slug: s.slug,
+  label: s.label,
+  players: (s.results!.players as any[])
+    .map((p) => ({ name: p.name, url: photoOf(p, s.slug), link: `/billard/joueur/${slugOf(p.id)}` }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'fr')),
+}));
+
+// Une galerie par saison SANS données : photos seules (nom de fichier), reliées à une fiche si le joueur est connu.
+const rawPhoto = photoOnlySeasons(new Set(seasons.map((s) => s.slug)));
+const photoGal = rawPhoto.map((g) => ({
+  slug: g.slug,
+  label: g.label,
+  players: g.players.map((pl) => {
+    const k = byPhotoKey.get(pl.key);
+    return { name: k?.name || pl.name, url: pl.url, link: k ? `/billard/joueur/${slugOf(k.id)}` : null };
+  }),
+}));
+
+const galleries = [...dataGal, ...photoGal].sort((a, b) => (a.slug < b.slug ? 1 : -1)); // récent → ancien
+
+const uniq = new Set<number>();
+for (const s of seasons) for (const p of s.results!.players as any[]) uniq.add(p.id);
+---
+<Base title="Archives des joueurs — Blackball Master" description="Tous les joueurs qui ont composé le Blackball Master, saison après saison, en images." active="disciplines">
+  <HubNav season={LANDING_SEASON} dataSeason={DEFAULT_SEASON} active="archives" archivesHref="/billard/archives" />
+  <section class="disc-hero" style="--dc:var(--c-billard)">
+    <div class="wrap">
+      <div class="kick" style="color:var(--c-billard)">Blackball Master · Archives</div>
+      <h1>Archives des joueurs</h1>
+      <p><b>{uniq.size} joueurs</b> ont composé le Blackball Master, saison après saison. Cliquez sur un joueur pour ouvrir sa fiche carrière.</p>
+      <div class="bar" style="background:var(--c-billard)"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap" style="max-width:900px">
+      <div style="max-width:460px;margin-bottom:24px"><PlayerSearch placeholder="Rechercher un joueur…" /></div>
+
+      {galleries.map((g) => (
+        <div class="gal-season">
+          <div class="gal-season-h">Saison {g.label} · {g.players.length} joueurs</div>
+          <div class="gal-grid">
+            {g.players.map((pl) => {
+              const inner = (
+                <>
+                  <span class="bphoto gal-ph"><span class="bavatar">{pl.name.slice(0, 1)}</span>{pl.url && <img src={pl.url} alt="" loading="lazy" onerror="this.remove()" />}</span>
+                  <span class="gal-name">{pl.name}</span>
+                </>
+              );
+              return pl.link
+                ? <a href={pl.link} class="gal-item">{inner}</a>
+                : <span class="gal-item gal-item-off">{inner}</span>;
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,44 @@
+Déposez ici les photos des joueurs (JPG/PNG, carré ~400x400 conseillé).
+
+Le système RECONNAÎT le joueur d'après le NOM du fichier. Vous pouvez nommer
+la photo de plusieurs façons — toutes fonctionnent :
+   Alexis Klinka.jpg   |   alexis-klinka.png   |   Klinka Alexis.jpg   |   Klinka.jpg
+(accents, majuscules, espaces, tirets : peu importe)
+
+Joueurs de la saison :
+
+  - Alexandre Buscetti
+  - Alexis Klinka
+  - Benjamin Piel
+  - Christophe Lambert
+  - Christophe Thebeault
+  - Cyrille Loncle
+  - Damien Joly
+  - Elie Christidis
+  - Ismail Zegour
+  - Julien Duquesnoy
+  - Julien Leroux
+  - Killian Ballon
+  - Leonardo Moreira
+  - Léo OSTROWSKA
+  - Mohammed Amine HIMID
+  - Nathan GAMBINO
+  - Nicolas Grandemange Denizot
+  - Nordine Mokhtar mehache
+  - Paul Coldrick
+  - Quentin DUMONT
+  - Simon Pellissier
+  - Thomas LOUBOUTIN
+  - Yannick Beaufils
+  - Yasser AMRANI HANCHI
+
+
+
+met le cadre : "🎬
+
+Vidéothèque billard
+
+Toutes les vidéos billard, toutes compétitions confondues · 535 vidéos
+
+Voir toutes les vidéos →" au dessus des cadres BLACKBALL MASTERS et BLACKBALL FEMMES.
+

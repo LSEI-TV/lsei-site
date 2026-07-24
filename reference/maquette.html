@@ -1,0 +1,629 @@
+<title>LSEI — Le Sport en Image</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    /* light (default) */
+    --paper:    #F1F3F6;
+    --surface:  #FFFFFF;
+    --surface-2:#F7F8FA;
+    --ink:      #14161D;
+    --ink-soft: #565B69;
+    --ink-faint:#8A90A0;
+    --line:     #E2E5EC;
+    --line-strong:#CDD2DD;
+    --accent:   #1E40E5;
+    --accent-ink:#152CB0;
+    --live:     #E5342B;
+    --on-accent:#FFFFFF;
+
+    /* discipline tints */
+    --c-basket: #E06A24;
+    --c-billard:#137A50;
+    --c-palets: #9A6A38;
+    --c-foot:   #2E9E52;
+    --c-bowling:#6E4AD1;
+
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --sans: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: "Cascadia Mono", "SF Mono", Consolas, "Liberation Mono", monospace;
+
+    --wrap: 1180px;
+    --r: 4px;
+    --shadow: 0 1px 2px rgba(20,22,29,.04), 0 12px 30px -18px rgba(20,22,29,.22);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:    #0C0E13;
+      --surface:  #14171F;
+      --surface-2:#1A1E28;
+      --ink:      #F1F3F7;
+      --ink-soft: #A7AEBE;
+      --ink-faint:#6E7688;
+      --line:     #262B36;
+      --line-strong:#333A48;
+      --accent:   #7E93FF;
+      --accent-ink:#9FB0FF;
+      --live:     #FF5B4D;
+      --on-accent:#0C0E13;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 16px 40px -20px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="light"] {
+    --paper:#F1F3F6; --surface:#FFFFFF; --surface-2:#F7F8FA;
+    --ink:#14161D; --ink-soft:#565B69; --ink-faint:#8A90A0;
+    --line:#E2E5EC; --line-strong:#CDD2DD;
+    --accent:#1E40E5; --accent-ink:#152CB0; --live:#E5342B; --on-accent:#FFFFFF;
+    --shadow: 0 1px 2px rgba(20,22,29,.04), 0 12px 30px -18px rgba(20,22,29,.22);
+  }
+  :root[data-theme="dark"] {
+    --paper:#0C0E13; --surface:#14171F; --surface-2:#1A1E28;
+    --ink:#F1F3F7; --ink-soft:#A7AEBE; --ink-faint:#6E7688;
+    --line:#262B36; --line-strong:#333A48;
+    --accent:#7E93FF; --accent-ink:#9FB0FF; --live:#FF5B4D; --on-accent:#0C0E13;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 16px 40px -20px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; }
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+
+  .eyebrow {
+    font-size: 11.5px; font-weight: 700; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ink-faint);
+  }
+  .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  /* ---------- top utility bar ---------- */
+  .util {
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 12px;
+  }
+  .util .wrap { display: flex; align-items: center; justify-content: space-between; height: 34px; }
+  .util .left { display: flex; gap: 18px; color: var(--ink-soft); letter-spacing: .02em; }
+  .util .left b { color: var(--ink); font-weight: 700; }
+  .util .right { display: flex; align-items: center; gap: 16px; color: var(--ink-soft); }
+  .util .right a:hover { color: var(--accent); }
+  .theme-toggle {
+    border: 1px solid var(--line-strong); background: transparent; color: var(--ink-soft);
+    border-radius: 100px; font: inherit; font-size: 11px; padding: 3px 10px; cursor: pointer;
+    letter-spacing: .04em;
+  }
+  .theme-toggle:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+  /* ---------- masthead ---------- */
+  .masthead { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 40; }
+  .masthead .wrap { display: flex; align-items: center; justify-content: space-between; height: 76px; }
+  .brand { display: flex; align-items: baseline; gap: 12px; }
+  .brand .logo {
+    font-weight: 800; font-size: 30px; letter-spacing: -.02em; line-height: 1;
+    color: var(--ink);
+  }
+  .brand .logo .dot { color: var(--accent); }
+  .brand .tag {
+    font-family: var(--serif); font-style: italic; font-size: 14px; color: var(--ink-soft);
+    border-left: 1px solid var(--line-strong); padding-left: 12px;
+  }
+  nav.main { display: flex; align-items: center; gap: 26px; }
+  nav.main a {
+    font-size: 13.5px; font-weight: 600; color: var(--ink-soft); letter-spacing: .01em;
+    padding: 6px 0; border-bottom: 2px solid transparent;
+  }
+  nav.main a:hover { color: var(--ink); border-color: var(--line-strong); }
+  nav.main a.active { color: var(--ink); border-color: var(--accent); }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent); color: var(--on-accent);
+    font-weight: 700; font-size: 13.5px; letter-spacing: .01em;
+    padding: 9px 16px; border-radius: 100px; border: 0; cursor: pointer;
+  }
+  .btn:hover { background: var(--accent-ink); }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line-strong); }
+  .btn.ghost:hover { border-color: var(--ink-faint); background: var(--surface-2); }
+
+  /* ---------- live ticker ---------- */
+  .ticker {
+    background: var(--ink); color: var(--surface);
+    font-size: 12.5px; overflow: hidden; white-space: nowrap;
+  }
+  :root[data-theme="dark"] .ticker { background: #05070B; color: #EDEFF4; }
+  @media (prefers-color-scheme: dark) { .ticker { background: #05070B; color: #EDEFF4; } }
+  .ticker .wrap { display: flex; align-items: center; gap: 20px; height: 40px; }
+  .ticker .lbl {
+    display: inline-flex; align-items: center; gap: 7px; color: #fff;
+    font-weight: 800; letter-spacing: .12em; text-transform: uppercase; font-size: 11px;
+    flex: none;
+  }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--live); box-shadow: 0 0 0 0 rgba(229,52,43,.6); animation: pulse 1.8s infinite; }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 7px rgba(229,52,43,0); } 100% { box-shadow: 0 0 0 0 rgba(229,52,43,0); } }
+  .ticker .items { display: flex; gap: 26px; color: #C9CDD8; overflow: hidden; }
+  .ticker .items span b { color: #fff; }
+  .ticker .items span i { color: var(--live); font-style: normal; font-weight: 700; margin-left: 6px; }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 40px 0 8px; }
+  .hero-grid { display: grid; grid-template-columns: 1.62fr 1fr; gap: 30px; }
+
+  .lead a.frame { display: block; }
+  .frame {
+    position: relative; aspect-ratio: 16/9; border-radius: var(--r); overflow: hidden;
+    border: 1px solid var(--line); background: #111;
+  }
+  .frame .duo { position: absolute; inset: 0; }
+  .frame .duo::after {
+    content: ""; position: absolute; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,.16) 1px, transparent 1.4px);
+    background-size: 7px 7px; mix-blend-mode: overlay; opacity: .5;
+  }
+  .frame .grad { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.72) 100%); }
+  .frame .badge {
+    position: absolute; top: 14px; left: 14px; display: inline-flex; align-items: center; gap: 7px;
+    background: var(--live); color: #fff; font-weight: 800; font-size: 11px; letter-spacing: .12em;
+    text-transform: uppercase; padding: 5px 10px; border-radius: 3px;
+  }
+  .frame .badge .pulse { background: #fff; box-shadow: 0 0 0 0 rgba(255,255,255,.6); }
+  @keyframes pulseW { 70% { box-shadow: 0 0 0 7px rgba(255,255,255,0);} 100%{ box-shadow:0 0 0 0 rgba(255,255,255,0);} }
+  .frame .badge .pulse { animation: pulseW 1.8s infinite; }
+  .frame .play {
+    position: absolute; inset: 0; margin: auto; width: 62px; height: 62px; border-radius: 50%;
+    background: rgba(255,255,255,.16); backdrop-filter: blur(2px); border: 1.5px solid rgba(255,255,255,.7);
+    display: grid; place-items: center; transition: transform .2s, background .2s;
+  }
+  .frame .play svg { margin-left: 3px; }
+  .lead a.frame:hover .play { transform: scale(1.06); background: rgba(255,255,255,.28); }
+  .frame .cap { position: absolute; left: 16px; right: 16px; bottom: 14px; color: #fff; }
+  .frame .cap .disc { font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; opacity: .92; }
+  .frame .cap .score { font-family: var(--mono); font-size: 13px; margin-top: 4px; letter-spacing: .02em; }
+
+  .lead h1 {
+    font-size: clamp(26px, 3.4vw, 40px); line-height: 1.06; letter-spacing: -.022em;
+    font-weight: 800; margin: 20px 0 0; text-wrap: balance;
+  }
+  .lead .dek {
+    font-family: var(--serif); font-size: 17px; line-height: 1.5; color: var(--ink-soft);
+    margin: 12px 0 0; max-width: 60ch;
+  }
+  .lead .byline { display: flex; align-items: center; gap: 12px; margin-top: 16px; font-size: 12.5px; color: var(--ink-faint); }
+  .lead .byline .k { color: var(--ink); font-weight: 600; }
+  .lead .byline .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--line-strong); }
+
+  /* schedule rail */
+  .rail { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); overflow: hidden; align-self: start; box-shadow: var(--shadow); }
+  .rail h2 {
+    margin: 0; padding: 14px 18px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    font-weight: 800; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between;
+  }
+  .rail h2 .live-mini { color: var(--live); display: inline-flex; align-items: center; gap: 6px; font-size: 11px; }
+  .prog { display: flex; gap: 13px; padding: 13px 18px; border-bottom: 1px solid var(--line); align-items: flex-start; }
+  .prog:last-child { border-bottom: 0; }
+  .prog:hover { background: var(--surface-2); }
+  .prog .time { font-family: var(--mono); font-size: 13px; color: var(--ink); font-weight: 600; padding-top: 1px; min-width: 46px; }
+  .prog .time.on { color: var(--live); }
+  .prog .body .t { font-size: 14px; font-weight: 650; line-height: 1.28; }
+  .prog .body .m { font-size: 11.5px; color: var(--ink-faint); margin-top: 2px; }
+  .prog .tagd { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; margin-top: 6px; }
+  .rail .more { display: block; text-align: center; padding: 12px; font-size: 12.5px; font-weight: 700; color: var(--accent); border-top: 1px solid var(--line); }
+  .rail .more:hover { background: var(--surface-2); }
+
+  /* ---------- disciplines ---------- */
+  .section { padding: 46px 0; }
+  .sec-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 22px; gap: 16px; }
+  .sec-head h2 { margin: 4px 0 0; font-size: 23px; letter-spacing: -.015em; font-weight: 800; }
+  .sec-head a.link { font-size: 13px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+  .sec-head a.link:hover { text-decoration: underline; }
+  .rule { border: 0; border-top: 1px solid var(--line); margin: 0; }
+
+  .discs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .disc-card {
+    position: relative; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface);
+    padding: 18px 16px 16px; overflow: hidden; transition: transform .18s, box-shadow .18s, border-color .18s;
+  }
+  .disc-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--dc, var(--accent)); }
+  .disc-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--line-strong); }
+  .disc-card .n { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
+  .disc-card .name { font-size: 17px; font-weight: 800; letter-spacing: -.01em; margin-top: 20px; }
+  .disc-card .sub { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+  .disc-card .cnt { margin-top: 14px; font-size: 11.5px; color: var(--dc); font-weight: 700; display: flex; align-items: center; gap: 6px; }
+
+  /* ---------- editorial grid ---------- */
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .card { display: flex; flex-direction: column; }
+  .card .frame { aspect-ratio: 16/10; }
+  .card .kicker { margin-top: 14px; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--dc, var(--accent)); }
+  .card h3 { margin: 7px 0 0; font-size: 18px; line-height: 1.24; letter-spacing: -.01em; font-weight: 750; }
+  .card:hover h3 { color: var(--accent); }
+  .card .ex { font-family: var(--serif); font-size: 14.5px; color: var(--ink-soft); margin: 8px 0 0; line-height: 1.45; }
+  .card .meta { margin-top: 10px; font-size: 12px; color: var(--ink-faint); display: flex; gap: 10px; align-items: center; }
+  .card .meta .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--line-strong); }
+
+  /* ---------- stats + partners band ---------- */
+  .band { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; padding: 40px 0 34px; max-width: 760px; }
+  .stat { text-align: left; padding-right: 20px; border-left: 2px solid var(--accent); padding-left: 18px; }
+  .stat .num { font-size: 42px; font-weight: 800; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .stat .lab { margin-top: 8px; font-size: 13px; color: var(--ink-soft); }
+  .partners { padding: 0 0 40px; }
+  .partners .pl { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); font-weight: 700; margin-bottom: 16px; }
+  .plist { display: flex; flex-wrap: wrap; gap: 10px 10px; }
+  .plist span {
+    font-size: 12.5px; font-weight: 650; color: var(--ink-soft);
+    border: 1px solid var(--line); border-radius: 100px; padding: 7px 14px; background: var(--surface-2);
+  }
+
+  /* ---------- CTA ---------- */
+  .cta {
+    position: relative; overflow: hidden; border-radius: 8px; background: var(--ink); color: #fff;
+    padding: 46px 44px; display: flex; align-items: center; justify-content: space-between; gap: 30px; flex-wrap: wrap;
+  }
+  :root[data-theme="dark"] .cta { background: #05070B; border: 1px solid var(--line); }
+  @media (prefers-color-scheme: dark) { .cta { background: #05070B; border: 1px solid var(--line); } }
+  .cta::before {
+    content: ""; position: absolute; right: -80px; top: -80px; width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(30,64,229,.55), transparent 62%);
+  }
+  .cta .txt { position: relative; max-width: 56ch; }
+  .cta h2 { margin: 6px 0 0; font-size: 27px; font-weight: 800; letter-spacing: -.02em; }
+  .cta p { margin: 10px 0 0; color: #C6CBD8; font-family: var(--serif); font-size: 15.5px; }
+  .cta .eyebrow { color: #8FA0FF; }
+  .cta .actions { position: relative; display: flex; gap: 12px; }
+  .cta .btn.light { background: #fff; color: #14161D; }
+  .cta .btn.light:hover { background: #E9ECF5; }
+  .cta .btn.outline { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.35); }
+  .cta .btn.outline:hover { border-color: #fff; }
+
+  /* ---------- footer ---------- */
+  footer { background: var(--surface); border-top: 1px solid var(--line); margin-top: 8px; }
+  .foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 24px; padding: 46px 0 30px; }
+  .foot .logo { font-weight: 800; font-size: 22px; letter-spacing: -.02em; }
+  .foot .logo .dot { color: var(--accent); }
+  .foot p { color: var(--ink-soft); font-size: 13px; margin: 12px 0 0; max-width: 34ch; }
+  .foot h4 { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin: 4px 0 14px; font-weight: 800; }
+  .foot ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+  .foot ul a { font-size: 13.5px; color: var(--ink-soft); }
+  .foot ul a:hover { color: var(--accent); }
+  .subfoot { border-top: 1px solid var(--line); padding: 16px 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--ink-faint); }
+  .subfoot .soc { display: flex; gap: 8px; }
+  .subfoot .soc a { border: 1px solid var(--line); border-radius: 100px; padding: 5px 12px; font-weight: 650; color: var(--ink-soft); }
+  .subfoot .soc a:hover { color: var(--accent); border-color: var(--line-strong); }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 940px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .discs { grid-template-columns: repeat(2, 1fr); }
+    .cards { grid-template-columns: 1fr 1fr; }
+    .foot { grid-template-columns: 1fr 1fr; }
+    nav.main { display: none; }
+  }
+  @media (max-width: 620px) {
+    .stats { grid-template-columns: 1fr; }
+    .cards { grid-template-columns: 1fr; }
+    .discs { grid-template-columns: 1fr 1fr; }
+    .foot { grid-template-columns: 1fr; }
+    .util .left span.hide { display: none; }
+    .cta { padding: 34px 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+</style>
+
+<!-- ================= UTILITY BAR ================= -->
+<div class="util">
+  <div class="wrap">
+    <div class="left">
+      <span><b>Dim. 12 juil.</b></span>
+      <span class="hide">Web TV associative</span>
+    </div>
+    <div class="right">
+      <a href="#">S'abonner</a>
+      <a href="#">Newsletter</a>
+      <button class="theme-toggle" id="tt" aria-label="Changer de thème">Thème</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MASTHEAD ================= -->
+<header class="masthead">
+  <div class="wrap">
+    <div class="brand">
+      <span class="logo">LSEI<span class="dot">.</span></span>
+      <span class="tag">Le Sport en Image</span>
+    </div>
+    <nav class="main">
+      <a href="#" class="active">Direct</a>
+      <a href="#">Replays</a>
+      <a href="#">Disciplines</a>
+      <a href="#">Reportages</a>
+      <a href="#">Le club</a>
+    </nav>
+    <a href="#" class="btn">▸ Regarder le direct</a>
+  </div>
+</header>
+
+<!-- ================= LIVE TICKER ================= -->
+<div class="ticker">
+  <div class="wrap">
+    <span class="lbl"><span class="pulse"></span>En direct</span>
+    <div class="items mono">
+      <span>Basket · <b>Fougères 68 – 64 Rueil</b> <i>Q4 04:12</i></span>
+      <span>Billard · <b>Masters, 1/2 finale</b> <i>en cours</i></span>
+      <span>Palets · <b>Championnat de Bretagne</b> <i>18:30</i></span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="lead">
+      <a href="#" class="frame" aria-label="Regarder le direct : Fougères – Rueil">
+        <div class="duo" style="background:linear-gradient(135deg,#E06A24,#7a2f0e);"></div>
+        <div class="grad"></div>
+        <span class="badge"><span class="pulse"></span>Direct</span>
+        <span class="play" aria-hidden="true">
+          <svg width="20" height="22" viewBox="0 0 20 22" fill="#fff"><path d="M0 0l20 11L0 22z"/></svg>
+        </span>
+        <div class="cap">
+          <div class="disc">Basketball · Poule A</div>
+          <div class="score">PAYS DE FOUGÈRES 68 — 64 RUEIL · 4E QUART · 04:12</div>
+        </div>
+      </a>
+      <h1>Fougères tient tête à Rueil dans un money-time bouillant</h1>
+      <p class="dek">Menés de dix points à la pause, les Fougerais ont renversé la rencontre porté par un public en fusion. Suivez la fin de match commentée, image et son signés LSEI.</p>
+      <div class="byline">
+        <span class="k">En direct</span><span class="sep"></span>
+        <span>Salle Justy Specker · Fougères</span><span class="sep"></span>
+        <span class="mono">1 240 spectateurs connectés</span>
+      </div>
+    </div>
+
+    <aside class="rail">
+      <h2>Au programme <span class="live-mini"><span class="pulse"></span>3 en direct</span></h2>
+      <a href="#" class="prog">
+        <div class="time on mono">LIVE</div>
+        <div class="body">
+          <div class="t">Fougères – Rueil</div>
+          <div class="m">Basket · 4e quart-temps</div>
+          <span class="tagd" style="background:rgba(224,106,36,.14);color:var(--c-basket)">Basket</span>
+        </div>
+      </a>
+      <a href="#" class="prog">
+        <div class="time on mono">LIVE</div>
+        <div class="body">
+          <div class="t">Masters de billard — 1/2 finale</div>
+          <div class="m">Billard français · à la bande</div>
+          <span class="tagd" style="background:rgba(19,122,80,.14);color:var(--c-billard)">Billard</span>
+        </div>
+      </a>
+      <a href="#" class="prog">
+        <div class="time mono">18:30</div>
+        <div class="body">
+          <div class="t">Championnat de Bretagne de palets</div>
+          <div class="m">Palets bretons · phase finale</div>
+          <span class="tagd" style="background:rgba(154,106,56,.16);color:var(--c-palets)">Palets</span>
+        </div>
+      </a>
+      <a href="#" class="prog">
+        <div class="time mono">21:00</div>
+        <div class="body">
+          <div class="t">L'Œil du dimanche — le mag</div>
+          <div class="m">Débrief de la semaine sportive</div>
+          <span class="tagd" style="background:rgba(30,64,229,.12);color:var(--accent)">Magazine</span>
+        </div>
+      </a>
+      <a href="#" class="more">Voir la grille complète →</a>
+    </aside>
+  </div>
+</section>
+
+<!-- ================= DISCIPLINES ================= -->
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">Nos antennes</div>
+        <h2>Cinq disciplines, une même passion</h2>
+      </div>
+      <a href="#" class="link">Toutes les disciplines →</a>
+    </div>
+    <div class="discs">
+      <a href="#" class="disc-card" style="--dc:var(--c-basket)">
+        <div class="n">01</div>
+        <div class="name">Basketball</div>
+        <div class="sub">Nationale Masculine 1</div>
+        <div class="cnt">● 42 matchs diffusés</div>
+      </a>
+      <a href="#" class="disc-card" style="--dc:var(--c-billard)">
+        <div class="n">02</div>
+        <div class="name">Billard</div>
+        <div class="sub">Français &amp; carambole</div>
+        <div class="cnt">● 18 lives</div>
+      </a>
+      <a href="#" class="disc-card" style="--dc:var(--c-palets)">
+        <div class="n">03</div>
+        <div class="name">Palets bretons</div>
+        <div class="sub">Sur planche &amp; terre</div>
+        <div class="cnt">● 12 tournois</div>
+      </a>
+      <a href="#" class="disc-card" style="--dc:var(--c-foot)">
+        <div class="n">04</div>
+        <div class="name">Football</div>
+        <div class="sub">Clubs &amp; régional</div>
+        <div class="cnt">● 27 rencontres</div>
+      </a>
+      <a href="#" class="disc-card" style="--dc:var(--c-bowling)">
+        <div class="n">05</div>
+        <div class="name">Bowling</div>
+        <div class="sub">Compétitions &amp; open</div>
+        <div class="cnt">● 9 étapes</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ================= REPLAYS / REPORTAGES ================= -->
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">À revoir</div>
+        <h2>Derniers replays &amp; reportages</h2>
+      </div>
+      <a href="#" class="link">Toute la vidéothèque →</a>
+    </div>
+    <div class="cards">
+
+      <a href="#" class="card" style="--dc:var(--c-billard)">
+        <div class="frame">
+          <div class="duo" style="background:linear-gradient(135deg,#137A50,#083b28);"></div>
+          <div class="grad"></div>
+          <span class="play" aria-hidden="true"><svg width="18" height="20" viewBox="0 0 20 22" fill="#fff"><path d="M0 0l20 11L0 22z"/></svg></span>
+          <div class="cap"><div class="disc">Billard · Masters</div></div>
+        </div>
+        <div class="kicker">Replay · 1 h 12</div>
+        <h3>Le rappel de bande qui a fait basculer la demi-finale</h3>
+        <p class="ex">Retour au ralenti sur le point qui a scellé la qualification, commenté par nos experts.</p>
+        <div class="meta"><span>Il y a 2 jours</span><span class="sep"></span><span class="mono">3,4 k vues</span></div>
+      </a>
+
+      <a href="#" class="card" style="--dc:var(--c-basket)">
+        <div class="frame">
+          <div class="duo" style="background:linear-gradient(135deg,#E06A24,#6f2c0c);"></div>
+          <div class="grad"></div>
+          <span class="play" aria-hidden="true"><svg width="18" height="20" viewBox="0 0 20 22" fill="#fff"><path d="M0 0l20 11L0 22z"/></svg></span>
+          <div class="cap"><div class="disc">Basket · Interview</div></div>
+        </div>
+        <div class="kicker">Reportage · 8 min</div>
+        <h3>Dans les coulisses du Pays de Fougères Basket</h3>
+        <p class="ex">Vestiaire, entraînement, ferveur : trois jours au cœur d'un club qui monte.</p>
+        <div class="meta"><span>Il y a 4 jours</span><span class="sep"></span><span class="mono">6,1 k vues</span></div>
+      </a>
+
+      <a href="#" class="card" style="--dc:var(--c-palets)">
+        <div class="frame">
+          <div class="duo" style="background:linear-gradient(135deg,#9A6A38,#4a3117);"></div>
+          <div class="grad"></div>
+          <span class="play" aria-hidden="true"><svg width="18" height="20" viewBox="0 0 20 22" fill="#fff"><path d="M0 0l20 11L0 22z"/></svg></span>
+          <div class="cap"><div class="disc">Palets · Portrait</div></div>
+        </div>
+        <div class="kicker">Reportage · 11 min</div>
+        <h3>Le palet breton, un patrimoine qui ne rouille pas</h3>
+        <p class="ex">À la rencontre des artisans et des joueurs qui perpétuent un jeu centenaire.</p>
+        <div class="meta"><span>Il y a 6 jours</span><span class="sep"></span><span class="mono">2,8 k vues</span></div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= STATS + PARTNERS ================= -->
+<div class="band">
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat">
+        <div class="num">13 K<span style="font-size:22px">+</span></div>
+        <div class="lab">Abonnés sur YouTube, et une communauté qui grandit à chaque saison.</div>
+      </div>
+      <div class="stat">
+        <div class="num">5</div>
+        <div class="lab">Disciplines couvertes en direct comme en reportage, du parquet à la planche.</div>
+      </div>
+    </div>
+    <div class="partners">
+      <div class="pl">Ils portent le projet</div>
+      <div class="plist">
+        <span>Fédération Française de Billard</span>
+        <span>Pays de Fougères Basket</span>
+        <span>Ligue de Bretagne de Football</span>
+        <span>Bambis Palets</span>
+        <span>Bowling Promotion</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= CTA ================= -->
+<section class="section">
+  <div class="wrap">
+    <div class="cta">
+      <div class="txt">
+        <div class="eyebrow">Votre club, à l'antenne</div>
+        <h2>Portez haut et fort les valeurs de votre sport</h2>
+        <p>Vous organisez une compétition, un tournoi, une rencontre ? LSEI capte, diffuse et raconte votre discipline. Parlons de votre prochain événement.</p>
+      </div>
+      <div class="actions">
+        <a href="#" class="btn light">Proposer un événement</a>
+        <a href="#" class="btn outline">Devenir partenaire</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <div class="logo">LSEI<span class="dot">.</span></div>
+        <p>La web TV associative qui met en image les sports authentiques du territoire, du haut niveau aux clubs de proximité.</p>
+      </div>
+      <div>
+        <h4>Disciplines</h4>
+        <ul>
+          <li><a href="#">Basketball</a></li>
+          <li><a href="#">Billard</a></li>
+          <li><a href="#">Palets bretons</a></li>
+          <li><a href="#">Football</a></li>
+          <li><a href="#">Bowling</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Le média</h4>
+        <ul>
+          <li><a href="#">Le direct</a></li>
+          <li><a href="#">Vidéothèque</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Nous rejoindre</h4>
+        <ul>
+          <li><a href="#">Devenir partenaire</a></li>
+          <li><a href="#">Proposer un événement</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrap subfoot">
+      <span>© 2026 LSEI — Le Sport en Image · Association loi 1901</span>
+      <div class="soc">
+        <a href="#">YouTube</a>
+        <a href="#">Instagram</a>
+        <a href="#">Facebook</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var btn = document.getElementById('tt');
+    var root = document.documentElement;
+    btn && btn.addEventListener('click', function () {
+      var cur = root.getAttribute('data-theme');
+      if (!cur) cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      root.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+    });
+  })();
+</script>

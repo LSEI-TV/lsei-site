@@ -1,0 +1,41 @@
+---
+// Barre de recherche d'un joueur (tout l'univers billard, toutes saisons).
+// Filtrage côté client → mène directement à la fiche carrière du joueur.
+import { allPlayers } from '../lib/billardStats';
+import type { Season } from '../data/billard/seasons';
+interface Props { placeholder?: string; seasons?: Season[]; hrefBase?: string }
+const { placeholder = 'Rechercher un joueur…', seasons, hrefBase = '/billard/joueur/' } = Astro.props;
+const players = allPlayers(seasons);
+const json = JSON.stringify(players).replace(/</g, '\\u003c');
+---
+<div class="psearch" data-hrefbase={hrefBase}>
+  <span class="psearch-ic" aria-hidden="true">🔍</span>
+  <input type="search" class="psearch-input" placeholder={placeholder} autocomplete="off" aria-label="Rechercher un joueur" />
+  <div class="psearch-results" hidden></div>
+  <script type="application/json" class="psearch-data" set:html={json}></script>
+</div>
+
+<script is:inline>
+  document.querySelectorAll('.psearch').forEach(function (box) {
+    var data = JSON.parse(box.querySelector('.psearch-data').textContent);
+    var input = box.querySelector('.psearch-input');
+    var results = box.querySelector('.psearch-results');
+    var hrefBase = box.getAttribute('data-hrefbase') || '/billard/joueur/';
+    var norm = function (s) { return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); };
+    var esc = function (s) { return (s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+    function render() {
+      var q = norm(input.value.trim());
+      if (!q) { results.hidden = true; results.innerHTML = ''; return; }
+      var hits = data.filter(function (p) { return norm(p.name).indexOf(q) !== -1; }).slice(0, 8);
+      if (!hits.length) { results.innerHTML = '<div class="psearch-empty">Aucun joueur trouvé</div>'; results.hidden = false; return; }
+      results.innerHTML = hits.map(function (p) {
+        return '<a href="' + hrefBase + (p.slug || p.id) + '" class="psearch-item">' + esc(p.name) + '</a>';
+      }).join('');
+      results.hidden = false;
+    }
+    input.addEventListener('input', render);
+    input.addEventListener('focus', function () { if (input.value) render(); });
+    document.addEventListener('click', function (e) { if (!box.contains(e.target)) { results.hidden = true; } });
+    input.addEventListener('keydown', function (e) { if (e.key === 'Escape') { input.value = ''; results.hidden = true; } });
+  });
+</script>

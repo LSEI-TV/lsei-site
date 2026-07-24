@@ -1,0 +1,16 @@
+---
+// Rangée de liens vers les disciplines (comme dans la vidéothèque).
+// Réutilisée sur la vidéothèque et les pages disciplines/saison.
+import { disciplines } from '../data/site';
+import SportIcon from './SportIcon.astro';
+interface Props { active?: string }
+const { active } = Astro.props;
+---
+<nav class="main disc-nav" aria-label="Disciplines">
+  {disciplines.map((d) => (
+    <a href={d.hub ?? `/disciplines/${d.slug}`} class={active === d.slug ? 'active' : ''} style={`--dc:${d.colorVar}`}>
+      <SportIcon slug={d.slug} class="disc-nav-ic" />
+      <span>{d.name}</span>
+    </a>
+  ))}
+</nav>

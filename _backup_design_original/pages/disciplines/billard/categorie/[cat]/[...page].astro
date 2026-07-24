@@ -1,0 +1,51 @@
+---
+import Base from '../../../../../layouts/Base.astro';
+import VideoGrid from '../../../../../components/VideoGrid.astro';
+import FilterMenu from '../../../../../components/FilterMenu.astro';
+import DisciplineNav from '../../../../../components/DisciplineNav.astro';
+import { disciplines } from '../../../../../data/site';
+import { getReplays, getBillardCategories, categorySlug, type Video } from '../../../../../lib/youtube';
+import type { GetStaticPaths, Page } from 'astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const all = await getReplays({ discipline: 'billard' });
+  const cats = await getBillardCategories();
+  const routes = [];
+  for (const c of cats) {
+    const vids = all.filter((v) => v.category === c.category);
+    routes.push(...paginate(vids, { params: { cat: categorySlug(c.category) }, props: { category: c.category }, pageSize: 24 }));
+  }
+  return routes;
+}) satisfies GetStaticPaths;
+
+const { page, category } = Astro.props as { page: Page<Video>; category: string };
+const disc = disciplines.find((d) => d.slug === 'billard')!;
+
+const cats = await getBillardCategories();
+const categoryOptions = [
+  { label: 'Toutes les catégories', value: '/disciplines/billard' },
+  ...cats.map((c) => ({ label: `${c.category} · ${c.count}`, value: `/disciplines/billard/categorie/${categorySlug(c.category)}`, selected: c.category === category })),
+];
+---
+<Base title={`Billard — ${category}`} description={`Les vidéos de billard : ${category}.`} active="disciplines">
+  <section class="disc-hero">
+    <div class="wrap" style={`--dc:${disc.colorVar}`}>
+      <div class="kick">{disc.label} · {category}</div>
+      <h1>{disc.name}</h1>
+      <p>{disc.blurb}</p>
+      <div class="bar"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap" style={`--dc:${disc.colorVar}`}>
+      <div class="filter-bar"><FilterMenu label="Catégorie" options={categoryOptions} colorVar={disc.colorVar} /></div>
+      <div class="sec-head">
+        <div class="eyebrow">{page.total} vidéos · {category}</div>
+        <DisciplineNav active="billard" />
+      </div>
+
+      <VideoGrid page={page} />
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,460 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import HubNav from '../../../../components/HubNav.astro';
+import SeasonPicker from '../../../../components/SeasonPicker.astro';
+import VideoPlayer from '../../../../components/VideoPlayer.astro';
+import Thumb from '../../../../components/Thumb.astro';
+import { getReplays } from '../../../../lib/youtube';
+import { getCollection } from 'astro:content';
+import { getDiscipline } from '../../../../data/site';
+import { articleCover } from '../../../../lib/articles';
+import { photoOf, fromPov, seasonHighlights, playerSlugs, photoOnlySeasons, playersByPhotoKey } from '../../../../lib/billardStats';
+import SportIcon from '../../../../components/SportIcon.astro';
+import PlayerSearch from '../../../../components/PlayerSearch.astro';
+import { getSeasons, getPalmares, DEFAULT_SEASON, type Season } from '../../../../data/billard/seasons';
+import rmixte2526 from '../../../../data/billard/results-mixte-2025-2026.json';
+import rmixte2425 from '../../../../data/billard/results-mixte-2024-2025.json';
+import rmixte2324 from '../../../../data/billard/results-mixte-2023-2024.json';
+// Classements « Mixte National » par saison : servent de PROVENANCE aux nouveaux
+// accédants du Masters de la saison SUIVANTE (Mixte N → nouveaux Masters N+1).
+const MIXTE_BY_SEASON: Record<string, any> = { '2025-2026': rmixte2526, '2024-2025': rmixte2425, '2023-2024': rmixte2324 };
+const { slugOf } = playerSlugs(getSeasons());
+
+export function getStaticPaths() {
+  return getSeasons().map((s) => ({ params: { season: s.slug }, props: { season: s } }));
+}
+const { season } = Astro.props as { season: Season };
+const d = getDiscipline('billard');
+const base = `/billard/saison/${season.slug}`;
+
+// Chaque hub montre le calendrier de SA propre saison (avec les vainqueurs des
+// étapes pour les saisons jouées). Le calendrier 2026/2027 « à venir » est sur
+// son propre hub, accessible via le sélecteur de saison.
+const calSeason = season;
+
+const R: any = season.results;
+const hasData = !!R;
+const players: any[] = hasData ? R.players : [];
+const matches: any[] = hasData ? R.matches : [];
+const top5 = players.slice(0, 5);
+const spot = players[0];
+const spotPhoto = spot ? photoOf(spot, season.slug) : null;
+const spotResults = spot
+  ? matches.filter((m) => m.aId === spot.id || m.bId === spot.id).sort((a, b) => (a.date < b.date ? 1 : -1)).map((m) => fromPov(m, spot.id)).slice(0, 4)
+  : [];
+const recent = hasData ? [...matches].sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 5) : [];
+const hi = hasData && matches.length ? seasonHighlights(R) : null;
+const tourById = (tid: string) => (hasData ? R.tournaments.find((t: any) => t.id === tid) : undefined);
+
+const seasonVideoKey = season.slug.replace('-', '/');
+// Uniquement les vidéos du MASTERS de cette saison (pas les régionales / Femmes / Para).
+const vids = (await getReplays({ discipline: 'billard' })).filter((v) => v.season === seasonVideoKey && v.category === 'Masters');
+const featured = vids[0];
+const latest = vids.slice(1, 5);
+
+const billardArticles = hasData
+  ? (await getCollection('articles', ({ data }) => !data.draft && data.discipline === 'billard'))
+      .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 3)
+  : [];
+const fmtArticleDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(dt);
+const fmtShort = (iso: string) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }).format(new Date(iso));
+const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
+const palmares = getPalmares();
+
+// Entrées & sorties : mouvements de l'effectif du Masters vs la saison précédente
+// (le Blackball Master est un plateau restreint : des joueurs entrent, d'autres sortent).
+const playedSeasons = getSeasons().filter((s) => s.results);
+const curIdx = playedSeasons.findIndex((s) => s.slug === season.slug);
+const prevSeason = curIdx >= 0 ? playedSeasons[curIdx + 1] : undefined; // liste récent→ancien : +1 = plus ancienne
+let entrants: any[] = [], leavers: any[] = [];
+if (hasData && prevSeason?.results) {
+  const prevPlayers = prevSeason.results.players as any[];
+  const curIds = new Set(players.map((p) => p.id));
+  const prevIds = new Set(prevPlayers.map((p) => p.id));
+  entrants = players.filter((p) => !prevIds.has(p.id)).sort((a, b) => a.rank - b.rank);
+  leavers = prevPlayers.filter((p) => !curIds.has(p.id)).sort((a, b) => a.rank - b.rank);
+}
+
+// --- Nouveaux accédants : joueurs qui DÉBUTENT au Blackball Master cette saison. ---
+const _n = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+const _byPhotoKey = playersByPhotoKey(getSeasons());
+
+// Provenance : le classement « Mixte National » de la saison PRÉCÉDENTE (feeder).
+// Ex. Masters 2026/2027 → Mixte 2025/2026 ; Masters 2025/2026 → Mixte 2024/2025.
+const [_ya, _yb] = season.slug.split('-').map(Number);
+const feederLabel = `${_ya - 1} / ${_yb - 1}`;
+const feeder = MIXTE_BY_SEASON[`${_ya - 1}-${_yb - 1}`] || null;
+const feederBy = feeder ? new Map((feeder.players as any[]).map((p) => [_n(p.name), p])) : null;
+let feederCdFKey: string | null = null;
+if (feeder) {
+  const t = (feeder.tournaments as any[]).find((x: any) => x.kind === 'france');
+  const fin = t && (feeder.matches as any[]).find((m: any) => m.tid === t.id && (m.round || '').toLowerCase() === 'final');
+  if (fin) feederCdFKey = _n(fin.sA > fin.sB ? fin.aName : fin.bName);
+}
+
+interface Newcomer { name: string; url: string | null; link: string | null; badge: string | null; prov: string; rank: number; points: number; wins: number; losses: number; tourns: number; mixteProv: string | null; }
+let newcomers: Newcomer[] = [];
+let newcHelp = '';
+
+if (!hasData) {
+  // Saison à venir : RÈGLE D'ACCESSION — les PROMOTED premiers du Mixte National (feeder)
+  // montent au Masters. Piloté par le classement (source d'autorité), photo si dispo.
+  // En cas de changement d'accession ponctuel, ajuster PROMOTED ou filtrer ci-dessous.
+  const PROMOTED = 8;
+  const knownMastersIds = new Set<number>();
+  for (const s of playedSeasons) for (const p of s.results!.players as any[]) knownMastersIds.add(p.id);
+  newcomers = (feeder ? (feeder.players as any[]) : [])
+    .slice()
+    .sort((a, b) => a.rank - b.rank)
+    .slice(0, PROMOTED)
+    .map((p) => {
+      const back = knownMastersIds.has(p.id); // déjà passé par le Masters → joueur de retour
+      return {
+        name: p.name,
+        url: photoOf(p, season.slug),
+        link: back ? `/billard/joueur/${slugOf(p.id)}` : null,
+        badge: back
+          ? '↩ De retour au Masters'
+          : (feederCdFKey === _n(p.name) ? '🏆 Champion de France Mixte' : (p.rank === 1 ? '⭐ 1er du Mixte National' : null)),
+        prov: `Mixte National · ${feederLabel}`,
+        rank: p.rank, points: p.points, wins: p.wins, losses: p.losses, tourns: p.tourns,
+        mixteProv: null,
+      };
+    });
+  newcHelp = `Les <b>${PROMOTED} premiers</b> du Mixte National ${feederLabel} accèdent au Blackball Master. Voici leur parcours sur le circuit.`;
+} else {
+  // Saison jouée : ACCÉDANTS = joueurs qui ARRIVENT au Masters cette saison (absents de
+  // l'effectif de la saison précédente). Ceux déjà passés par le Masters avant sont badgés
+  // « de retour » ; les autres sont des débutants (1re fois). Correspond au groupe promu
+  // depuis le Mixte National (cf. règle des N premiers qui montent).
+  const earlierIds = new Set<number>(); // vus lors d'une saison ANTÉRIEURE (données + galeries photo)
+  for (const s of playedSeasons) if (s.slug < season.slug) for (const p of s.results!.players as any[]) earlierIds.add(p.id);
+  for (const gal of photoOnlySeasons(new Set(playedSeasons.map((s) => s.slug))))
+    if (gal.slug < season.slug) for (const pl of gal.players) { const k = _byPhotoKey.get(pl.key); if (k) earlierIds.add(k.id); }
+  // Référence des arrivées = effectif de la saison précédente immédiate (ou, pour la plus
+  // ancienne saison avec données, la galerie photo antérieure résolue).
+  const prevRosterIds = prevSeason?.results
+    ? new Set((prevSeason.results.players as any[]).map((p) => p.id))
+    : earlierIds;
+  newcomers = (players as any[])
+    .filter((p) => !prevRosterIds.has(p.id))
+    .sort((a, b) => a.rank - b.rank)
+    .map((p) => {
+      const back = earlierIds.has(p.id);           // déjà présent au Masters par le passé → de retour
+      const mx = feederBy?.get(_n(p.name)) as any;  // sa place dans le Mixte National de l'an passé
+      return {
+        name: p.name, url: photoOf(p, season.slug), link: `/billard/joueur/${slugOf(p.id)}`,
+        badge: back
+          ? '↩ De retour au Masters'
+          : (p.rank === 1 ? '⭐ Champion pour ses débuts' : (p.rank <= 5 ? `🔥 ${p.rank}ᵉ pour ses débuts` : null)),
+        prov: back ? 'Retour au Blackball Master' : 'Débuts au Blackball Master',
+        rank: p.rank, points: p.points, wins: p.wins, losses: p.losses, tourns: p.tourns,
+        mixteProv: mx ? `Venait du Mixte National ${feederLabel} · ${mx.rank}${mx.rank === 1 ? 'er' : 'ᵉ'} (${mx.wins}-${mx.losses})` : null,
+      };
+    });
+  newcHelp = feeder
+    ? `Ils accèdent au Blackball Master cette saison. Bilan sur le plateau + leur provenance en <b>Mixte National ${feederLabel}</b> — cliquez pour ouvrir leur fiche.`
+    : 'Ils accèdent au Blackball Master cette saison. Voici leur bilan sur le plateau — cliquez pour ouvrir leur fiche.';
+}
+---
+<Base title={`Billard — Blackball Master ${season.label}`} description={`L'univers Billard de LSEI : vidéos, classements et statistiques du Blackball Master, saison ${season.label}.`} active="disciplines">
+  <HubNav season={season.slug} dataSeason={hasData ? season.slug : DEFAULT_SEASON} active="accueil" archivesHref="/billard/archives" />
+
+  <section class="section hub-top" style="--dc:var(--c-billard)">
+    <div class="wrap hub-hero">
+      <div class="hub-lead">
+        <SeasonPicker current={season.slug} sub="" />
+
+        {featured ? (
+          <VideoPlayer id={featured.id} from={d.from} to={d.to} caption={featured.caption} title={featured.title} image={featured.thumb} />
+        ) : hasData ? (
+          <div class="season-empty">
+            <div class="hub-kick">Blackball Master · {season.label}</div>
+            <h1 class="hub-h1">Saison {season.label}</h1>
+            <p class="dek" style="margin-top:8px">Classement officiel de la saison — <b>{players.length} joueurs</b>. Retrouvez le classement, les joueurs, le palmarès et les confrontations ci-dessous.</p>
+          </div>
+        ) : (
+          <div class="season-empty">
+            <div class="hub-kick">Blackball Master · {season.label}</div>
+            <h1 class="hub-h1">Saison à venir</h1>
+            <p class="dek" style="margin-top:8px">Le circuit démarre en octobre 2026. Voici le calendrier officiel de la saison — résultats, classement et vidéos s'afficheront au fil des étapes.</p>
+          </div>
+        )}
+        {featured && <div class="hub-kick">À la une · Dernière vidéo</div>}
+        {featured && <h1 class="hub-h1">{featured.title}</h1>}
+
+        {calSeason.calendar.length > 0 && (
+          <div class="parcours parcours-box">
+            <div class="parcours-h">Calendrier · Saison {calSeason.label} · {calSeason.calendar.length} rendez-vous</div>
+            <div class="parcours-grid">
+              {calSeason.calendar.map((e) => (
+                <div class={`etape k-${e.kind}`} title={e.name}>
+                  <span class="et-num">{e.short}</span>
+                  <span class="et-city">{e.place}</span>
+                  <span class="et-date">{evDate(e.date)}</span>
+                  {e.winner && <a class="et-winner" href={`/billard/joueur/${slugOf(e.winner.id)}`} title={`Vainqueur : ${e.winner.name}`}>🏆 {e.winner.name}</a>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <aside class="hub-side">
+        <div class="hub-card hub-search">
+          <div class="hub-card-h"><span>Rechercher un joueur</span></div>
+          <PlayerSearch placeholder="Nom d'un joueur…" />
+        </div>
+        {hasData ? (
+          <>
+            <div class="hub-card">
+              <div class="hub-card-h"><span>Classement · Top 5</span><a href={`${base}/classement`}>Tout →</a></div>
+              {top5.map((p) => {
+                const src = photoOf(p, season.slug);
+                return (
+                  <a href={`/billard/joueur/${slugOf(p.id)}`} class="pod-row">
+                    <span class="pod-rank">{p.rank}</span>
+                    <span class="bphoto pod-ph"><span class="bavatar">{p.name.slice(0, 1)}</span>{src && <img src={src} alt="" onerror="this.remove()" />}</span>
+                    <span class="pod-name">{p.name}</span>
+                    <span class="pod-pts">{p.points}<small>pts</small></span>
+                  </a>
+                );
+              })}
+              <a href={`${base}/comparateur`} class="hub-card-cta">⚔ Comparer deux joueurs</a>
+            </div>
+
+            <div class="hub-card hub-spot">
+              <div class="hub-card-h"><span>Joueur à la une</span></div>
+              <a href={`/billard/joueur/${slugOf(spot.id)}`} class="spot-head">
+                <span class="bphoto spot-ph"><span class="bavatar">{spot.name.slice(0, 1)}</span>{spotPhoto && <img src={spotPhoto} alt="" onerror="this.remove()" />}</span>
+                <span>
+                  <span class="spot-name">{spot.name}</span>
+                  <span class="spot-rank"><b style={`color:${d.colorVar}`}>{spot.rank}<sup>er</sup></b> · {spot.points} pts</span>
+                </span>
+              </a>
+              <div class="spot-stats">
+                <div><b>{spot.wins}-{spot.losses}</b><span>Bilan</span></div>
+                <div><b>{spot.winPct}%</b><span>Victoires</span></div>
+                <div><b>{spot.diff >= 0 ? '+' : ''}{spot.diff}</b><span>Diff.</span></div>
+              </div>
+              <div class="spot-last">
+                {spotResults.map((r) => (
+                  <span class={`spot-chip ${r.win ? 'w' : 'l'}`}>{r.win ? 'V' : 'D'} {r.my}-{r.opp}</span>
+                ))}
+              </div>
+            </div>
+
+            <div class="hub-card">
+              <div class="hub-card-h"><span>Derniers résultats</span><a href={`${base}/classement`}>Classement →</a></div>
+              <div class="hub-results">
+                {recent.map((m) => {
+                  const t = tourById(m.tid);
+                  const aWin = m.sA > m.sB;
+                  return (
+                    <div class="hr-row">
+                      <a href={`/billard/joueur/${slugOf(m.aId)}`} class={`hr-p ${aWin ? 'w' : ''}`}>{m.aName}</a>
+                      <span class="hr-sc mono">{m.sA}<i>—</i>{m.sB}</span>
+                      <a href={`/billard/joueur/${slugOf(m.bId)}`} class={`hr-p r ${!aWin ? 'w' : ''}`}>{m.bName}</a>
+                      <span class="hr-meta">{t?.level} · {evDate(m.date)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </>
+        ) : (
+          <div class="hub-card">
+            <div class="hub-card-h"><span>Classement · Joueurs · Résultats</span></div>
+            <p class="dek" style="margin:6px 0 0">Ils s'afficheront ici au fil de la saison {season.label}, dès les premières étapes disputées.</p>
+          </div>
+        )}
+      </aside>
+    </div>
+  </section>
+
+  {newcomers.length > 0 && (
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Bienvenue au Masters</div><h2>Les nouveaux · saison {season.label}</h2></div></div>
+        <p class="fj-help" style="margin-top:0" set:html={newcHelp}></p>
+        <div class="newc-grid">
+          {newcomers.map((n) => {
+            const body = (
+              <>
+                <span class="bphoto newc-ph"><span class="bavatar">{n.name.slice(0, 1)}</span>{n.url && <img src={n.url} alt="" loading="lazy" onerror="this.remove()" />}</span>
+                <div class="newc-body">
+                  <div class="newc-name">{n.name}</div>
+                  {n.badge && <div class="newc-badge">{n.badge}</div>}
+                  <div class="newc-prov">{n.prov}</div>
+                  <div class="newc-stats"><span class="newc-rank">{n.rank}<sup>e</sup></span> · {n.points} pts · <b>{n.wins}</b>-{n.losses} · {n.tourns} tournois</div>
+                  {n.mixteProv && <div class="newc-mixte">↖ {n.mixteProv}</div>}
+                </div>
+              </>
+            );
+            return n.link
+              ? <a href={n.link} class="newc-card newc-link">{body}</a>
+              : <div class="newc-card">{body}</div>;
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {hi && (
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">En chiffres</div><h2>Faits marquants de la saison</h2></div></div>
+        <div class="facts">
+          <div class="fact">
+            <div class="fact-ic">🎯</div>
+            <div class="fact-lab">Plus large victoire</div>
+            <div class="fact-val">{hi.biggest.sw}–{hi.biggest.sl}</div>
+            <div class="fact-sub"><a href={`/billard/joueur/${slugOf(hi.biggest.winId)}`}>{hi.biggest.winName}</a> contre {hi.biggest.loseName}</div>
+          </div>
+          <div class="fact">
+            <div class="fact-ic">🔥</div>
+            <div class="fact-lab">Plus longue série</div>
+            <div class="fact-val">{hi.streak.n} victoires</div>
+            <div class="fact-sub">d'affilée · <a href={`/billard/joueur/${slugOf(hi.streak.id)}`}>{hi.streak.name}</a></div>
+          </div>
+          <div class="fact">
+            <div class="fact-ic">🏆</div>
+            <div class="fact-lab">Plus de victoires</div>
+            <div class="fact-val">{hi.topWins.wins} matchs</div>
+            <div class="fact-sub">gagnés · <a href={`/billard/joueur/${slugOf(hi.topWins.id)}`}>{hi.topWins.name}</a></div>
+          </div>
+          <div class="fact">
+            <div class="fact-ic">📈</div>
+            <div class="fact-lab">Meilleur pourcentage</div>
+            <div class="fact-val">{hi.bestPct.winPct}%</div>
+            <div class="fact-sub">de victoires · <a href={`/billard/joueur/${slugOf(hi.bestPct.id)}`}>{hi.bestPct.name}</a></div>
+          </div>
+          <div class="fact">
+            <div class="fact-ic">⚡</div>
+            <div class="fact-lab">Le plus actif</div>
+            <div class="fact-val">{hi.mostActive.played} matchs</div>
+            <div class="fact-sub">disputés · <a href={`/billard/joueur/${slugOf(hi.mostActive.id)}`}>{hi.mostActive.name}</a></div>
+          </div>
+          <div class="fact">
+            <div class="fact-ic">💡</div>
+            <div class="fact-lab">Le saviez-vous</div>
+            <div class="fact-val">{hi.totalManches} manches</div>
+            <div class="fact-sub">jouées en {hi.totalMatches} matchs cette saison</div>
+          </div>
+        </div>
+        <p class="fact-totals">Bilan de la saison : <b>{hi.tournCount}</b> étapes · <b>{hi.playerCount}</b> joueurs · <b>{hi.totalMatches}</b> matchs disputés.</p>
+      </div>
+    </section>
+  )}
+
+  {(entrants.length > 0 || leavers.length > 0) && prevSeason && (
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Effectif</div><h2>Entrées &amp; sorties</h2></div></div>
+        <div class="roster-count"><span class="roster-num">{players.length}</span><span class="roster-lab">joueurs composent le Masters<br />en {season.label}</span></div>
+        <p class="fj-help" style="margin-top:0">Le Blackball Master est un plateau restreint : chaque saison, des joueurs y font leur entrée et d'autres le quittent. Voici les mouvements par rapport à la saison <b>{prevSeason.label}</b>.</p>
+        <div class="moves">
+          <div class="moves-col moves-in">
+            <div class="moves-h"><span class="moves-ic">↗</span>Arrivées <span class="moves-n">{entrants.length}</span></div>
+            {entrants.length > 0 ? entrants.map((p) => (
+              <a href={`/billard/joueur/${slugOf(p.id)}`} class="move-row">
+                <span class="move-name">{p.name}</span>
+                <span class="move-meta">{p.rank}<sup>e</sup> · {p.points} pts</span>
+              </a>
+            )) : <p class="moves-empty">Aucune arrivée</p>}
+          </div>
+          <div class="moves-col moves-out">
+            <div class="moves-h"><span class="moves-ic">↘</span>Départs <span class="moves-n">{leavers.length}</span></div>
+            {leavers.length > 0 ? leavers.map((p) => (
+              <a href={`/billard/joueur/${slugOf(p.id)}`} class="move-row">
+                <span class="move-name">{p.name}</span>
+                <span class="move-meta">{p.rank}<sup>e</sup> en {prevSeason.label}</span>
+              </a>
+            )) : <p class="moves-empty">Aucun départ</p>}
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {palmares.length > 0 && (
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Histoire</div><h2>Palmarès du Blackball Master</h2></div></div>
+        <div class="palmares">
+          {palmares.map((p) => (
+            <div class="palm-row">
+              <div class="palm-season">{p.label}</div>
+              <a href={`/billard/joueur/${slugOf(p.champ.id)}`} class="palm-card palm-champ">
+                <span class="palm-lab">Champion de saison</span>
+                <span class="palm-name">{p.champ.name}</span>
+                <span class="palm-sub">{p.champ.points} pts</span>
+              </a>
+              {p.cdf ? (
+                <a href={`/billard/joueur/${slugOf(p.cdf.id)}`} class="palm-card palm-cdf">
+                  <span class="palm-lab">🏆 Champion de France</span>
+                  <span class="palm-name">{p.cdf.name}</span>
+                </a>
+              ) : (
+                <div class="palm-card palm-cdf palm-empty">
+                  <span class="palm-lab">Champion de France</span>
+                  <span class="palm-name">—</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {billardArticles.length > 0 && (
+    <section class="section" style="padding-top:0">
+      <div class="wrap" style={`--dc:${d.colorVar}`}>
+        <div class="sec-head">
+          <div><div class="eyebrow" style={`color:${d.colorVar}`}>Le mag</div><h2>Derniers articles billard</h2></div>
+          <a href="/actualites" class="link" style={`color:${d.colorVar}`}>Toutes les actualités →</a>
+        </div>
+        <div class="cards">
+          {billardArticles.map((a) => {
+            const cover = articleCover(a);
+            return (
+              <a href={`/actualites/${a.id}`} class="card" style={`--dc:${d.colorVar}`}>
+                <div class="frame">
+                  {cover
+                    ? <img class="photo" src={cover.src} alt="" loading="lazy" onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />
+                    : <div class="duo" style={`background:linear-gradient(135deg,${d.from},${d.to})`}></div>}
+                  <div class="grad"></div>
+                  <div class="cap"><div class="disc"><SportIcon slug={d.slug} class="disc-tag-ic" />{d.label}</div></div>
+                </div>
+                <div class="kicker">{fmtArticleDate(a.data.date)}</div>
+                <h3>{a.data.title}</h3>
+                <p class="ex">{a.data.excerpt}</p>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {latest.length > 0 && (
+    <section class="section" style="padding-top:0">
+      <div class="wrap" style={`--dc:${d.colorVar}`}>
+        <div class="sec-head"><div><div class="eyebrow" style={`color:${d.colorVar}`}>Vidéothèque</div><h2>Dernières vidéos billard</h2></div>
+          <a href="/disciplines/billard" class="link" style={`color:${d.colorVar}`}>Toutes les vidéos →</a>
+        </div>
+        <div class="cards">
+          {latest.map((v) => (
+            <a href={`/replay/${v.id}`} class="card" style={`--dc:${d.colorVar}`}>
+              <Thumb from={d.from} to={d.to} caption={v.caption} image={v.thumb} />
+              <div class="kicker">{v.kicker}</div>
+              <h3>{v.title}</h3>
+              <div class="meta"><span>{v.when}</span></div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</Base>

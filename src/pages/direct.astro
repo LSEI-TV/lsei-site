@@ -1,0 +1,96 @@
+---
+import Base from '../layouts/Base.astro';
+import VideoPlayer from '../components/VideoPlayer.astro';
+import { site, getDiscipline } from '../data/site';
+import { getProgramme, getCurrentLives, tagStyle } from '../lib/youtube';
+
+const channel = site.channelId;
+const lives = await getCurrentLives();
+const programme = await getProgramme();
+const upcoming = programme.filter((p) => !p.live);
+const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t as any).label);
+---
+<Base title="Direct" description="Regarder LSEI en direct, en temps réel." active="direct">
+  <section class="section">
+    <div class="wrap" style="max-width:980px">
+      <div class="disc-hero" style="padding-top:0">
+        <div class="kick" style="color:var(--live)">
+          {lives.length > 1 ? `${lives.length} directs en cours` : lives.length === 1 ? 'En direct maintenant' : 'Le direct'}
+        </div>
+        <h1>Regarder LSEI en direct</h1>
+        <p>
+          {lives.length > 0
+            ? 'Lancez la lecture ci-dessous. Plusieurs directs ? Choisissez celui que vous voulez suivre.'
+            : 'Dès qu’un direct démarre sur notre chaîne, il s’affiche ici automatiquement. Sinon, retrouvez le prochain rendez-vous plus bas.'}
+        </p>
+        <div class="bar" style="background:var(--live)"></div>
+      </div>
+
+      {lives.length > 0 ? (
+        <div class={`live-grid${lives.length === 1 ? ' live-grid--one' : ''}`} style="margin-top:24px">
+          {lives.map((l) => {
+            const d = getDiscipline(l.discipline);
+            return (
+              <div>
+                <VideoPlayer id={l.id} from={d.from} to={d.to} live caption={d.label} title={l.title} image={l.thumb} />
+                <h3 class="live-title">{l.title}</h3>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div class="player" style="margin-top:24px">
+          <button class="facade frame" id="live-facade" data-channel={channel} aria-label="Regarder le direct LSEI">
+            <div class="duo" style="background:linear-gradient(135deg,#3a0f12,#14161D);"></div>
+            <div class="grad"></div>
+            <span class="badge"><span class="pulse"></span>Direct</span>
+            <span class="play" aria-hidden="true">
+              <svg width="24" height="26" viewBox="0 0 20 22" fill="#fff"><path d="M0 0l20 11L0 22z"/></svg>
+            </span>
+            <div class="cap">
+              <div class="disc">LSEI — Le Sport en Image</div>
+              <div class="score">Cliquez pour vérifier si un direct est en cours</div>
+            </div>
+          </button>
+        </div>
+      )}
+
+      {upcoming.length > 0 && (
+        <div style="margin-top:40px">
+          <div class="eyebrow">Prochains directs</div>
+          <div class="rail" style="margin-top:14px;box-shadow:none">
+            {upcoming.map((p) => (
+              <div class="prog">
+                <div class="time mono">{p.time}</div>
+                <div class="body">
+                  <div class="t">{p.title}</div>
+                  <div class="m">{p.meta}</div>
+                  <span class="tagd" style={tagStyle(p.tag)}>{tagLabel(p.tag)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <p class="dek" style="margin-top:26px">
+        Retrouvez tous nos matchs passés dans la <a href="/videotheque" style="color:var(--accent)">vidéothèque</a>.
+      </p>
+    </div>
+  </section>
+</Base>
+<script is:inline>
+  (function () {
+    var el = document.getElementById('live-facade');
+    if (!el) return;
+    el.addEventListener('click', function () {
+      var ch = el.getAttribute('data-channel');
+      var f = document.createElement('iframe');
+      f.src = 'https://www.youtube.com/embed/live_stream?channel=' + ch + '&autoplay=1';
+      f.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
+      f.setAttribute('allowfullscreen', '');
+      f.setAttribute('title', 'Direct LSEI');
+      el.replaceWith(f);
+    });
+  })();
+</script>

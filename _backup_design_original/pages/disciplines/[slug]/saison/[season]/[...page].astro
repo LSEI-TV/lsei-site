@@ -1,0 +1,52 @@
+---
+import Base from '../../../../../layouts/Base.astro';
+import VideoGrid from '../../../../../components/VideoGrid.astro';
+import FilterMenu from '../../../../../components/FilterMenu.astro';
+import DisciplineNav from '../../../../../components/DisciplineNav.astro';
+import { disciplines } from '../../../../../data/site';
+import { getReplays, getSeasonCounts, seasonSlug, seasonShort, type Video } from '../../../../../lib/youtube';
+import type { GetStaticPaths, Page } from 'astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const routes = [];
+  for (const d of disciplines) {
+    const all = await getReplays({ discipline: d.slug });
+    const seasons = await getSeasonCounts(d.slug);
+    for (const s of seasons) {
+      const vids = all.filter((v) => v.season === s.season);
+      routes.push(...paginate(vids, { params: { slug: d.slug, season: seasonSlug(s.season) }, props: { disc: d, season: s.season }, pageSize: 24 }));
+    }
+  }
+  return routes;
+}) satisfies GetStaticPaths;
+
+const { page, disc, season } = Astro.props as { page: Page<Video>; disc: (typeof disciplines)[number]; season: string };
+
+const seasonCounts = await getSeasonCounts(disc.slug);
+const seasonOptions = [
+  { label: 'Toutes les saisons', value: `/disciplines/${disc.slug}` },
+  ...seasonCounts.map((s) => ({ label: `${s.season} · ${s.count}`, value: `/disciplines/${disc.slug}/saison/${seasonSlug(s.season)}`, selected: s.season === season })),
+];
+---
+<Base title={`${disc.name} — Saison ${season}`} description={`Les vidéos ${disc.name} de la saison ${season}.`} active="disciplines">
+  <section class="disc-hero">
+    <div class="wrap" style={`--dc:${disc.colorVar}`}>
+      <div class="kick">{disc.label} · Saison {season}</div>
+      <h1>{disc.name}</h1>
+      <p>{disc.blurb}</p>
+      <div class="bar"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap" style={`--dc:${disc.colorVar}`}>
+      <div class="filter-bar"><FilterMenu label="Saison" options={seasonOptions} colorVar={disc.colorVar} /></div>
+      <div class="sec-head">
+        <div class="eyebrow">{page.total} vidéos · saison {season}</div>
+        <DisciplineNav active={disc.slug} />
+      </div>
+
+      <VideoGrid page={page} />
+    </div>
+  </section>
+</Base>

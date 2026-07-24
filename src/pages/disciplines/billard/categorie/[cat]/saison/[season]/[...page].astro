@@ -1,0 +1,67 @@
+---
+import Base from '../../../../../../../layouts/Base.astro';
+import VideoGrid from '../../../../../../../components/VideoGrid.astro';
+import FilterMenu from '../../../../../../../components/FilterMenu.astro';
+import DisciplineNav from '../../../../../../../components/DisciplineNav.astro';
+import { disciplines } from '../../../../../../../data/site';
+import { getReplays, getBillardCategories, categorySlug, seasonSlug, type Video } from '../../../../../../../lib/youtube';
+import type { GetStaticPaths, Page } from 'astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const all = await getReplays({ discipline: 'billard' });
+  const cats = await getBillardCategories();
+  const routes = [];
+  for (const c of cats) {
+    const catVids = all.filter((v) => v.category === c.category);
+    const seasons = [...new Set(catVids.map((v) => v.season).filter(Boolean))] as string[];
+    for (const s of seasons) {
+      const vids = catVids.filter((v) => v.season === s);
+      routes.push(...paginate(vids, { params: { cat: categorySlug(c.category), season: seasonSlug(s) }, props: { category: c.category, season: s }, pageSize: 24 }));
+    }
+  }
+  return routes;
+}) satisfies GetStaticPaths;
+
+const { page, category, season } = Astro.props as { page: Page<Video>; category: string; season: string };
+const disc = disciplines.find((d) => d.slug === 'billard')!;
+const catSlug = categorySlug(category);
+
+const all = await getReplays({ discipline: 'billard' });
+const catVids = all.filter((v) => v.category === category);
+const seasons = [...new Set(catVids.map((v) => v.season).filter(Boolean))].sort().reverse() as string[];
+
+const cats = await getBillardCategories();
+const categoryOptions = [
+  { label: 'Toutes les catégories', value: '/disciplines/billard' },
+  ...cats.map((c) => ({ label: `${c.category} · ${c.count}`, value: `/disciplines/billard/categorie/${categorySlug(c.category)}`, selected: c.category === category })),
+];
+const seasonOptions = [
+  { label: 'Toutes les saisons', value: `/disciplines/billard/categorie/${catSlug}` },
+  ...seasons.map((s) => ({ label: `${s} · ${catVids.filter((v) => v.season === s).length}`, value: `/disciplines/billard/categorie/${catSlug}/saison/${seasonSlug(s)}`, selected: s === season })),
+];
+---
+<Base title={`Billard — ${category} · ${season}`} description={`Les vidéos de billard : ${category}, saison ${season}.`} active="disciplines">
+  <section class="disc-hero">
+    <div class="wrap" style={`--dc:${disc.colorVar}`}>
+      <div class="kick">{disc.label} · {category} · {season}</div>
+      <h1>{disc.name}</h1>
+      <p>{disc.blurb}</p>
+      <div class="bar"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap" style={`--dc:${disc.colorVar}`}>
+      <div class="filter-bar">
+        <FilterMenu label="Catégorie" options={categoryOptions} colorVar={disc.colorVar} />
+        <FilterMenu label="Saison" options={seasonOptions} colorVar={disc.colorVar} />
+      </div>
+      <div class="sec-head">
+        <div class="eyebrow">{page.total} vidéos · {category} · saison {season}</div>
+        <DisciplineNav active="billard" />
+      </div>
+
+      <VideoGrid page={page} />
+    </div>
+  </section>
+</Base>

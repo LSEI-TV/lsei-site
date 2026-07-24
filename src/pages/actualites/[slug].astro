@@ -1,0 +1,53 @@
+---
+import Base from '../../layouts/Base.astro';
+import ShareLinks from '../../components/ShareLinks.astro';
+import { getCollection } from 'astro:content';
+import { disciplines } from '../../data/site';
+import { articleCover, renderArticleBody } from '../../lib/articles';
+import { playersInText } from '../../lib/billardStats';
+import SportIcon from '../../components/SportIcon.astro';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles', ({ data }) => !data.draft);
+  return articles.map((a) => ({ params: { slug: a.id }, props: { article: a } }));
+}
+
+const { article } = Astro.props;
+const bodyHtml = renderArticleBody(article.body ?? '');
+const d = disciplines.find((x) => x.slug === article.data.discipline);
+const cover = articleCover(article);
+const shareUrl = new URL(`/actualites/${article.id}`, Astro.site).href;
+const fmtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(dt);
+// Joueurs du Blackball Master cités dans l'article → lien vers leur fiche carrière.
+const citedPlayers = article.data.discipline === 'billard'
+  ? playersInText(`${article.data.title} ${article.data.excerpt} ${article.body ?? ''}`)
+  : [];
+---
+<Base title={article.data.title} description={article.data.excerpt} active="actualites">
+  <article class="section">
+    <div class="wrap article-wrap">
+      <a href="/actualites" class="link" style="display:inline-block;margin-bottom:18px">← Toutes les actualités</a>
+      <h1 class="article-title">{article.data.title}</h1>
+      <div class="article-meta">{article.data.author && <Fragment>{article.data.author} · </Fragment>}{fmtDate(article.data.date)}</div>
+      {cover && <img class="article-cover" src={cover.src} alt="" onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />}
+      <div class="prose article-body" set:html={bodyHtml}></div>
+      {citedPlayers.length > 0 && (
+        <div class="artplayers">
+          <span class="artplayers-lab">Joueurs cités</span>
+          {citedPlayers.map((p) => (
+            <a href={`/billard/joueur/${p.slug}`} class="artplayer">🎱 {p.name}</a>
+          ))}
+        </div>
+      )}
+      <div class="article-share"><ShareLinks url={shareUrl} title={article.data.title} /></div>
+      {d && (
+        <footer class="article-footer">
+          <span class="af-label">Catégorie</span>
+          <a href={`/disciplines/${d.slug}`} class="article-tag" style={`--dc:${d.colorVar}`}>
+            <SportIcon slug={d.slug} class="disc-page-ic" />{d.label}
+          </a>
+        </footer>
+      )}
+    </div>
+  </article>
+</Base>

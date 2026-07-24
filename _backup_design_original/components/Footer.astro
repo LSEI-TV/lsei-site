@@ -1,0 +1,40 @@
+---
+import { site, disciplines } from '../data/site';
+import SocialLinks from './SocialLinks.astro';
+import Logo from './Logo.astro';
+const year = new Date().getFullYear();
+---
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <Logo />
+        <p>{site.description}</p>
+      </div>
+      <div>
+        <h4>Disciplines</h4>
+        <ul>
+          {disciplines.map((d) => (
+            <li><a href={`/disciplines/${d.slug}`}>{d.name}</a></li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h4>Le média</h4>
+        <ul>
+          <li><a href="/">Le direct</a></li>
+          <li><a href="/videotheque">Vidéothèque</a></li>
+          <li><a href="/le-club">La web TV</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="subfoot">
+      <span>
+        © {year} LSEI — Le Sport en Image · Association loi 1901
+        · <a href="/mentions-legales">Mentions légales</a>
+        · <a href="/confidentialite">Confidentialité</a>
+      </span>
+      <SocialLinks />
+    </div>
+  </div>
+</footer>

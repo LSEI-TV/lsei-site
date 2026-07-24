@@ -1,0 +1,49 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import VideoGrid from '../../../../components/VideoGrid.astro';
+import FilterMenu from '../../../../components/FilterMenu.astro';
+import DisciplineNav from '../../../../components/DisciplineNav.astro';
+import { getReplays, getSeasons, getSeasonCounts, seasonSlug, seasonShort, type Video } from '../../../../lib/youtube';
+import type { GetStaticPaths, Page } from 'astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const all = await getReplays();
+  const seasons = await getSeasons();
+  const routes = [];
+  for (const s of seasons) {
+    const vids = all.filter((v) => v.season === s);
+    routes.push(...paginate(vids, { params: { season: seasonSlug(s) }, props: { season: s }, pageSize: 24 }));
+  }
+  return routes;
+}) satisfies GetStaticPaths;
+
+const { page, season } = Astro.props as { page: Page<Video>; season: string };
+
+const seasonCounts = await getSeasonCounts();
+const seasonOptions = [
+  { label: 'Toutes les saisons', value: '/videotheque' },
+  ...seasonCounts.map((s) => ({ label: `${s.season} · ${s.count}`, value: `/videotheque/saison/${seasonSlug(s.season)}`, selected: s.season === season })),
+];
+---
+<Base title={`Vidéothèque — Saison ${season}`} description={`Les vidéos LSEI de la saison ${season}.`} active="replays">
+  <section class="disc-hero">
+    <div class="wrap">
+      <div class="kick" style="color:var(--accent)">Vidéothèque</div>
+      <h1>Saison {season}</h1>
+      <p>Retrouvez tous les directs et replays de la saison {season}, toutes disciplines confondues.</p>
+      <div class="bar" style="background:var(--accent)"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="filter-bar"><FilterMenu label="Saison" options={seasonOptions} /></div>
+      <div class="sec-head">
+        <div class="eyebrow">{page.total} vidéos · saison {season}</div>
+        <DisciplineNav />
+      </div>
+
+      <VideoGrid page={page} />
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import { legal, site } from '../data/site';
+---
+<Base title="Mentions légales" description="Mentions légales du site LSEI — Le Sport en Image.">
+  <section class="section">
+    <div class="wrap prose">
+      <h1>Mentions légales</h1>
+      <p class="lead-p">Dernière mise à jour : {legal.updated}.</p>
+
+      <h2>Éditeur du site</h2>
+      <p>
+        {legal.orgName} — {legal.orgType}<br />
+        Siège : {legal.address}<br />
+        Immatriculation : {legal.rna}
+      </p>
+
+      <h2>Responsable de la publication</h2>
+      <p>{legal.publisher}</p>
+
+      <h2>Hébergement</h2>
+      <p>
+        Le site est hébergé par {legal.host.name}<br />
+        {legal.host.address}
+      </p>
+
+      <h2>Contenus vidéo</h2>
+      <p>
+        Les vidéos diffusées sur ce site sont hébergées par YouTube (Google Ireland Limited) et
+        intégrées via un lecteur qui n'est chargé qu'à la demande de l'internaute. En lançant une
+        vidéo, vous acceptez les conditions d'utilisation de YouTube.
+      </p>
+
+      <h2>Propriété intellectuelle</h2>
+      <p>
+        L'ensemble des contenus produits par {site.name} (vidéos, textes, éléments graphiques) est
+        protégé par le droit d'auteur. Toute reproduction sans autorisation est interdite.
+      </p>
+
+      <p style="margin-top:24px"><a href="/confidentialite">Voir la politique de confidentialité →</a></p>
+    </div>
+  </section>
+</Base>

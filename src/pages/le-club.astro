@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import { site, stats, partners, cta } from '../data/site';
+---
+<Base title="La web TV" description="LSEI, la web TV associative qui met en image les sports du territoire." active="club">
+  <section class="disc-hero">
+    <div class="wrap">
+      <div class="kick" style="color:var(--accent)">La web TV</div>
+      <h1>La passion du sport, mise en image</h1>
+      <p>{site.description}</p>
+      <div class="bar" style="background:var(--accent)"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap prose">
+      <h2>Notre implication</h2>
+      <p>
+        LSEI est né d'une conviction simple : les sports authentiques du territoire méritent d'être
+        vus. Du billard au basket, du palet au football, du beach-volley au bowling jusqu'au subbuteo, nous filmons,
+        diffusons et racontons des histoires de sport par le partage et la découverte.
+      </p>
+    </div>
+  </section>
+
+  <div class="band">
+    <div class="wrap">
+      <div class="stats">
+        {stats.map((s) => (
+          <div class="stat">
+            <div class="num">{s.num}{s.unit && <span style="font-size:22px">{s.unit}</span>}</div>
+            <div class="lab">{s.label}</div>
+          </div>
+        ))}
+      </div>
+      <div class="partners">
+        <div class="pl">Ils portent le projet</div>
+        <div class="plist">
+          {partners.map((p) => <span>{p}</span>)}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="cta">
+        <div class="txt">
+          <div class="eyebrow">{cta.eyebrow}</div>
+          <h2>{cta.title}</h2>
+          <p>{cta.text}<br />{cta.text2}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

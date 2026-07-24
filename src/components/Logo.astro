@@ -1,0 +1,19 @@
+---
+// Logo LSEI recréé en SVG : les 4 barres gardent les couleurs de marque
+// (visibles sur fond clair comme sombre), le wordmark « LE SPORT EN IMAGE »
+// prend la couleur du texte (var(--ink)) → s'adapte au thème automatiquement.
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
+---
+<a class={`brand${compact ? ' brand--sm' : ''}`} href="/" aria-label="LSEI — Le Sport en Image">
+  <svg class="brand-mark" viewBox="0 0 104 120" role="img" aria-hidden="true">
+    <rect x="0"  y="26" width="20" height="82"  fill="#3AAA35" />
+    <rect x="28" y="4"  width="20" height="112" fill="#009FE3" />
+    <rect x="56" y="12" width="20" height="96"  fill="#E6007E" />
+    <rect x="84" y="36" width="20" height="60"  fill="#F39200" />
+  </svg>
+  <span class="brand-word">
+    <span class="l1">Le Sport en</span>
+    <span class="l2">Image</span>
+  </span>
+</a>

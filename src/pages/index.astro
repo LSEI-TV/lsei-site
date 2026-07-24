@@ -1,0 +1,258 @@
+---
+import Base from '../layouts/Base.astro';
+import Ticker from '../components/Ticker.astro';
+import Thumb from '../components/Thumb.astro';
+import VideoPlayer from '../components/VideoPlayer.astro';
+import { disciplines, getDiscipline, partners, stats, cta } from '../data/site';
+import SportIcon from '../components/SportIcon.astro';
+import { getLiveFeature, getProgramme, getReplays, tagStyle } from '../lib/youtube';
+import { getCollection } from 'astro:content';
+import { articleCover } from '../lib/articles';
+
+const latestArticles = (await getCollection('articles', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+const fmtArticleDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+
+const live = await getLiveFeature();
+const programme = await getProgramme();
+const replays = await getReplays({ limit: 3 });
+const liveCount = programme.filter((p) => p.live).length;
+// Si aucun direct/programme, le rail affiche la DERNIÈRE vidéo de CHAQUE discipline
+// (une par sport), en gardant l'ordre par heure réelle de diffusion la plus récente.
+let railReplays: Awaited<ReturnType<typeof getReplays>> = [];
+if (!programme.length) {
+  const all = await getReplays();
+  const seen = new Set<string>();
+  for (const v of all) {
+    if (!seen.has(v.discipline)) {
+      seen.add(v.discipline);
+      railReplays.push(v);
+    }
+  }
+}
+
+const liveDisc = live ? getDiscipline(live.discipline) : null;
+const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t as any).label);
+---
+<Base active="direct">
+  <Ticker />
+
+  <!-- HERO -->
+  {live && liveDisc && (
+    <section class="hero" style={`--hero-accent:${liveDisc.colorVar}`}>
+      <div class="wrap hero-grid">
+        <div class="lead">
+          <VideoPlayer
+            id={live.id}
+            from={liveDisc.from}
+            to={liveDisc.to}
+            live={live.isLive}
+            caption={live.caption}
+            score={live.isLive ? live.score : undefined}
+            image={live.thumb}
+            title={live.title}
+          />
+          <div class={`hero-kicker${live.isLive ? ' is-live' : ''}`}>
+            <span class="dot"></span>{live.isLive ? 'En direct' : 'À revoir'}<span class="sepk">·</span>{liveDisc.name}
+          </div>
+          <h1>{live.title}</h1>
+          {live.dek && <p class="dek">{live.dek}</p>}
+          {live.isLive ? (
+            <div class="byline">
+              <span class="k">En direct</span>
+              {live.venue && <Fragment><span class="sep"></span><span>{live.venue}</span></Fragment>}
+              {live.viewers && <Fragment><span class="sep"></span><span class="mono">{live.viewers}</span></Fragment>}
+            </div>
+          ) : (
+            <div class="byline">
+              <span class="k">À revoir</span><span class="sep"></span><span>{liveDisc.name}</span>
+            </div>
+          )}
+        </div>
+
+        <aside class="rail">
+          <h2>{programme.length ? 'Au programme' : 'Dernières vidéos'}
+            {liveCount > 0 && (
+              <span class="live-mini"><span class="pulse"></span>{liveCount} en direct</span>
+            )}
+          </h2>
+          {programme.length
+            ? programme.map((p) => (
+                <a href="/videotheque" class="prog">
+                  <div class={`time mono${p.live ? ' on' : ''}`}>{p.time}</div>
+                  <div class="body">
+                    <div class="t">{p.title}</div>
+                    <div class="m">{p.meta}</div>
+                    <span class="tagd" style={tagStyle(p.tag)}>{tagLabel(p.tag)}</span>
+                  </div>
+                </a>
+              ))
+            : railReplays.map((v) => {
+                const rd = getDiscipline(v.discipline);
+                return (
+                  <a href={`/replay/${v.id}`} class="prog" data-id={v.id} data-title={v.title} data-caption={v.caption}>
+                    <div class="prog-thumb">
+                      {v.thumb
+                        ? <img src={v.thumb} alt="" loading="lazy" />
+                        : <span style={`background:linear-gradient(135deg,${rd.from},${rd.to})`}></span>}
+                    </div>
+                    <div class="body">
+                      <div class="t">{v.title}</div>
+                      <div class="m">{v.caption}</div>
+                    </div>
+                  </a>
+                );
+              })}
+          <a href="/disciplines" class="more">Voir toutes les disciplines →</a>
+        </aside>
+      </div>
+    </section>
+  )}
+
+  <!-- DISCIPLINES -->
+  <section class="section" id="disciplines">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow">Nos antennes</div>
+          <h2>7 disciplines, une même passion</h2>
+        </div>
+        <a href="/videotheque" class="link">Toute la vidéothèque →</a>
+      </div>
+      <div class="discs">
+        {disciplines.map((d, i) => (
+          <a href={d.hub ?? `/disciplines/${d.slug}`} class="disc-card" style={`--dc:${d.colorVar}`}>
+            <div class="n">{String(i + 1).padStart(2, '0')}</div>
+            <SportIcon slug={d.slug} />
+            <div class="name">{d.name}</div>
+            <div class="sub">{d.sub}</div>
+            {d.statsHub && <div class="disc-stats-badge">＋ Classements &amp; stats</div>}
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- REPLAYS -->
+  <section class="section">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow">À revoir</div>
+          <h2>Derniers replays</h2>
+        </div>
+        <a href="/videotheque" class="link">Toute la vidéothèque →</a>
+      </div>
+      <div class="cards">
+        {replays.map((v) => {
+          const d = getDiscipline(v.discipline);
+          return (
+            <a href={`/replay/${v.id}`} class="card" style={`--dc:${d.colorVar}`}>
+              <Thumb from={d.from} to={d.to} caption={v.caption} image={v.thumb} />
+              <div class="kicker">{v.kicker}</div>
+              <h3>{v.title}</h3>
+              {v.excerpt && <p class="ex">{v.excerpt}</p>}
+              <div class="meta"><span>{v.when}</span>{v.views && <Fragment><span class="sep"></span><span class="mono">{v.views} vues</span></Fragment>}</div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- ACTUALITÉS -->
+  {latestArticles.length > 0 && (
+    <section class="section">
+      <div class="wrap">
+        <div class="sec-head">
+          <div>
+            <div class="eyebrow">Le mag</div>
+            <h2>Actualités</h2>
+          </div>
+          <a href="/actualites" class="link">Toutes les actualités →</a>
+        </div>
+        <div class="cards">
+          {latestArticles.map((a) => {
+            const d = disciplines.find((x) => x.slug === a.data.discipline);
+            const cover = articleCover(a);
+            return (
+              <a href={`/actualites/${a.id}`} class="card" style={d ? `--dc:${d.colorVar}` : ''}>
+                <div class="frame">
+                  {cover
+                    ? <img class="photo" src={cover.src} alt="" loading="lazy" onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />
+                    : <div class="duo" style={d ? `background:linear-gradient(135deg,${d.from},${d.to})` : 'background:linear-gradient(135deg,#1E40E5,#0a1a6b)'}></div>}
+                  <div class="grad"></div>
+                  {d && <div class="cap"><div class="disc"><SportIcon slug={d.slug} class="disc-tag-ic" />{d.label}</div></div>}
+                </div>
+                <div class="kicker">{fmtArticleDate(a.data.date)}</div>
+                <h3>{a.data.title}</h3>
+                <p class="ex">{a.data.excerpt}</p>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- STATS + PARTNERS -->
+  <div class="band" id="club">
+    <div class="wrap">
+      <div class="stats">
+        {stats.map((s) => (
+          <div class="stat">
+            <div class="num">{s.num}{s.unit && <span style="font-size:22px">{s.unit}</span>}</div>
+            <div class="lab">{s.label}</div>
+          </div>
+        ))}
+      </div>
+      <div class="partners">
+        <div class="pl">Ils portent le projet</div>
+        <div class="plist">
+          {partners.map((p) => <span>{p}</span>)}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="wrap">
+      <div class="cta">
+        <div class="txt">
+          <div class="eyebrow">{cta.eyebrow}</div>
+          <h2>{cta.title}</h2>
+          <p>{cta.text}<br />{cta.text2}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    // Clic sur une vidéo du cadre « Dernières vidéos » → la lit dans le grand lecteur.
+    (function () {
+      var hero = document.querySelector('.hero .player');
+      if (!hero) return;
+      document.querySelectorAll('.rail .prog[data-id]').forEach(function (item) {
+        item.addEventListener('click', function (e) {
+          e.preventDefault();
+          var id = item.getAttribute('data-id');
+          var title = item.getAttribute('data-title');
+          var f = document.createElement('iframe');
+          f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
+          f.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
+          f.setAttribute('allowfullscreen', '');
+          f.setAttribute('title', title || 'Lecteur vidéo');
+          hero.innerHTML = '';
+          hero.appendChild(f);
+          var h1 = document.querySelector('.hero .lead h1');
+          if (h1 && title) h1.textContent = title;
+          hero.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      });
+    })();
+  </script>
+</Base>

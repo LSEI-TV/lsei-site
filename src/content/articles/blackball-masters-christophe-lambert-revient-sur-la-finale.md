@@ -1,0 +1,11 @@
+---
+title: "Blackball Masters : Christophe Lambert revient sur la finale"
+date: 2026-06-22
+excerpt: Christophe Lambert revient sur sa finale lors du championnat de France
+  face à Alexis Klinka.
+cover: ""
+coverFrame: default
+discipline: billard
+author: ""
+---
+<h1><span style="color: rgb(187, 187, 187);">Lambert s'incline mais régale</span></h1><p><span style="color: rgb(187, 187, 187);">Christophe Lambert, finaliste du Championnat de France Blackball Master</span></p><p><span style="color: rgb(187, 187, 187);">Fidèle à son jeu offensif, Christophe Lambert a livré une finale spectaculaire. Mais la réussite qui l'avait porté tout le week-end l'a lâché au pire moment : de belles billes suivies de retours cruels, et une jaune manquée à 11 qu'il assume pleinement.</span></p><p><span style="color: rgb(187, 187, 187);">Le finaliste ressort pourtant conquis d'un week-end « où il a pris un plaisir rare », félicite le vainqueur Alexis et salue une jeunesse qui s'affirme. Côté forme, le dos est remis après trois semaines de blocage — reste une tendinite au poignet.</span></p><p><br></p><blockquote><em style="color: rgb(187, 187, 187);">Ça faisait très longtemps que je ne m'étais pas amusé comme ça sur du blackball.</em></blockquote><blockquote><span style="color: rgb(187, 187, 187);">— Christophe Lambert</span></blockquote><p><br></p><p><span style="color: rgb(187, 187, 187);">Le parcours de Christophe Lambert :</span></p><p><br></p><ul><li><span style="color: rgb(187, 187, 187);">TOUR 1: 8-3 face à Killian Ballon</span></li><li><span style="color: rgb(187, 187, 187);">TOUR 2: 8-3 face à Yannick Beaufils</span></li><li><span style="color: rgb(187, 187, 187);">1/2 FINALE: 8-2 face à Léonardo Moreira</span></li><li><span style="color: rgb(187, 187, 187);">FINALE: 4-8 face à Alexis Klinka</span></li></ul><h2><span style="color: rgb(187, 187, 187);">À revoir</span></h2><p><span style="color: rgb(187, 187, 187);">L'intégralité de la finale est disponible en replay dans la discipline </span><strong style="color: rgb(187, 187, 187);">Billard</strong><span style="color: rgb(187, 187, 187);">, catégorie </span><strong style="color: rgb(187, 187, 187);">Masters</strong><span style="color: rgb(187, 187, 187);">.</span></p><p><span style="color: rgb(187, 187, 187);">https://youtu.be/GsZbErKgXyk</span></p>

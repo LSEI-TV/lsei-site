@@ -1,0 +1,347 @@
+---
+import Base from '../../../layouts/Base.astro';
+import HubNav from '../../../components/HubNav.astro';
+import { getCollection } from 'astro:content';
+import { photoOf, fromPov, fmtDate, frRound, playersInText, playerSlugs } from '../../../lib/billardStats';
+import { getParaSeasons, getParaPalmares } from '../../../data/billard/seasonsPara';
+
+export function getStaticPaths() {
+  const { entries } = playerSlugs(getParaSeasons());
+  const paths: any[] = [];
+  for (const { id, slug } of entries) {
+    paths.push({ params: { id: slug }, props: { pid: id } });
+    paths.push({ params: { id: String(id) }, props: { pid: id } });
+  }
+  return paths;
+}
+
+const { pid } = Astro.props as { pid: number };
+const { slugOf } = playerSlugs(getParaSeasons());
+const seasons = getParaSeasons().filter((s) => s.results);
+
+const bySeason = seasons
+  .map((s) => {
+    const R = s.results!;
+    const p = (R.players as any[]).find((x) => x.id === pid);
+    return p ? { slug: s.slug, label: s.label, status: s.status, p, R } : null;
+  })
+  .filter(Boolean) as { slug: string; label: string; status: string; p: any; R: any }[];
+
+// Détail complet par saison — pour l'accordéon « saison par saison » (toutes les infos,
+// données déjà en mémoire, aucune requête supplémentaire ni page séparée).
+const seasonInfo = bySeason.map((x) => {
+  const res = (x.R.matches as any[]).filter((m) => m.aId === pid || m.bId === pid).map((m) => fromPov(m, pid));
+  const chrono = [...res].sort((a, b) => (a.date < b.date ? -1 : 1));
+  const recent = [...res].sort((a, b) => (a.date < b.date ? 1 : -1));
+  let best = 0, cur = 0;
+  for (const r of chrono) { if (r.win) { cur++; best = Math.max(best, cur); } else cur = 0; }
+  const wins = res.filter((r) => r.win);
+  const biggest = wins.length ? wins.reduce((b, r) => ((r.my - r.opp) > (b.my - b.opp) ? r : b)) : null;
+  const n = res.length || 1;
+  const avgFor = res.reduce((s, r) => s + r.my, 0) / n;
+  const avgAg = res.reduce((s, r) => s + r.opp, 0) / n;
+  const byTour = (x.R.tournaments as any[])
+    .map((t) => {
+      const tms = res.filter((r) => r.tid === t.id).sort((a, b) => (a.date < b.date ? -1 : 1));
+      return tms.length ? { level: t.level, city: t.city, w: tms.filter((r) => r.win).length, l: tms.filter((r) => !r.win).length, ms: tms } : null;
+    })
+    .filter(Boolean) as { level: string; city: string; w: number; l: number; ms: any[] }[];
+  return { byTour, best, biggest, avgFor, avgAg, form: recent.slice(0, 5) };
+});
+
+const latest = bySeason[0];
+const name = latest.p.name;
+const photo = photoOf(latest.p, latest.slug);
+
+const career = bySeason.reduce(
+  (a, x) => {
+    a.played += x.p.played; a.wins += x.p.wins; a.losses += x.p.losses; a.tourns += x.p.tourns;
+    return a;
+  },
+  { played: 0, wins: 0, losses: 0, tourns: 0 },
+);
+const winPct = career.played ? Math.round((career.wins / career.played) * 100) : 0;
+const bestRank = Math.min(...bySeason.map((x) => x.p.rank));
+
+const palm = getParaPalmares();
+const titles: { label: string; slug: string; kind: 'saison' | 'france' | 'promo' }[] = [];
+for (const pl of palm) {
+  if (pl.champ.id === pid) titles.push({ label: pl.label, slug: pl.slug, kind: 'saison' });
+  if (pl.cdf && pl.cdf.id === pid) titles.push({ label: pl.label, slug: pl.slug, kind: pl.cdfPromo ? 'promo' : 'france' });
+}
+// Une victoire en « promotion » (avant le CdF officiel 2025/2026) figure au palmarès
+// mais n'est pas comptée comme un titre officiel.
+const officialTitles = titles.filter((t) => t.kind !== 'promo');
+
+interface Enc { seasonLabel: string; slug: string; level: string; city: string; my: number; opp: number; win: boolean; date: string }
+const oppMap = new Map<number, { name: string; w: number; l: number; n: number; enc: Enc[] }>();
+for (const x of bySeason) {
+  const tById = new Map((x.R.tournaments as any[]).map((t) => [t.id, t]));
+  for (const m of (x.R.matches as any[]).filter((m) => m.aId === pid || m.bId === pid)) {
+    const r = fromPov(m, pid);
+    let e = oppMap.get(r.oppId);
+    if (!e) { e = { name: r.oppName, w: 0, l: 0, n: 0, enc: [] }; oppMap.set(r.oppId, e); }
+    e.n++; r.win ? e.w++ : e.l++;
+    const t: any = tById.get(r.tid) || {};
+    e.enc.push({ seasonLabel: x.label, slug: x.slug, level: t.level || '', city: t.city || '', my: r.my, opp: r.opp, win: r.win, date: r.date });
+  }
+}
+const allOpp = [...oppMap.entries()]
+  .map(([id, e]) => ({ id, ...e, photo: photoOf({ name: e.name } as any), enc: [...e.enc].sort((a, b) => (a.date < b.date ? 1 : -1)) }))
+  .sort((a, b) => b.n - a.n || b.w - a.w || a.name.localeCompare(b.name, 'fr'));
+const rivals = allOpp.slice(0, 8);
+
+const allResults: any[] = [];
+for (const x of bySeason) {
+  for (const m of (x.R.matches as any[]).filter((m) => m.aId === pid || m.bId === pid)) {
+    allResults.push({ ...fromPov(m, pid), slug: x.slug, label: x.label, R: x.R });
+  }
+}
+allResults.sort((a, b) => (a.date < b.date ? 1 : -1));
+const recent = allResults.slice(0, 6);
+
+// Hero « magazine » : statut, meilleure série carrière, plus large victoire, dernier match.
+const leftAfter = latest.slug !== seasons[0].slug ? latest.label : null;
+const careerChrono = [...allResults].sort((a, b) => (a.date < b.date ? -1 : 1));
+let careerStreak = 0, _run = 0;
+for (const r of careerChrono) { if (r.win) { _run++; careerStreak = Math.max(careerStreak, _run); } else _run = 0; }
+const careerWins = allResults.filter((r) => r.win);
+const biggestCareer = careerWins.length ? careerWins.reduce((b, r) => ((r.my - r.opp) > (b.my - b.opp) ? r : b)) : null;
+const lastMatch = allResults[0] || null;
+const lastTour = lastMatch ? (lastMatch.R.tournaments as any[]).find((t: any) => t.id === lastMatch.tid) : null;
+const lastOppPhoto = lastMatch ? photoOf({ name: lastMatch.oppName } as any) : null;
+
+const arts = (await getCollection('articles', ({ data }) => !data.draft && data.discipline === 'billard'))
+  .filter((a) => playersInText(`${a.data.title} ${a.data.excerpt} ${a.body}`, getParaSeasons()).some((x) => x.id === pid))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+const fmtArtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(dt);
+---
+<Base title={`${name} — Fiche carrière · Blackball Para-billard`} description={`Fiche carrière de ${name} au Para-billard : palmarès, statistiques et confrontations sur ${bySeason.length} saison${bySeason.length > 1 ? 's' : ''}.`} active="disciplines">
+  <HubNav season={latest.slug} active="joueurs" root="/para-billard" brand="Para-billard" sub="· Blackball Para-billard" joueursLabel="Joueurs" videosHref="/disciplines/billard/categorie/para-billard" />
+  <section class="section">
+    <div class="wrap" style="max-width:900px">
+      <a href={`/para-billard/saison/${latest.slug}/classement`} class="link" style="color:var(--c-billard);display:inline-block;margin-bottom:18px">← Classement {latest.label}</a>
+
+      <section class="chero" style="--dc:var(--c-billard)">
+        <div class="chero-main">
+          <div class="chero-tags">
+            <span class="chero-tag">Blackball Para-billard</span>
+            <span class="chero-tag">{latest.p.rank}<sup>e</sup> au classement {latest.label}</span>
+            {leftAfter
+              ? <span class="chero-tag off">↩ Parti après {leftAfter}</span>
+              : <span class="chero-tag on">● En activité</span>}
+          </div>
+          <div class="chero-eyebrow">Fiche carrière · Blackball Para-billard</div>
+          <h1 class="chero-name">{name}</h1>
+          <div class="chero-record">{career.wins} V – {career.losses} D <span>· {bySeason.length} saison{bySeason.length > 1 ? 's' : ''}</span></div>
+          <div class="chero-stats">
+            {officialTitles.length > 0 && <div class="chero-stat"><div class="chero-num">{officialTitles.length}</div><div class="chero-lab">Titre{officialTitles.length > 1 ? 's' : ''}</div></div>}
+            <div class="chero-stat"><div class="chero-num">{bestRank}<sup>e</sup></div><div class="chero-lab">Meilleur classement</div></div>
+            <div class="chero-stat"><div class="chero-num">{careerStreak}</div><div class="chero-lab">Victoires d'affilée<br />(meilleure série)</div></div>
+            {biggestCareer && <div class="chero-stat"><div class="chero-num">{biggestCareer.my}-{biggestCareer.opp}</div><div class="chero-lab">Plus large victoire</div></div>}
+          </div>
+        </div>
+        <aside class="chero-side">
+          <span class="chero-photo"><span class="chero-photo-av">{name.slice(0, 1)}</span>{photo && <img src={photo} alt="" onerror="this.remove()" />}</span>
+          {lastMatch && (
+            <div class="chero-last">
+              <div class="chero-last-h">Dernier match</div>
+              <a href={`/para-billard/joueur/${slugOf(lastMatch.oppId)}`} class="chero-last-row">
+                <span class="bphoto chero-last-ph"><span class="bavatar">{lastMatch.oppName.slice(0, 1)}</span>{lastOppPhoto && <img src={lastOppPhoto} alt="" onerror="this.remove()" />}</span>
+                <span class="chero-last-body">
+                  <span class={`chero-last-res ${lastMatch.win ? 'w' : 'l'}`}>{lastMatch.win ? 'Victoire' : 'Défaite'} {lastMatch.my}-{lastMatch.opp}</span>
+                  <span class="chero-last-opp">contre {lastMatch.oppName}</span>
+                  <span class="chero-last-meta">{lastTour?.level} {lastTour?.city} · {lastMatch.label}</span>
+                </span>
+              </a>
+              <a href="#histo" class="chero-histo" data-open-histo>Voir l'historique →</a>
+            </div>
+          )}
+        </aside>
+      </section>
+
+      <div class="btiles">
+        <div class="btile" title="Nombre de saisons du Para-billard où le joueur a participé."><div class="bt-num" style="color:var(--c-billard)">{bySeason.length}</div><div class="bt-lab">Saison{bySeason.length > 1 ? 's' : ''}</div></div>
+        <div class="btile" title="Le meilleur classement final atteint sur l'ensemble de sa carrière."><div class="bt-num">{bestRank}<sup>e</sup></div><div class="bt-lab">Meilleur classement</div></div>
+        <div class="btile" title="Total des matchs gagnés (V) et perdus (D) sur toute la carrière."><div class="bt-num">{career.wins}<span>-</span>{career.losses}</div><div class="bt-vdbar"><span class="bt-vd-w" style={`width:${winPct}%`}></span><span class="bt-vd-l" style={`width:${100 - winPct}%`}></span></div><div class="bt-lab">Bilan carrière</div></div>
+        <div class="btile" title="Part de matchs gagnés sur l'ensemble de la carrière."><div class="bt-ring"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bt-ring-bg" cx="18" cy="18" r="15.915"></circle><circle class="bt-ring-fg" cx="18" cy="18" r="15.915" style={`stroke-dasharray:${winPct} ${100 - winPct}`}></circle></svg><span class="bt-ring-val">{winPct}<small>%</small></span></div><div class="bt-lab">Victoires</div></div>
+        <div class="btile" title="Total des matchs disputés, toutes saisons confondues."><div class="bt-num">{career.played}</div><div class="bt-lab">Matchs joués</div></div>
+        <div class="btile" title="Total des tournois (étapes) disputés sur la carrière."><div class="bt-num">{career.tourns}</div><div class="bt-lab">Tournois</div></div>
+      </div>
+
+      <p class="fj-help"><b>Pour aller vite :</b> cette fiche résume la carrière du joueur. Pour le détail d'une saison — parcours étape par étape, tous les résultats — cliquez sur la saison voulue ci-dessous.</p>
+
+      {titles.length > 0 && (
+        <div class="car-palm">
+          <div class="car-palm-h">Palmarès{officialTitles.length > 0 ? ` · ${officialTitles.length} titre${officialTitles.length > 1 ? 's' : ''}` : ''}</div>
+          <div class="car-palm-list">
+            {titles.map((t) => (
+              <span class={`car-palm-item ${t.kind}`}>
+                <span class="car-palm-ic">{t.kind === 'france' ? '🏆' : t.kind === 'promo' ? '🎖️' : '⭐'}</span>
+                <span class="car-palm-body"><b>{t.kind === 'france' ? 'Champion de France' : t.kind === 'promo' ? 'Champion de France · promotion' : 'Champion de saison'}</b><span>{t.label}</span></span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div class="sec-head" style="margin-top:34px"><div><div class="eyebrow" style="color:var(--c-billard)">Parcours</div><h2>Saison par saison</h2></div></div>
+      <p class="fj-help" style="margin-top:0">Cliquez sur une saison pour dérouler son parcours étape par étape.</p>
+      <div class="car-seasons">
+        {bySeason.map((x, i) => (
+          <div class="car-sitem">
+            <button type="button" class="car-srow" data-accordion aria-expanded="false">
+              <span class="car-sn">{x.label}</span>
+              <span class="car-srank"><b style="color:var(--c-billard)">{x.p.rank}<sup>e</sup></b></span>
+              <span class="car-spts">{x.p.points} pts</span>
+              <span class="car-srec"><b class="bwin">{x.p.wins}</b>-{x.p.losses}</span>
+              <span class="car-sgo car-schev" aria-hidden="true">▾</span>
+            </button>
+            <div class="car-sdetail" hidden>
+              <div class="btiles car-sd-tiles">
+                <div class="btile" title="Points au classement officiel FFB, gagnés selon les résultats à chaque tournoi."><div class="bt-num" style="color:var(--c-billard)">{x.p.points}</div><div class="bt-lab">Points FFB</div></div>
+                <div class="btile" title="Matchs gagnés (V) et perdus (D) sur la saison."><div class="bt-num">{x.p.wins}<span>-</span>{x.p.losses}</div><div class="bt-lab">Bilan V-D</div></div>
+                <div class="btile" title="Part de matchs gagnés."><div class="bt-num">{x.p.winPct}%</div><div class="bt-lab">Victoires</div></div>
+                <div class="btile" title="Matchs disputés dans la saison."><div class="bt-num">{x.p.played}</div><div class="bt-lab">Matchs joués</div></div>
+                <div class="btile" title="Manches gagnées moins manches perdues sur la saison."><div class="bt-num">{x.p.diff >= 0 ? '+' : ''}{x.p.diff}</div><div class="bt-lab">Différentiel</div></div>
+                <div class="btile" title="Étapes (tournois) disputées dans la saison."><div class="bt-num">{x.p.tourns}</div><div class="bt-lab">Tournois</div></div>
+              </div>
+              <div class="fj-extra">
+                <div class="fj-form">
+                  <span class="fj-lab">Forme</span>
+                  {seasonInfo[i].form.map((r) => <span class={`spot-chip ${r.win ? 'w' : 'l'}`}>{r.win ? 'V' : 'D'}</span>)}
+                  {seasonInfo[i].form.length === 0 && <span class="dek" style="margin:0">—</span>}
+                </div>
+                <div class="fj-more">
+                  <span title="La plus longue série de victoires consécutives sur la saison."><b>{seasonInfo[i].best}</b> victoires d'affilée <span class="fj-hint">(meilleure série)</span></span>
+                  <span title="En moyenne par match : manches gagnées – manches perdues."><b>{seasonInfo[i].avgFor.toFixed(1).replace('.', ',')}</b> – <b>{seasonInfo[i].avgAg.toFixed(1).replace('.', ',')}</b> manches par match <span class="fj-hint">(en moyenne)</span></span>
+                  {seasonInfo[i].biggest && <span title="La victoire avec le plus grand écart de manches.">Plus large victoire : <b>{seasonInfo[i].biggest.my}-{seasonInfo[i].biggest.opp}</b> contre {seasonInfo[i].biggest.oppName}</span>}
+                </div>
+              </div>
+              <div class="car-sd-h">Parcours étape par étape</div>
+              <div class="car-sd-tours">
+                {seasonInfo[i].byTour.map((t) => (
+                  <div class="fj-tour-lite">
+                    <div class="fj-tour-h"><span class="fj-tour-name">{t.level}{t.city ? ` · ${t.city}` : ''}</span><span class="fj-tour-rec mono">{t.w}-{t.l}</span></div>
+                    <div class="fjm-list">
+                      {t.ms.map((r) => (
+                        <a href={`/para-billard/joueur/${slugOf(r.oppId)}`} class={`fjm-row ${r.win ? 'w' : 'l'}`} title={`${r.win ? 'Victoire' : 'Défaite'} ${r.my}-${r.opp} contre ${r.oppName}`}>
+                          <span class="fjm-res">{r.win ? 'V' : 'D'}</span>
+                          <span class="fjm-score mono">{r.my}<i>–</i>{r.opp}</span>
+                          <span class="fjm-opp">{r.oppName}</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {arts.length > 0 && (
+        <>
+          <div class="sec-head" style="margin-top:34px"><div><div class="eyebrow" style="color:var(--c-billard)">Le mag</div><h2>Dans l'actualité</h2></div></div>
+          <div class="car-arts">
+            {arts.map((a) => (
+              <a href={`/actualites/${a.id}`} class="car-art">
+                <span class="car-art-t">{a.data.title}</span>
+                <span class="car-art-d">{fmtArtDate(a.data.date)}</span>
+              </a>
+            ))}
+          </div>
+        </>
+      )}
+
+      <div class="secgroup-lab">Confrontations &amp; résultats</div>
+      <div class="secbars">
+      {rivals.length > 0 && (
+        <>
+          <div class="car-sitem">
+            <button type="button" class="secbar" data-accordion aria-expanded="false">
+              <span class="secbar-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="4.6" fill="currentColor"></circle><circle cx="16" cy="12" r="4.6" fill="none" stroke="currentColor" stroke-width="1.8"></circle></svg></span>
+              <span class="secbar-txt"><span class="secbar-title">Adversaires les plus fréquents</span><span class="secbar-sub">Les {rivals.length} joueurs les plus souvent affrontés</span></span>
+              <span class="secbar-chev car-schev" aria-hidden="true">▾</span>
+            </button>
+            <div class="ff-panel" hidden>
+          <p class="fj-help" style="margin-top:0"><b>En clair :</b> les joueurs que {name} a le plus souvent affrontés. Le bilan est le sien : <b>V</b> = ses victoires, <b>D</b> = ses défaites face à cet adversaire.</p>
+          <div class="car-rivals">
+            {rivals.map((r) => (
+              <a href={`/para-billard/joueur/${slugOf(r.id)}`} class="car-rival">
+                <span class="bphoto car-rph"><span class="bavatar">{r.name.slice(0, 1)}</span>{r.photo && <img src={r.photo} alt="" loading="lazy" onerror="this.remove()" />}</span>
+                <span class="car-rn">{r.name}</span>
+                <span class="car-rrec"><span class="rec-w">{r.w}<em>V</em></span> <i>–</i> <span class="rec-l">{r.l}<em>D</em></span></span>
+                <span class="car-rn2">{r.n} match{r.n > 1 ? 's' : ''}</span>
+              </a>
+            ))}
+          </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {allOpp.length > 0 && (
+        <>
+          <div class="car-sitem">
+            <button type="button" class="secbar" data-accordion aria-expanded="false">
+              <span class="secbar-ic"><svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><circle cx="12" cy="6" r="1.9"></circle><circle cx="8.7" cy="11" r="1.9"></circle><circle cx="15.3" cy="11" r="1.9"></circle><circle cx="5.4" cy="16" r="1.9"></circle><circle cx="12" cy="16" r="1.9"></circle><circle cx="18.6" cy="16" r="1.9"></circle></svg></span>
+              <span class="secbar-txt"><span class="secbar-title">Tous les adversaires affrontés</span><span class="secbar-sub">{allOpp.length} joueurs rencontrés sur toutes les saisons</span></span>
+              <span class="secbar-chev car-schev" aria-hidden="true">▾</span>
+            </button>
+            <div class="ff-panel" hidden>
+          <p class="fj-help" style="margin-top:0"><b>{allOpp.length}</b> joueur{allOpp.length > 1 ? 's' : ''} rencontré{allOpp.length > 1 ? 's' : ''} par {name} sur l'ensemble des saisons. Le bilan est le sien — <b>V</b> = ses victoires, <b>D</b> = ses défaites — cliquez sur un adversaire pour dérouler le détail de chaque match (score · étape · saison).</p>
+          <div class="opp-list">
+            {allOpp.map((o) => (
+              <div class="opp-item">
+                <button type="button" class="opp-item-h" data-accordion aria-expanded="false">
+                  <span class="opp-who">
+                    <span class="bphoto opp-ph"><span class="bavatar">{o.name.slice(0, 1)}</span>{o.photo && <img src={o.photo} alt="" loading="lazy" onerror="this.remove()" />}</span>
+                    <span class="opp-name">{o.name}</span>
+                  </span>
+                  <span class="opp-rec"><span class="rec-w">{o.w}<em>V</em></span> <i>–</i> <span class="rec-l">{o.l}<em>D</em></span></span>
+                  <span class="opp-chev car-schev" aria-hidden="true">▾</span>
+                </button>
+                <div class="opp-enc" hidden>
+                  {o.enc.map((e) => (
+                    <span class={`opp-e ${e.win ? 'w' : 'l'}`} title={`${e.win ? 'Victoire' : 'Défaite'} ${e.my}-${e.opp}`}>
+                      <b>{e.my}-{e.opp}</b> · {e.level}{e.city ? ` ${e.city}` : ''} · {e.seasonLabel}
+                    </span>
+                  ))}
+                  <a href={`/para-billard/joueur/${slugOf(o.id)}`} class="opp-fiche">Voir la fiche de {o.name} →</a>
+                </div>
+              </div>
+            ))}
+          </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      <div class="car-sitem">
+        <button type="button" id="histo" class="secbar" data-accordion aria-expanded="false" style="scroll-margin-top:20px">
+          <span class="secbar-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="16.5" r="4" fill="currentColor"></circle><line x1="11" y1="13" x2="21" y2="3" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></line></svg></span>
+          <span class="secbar-txt"><span class="secbar-title">Derniers résultats</span><span class="secbar-sub">Les {recent.length} matchs les plus récents</span></span>
+          <span class="secbar-chev car-schev" aria-hidden="true">▾</span>
+        </button>
+        <div class="ff-panel" hidden>
+          <div class="bmatches">
+            {recent.map((r) => {
+              const t = (r.R.tournaments as any[]).find((x) => x.id === r.tid);
+              return (
+                <div class={`bmatch ${r.win ? 'w' : 'l'}`} data-card-href={`/para-billard/joueur/${slugOf(r.oppId)}`}>
+                  <span class="bm-tag">{r.win ? 'V' : 'D'}</span>
+                  <span class="bm-score mono">{r.my} — {r.opp}</span>
+                  <a href={`/para-billard/joueur/${slugOf(r.oppId)}`} class="bm-opp">{r.oppName}</a>
+                  <span class="bm-meta">{frRound(r.round)} · {t?.level} {t?.city} · {r.label}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+</Base>

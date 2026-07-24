@@ -1,0 +1,258 @@
+---
+import Base from '../layouts/Base.astro';
+import { getReplays } from '../lib/youtube';
+import { getCollection } from 'astro:content';
+import { getDiscipline, type DisciplineSlug } from '../data/site';
+import { articleCover } from '../lib/articles';
+
+// Normalisation : minuscules, sans accents, ponctuation → espace. Sert à comparer
+// la requête et le contenu indexé de façon tolérante (« fougeres » trouve « Fougères »).
+const norm = (s: string) =>
+  (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+
+const videos = await getReplays();
+const articles = await getCollection('articles', ({ data }) => !data.draft);
+const fmtDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+
+interface Item {
+  t: 'v' | 'a';
+  url: string;
+  title: string;
+  discLabel: string;
+  color: string;
+  meta: string;
+  sub: string;
+  thumb: string;
+  fb?: string;
+  from: string;
+  to: string;
+  /** chaîne de recherche pré-normalisée (haystack) */
+  s: string;
+}
+
+// Index construit au build : toutes les vidéos + tous les articles, réunis.
+const items: Item[] = [
+  ...videos.map((v): Item => {
+    const d = getDiscipline(v.discipline);
+    return {
+      t: 'v',
+      url: `/replay/${v.id}`,
+      title: v.title,
+      discLabel: v.caption || d.label,
+      color: d.colorVar,
+      meta: v.kicker || 'Replay',
+      sub: [v.season, v.category].filter(Boolean).join(' · ') || v.when,
+      thumb: v.thumb || '',
+      from: d.from,
+      to: d.to,
+      s: norm([v.title, d.label, d.name, v.caption, v.category, v.season, v.kicker].filter(Boolean).join(' ')),
+    };
+  }),
+  ...articles.map((a): Item => {
+    const d = a.data.discipline ? getDiscipline(a.data.discipline as DisciplineSlug) : null;
+    const cover = articleCover(a);
+    return {
+      t: 'a',
+      url: `/actualites/${a.id}`,
+      title: a.data.title,
+      discLabel: d ? d.label : 'Actualité',
+      color: d ? d.colorVar : 'var(--accent)',
+      meta: 'Article',
+      sub: fmtDate(a.data.date),
+      thumb: cover?.src || '',
+      fb: cover?.fallback,
+      from: d ? d.from : '#1E40E5',
+      to: d ? d.to : '#0a1a6b',
+      s: norm([a.data.title, a.data.excerpt, d?.label, d?.name, 'actualite article magazine'].filter(Boolean).join(' ')),
+    };
+  }),
+];
+
+// `</script>` éventuel dans un titre → échappé pour ne pas casser le bloc JSON.
+const dataJson = JSON.stringify(items).replace(/</g, '\\u003c');
+---
+<Base title="Recherche" description="Rechercher parmi les vidéos et les actualités LSEI." active="recherche">
+  <section class="disc-hero">
+    <div class="wrap">
+      <div class="kick" style="color:var(--accent)">Recherche</div>
+      <h1>Rechercher</h1>
+      <p>Une vidéo, un article, une équipe, une compétition, une saison… tapez et trouvez.</p>
+      <div class="bar" style="background:var(--accent)"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="search-box">
+        <svg class="mag" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><line x1="20" y1="20" x2="16.65" y2="16.65"></line></svg>
+        <input type="search" id="q" placeholder="Ex. Blackball, Fougères, finale, palets…" autocomplete="off" aria-label="Rechercher" />
+        <button type="button" class="q-clear" id="q-clear" aria-label="Effacer" hidden>✕</button>
+      </div>
+
+      <div class="seg" role="group" aria-label="Filtrer par type">
+        <button type="button" class="seg-btn is-on" data-f="all" aria-pressed="true">Tout</button>
+        <button type="button" class="seg-btn" data-f="v" aria-pressed="false">Vidéos</button>
+        <button type="button" class="seg-btn" data-f="a" aria-pressed="false">Actualités</button>
+      </div>
+
+      <div class="search-count" id="count" aria-live="polite"></div>
+      <div class="cards" id="results"></div>
+      <div class="search-empty" id="empty">Tapez un mot-clé pour lancer la recherche.</div>
+    </div>
+  </section>
+
+  <script type="application/json" id="search-data" set:html={dataJson}></script>
+  <script is:inline>
+    (function () {
+      var data = [];
+      try { data = JSON.parse(document.getElementById('search-data').textContent); } catch (e) {}
+      var input = document.getElementById('q');
+      var results = document.getElementById('results');
+      var count = document.getElementById('count');
+      var empty = document.getElementById('empty');
+      var clearBtn = document.getElementById('q-clear');
+      var segBtns = Array.prototype.slice.call(document.querySelectorAll('.seg-btn'));
+      if (!input) return;
+      var filter = 'all';
+      var MAX = 48;
+      var PLAY = '<svg width="20" height="22" viewBox="0 0 20 22" fill="#fff"><path d="M0 0l20 11L0 22z"/></svg>';
+
+      function norm(s) {
+        return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+      }
+      data.forEach(function (it) { it.nt = norm(it.title); });
+
+      function card(it) {
+        var a = document.createElement('a');
+        a.href = it.url;
+        a.className = 'card';
+        a.style.setProperty('--dc', it.color);
+
+        var frame = document.createElement('div');
+        frame.className = 'frame';
+        if (it.thumb) {
+          var img = document.createElement('img');
+          img.className = 'photo'; img.loading = 'lazy'; img.alt = ''; img.src = it.thumb;
+          if (it.fb) { img.addEventListener('error', function () { this.onerror = null; this.src = it.fb; }); }
+          frame.appendChild(img);
+        } else {
+          var duo = document.createElement('div');
+          duo.className = 'duo';
+          duo.style.background = 'linear-gradient(135deg,' + it.from + ',' + it.to + ')';
+          frame.appendChild(duo);
+        }
+        var grad = document.createElement('div'); grad.className = 'grad'; frame.appendChild(grad);
+        if (it.t === 'v') {
+          var play = document.createElement('span');
+          play.className = 'play'; play.setAttribute('aria-hidden', 'true'); play.innerHTML = PLAY;
+          frame.appendChild(play);
+        }
+        var cap = document.createElement('div'); cap.className = 'cap';
+        var disc = document.createElement('div'); disc.className = 'disc'; disc.textContent = it.discLabel;
+        cap.appendChild(disc); frame.appendChild(cap);
+        a.appendChild(frame);
+
+        var kick = document.createElement('div'); kick.className = 'kicker'; kick.textContent = it.meta; a.appendChild(kick);
+        var h = document.createElement('h3'); h.textContent = it.title; a.appendChild(h);
+        var meta = document.createElement('div'); meta.className = 'meta';
+        var sp = document.createElement('span'); sp.textContent = it.sub; meta.appendChild(sp); a.appendChild(meta);
+        return a;
+      }
+
+      function render(list, q) {
+        results.innerHTML = '';
+        if (!q) {
+          count.textContent = '';
+          empty.hidden = false;
+          empty.textContent = 'Tapez un mot-clé pour lancer la recherche.';
+          return;
+        }
+        if (!list.length) {
+          count.textContent = '';
+          empty.hidden = false;
+          empty.textContent = 'Aucun résultat pour « ' + input.value.trim() +' ».';
+          return;
+        }
+        empty.hidden = true;
+        var frag = document.createDocumentFragment();
+        list.slice(0, MAX).forEach(function (it) { frag.appendChild(card(it)); });
+        results.appendChild(frag);
+        var n = list.length;
+        count.textContent = n + (n > 1 ? ' résultats' : ' résultat') + (n > MAX ? ' — affinez pour préciser' : '');
+      }
+
+      function run() {
+        var q = norm(input.value);
+        clearBtn.hidden = !input.value;
+        var list = [];
+        if (q) {
+          var toks = q.split(' ').filter(Boolean);
+          list = data.filter(function (it) {
+            if (filter !== 'all' && it.t !== filter) return false;
+            for (var i = 0; i < toks.length; i++) if (it.s.indexOf(toks[i]) === -1) return false;
+            return true;
+          });
+          // Les titres qui contiennent la requête passent devant (tri stable).
+          list.sort(function (a, b) {
+            return (a.nt.indexOf(q) !== -1 ? 0 : 1) - (b.nt.indexOf(q) !== -1 ? 0 : 1);
+          });
+        }
+        render(list, q);
+      }
+
+      function setParam(v) {
+        try {
+          var u = new URL(location.href);
+          if (v) u.searchParams.set('q', v); else u.searchParams.delete('q');
+          history.replaceState(null, '', u);
+        } catch (e) {}
+      }
+
+      input.addEventListener('input', function () { run(); setParam(input.value.trim()); });
+      clearBtn.addEventListener('click', function () { input.value = ''; run(); setParam(''); input.focus(); });
+      segBtns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          segBtns.forEach(function (x) { x.classList.remove('is-on'); x.setAttribute('aria-pressed', 'false'); });
+          b.classList.add('is-on'); b.setAttribute('aria-pressed', 'true');
+          filter = b.getAttribute('data-f');
+          run();
+        });
+      });
+
+      // Requête initiale via ?q= (lien partageable / venant du header).
+      try {
+        var initial = new URLSearchParams(location.search).get('q');
+        if (initial) input.value = initial;
+      } catch (e) {}
+      run();
+      input.focus();
+    })();
+  </script>
+</Base>
+
+<style>
+  .search-box { position: relative; max-width: 640px; margin: 0 auto 18px; }
+  .search-box .mag { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--ink-faint); pointer-events: none; }
+  .search-box input {
+    width: 100%; height: 56px; padding: 0 46px 0 50px; border-radius: 100px;
+    border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink);
+    font-size: 16px; font-family: inherit;
+  }
+  .search-box input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(30,64,229,.12); }
+  .q-clear {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    width: 30px; height: 30px; border: 0; border-radius: 50%;
+    background: var(--surface-2); color: var(--ink-soft); cursor: pointer; font-size: 12px; line-height: 1;
+  }
+  .q-clear:hover { color: var(--ink); }
+  .seg { display: flex; justify-content: center; gap: 8px; margin-bottom: 14px; }
+  .seg-btn {
+    font: inherit; font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 100px;
+    border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-soft); cursor: pointer;
+  }
+  .seg-btn:hover { color: var(--ink); }
+  .seg-btn.is-on { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .search-count { text-align: center; color: var(--ink-faint); font-size: 13px; margin-bottom: 18px; min-height: 16px; }
+  .search-empty { text-align: center; color: var(--ink-soft); padding: 40px 0; font-size: 15px; }
+  .search-empty[hidden] { display: none; }
+</style>

@@ -1,0 +1,155 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CookieBanner from '../components/CookieBanner.astro';
+import VideoModal from '../components/VideoModal.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  active?: string;
+}
+const { title, description = site.description, active } = Astro.props;
+const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
+---
+<!doctype html>
+<html lang="fr" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <Header active={active} />
+    <slot />
+    <Footer />
+    <CookieBanner />
+    <VideoModal />
+    <script is:inline>
+      // Micro-animations : révélations au défilement, compteurs, bouton magnétique.
+      // Tout est désactivé si l'utilisateur a demandé « réduire les animations ».
+      (function () {
+        var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var root = document.documentElement;
+        var hasIO = 'IntersectionObserver' in window;
+
+        // 1) Révélations au défilement
+        if (!reduce && hasIO) {
+          root.classList.add('has-reveal');
+          var fade = [];
+          document.querySelectorAll('.cards > .card, .discs > .disc-card').forEach(function (el) {
+            el.classList.add('reveal-fade'); fade.push(el);
+          });
+          var up = [];
+          document.querySelectorAll('.stats, .cta, .band .partners, .section > .wrap > .sec-head').forEach(function (el) {
+            el.classList.add('reveal-up'); up.push(el);
+          });
+          [fade, up].forEach(function (list) {
+            list.forEach(function (el) {
+              var idx = Array.prototype.indexOf.call(el.parentElement.children, el);
+              el.style.transitionDelay = Math.min(idx, 6) * 60 + 'ms';
+            });
+          });
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) { e.target.classList.add('reveal-in'); io.unobserve(e.target); }
+            });
+          }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+          fade.concat(up).forEach(function (el) { io.observe(el); });
+
+          // Filet de sécurité : si l'observateur ne se déclenche jamais (cas rare
+          // ou navigateur capricieux), on révèle tout après 3,5 s → aucun contenu
+          // ne peut rester invisible.
+          setTimeout(function () {
+            document.querySelectorAll('.reveal-fade:not(.reveal-in), .reveal-up:not(.reveal-in)').forEach(function (el) {
+              el.classList.add('reveal-in');
+            });
+          }, 3500);
+        }
+
+        // 2) Compteurs animés (chiffres-clés)
+        if (!reduce && hasIO) {
+          var cio = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              if (!e.isIntersecting) return;
+              cio.unobserve(e.target);
+              animateNum(e.target);
+            });
+          }, { threshold: 0.6 });
+          document.querySelectorAll('.stat .num').forEach(function (n) { cio.observe(n); });
+        }
+        function animateNum(el) {
+          var textNode = null;
+          for (var i = 0; i < el.childNodes.length; i++) {
+            if (el.childNodes[i].nodeType === 3 && el.childNodes[i].textContent.trim()) { textNode = el.childNodes[i]; break; }
+          }
+          if (!textNode) return;
+          var raw = textNode.textContent;
+          var m = raw.match(/^\s*(\d+)(.*)$/);
+          if (!m) return;
+          var target = parseInt(m[1], 10), suffix = m[2], dur = 1100, start = null;
+          textNode.textContent = '0' + suffix;
+          function step(ts) {
+            if (start === null) start = ts;
+            var p = Math.min((ts - start) / dur, 1);
+            var val = Math.round((1 - Math.pow(1 - p, 3)) * target);
+            textNode.textContent = val + suffix;
+            if (p < 1) requestAnimationFrame(step); else textNode.textContent = raw;
+          }
+          requestAnimationFrame(step);
+        }
+
+        // 3) Bouton magnétique (CTA principal, uniquement au vrai survol souris)
+        if (!reduce && matchMedia('(hover: hover)').matches) {
+          document.querySelectorAll('.masthead .btn').forEach(function (btn) {
+            btn.addEventListener('mousemove', function (e) {
+              var r = btn.getBoundingClientRect();
+              var x = e.clientX - r.left - r.width / 2;
+              var y = e.clientY - r.top - r.height / 2;
+              btn.style.transform = 'translate(' + (x * 0.28) + 'px,' + (y * 0.28) + 'px)';
+            });
+            btn.addEventListener('mouseleave', function () { btn.style.transform = ''; });
+          });
+        }
+
+        // 4) Cadres cliquables (ex. « Derniers résultats » d'une fiche) : un clic
+        // n'importe où dans le cadre suit son lien, sauf si on a cliqué un lien interne.
+        document.addEventListener('click', function (e) {
+          if (e.target.closest('a, button')) return;
+          var card = e.target.closest('[data-card-href]');
+          if (card) location.href = card.getAttribute('data-card-href');
+        });
+
+        // 5) Accordéons (ex. « saison par saison » d'une fiche) : dérouler / replier
+        // le panneau qui suit l'en-tête, au clic ou au clavier.
+        document.addEventListener('click', function (e) {
+          var head = e.target.closest('[data-accordion]');
+          if (!head) return;
+          var panel = head.nextElementSibling;
+          if (!panel) return;
+          var open = head.getAttribute('aria-expanded') === 'true';
+          head.setAttribute('aria-expanded', open ? 'false' : 'true');
+          panel.hidden = open;
+          var chev = head.querySelector('.car-schev');
+          if (chev) chev.textContent = open ? '▾' : '▴'; // ▾ replié · ▴ déroulé
+        });
+
+        // 6) Ouvrir un accordéon-cible depuis un lien (ex. « Voir l'historique » du hero
+        // ouvre + fait défiler vers la section Historique repliée).
+        document.addEventListener('click', function (e) {
+          var opener = e.target.closest('[data-open-histo]');
+          if (!opener) return;
+          var t = document.getElementById('histo');
+          if (t && t.getAttribute('aria-expanded') === 'false') t.click();
+        });
+      })();
+    </script>
+  </body>
+</html>

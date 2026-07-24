@@ -1,0 +1,34 @@
+---
+// Vignette vidéo « broadcast » : dégradé duotone (placeholder tant qu'il n'y a
+// pas de photo/miniature YouTube), bouton play, légende et badge Direct optionnel.
+interface Props {
+  from: string;
+  to: string;
+  caption?: string;
+  score?: string;
+  live?: boolean;
+  href?: string;
+  ariaLabel?: string;
+  image?: string;
+}
+const { from, to, caption, score, live = false, href, ariaLabel, image } = Astro.props;
+const Tag = href ? 'a' : 'div';
+---
+<Tag class="frame" href={href} aria-label={ariaLabel}>
+  {image
+    ? <img class="photo" src={image} alt="" loading="lazy" />
+    : <div class="duo" style={`background:linear-gradient(135deg,${from},${to});`}></div>}
+  <div class="grad"></div>
+  {live && (
+    <span class="badge"><span class="pulse"></span>Direct</span>
+  )}
+  <span class="play" aria-hidden="true">
+    <svg width="20" height="22" viewBox="0 0 20 22" fill="#fff"><path d="M0 0l20 11L0 22z"/></svg>
+  </span>
+  {(caption || score) && (
+    <div class="cap">
+      {caption && <div class="disc">{caption}</div>}
+      {score && <div class="score">{score}</div>}
+    </div>
+  )}
+</Tag>

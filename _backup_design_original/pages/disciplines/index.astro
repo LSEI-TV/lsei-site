@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import { disciplines } from '../../data/site';
+---
+<Base title="Disciplines" description="Les sept disciplines couvertes par LSEI." active="disciplines">
+  <section class="disc-hero">
+    <div class="wrap">
+      <div class="kick" style="color:var(--accent)">Nos antennes</div>
+      <h1>7 disciplines, une même passion</h1>
+      <p>Du parquet à la planche, LSEI met en image les sports authentiques du territoire — en direct comme en replay. Choisissez une discipline pour retrouver ses matchs et ses vidéos.</p>
+      <div class="bar" style="background:var(--accent)"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="discs">
+        {disciplines.map((d, i) => (
+          <a href={`/disciplines/${d.slug}`} class="disc-card" style={`--dc:${d.colorVar}`}>
+            <div class="n">{String(i + 1).padStart(2, '0')}</div>
+            <div class="name">{d.name}</div>
+            <div class="sub">{d.sub}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import { legal } from '../data/site';
+---
+<Base title="Politique de confidentialité" description="Comment LSEI traite vos données personnelles et les cookies.">
+  <section class="section">
+    <div class="wrap prose">
+      <h1>Politique de confidentialité</h1>
+      <p class="lead-p">Nous ne collectons aucune donnée.</p>
+
+      <h2>Aucun suivi par défaut</h2>
+      <p>
+        Ce site est un site statique qui ne dépose aucun cookie de mesure d'audience ni de traçage
+        publicitaire. Vous pouvez le consulter sans qu'aucune donnée personnelle ne soit collectée.
+      </p>
+
+      <h2>Vidéos YouTube</h2>
+      <p>
+        Les vidéos sont fournies par YouTube. Pour protéger votre vie privée, le lecteur n'est chargé
+        qu'au moment où vous cliquez sur « lecture » : tant que vous ne lancez pas de vidéo, YouTube
+        n'est pas contacté et ne dépose aucun cookie. Lorsque vous lancez une lecture, YouTube peut
+        déposer ses propres cookies, régis par la
+        <a href="https://policies.google.com/privacy" rel="noopener">politique de confidentialité de Google</a>.
+      </p>
+
+      <h2>Vos droits</h2>
+      <p>
+        Ce site ne collectant aucune donnée personnelle, il n'y a en pratique aucune donnée vous
+        concernant à consulter, rectifier ou supprimer. Conformément au RGPD, toute demande relative à
+        vos droits peut être adressée au responsable de traitement de l'association
+        (voir les <a href="/mentions-legales">mentions légales</a>).
+      </p>
+
+      <h2>Responsable du traitement</h2>
+      <p>
+        {legal.orgName} — {legal.orgType}<br />
+        {legal.address}
+      </p>
+
+      <p style="margin-top:24px"><a href="/mentions-legales">Voir les mentions légales →</a></p>
+    </div>
+  </section>
+</Base>

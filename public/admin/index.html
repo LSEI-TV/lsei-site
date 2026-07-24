@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>LSEI — Administration</title>
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet" />
+    <style>
+      .lsei-richtext .ql-container { min-height: 320px; font-size: 15px; }
+      .lsei-richtext .ql-editor { min-height: 320px; }
+    </style>
+  </head>
+  <body>
+    <!-- Interface d'administration (Decap CMS) + éditeur visuel Quill (couleur du texte). -->
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <script>
+      window.addEventListener('load', function () {
+        if (!window.CMS || !window.Quill || !window.h || !window.createClass) return;
+        var h = window.h;
+        var createClass = window.createClass;
+
+        // Éditeur visuel « richtext » : sélectionner du texte → choisir une couleur, etc.
+        var Control = createClass({
+          componentDidMount: function () {
+            var self = this;
+            this.quill = new window.Quill(this.editorEl, {
+              theme: 'snow',
+              placeholder: 'Rédigez votre article…',
+              modules: {
+                toolbar: [
+                  [{ header: [2, 3, false] }],
+                  ['bold', 'italic', 'underline'],
+                  [{ color: [] }],
+                  ['blockquote', 'link', 'video'],
+                  [{ list: 'bullet' }, { list: 'ordered' }],
+                  ['clean'],
+                ],
+              },
+            });
+            if (this.props.value) this.quill.clipboard.dangerouslyPasteHTML(this.props.value);
+            this.quill.on('text-change', function () {
+              var html = self.quill.root.innerHTML;
+              self.props.onChange(html === '<p><br></p>' ? '' : html);
+            });
+          },
+          render: function () {
+            var self = this;
+            return h('div', { className: 'lsei-richtext' },
+              h('div', { ref: function (el) { self.editorEl = el; } })
+            );
+          },
+        });
+
+        var Preview = createClass({
+          render: function () {
+            return h('div', { className: 'ql-editor', dangerouslySetInnerHTML: { __html: this.props.value || '' } });
+          },
+        });
+
+        window.CMS.registerWidget('richtext', Control, Preview);
+      });
+    </script>
+  </body>
+</html>

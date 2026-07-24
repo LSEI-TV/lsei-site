@@ -1,0 +1,26 @@
+---
+import { site } from '../data/site';
+
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
+
+// Icônes SVG des réseaux (fill currentColor → prennent la couleur du texte/hover).
+const icons: Record<string, string> = {
+  youtube: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 12s0-2.9-.37-4.29a2.5 2.5 0 0 0-1.77-1.77C19.47 5.57 12 5.57 12 5.57s-7.47 0-8.86.37a2.5 2.5 0 0 0-1.77 1.77C1 9.1 1 12 1 12s0 2.9.37 4.29a2.5 2.5 0 0 0 1.77 1.77c1.39.37 8.86.37 8.86.37s7.47 0 8.86-.37a2.5 2.5 0 0 0 1.77-1.77C23 14.9 23 12 23 12Zm-13 3.5v-7l6 3.5-6 3.5Z"/></svg>',
+  facebook: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.87v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.88h-2.34v6.99A10 10 0 0 0 22 12Z"/></svg>',
+  instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg>',
+  tiktok: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.5 3c.3 2.1 1.5 3.6 3.5 3.9v2.45c-1.3.06-2.5-.32-3.6-1.02v6.06a5.6 5.6 0 1 1-5.6-5.6c.3 0 .6.02.9.07v2.53a3.1 3.1 0 1 0 2.2 2.97V3h2.6Z"/></svg>',
+};
+
+const links = [
+  { key: 'youtube', label: 'YouTube', href: site.social.youtube },
+  { key: 'facebook', label: 'Facebook', href: site.social.facebook },
+  { key: 'instagram', label: 'Instagram', href: site.social.instagram },
+  { key: 'tiktok', label: 'TikTok', href: site.social.tiktok },
+].filter((l) => l.href && l.href !== '#');
+---
+<div class={compact ? 'soc soc-sm' : 'soc'}>
+  {links.map((l) => (
+    <a href={l.href} target="_blank" rel="noopener" aria-label={l.label} title={l.label} set:html={icons[l.key]}></a>
+  ))}
+</div>

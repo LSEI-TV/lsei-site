@@ -1,0 +1,12 @@
+---
+// Filtre compact sous forme de menu déroulant (saison, catégorie…).
+interface Opt { label: string; value: string; selected?: boolean }
+interface Props { label: string; options: Opt[]; colorVar?: string }
+const { label, options, colorVar = 'var(--accent)' } = Astro.props;
+---
+<label class="filter-menu" style={`--dc:${colorVar}`}>
+  <span class="fm-label">{label}</span>
+  <select onchange="if(this.value)window.location.href=this.value">
+    {options.map((o) => <option value={o.value} selected={o.selected}>{o.label}</option>)}
+  </select>
+</label>

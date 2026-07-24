@@ -1,0 +1,114 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import HubNav from '../../../../components/HubNav.astro';
+import SeasonPicker from '../../../../components/SeasonPicker.astro';
+import { photoOf, frRound } from '../../../../lib/billardStats';
+import { getParaSeasons } from '../../../../data/billard/seasonsPara';
+import type { Season } from '../../../../data/billard/seasons';
+
+export function getStaticPaths() {
+  return getParaSeasons().filter((s) => s.results).map((s) => ({ params: { season: s.slug }, props: { season: s } }));
+}
+const { season } = Astro.props as { season: Season };
+const R = season.results!;
+const base = `/para-billard/saison/${season.slug}`;
+
+const payload = {
+  players: (R.players as any[]).map((p) => ({ id: p.id, name: p.name, photo: photoOf(p, season.slug), rank: p.rank, points: p.points, played: p.played, wins: p.wins, losses: p.losses, winPct: p.winPct, diff: p.diff })),
+  matches: (R.matches as any[]).map((m) => ({ a: m.aId, b: m.bId, sA: m.sA, sB: m.sB, d: m.date, r: frRound(m.round), t: m.tid })),
+  tournaments: R.tournaments,
+};
+const json = JSON.stringify(payload).replace(/</g, '\\u003c');
+const sorted = [...(R.players as any[])].sort((a, b) => a.name.localeCompare(b.name));
+const defA = R.players[0]?.id;
+const defB = R.players[1]?.id;
+---
+<Base title={`Comparateur ${season.label} — Blackball Para-billard`} description="Comparez deux joueurs du Para-billard : confrontations directes et statistiques." active="disciplines">
+  <HubNav season={season.slug} active="comparateur" root="/para-billard" brand="Para-billard" sub="· Blackball Para-billard" joueursLabel="Joueurs" videosHref="/disciplines/billard/categorie/para-billard" />
+  <section class="disc-hero" style="--dc:var(--c-billard)">
+    <div class="wrap">
+      <div class="kick" style="color:var(--c-billard)">Blackball Para-billard · Comparateur</div>
+      <h1>Comparer deux joueurs</h1>
+      <p>Confrontations directes et statistiques côte à côte · saison {season.label}.</p>
+      <div class="bar" style="background:var(--c-billard)"></div>
+      <div class="bstat-nav"><SeasonPicker current={season.slug} sub="/comparateur" onlyPlayed={true} root="/para-billard" seasons={getParaSeasons()} /></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap" style="max-width:860px">
+      <div class="cmp-pick">
+        <select id="selA" class="cmp-sel" aria-label="Joueur 1">
+          {sorted.map((p) => <option value={p.id} selected={p.id === defA}>{p.name}</option>)}
+        </select>
+        <span class="cmp-vs">VS</span>
+        <select id="selB" class="cmp-sel" aria-label="Joueur 2">
+          {sorted.map((p) => <option value={p.id} selected={p.id === defB}>{p.name}</option>)}
+        </select>
+      </div>
+      <div id="cmp-out" data-base={base}></div>
+    </div>
+  </section>
+
+  <script type="application/json" id="cmp-data" set:html={json}></script>
+  <script is:inline>
+    (function () {
+      var data = JSON.parse(document.getElementById('cmp-data').textContent);
+      var byId = {}; data.players.forEach(function (p) { byId[p.id] = p; });
+      var tById = {}; data.tournaments.forEach(function (t) { tById[t.id] = t; });
+      var selA = document.getElementById('selA'), selB = document.getElementById('selB'), out = document.getElementById('cmp-out');
+      var fmt = function (d) { try { return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(d)); } catch (e) { return d; } };
+
+      function h2h(aId, bId) {
+        return data.matches.filter(function (m) { return (m.a === aId && m.b === bId) || (m.a === bId && m.b === aId); })
+          .sort(function (x, y) { return x.d < y.d ? 1 : -1; });
+      }
+      function statRow(label, va, vb, hlHigher) {
+        var aw = hlHigher && va > vb, bw = hlHigher && vb > va;
+        return '<div class="cmp-row"><span class="cmp-a ' + (aw ? 'win' : '') + '">' + va + '</span>'
+          + '<span class="cmp-lab">' + label + '</span>'
+          + '<span class="cmp-b ' + (bw ? 'win' : '') + '">' + vb + '</span></div>';
+      }
+      function head(p) {
+        var img = p.photo ? '<img src="' + p.photo + '" alt="" onerror="this.remove()">' : '';
+        var photo = '<span class="bphoto"><span class="bavatar">' + p.name.slice(0, 1) + '</span>' + img + '</span>';
+        var parts = p.name.trim().split(/\s+/);
+        var first = parts.shift() || p.name;
+        var last = parts.join(' ');
+        var nm = '<span class="cmp-fn">' + first + '</span>' + (last ? '<span class="cmp-ln">' + last + '</span>' : '');
+        return '<div class="cmp-head">' + photo + '<div class="cmp-hn">' + nm + '</div></div>';
+      }
+      function render() {
+        var a = byId[+selA.value], b = byId[+selB.value];
+        if (!a || !b || a.id === b.id) { out.innerHTML = '<p class="dek" style="text-align:center;padding:30px 0">Choisissez deux joueurs différents.</p>'; return; }
+        var m = h2h(a.id, b.id), wa = 0, wb = 0;
+        m.forEach(function (x) { var aS = x.a === a.id ? x.sA : x.sB, bS = x.a === a.id ? x.sB : x.sA; if (aS > bS) wa++; else if (bS > aS) wb++; });
+        var html = '<div class="cmp-card">';
+        html += '<div class="cmp-heads">' + head(a) + '<div class="cmp-vsbig">VS</div>' + head(b) + '</div>';
+        html += '<div class="cmp-h2h">' + (m.length ? '<b>' + m.length + '</b> confrontation' + (m.length > 1 ? 's' : '') + ' · <span class="cmp-score">' + wa + ' — ' + wb + '</span>' : 'Aucune confrontation directe cette saison') + '</div>';
+        html += '<div class="cmp-stats">';
+        html += statRow('Points FFB', a.points, b.points, true);
+        html += statRow('Classement', a.rank + 'e', b.rank + 'e', false);
+        html += statRow('Victoires', a.wins, b.wins, true);
+        html += statRow('% victoires', a.winPct + '%', b.winPct + '%', false);
+        html += statRow('Matchs joués', a.played, b.played, false);
+        html += statRow('Différentiel', (a.diff >= 0 ? '+' : '') + a.diff, (b.diff >= 0 ? '+' : '') + b.diff, false);
+        html += '</div>';
+        if (m.length) {
+          html += '<div class="cmp-list"><div class="cmp-list-t">Confrontations</div>';
+          m.forEach(function (x) {
+            var t = tById[x.t] || {}, aS = x.a === a.id ? x.sA : x.sB, bS = x.a === a.id ? x.sB : x.sA;
+            var loc = [t.level, t.city].filter(Boolean).join(' · ');
+            html += '<div class="cmp-match"><span class="cmp-md">' + fmt(x.d) + '</span><span class="cmp-ms mono ' + (aS > bS ? 'wa' : 'wb') + '">' + aS + ' — ' + bS + '</span><span class="cmp-mr">' + [x.r, loc].filter(Boolean).join(' · ') + '</span></div>';
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+        out.innerHTML = html;
+      }
+      selA.addEventListener('change', render);
+      selB.addEventListener('change', render);
+      render();
+    })();
+  </script>
+</Base>

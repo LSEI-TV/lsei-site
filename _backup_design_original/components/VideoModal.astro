@@ -1,0 +1,77 @@
+---
+// Modale de lecture : cliquer une carte vidéo ouvre le lecteur par-dessus la page,
+// sans quitter la liste. Échap / bouton retour ferment. URL synchronisée (partageable).
+---
+<div class="modal" id="video-modal" hidden role="dialog" aria-modal="true" aria-label="Lecteur vidéo">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-body">
+    <button class="modal-close" data-close aria-label="Fermer">✕</button>
+    <div class="modal-player" id="modal-player"></div>
+    <div class="modal-meta">
+      <h3 class="modal-title" id="modal-title"></h3>
+      <a class="modal-yt" id="modal-yt" href="#" target="_blank" rel="noopener">Voir sur YouTube ↗</a>
+    </div>
+  </div>
+</div>
+<script is:inline>
+  (function () {
+    var modal = document.getElementById('video-modal');
+    if (!modal) return;
+    var player = document.getElementById('modal-player');
+    var titleEl = document.getElementById('modal-title');
+    var ytEl = document.getElementById('modal-yt');
+    var open = false;
+
+    function show(id, title) {
+      player.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Lecteur vidéo"></iframe>';
+      titleEl.textContent = title || '';
+      ytEl.href = 'https://www.youtube.com/watch?v=' + id;
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      open = true;
+    }
+    function hide() {
+      player.innerHTML = '';
+      modal.hidden = true;
+      document.body.style.overflow = '';
+      open = false;
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest('a.card[href^="/replay/"]');
+      if (!a) return;
+      e.preventDefault();
+      var href = a.getAttribute('href');
+      var id = href.slice('/replay/'.length);
+      var h = a.querySelector('h3');
+      var title = h ? h.textContent.trim() : '';
+      show(id, title);
+      try { history.pushState({ videoModal: true, id: id, title: title }, '', href); } catch (err) {}
+    });
+    function requestClose() {
+      if (!open) return;
+      if (history.state && history.state.videoModal) history.back();
+      else hide();
+    }
+    modal.querySelectorAll('[data-close]').forEach(function (el) { el.addEventListener('click', requestClose); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') requestClose(); });
+    window.addEventListener('popstate', function () {
+      var st = history.state;
+      if (st && st.videoModal) { if (!open) show(st.id, st.title); }
+      else if (open) hide();
+    });
+
+    // Vidéos intégrées dans les articles : clic sur la façade → chargement en place.
+    document.addEventListener('click', function (e) {
+      var f = e.target.closest('.yt-facade');
+      if (!f) return;
+      var id = f.getAttribute('data-id');
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
+      iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.setAttribute('title', 'Lecteur vidéo');
+      iframe.className = 'yt-iframe';
+      f.replaceWith(iframe);
+    });
+  })();
+</script>

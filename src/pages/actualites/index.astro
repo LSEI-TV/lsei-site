@@ -1,0 +1,98 @@
+---
+import Base from '../../layouts/Base.astro';
+import SocialLinks from '../../components/SocialLinks.astro';
+import { getCollection } from 'astro:content';
+import { disciplines } from '../../data/site';
+import { articleCover } from '../../lib/articles';
+import SportIcon from '../../components/SportIcon.astro';
+
+const articles = (await getCollection('articles', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const discOf = (slug?: string) => disciplines.find((d) => d.slug === slug);
+const fmtDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+
+// Publications réseaux (posts choisis à la main) — affichées en bas de page.
+const socialPosts = (await getCollection('social', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const FB_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.56 9.87v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.88h-2.34v6.99A10 10 0 0 0 22 12Z"/></svg>';
+const IG_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg>';
+const PLATFORMS: Record<string, { label: string; color: string; icon: string }> = {
+  facebook: { label: 'Facebook', color: '#1877F2', icon: FB_ICON },
+  instagram: { label: 'Instagram', color: '#E1306C', icon: IG_ICON },
+};
+---
+<Base title="Actualités" description="Comptes-rendus, portraits et coulisses des disciplines LSEI." active="actualites">
+  <section class="disc-hero">
+    <div class="wrap">
+      <div class="kick" style="color:var(--accent)">Le mag</div>
+      <h1>Actualités</h1>
+      <p>Comptes-rendus, portraits et coulisses : l'actualité de nos disciplines, racontée par LSEI.</p>
+      <div class="bar" style="background:var(--accent)"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      {articles.length > 0 ? (
+        <div class="cards">
+          {articles.map((a) => {
+            const d = discOf(a.data.discipline);
+            const cover = articleCover(a);
+            return (
+              <a href={`/actualites/${a.id}`} class="card" style={d ? `--dc:${d.colorVar}` : ''}>
+                <div class="frame">
+                  {cover
+                    ? <img class="photo" src={cover.src} alt="" loading="lazy" onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />
+                    : <div class="duo" style={d ? `background:linear-gradient(135deg,${d.from},${d.to})` : 'background:linear-gradient(135deg,#1E40E5,#0a1a6b)'}></div>}
+                  <div class="grad"></div>
+                  {d && <div class="cap"><div class="disc"><SportIcon slug={d.slug} class="disc-tag-ic" />{d.label}</div></div>}
+                </div>
+                <div class="kicker">{fmtDate(a.data.date)}</div>
+                <h3>{a.data.title}</h3>
+                <p class="ex">{a.data.excerpt}</p>
+              </a>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="dek">Les premiers articles arrivent bientôt.</p>
+      )}
+    </div>
+  </section>
+
+  {socialPosts.length > 0 && (
+    <section class="section social-section">
+      <div class="wrap">
+        <hr class="rule" />
+        <div class="sec-head" style="margin-top:34px">
+          <div>
+            <div class="eyebrow">À suivre</div>
+            <h2>Sur les réseaux sociaux</h2>
+          </div>
+          <div class="social-follow"><SocialLinks compact /></div>
+        </div>
+        <div class="cards">
+          {socialPosts.map((p) => {
+            const pf = PLATFORMS[p.data.platform];
+            return (
+              <a href={p.data.link} target="_blank" rel="noopener" class="card social-card" style={`--pc:${pf.color}`}>
+                <div class="frame">
+                  {p.data.image
+                    ? <img class="photo" src={p.data.image} alt="" loading="lazy" />
+                    : <div class="duo social-ph"><span class="soc-ph-ico" set:html={pf.icon}></span></div>}
+                  <div class="grad"></div>
+                  <div class="cap"><div class="disc"><span class="plat-ico" set:html={pf.icon}></span>{pf.label}</div></div>
+                </div>
+                <div class="kicker">{fmtDate(p.data.date)}</div>
+                <p class="social-cap">{p.data.caption}</p>
+                <span class="social-more">Voir la publication ↗</span>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+</Base>

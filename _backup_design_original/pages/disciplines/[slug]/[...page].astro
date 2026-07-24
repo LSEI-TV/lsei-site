@@ -1,0 +1,63 @@
+---
+import Base from '../../../layouts/Base.astro';
+import VideoGrid from '../../../components/VideoGrid.astro';
+import FilterMenu from '../../../components/FilterMenu.astro';
+import DisciplineNav from '../../../components/DisciplineNav.astro';
+import { disciplines } from '../../../data/site';
+import { getReplays, getSeasonCounts, getBillardCategories, seasonSlug, seasonShort, categorySlug, type Video } from '../../../lib/youtube';
+import type { GetStaticPaths, Page } from 'astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const routes = [];
+  for (const d of disciplines) {
+    const videos = await getReplays({ discipline: d.slug });
+    routes.push(...paginate(videos, { params: { slug: d.slug }, props: { disc: d }, pageSize: 24 }));
+  }
+  return routes;
+}) satisfies GetStaticPaths;
+
+const { page, disc } = Astro.props as { page: Page<Video>; disc: (typeof disciplines)[number] };
+const videos = page.data;
+
+const seasonCounts = await getSeasonCounts(disc.slug);
+const seasonOptions = [
+  { label: 'Toutes les saisons', value: `/disciplines/${disc.slug}`, selected: true },
+  ...seasonCounts.map((s) => ({ label: `${s.season} · ${s.count}`, value: `/disciplines/${disc.slug}/saison/${seasonSlug(s.season)}` })),
+];
+
+// Catégories (billard uniquement)
+const catCounts = disc.slug === 'billard' ? await getBillardCategories() : [];
+const categoryOptions = [
+  { label: 'Toutes les catégories', value: '/disciplines/billard', selected: true },
+  ...catCounts.map((c) => ({ label: `${c.category} · ${c.count}`, value: `/disciplines/billard/categorie/${categorySlug(c.category)}` })),
+];
+---
+<Base title={disc.name} description={disc.blurb} active="disciplines">
+  <section class="disc-hero">
+    <div class="wrap" style={`--dc:${disc.colorVar}`}>
+      <div class="kick">{disc.label} · {disc.sub}</div>
+      <h1>{disc.name}</h1>
+      <p>{disc.blurb}</p>
+      <div class="bar"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap" style={`--dc:${disc.colorVar}`}>
+      {(seasonCounts.length > 0 || catCounts.length > 0) && (
+        <div class="filter-bar">
+          {seasonCounts.length > 0 && <FilterMenu label="Saison" options={seasonOptions} colorVar={disc.colorVar} />}
+          {catCounts.length > 0 && <FilterMenu label="Catégorie" options={categoryOptions} colorVar={disc.colorVar} />}
+        </div>
+      )}
+      <div class="sec-head">
+        <div class="eyebrow">Vidéothèque{page.total > 0 && ` · ${page.total} vidéos`}</div>
+        <DisciplineNav active={disc.slug} />
+      </div>
+
+      {videos.length > 0
+        ? <VideoGrid page={page} />
+        : <p class="dek">Les vidéos de cette discipline arrivent bientôt.</p>}
+    </div>
+  </section>
+</Base>
