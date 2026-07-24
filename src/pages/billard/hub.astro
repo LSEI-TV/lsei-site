@@ -1,75 +1,56 @@
 ---
-// Page d'entrée du Billard : on choisit la compétition (Masters ou Féminin),
-// avec un résumé de chacune (chiffres, podium, palmarès en titre).
+// Hub BILLARD : point d'entrée de la discipline. On choisit l'univers de jeu.
+// - Blackball : compétitions FFB structurées (Masters/Femmes/Para) -> sous-hub /billard/blackball
+// - Snooker & Billard américain : uniquement des vidéos -> vidéothèque de la catégorie
 import Base from '../../layouts/Base.astro';
 import { getReplays } from '../../lib/youtube';
-import { defaultSeason, getPalmares, DEFAULT_SEASON, LANDING_SEASON } from '../../data/billard/seasons';
-import { femmesDefaultSeason, getFemmesPalmares, FEMMES_DEFAULT_SEASON } from '../../data/billard/seasonsFemmes';
-import { paraDefaultSeason, getParaPalmares, PARA_DEFAULT_SEASON } from '../../data/billard/seasonsPara';
 
-const vidCount = (await getReplays({ discipline: 'billard' })).length;
-const m = defaultSeason();
-const f = femmesDefaultSeason();
-const pa = paraDefaultSeason();
-const mPalm = getPalmares().find((p) => p.slug === DEFAULT_SEASON);
-const fPalm = getFemmesPalmares().find((p) => p.slug === FEMMES_DEFAULT_SEASON);
-const paPalm = getParaPalmares().find((p) => p.slug === PARA_DEFAULT_SEASON);
+const bilVids = await getReplays({ discipline: 'billard' });
+const nSnooker = bilVids.filter((v) => v.category === 'Snooker').length;
+const nAmericain = bilVids.filter((v) => v.category === 'Billard américain').length;
 
-const comps = [
+const types = [
   {
-    href: `/billard/saison/${LANDING_SEASON}`,
-    ficheBase: '/billard/joueur/',
-    accent: '#7C4DD6', accentInk: '#ffffff', // violet (Masters)
-    eyebrow: 'Compétition masculine',
-    title: 'Blackball Masters',
-    noun: 'joueurs',
-    desc: 'Le circuit national masculin : 8 Tournois Nationaux et le Championnat de France, où s’affrontent les meilleurs joueurs français.',
-    R: m.results!, season: m.label,
-    champSeasonLabel: 'Champion de saison', champFranceLabel: 'Champion de France',
-    palm: mPalm,
+    href: '/billard/blackball',
+    accent: 'var(--c-billard)',
+    eyebrow: 'Compétitions FFB · classements',
+    title: 'Blackball',
+    desc: 'Le circuit national de la FFB : Masters (hommes), Femmes et Para-billard. Classements officiels, joueurs, fiches carrière et 11 saisons d’archives.',
+    chips: ['Masters', 'Femmes', 'Para-billard'],
+    stat: '3 compétitions',
+    cta: 'Entrer dans le hub Blackball',
+    featured: true,
   },
   {
-    href: `/femmes`,
-    ficheBase: '/femmes/joueur/',
-    accent: '#F2B90A', accentInk: '#2a2205', // jaune (Femmes) — distingue la compétition
-    eyebrow: 'Compétition féminine',
-    title: 'Blackball Femmes',
-    noun: 'joueuses',
-    desc: 'Le circuit national féminin : 8 Tournois Nationaux et le Championnat de France, qui réunit les meilleures joueuses françaises.',
-    R: f.results!, season: f.label,
-    champSeasonLabel: 'Championne de saison', champFranceLabel: 'Championne de France',
-    palm: fPalm,
+    href: '/disciplines/billard/categorie/snooker',
+    accent: '#2FA36B',
+    eyebrow: 'Vidéos',
+    title: 'Snooker',
+    desc: 'Le billard anglais à grande table : nos captations et rediffusions snooker.',
+    chips: [],
+    stat: `${nSnooker} vidéo${nSnooker > 1 ? 's' : ''}`,
+    cta: 'Voir les vidéos',
+    featured: false,
   },
   {
-    href: `/para-billard`,
-    ficheBase: '/para-billard/joueur/',
-    accent: '#14A38B', accentInk: '#ffffff', // turquoise (Para-billard)
-    eyebrow: 'Compétition handi-billard',
-    title: 'Blackball Para-billard',
-    noun: 'joueurs',
-    desc: 'Le blackball para-billard (handi-billard) de la FFB : le circuit national des joueurs en situation de handicap.',
-    R: pa.results!, season: pa.label,
-    champSeasonLabel: 'Champion de saison', champFranceLabel: 'Champion de France',
-    palm: paPalm,
+    href: '/disciplines/billard/categorie/billard-americain',
+    accent: '#D9642E',
+    eyebrow: 'Vidéos',
+    title: 'Billard américain',
+    desc: 'Pool 8 et 9 billes : nos captations et rediffusions de billard américain.',
+    chips: [],
+    stat: `${nAmericain} vidéo${nAmericain > 1 ? 's' : ''}`,
+    cta: 'Voir les vidéos',
+    featured: false,
   },
-].map((c) => {
-  const players = c.R.players as any[];
-  const top3 = [...players].sort((a, b) => a.rank - b.rank).slice(0, 3);
-  // Champion à la une : le Champion de France s'il existe (titre suprême), sinon le champion de saison.
-  const feat = c.palm?.cdf
-    ? { icon: '🏆', label: c.champFranceLabel, name: c.palm.cdf.name, id: c.palm.cdf.id }
-    : c.palm?.champ
-    ? { icon: '⭐', label: c.champSeasonLabel, name: c.palm.champ.name, id: c.palm.champ.id }
-    : null;
-  return { ...c, players: players.length, tourns: c.R.tournaments.length, matches: c.R.matches.length, top3, feat };
-});
+];
 ---
-<Base title="Billard — Blackball Masters & Femmes" description="Le hub Billard de LSEI : choisissez la compétition Blackball Masters (hommes) ou Blackball Femmes (femmes)." active="disciplines">
+<Base title="Billard — Le hub" description="Le hub Billard de LSEI : Blackball (Masters, Femmes, Para), Snooker et Billard américain." active="disciplines">
   <section class="disc-hero" style="--dc:var(--c-billard)">
     <div class="wrap">
       <div class="kick" style="color:var(--c-billard)">LSEI · Billard</div>
-      <h1>Le hub Blackball</h1>
-      <p>Deux compétitions, un même univers. Choisissez le circuit national que vous voulez suivre — classements, joueurs, fiches carrière et confrontations.</p>
+      <h1>Le hub Billard</h1>
+      <p>Trois univers sous un même toit. Le <b>Blackball</b> (nos compétitions nationales avec classements et fiches), le <b>Snooker</b> et le <b>Billard américain</b> (nos vidéos). Choisissez ce que vous voulez suivre.</p>
       <div class="bar" style="background:var(--c-billard)"></div>
     </div>
   </section>
@@ -80,50 +61,52 @@ const comps = [
         <span class="bchoose-video-ic">🎬</span>
         <span class="bchoose-video-txt">
           <span class="bchoose-video-t">Vidéothèque billard</span>
-          <span class="bchoose-video-s">Toutes les vidéos billard, toutes compétitions confondues · {vidCount} vidéos</span>
+          <span class="bchoose-video-s">Toutes les vidéos billard, tous univers confondus · {bilVids.length} vidéos</span>
         </span>
         <span class="bchoose-video-cta">Voir toutes les vidéos →</span>
       </a>
 
-      <div class="bchoose">
-        {comps.map((c) => (
-          <div class="bchoose-card" style={`--cc:${c.accent};--cc-ink:${c.accentInk}`}>
-            <div class="bchoose-eyebrow">{c.eyebrow}</div>
-            <a href={c.href} class="bchoose-title-link"><h2 class="bchoose-title">{c.title}</h2></a>
-            <p class="bchoose-desc">{c.desc}</p>
-
-            {c.feat && (
-              <a href={`${c.ficheBase}${c.feat.id}`} class="champ-feature">
-                <span class="champ-trophy">{c.feat.icon}</span>
-                <span class="champ-body">
-                  <span class="champ-lab">{c.feat.label} en titre</span>
-                  <span class="champ-name">{c.feat.name}</span>
-                </span>
-                <span class="champ-go">→</span>
-              </a>
-            )}
-
-            <div class="bchoose-sublab">Podium de la saison {c.season}</div>
-            <div class="bchoose-podium">
-              {c.top3.map((p) => (
-                <a href={`${c.ficheBase}${p.id}`} class="bchoose-pod">
-                  <span class={`bchoose-pod-r r${p.rank}`}>{p.rank}</span>
-                  <span class="bchoose-pod-n"><span class="pod-name">{p.name}</span>{p.rank === 1 && <em class="pod-tag">{c.champSeasonLabel}</em>}</span>
-                  <span class="bchoose-pod-p">{p.points}<small>pts</small></span>
-                </a>
-              ))}
+      <div class="gchoose">
+        {types.map((t) => (
+          <a href={t.href} class={`gcard${t.featured ? ' is-featured' : ''}`} style={`--gc:${t.accent}`}>
+            <div class="gcard-top">
+              <div class="gcard-eyebrow">{t.eyebrow}</div>
+              <h2 class="gcard-title">{t.title}</h2>
+              <p class="gcard-desc">{t.desc}</p>
+              {t.chips.length > 0 && (
+                <div class="gcard-chips">{t.chips.map((ch) => <span>{ch}</span>)}</div>
+              )}
             </div>
-
-            <div class="bchoose-stats">
-              <div><b>{c.players}</b><span>{c.noun}</span></div>
-              <div><b>{c.tourns}</b><span>étapes</span></div>
-              <div><b>{c.matches}</b><span>matchs</span></div>
+            <div class="gcard-foot">
+              <span class="gcard-stat">{t.stat}</span>
+              <span class="gcard-cta">{t.cta} →</span>
             </div>
-
-            <a href={c.href} class="bchoose-cta">Entrer dans le hub →</a>
-          </div>
+          </a>
         ))}
       </div>
     </div>
   </section>
 </Base>
+
+<style>
+  .gchoose { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 16px; align-items: stretch; }
+  .gcard {
+    display: flex; flex-direction: column; justify-content: space-between; gap: 20px;
+    border: 1px solid var(--line-strong); border-top: 3px solid var(--gc);
+    border-radius: 14px; background: var(--surface); padding: 22px 22px 18px;
+    text-decoration: none; color: inherit; transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  .gcard:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -22px rgba(0,0,0,.7); border-color: var(--gc); }
+  .gcard.is-featured { background: color-mix(in srgb, var(--gc) 7%, var(--surface)); }
+  .gcard-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gc); margin-bottom: 8px; }
+  .gcard-title { font-family: var(--display); font-size: clamp(24px, 3vw, 34px); line-height: 1.05; margin: 0 0 10px; color: var(--ink); }
+  .gcard-desc { font-size: 14px; color: var(--ink-soft); line-height: 1.5; margin: 0; }
+  .gcard-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .gcard-chips span { font-size: 12px; font-weight: 600; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 100px; padding: 4px 11px; }
+  .gcard-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .gcard-stat { font-family: var(--display); font-weight: 700; font-size: 15px; color: var(--ink); }
+  .gcard-cta { font-size: 13px; font-weight: 700; color: var(--gc); white-space: nowrap; }
+  @media (max-width: 860px) {
+    .gchoose { grid-template-columns: 1fr; }
+  }
+</style>
