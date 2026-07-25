@@ -45,6 +45,23 @@ export const BILLARD_CATEGORIES = [
   'Snooker', 'Pool', 'Billard américain', 'Autres',
 ];
 
+// Description éditoriale propre à chaque catégorie (référencement : chaque page
+// catégorie a ainsi son propre texte riche en mots-clés, au lieu du texte générique).
+export const CATEGORY_INTRO: Record<string, string> = {
+  'Masters': "Les Masters, catégorie reine du Blackball français : retrouvez en replay les tournois nationaux, phases finales et grands rendez-vous du Blackball Master, filmés et commentés par LSEI.",
+  'Femmes': "Le Blackball féminin à l'honneur : tournois et compétitions féminines de billard blackball, en replay commenté sur LSEI — Le Sport en Image.",
+  'Para-billard': "Le para-billard blackball : le Championnat de France de para-billard et les rencontres de blackball handisport, filmés et diffusés par LSEI.",
+  'Espoirs': "Les Espoirs du blackball : la relève du billard français, ses tournois et ses phases finales, en replay commenté sur LSEI.",
+  'Tournois Nationaux': "Les Tournois Nationaux (TN) de blackball : les étapes du circuit national français, en replay commenté par LSEI.",
+  'Coupe de France': "La Coupe de France de blackball : la grande compétition nationale par équipes et ses phases finales, filmées par LSEI.",
+  'Championnat': "Les championnats de blackball : rencontres et phases de championnat, en replay sur LSEI — Le Sport en Image.",
+  'Ligue de Bretagne': "Le blackball en Bretagne : les compétitions et rencontres de la Ligue de Bretagne, filmées et commentées par LSEI.",
+  'Snooker': "Le snooker : rencontres, tournois et démonstrations de snooker en vidéo sur LSEI — Le Sport en Image.",
+  'Pool': "Le pool et le billard américain (8-ball, blackball US) : tournois et rencontres en replay commenté sur LSEI.",
+  'Billard américain': "Le billard américain : rencontres et compétitions filmées et commentées par LSEI — Le Sport en Image.",
+  'Autres': "Rencontres et compétitions de billard diverses, filmées et diffusées par LSEI — Le Sport en Image.",
+};
+
 function billardCategory(title: string): string {
   const t = title.toLowerCase();
   if (t.includes('para') || t.includes('handi')) return 'Para-billard';

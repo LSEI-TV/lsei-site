@@ -4,7 +4,7 @@ import VideoGrid from '../../../../../components/VideoGrid.astro';
 import FilterMenu from '../../../../../components/FilterMenu.astro';
 import DisciplineNav from '../../../../../components/DisciplineNav.astro';
 import { disciplines } from '../../../../../data/site';
-import { getReplays, getBillardCategories, categorySlug, seasonSlug, type Video } from '../../../../../lib/youtube';
+import { getReplays, getBillardCategories, categorySlug, seasonSlug, CATEGORY_INTRO, type Video } from '../../../../../lib/youtube';
 import type { GetStaticPaths, Page } from 'astro';
 
 export const getStaticPaths = (async ({ paginate }) => {
@@ -20,6 +20,8 @@ export const getStaticPaths = (async ({ paginate }) => {
 
 const { page, category } = Astro.props as { page: Page<Video>; category: string };
 const disc = disciplines.find((d) => d.slug === 'billard')!;
+// Texte propre à la catégorie (SEO) ; repli sur le chapô billard si non défini.
+const catText = CATEGORY_INTRO[category] || disc.blurb;
 
 const cats = await getBillardCategories();
 const categoryOptions = [
@@ -36,12 +38,12 @@ const seasonOptions = [
   ...seasons.map((s) => ({ label: `${s} · ${catVids.filter((v) => v.season === s).length}`, value: `/disciplines/billard/categorie/${catSlug}/saison/${seasonSlug(s)}` })),
 ];
 ---
-<Base title={`Billard — ${category}`} description={`Les vidéos de billard : ${category}.`} active="disciplines">
+<Base title={`Billard — ${category}`} description={catText} active="disciplines">
   <section class="disc-hero">
     <div class="wrap" style={`--dc:${disc.colorVar}`}>
       <div class="kick">{disc.label} · {category}</div>
-      <h1>{disc.name}</h1>
-      <p>{disc.blurb}</p>
+      <h1>{disc.name} — {category}</h1>
+      <p>{catText}</p>
       <div class="bar"></div>
     </div>
   </section>
