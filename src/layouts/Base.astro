@@ -25,6 +25,9 @@ const ogImage = new URL('/og-image.jpg', Astro.site).href;
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0C0E13" />
     <link rel="canonical" href={canonical} />
     <!-- Open Graph (Facebook, WhatsApp, Messenger, LinkedIn…) -->
     <meta property="og:title" content={fullTitle} />
