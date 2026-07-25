@@ -17,8 +17,27 @@ const shareUrl = new URL(`/replay/${video.id}`, Astro.site).href;
 
 const all = await getReplays({ discipline: video.discipline });
 const related = all.filter((v) => v.id !== video.id).slice(0, 3);
+
+// Données structurées vidéo (SEO) : permet à Google d'afficher la vidéo
+// avec sa miniature dans les résultats de recherche et l'onglet « Vidéos ».
+const videoLd = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  name: video.title,
+  description: video.excerpt || `${video.title} — ${d.name} en replay sur LSEI, Le Sport en Image.`,
+  ...(video.thumb ? { thumbnailUrl: [video.thumb] } : {}),
+  ...(video.date ? { uploadDate: video.date } : {}),
+  embedUrl: `https://www.youtube.com/embed/${video.id}`,
+  contentUrl: `https://www.youtube.com/watch?v=${video.id}`,
+  publisher: {
+    '@type': 'Organization',
+    name: 'LSEI — Le Sport en Image',
+    logo: { '@type': 'ImageObject', url: new URL('/icon-512.png', Astro.site).href },
+  },
+};
 ---
-<Base title={video.title} description={video.excerpt} active="replays">
+<Base title={video.title} description={video.excerpt} active="replays" image={video.thumb}>
+  <script type="application/ld+json" set:html={JSON.stringify(videoLd)} />
   <section class="section">
     <div class="wrap watch">
       <div class="watch-main lead">

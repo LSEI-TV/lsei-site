@@ -10,12 +10,16 @@ interface Props {
   title?: string;
   description?: string;
   active?: string;
+  /** image de partage spécifique à la page (ex. miniature d'une vidéo). Défaut : image du site. */
+  image?: string;
 }
-const { title, description = site.description, active } = Astro.props;
+const { title, description = site.description, active, image } = Astro.props;
 const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
 // URLs absolues (nécessaires pour le partage réseaux sociaux + le référencement).
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL('/og-image.jpg', Astro.site).href;
+const ogImage = image
+  ? (image.startsWith('http') ? image : new URL(image, Astro.site).href)
+  : new URL('/og-image.jpg', Astro.site).href;
 ---
 <!doctype html>
 <html lang="fr" data-theme="dark">

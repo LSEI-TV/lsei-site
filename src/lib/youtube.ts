@@ -34,6 +34,8 @@ export interface Video {
   season?: string;
   /** catégorie/compétition (billard uniquement), ex. "Masters" */
   category?: string;
+  /** date de diffusion au format ISO (pour les données structurées SEO) */
+  date?: string;
 }
 
 // --- Catégories billard (par compétition), déduites du titre de la playlist ---
@@ -235,6 +237,7 @@ const FOOTBALL_VIDEOS: Video[] = FOOTBALL_SOURCE.map((v) => ({
   thumb: `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`,
   // finales de fin de saison (mai-juin) → saison qui s'achève cette année-là
   season: `${Number(v.year) - 1}/${v.year}`,
+  date: `${v.year}-06-01`,
 }));
 
 // =============== API PUBLIQUE (consommée par les pages) ===============
@@ -336,6 +339,7 @@ async function fetchRealReplays(): Promise<Video[]> {
         thumb: m.thumb,
         season: m.plSeason || seasonOf(eff), // le « 25/26 » du nom de playlist fait foi
         category: m.category,
+        date: eff, // ISO, pour les données structurées vidéo
       } as Video,
     };
   });
