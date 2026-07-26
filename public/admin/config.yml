@@ -84,3 +84,20 @@ collections:
       - { label: "Lien vers la publication", name: "link", widget: "string", hint: "Collez l'adresse (URL) du post Facebook ou Instagram" }
       - { label: "Image du post (téléversez-la)", name: "image", widget: "image", required: false }
       - { label: "Brouillon (ne pas publier)", name: "draft", widget: "boolean", default: false, required: false }
+
+  - name: "evenements"
+    label: "Événements"
+    label_singular: "Événement"
+    folder: "src/content/evenements"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    summary: "{{title}} — {{date}}"
+    sortable_fields: ["date", "title"]
+    fields:
+      - { label: "Titre de l'événement", name: "title", widget: "string" }
+      - { label: "Affiche / bannière (image large, ex. 1760×334)", name: "image", widget: "image" }
+      - { label: "Date de l'événement (le bandeau disparaît après)", name: "date", widget: "datetime", date_format: "DD/MM/YYYY", time_format: false, format: "YYYY-MM-DD" }
+      - { label: "Lien (optionnel : direct YouTube, billetterie, info…)", name: "link", widget: "string", required: false }
+      - { label: "Brouillon (ne pas publier)", name: "draft", widget: "boolean", default: false, required: false }

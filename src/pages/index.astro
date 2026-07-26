@@ -14,6 +14,10 @@ const latestArticles = (await getCollection('articles', ({ data }) => !data.draf
   .slice(0, 3);
 const fmtArticleDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
 
+// Événements à mettre en avant (bandeau en haut) — disparaissent après la date de l'événement.
+const events = (await getCollection('evenements', ({ data }) => !data.draft && data.date.valueOf() + 86400000 > Date.now()))
+  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+
 const live = await getLiveFeature();
 const programme = await getProgramme();
 const replays = await getReplays({ limit: 3 });
@@ -134,7 +138,54 @@ const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t
     </div>
   </section>
 
-  <hr class="rule" />
+  {events.length > 0 ? (
+    <section class="section evbanner-wrap">
+      <div class="wrap">
+        <div class="sec-head">
+          <div>
+            <div class="eyebrow">À l'affiche</div>
+            <h2>{events.length > 1 ? 'Événements à venir' : 'Prochain événement'}</h2>
+          </div>
+        </div>
+        <div class="evcar" data-count={events.length}>
+          <div class="evcar-track">
+            {events.map((e) => (
+              <div class="evcar-slide">
+                {e.data.link
+                  ? <a href={e.data.link} class="evbanner" target={e.data.link.startsWith('http') ? '_blank' : undefined} rel="noopener" aria-label={e.data.title}><img src={e.data.image} alt={e.data.title} loading="lazy" /></a>
+                  : <div class="evbanner"><img src={e.data.image} alt={e.data.title} loading="lazy" /></div>}
+              </div>
+            ))}
+          </div>
+          {events.length > 1 && (
+            <div class="evcar-dots">
+              {events.map((e, i) => <button type="button" class="evcar-dot" data-i={i} aria-label={`Voir : ${e.data.title}`}></button>)}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  ) : (
+    <hr class="rule" />
+  )}
+  <script is:inline>
+    (function () {
+      document.querySelectorAll('.evcar[data-count]').forEach(function (car) {
+        var count = parseInt(car.getAttribute('data-count'), 10);
+        if (!count || count < 2) return;
+        var track = car.querySelector('.evcar-track');
+        var dots = Array.prototype.slice.call(car.querySelectorAll('.evcar-dot'));
+        var i = 0, timer = null;
+        function go(n) { i = (n + count) % count; track.style.transform = 'translateX(' + (-i * 100) + '%)'; dots.forEach(function (d, k) { d.classList.toggle('active', k === i); }); }
+        function start() { timer = setInterval(function () { go(i + 1); }, 8000); }
+        function stop() { if (timer) { clearInterval(timer); timer = null; } }
+        dots.forEach(function (d, k) { d.addEventListener('click', function () { stop(); go(k); start(); }); });
+        car.addEventListener('mouseenter', stop);
+        car.addEventListener('mouseleave', start);
+        go(0); start();
+      });
+    })();
+  </script>
 
   <!-- REPLAYS -->
   <section class="section">

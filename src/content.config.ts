@@ -37,4 +37,17 @@ const social = defineCollection({
   }),
 });
 
-export const collections = { articles, social };
+// Collection « événements » — affiches d'événements à mettre en avant (bandeau d'accueil).
+// Éditable via /admin. Le bandeau disparaît automatiquement après la date de l'événement.
+const evenements = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/evenements' }),
+  schema: z.object({
+    title: z.string(),
+    image: z.string(),            // affiche / bannière (large, ex. 1760×334)
+    date: z.coerce.date(),        // date de l'événement — le bandeau disparaît après
+    link: z.string().optional(),  // lien optionnel (direct YouTube, billetterie, page info…)
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { articles, social, evenements };
