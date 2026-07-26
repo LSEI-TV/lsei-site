@@ -906,7 +906,7 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 /* Montage 3 colonnes façon fiche sportive : texte | photo centrale | carte dernier match */
 .chero-ufc { grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) 235px; gap: 20px; align-items: center; }
 .chero-photo-c { position: relative; align-self: stretch; min-height: 380px; display: flex; align-items: flex-end; justify-content: center; }
-.chero-photo-c img { position: relative; z-index: 1; max-height: 460px; max-width: 100%; object-fit: contain; object-position: bottom center; filter: drop-shadow(0 24px 44px rgba(0, 0, 0, .55)); }
+.chero-photo-c img { position: relative; z-index: 1; max-height: 520px; max-width: 100%; object-fit: contain; object-position: bottom center; filter: drop-shadow(0 24px 44px rgba(0, 0, 0, .55)); }
 .chero-photo-c::before { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 90%; height: 80%; background: radial-gradient(ellipse at center bottom, color-mix(in srgb, var(--dc) 34%, transparent), transparent 70%); z-index: 0; }
 .chero-photo-c .chero-photo-av { font-family: var(--display); font-weight: 700; font-size: 130px; color: color-mix(in srgb, var(--dc) 55%, var(--ink-faint)); text-transform: uppercase; opacity: .6; z-index: 1; }
 @media (max-width: 760px) {

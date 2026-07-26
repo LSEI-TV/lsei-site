@@ -120,7 +120,7 @@ const fmtArtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeri
 <Base title={`${name} — Fiche carrière · Blackball Para-billard`} description={`Fiche carrière de ${name} au Para-billard : palmarès, statistiques et confrontations sur ${bySeason.length} saison${bySeason.length > 1 ? 's' : ''}.`} active="disciplines">
   <HubNav season={latest.slug} active="joueurs" root="/para-billard" brand="Para-billard" sub="· Blackball Para-billard" joueursLabel="Joueurs" videosHref="/disciplines/billard/categorie/para-billard" />
   <section class="section">
-    <div class="wrap" style="max-width:900px">
+    <div class="wrap" style="max-width:1100px">
       <a href={`/para-billard/saison/${latest.slug}/classement`} class="link" style="color:var(--c-billard);display:inline-block;margin-bottom:18px">← Classement {latest.label}</a>
 
       <section class="chero chero-ufc" style="--dc:var(--c-billard)">
