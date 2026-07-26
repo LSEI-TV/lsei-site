@@ -1,0 +1,36 @@
+name: Statut direct (live.json)
+
+# Vérifie régulièrement si la chaîne est en direct et met à jour uniquement
+# le petit fichier live.json sur le serveur (léger, sans reconstruire le site).
+on:
+  schedule:
+    - cron: '*/30 * * * *'   # toutes les 30 minutes
+  workflow_dispatch:          # bouton manuel pour forcer une vérification
+
+concurrency:
+  group: live-status
+  cancel-in-progress: true
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Détecter le direct → live.json
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          YOUTUBE_CHANNEL_ID: UCYUOdKr28cOjLzHWv6pTpjQ
+        run: node scripts/check-live.mjs
+
+      - name: Envoyer live.json sur OVH (FTP)
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          curl --fail --silent --show-error --ftp-create-dirs \
+            -T live.json "ftp://${FTP_SERVER}/site/live.json" \
+            --user "${FTP_USERNAME}:${FTP_PASSWORD}"
+          echo "live.json envoyé sur /site/"

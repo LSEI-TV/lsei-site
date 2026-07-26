@@ -47,3 +47,9 @@ jobs:
           port: 21
           local-dir: ./dist/
           server-dir: /site/
+          # live.json est géré par le workflow live-status.yml — ne pas l'écraser ici.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/live.json
