@@ -6,7 +6,7 @@ import { disciplines } from '../../data/site';
 import { articleCover } from '../../lib/articles';
 import SportIcon from '../../components/SportIcon.astro';
 
-const articles = (await getCollection('articles', ({ data }) => !data.draft)).sort(
+const articles = (await getCollection('articles', ({ data }) => !data.draft && data.date.valueOf() <= Date.now())).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
 const discOf = (slug?: string) => disciplines.find((d) => d.slug === slug);

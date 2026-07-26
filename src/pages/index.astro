@@ -9,7 +9,7 @@ import { getLiveFeature, getProgramme, getReplays, tagStyle } from '../lib/youtu
 import { getCollection } from 'astro:content';
 import { articleCover } from '../lib/articles';
 
-const latestArticles = (await getCollection('articles', ({ data }) => !data.draft))
+const latestArticles = (await getCollection('articles', ({ data }) => !data.draft && data.date.valueOf() <= Date.now()))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 const fmtArticleDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);

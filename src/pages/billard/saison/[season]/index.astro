@@ -53,7 +53,7 @@ const featured = vids[0];
 const latest = vids.slice(1, 5);
 
 const billardArticles = hasData
-  ? (await getCollection('articles', ({ data }) => !data.draft && data.discipline === 'billard'))
+  ? (await getCollection('articles', ({ data }) => !data.draft && data.date.valueOf() <= Date.now() && data.discipline === 'billard'))
       .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 3)
   : [];
 const fmtArticleDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(dt);

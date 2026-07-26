@@ -111,7 +111,7 @@ const lastMatch = allResults[0] || null;
 const lastTour = lastMatch ? (lastMatch.R.tournaments as any[]).find((t: any) => t.id === lastMatch.tid) : null;
 const lastOppPhoto = lastMatch ? photoOf({ name: lastMatch.oppName } as any) : null;
 
-const arts = (await getCollection('articles', ({ data }) => !data.draft && data.discipline === 'billard'))
+const arts = (await getCollection('articles', ({ data }) => !data.draft && data.date.valueOf() <= Date.now() && data.discipline === 'billard'))
   .filter((a) => playersInText(`${a.data.title} ${a.data.excerpt} ${a.body}`, getParaSeasons()).some((x) => x.id === pid))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 4);

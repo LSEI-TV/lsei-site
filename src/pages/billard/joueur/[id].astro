@@ -131,7 +131,7 @@ const lastTour = lastMatch ? (lastMatch.R.tournaments as any[]).find((t: any) =>
 const lastOppPhoto = lastMatch ? photoOf({ name: lastMatch.oppName } as any) : null;
 
 // Articles qui mentionnent ce joueur (reliage éditorial automatique par le nom).
-const arts = (await getCollection('articles', ({ data }) => !data.draft && data.discipline === 'billard'))
+const arts = (await getCollection('articles', ({ data }) => !data.draft && data.date.valueOf() <= Date.now() && data.discipline === 'billard'))
   .filter((a) => playersInText(`${a.data.title} ${a.data.excerpt} ${a.body}`).some((x) => x.id === pid))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 4);

@@ -15,7 +15,7 @@ const norm = (s: string) =>
   (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
 
 const videos = await getReplays();
-const articles = await getCollection('articles', ({ data }) => !data.draft);
+const articles = await getCollection('articles', ({ data }) => !data.draft && data.date.valueOf() <= Date.now());
 const fmtDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
 
 interface Item {

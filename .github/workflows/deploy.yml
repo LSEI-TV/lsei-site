@@ -53,3 +53,10 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/live.json
+
+      - name: Notifier IndexNow (Bing) des mises à jour
+        run: |
+          curl -sS -X POST "https://api.indexnow.org/indexnow" \
+            -H "Content-Type: application/json" \
+            -d '{"host":"lsei.tv","key":"4c1f9e7a2b8d43f6a09e5c7d1b3a6e82","keyLocation":"https://lsei.tv/4c1f9e7a2b8d43f6a09e5c7d1b3a6e82.txt","urlList":["https://lsei.tv/","https://lsei.tv/videotheque","https://lsei.tv/actualites","https://lsei.tv/disciplines","https://lsei.tv/direct","https://lsei.tv/disciplines/billard"]}' || true
+          echo "IndexNow notifié."
