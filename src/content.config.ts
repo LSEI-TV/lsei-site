@@ -50,4 +50,19 @@ const evenements = defineCollection({
   }),
 });
 
-export const collections = { articles, social, evenements };
+// Collection « programme » — grille TV des diffusions (matchs annoncés à l'avance).
+// Éditable via /admin. Se combine avec les directs YouTube détectés automatiquement.
+const programme = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/programme' }),
+  schema: z.object({
+    sport: z.enum(['basket', 'billard', 'palets', 'football', 'beach', 'bowling', 'subbuteo']),
+    category: z.string().optional(),   // ex. « Masters — 1/4 de finale »
+    title: z.string().optional(),      // ex. « Fougères – Lorient »
+    date: z.coerce.date(),             // date + heure de la diffusion
+    image: z.string().optional(),      // image/vignette de la carte (sinon dégradé du sport)
+    link: z.string().optional(),       // lien YouTube / direct
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { articles, social, evenements, programme };

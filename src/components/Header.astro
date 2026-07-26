@@ -28,6 +28,7 @@ today = today.charAt(0).toUpperCase() + today.slice(1);
     <Logo />
     <nav class="main">
       <a href="/" class={active === 'direct' ? 'active' : ''}>Direct</a>
+      <a href="/programme" class={active === 'programme' ? 'active' : ''}>Programme</a>
       <a href="/disciplines" class={active === 'disciplines' ? 'active' : ''}>Disciplines</a>
       <a href="/actualites" class={active === 'actualites' ? 'active' : ''}>Actualités</a>
     </nav>
@@ -45,6 +46,7 @@ today = today.charAt(0).toUpperCase() + today.slice(1);
 
 <nav class="mobile-nav" id="mobile-nav">
   <a href="/" class={active === 'direct' ? 'active' : ''}>Direct</a>
+  <a href="/programme" class={active === 'programme' ? 'active' : ''}>Programme</a>
   <a href="/disciplines" class={active === 'disciplines' ? 'active' : ''}>Disciplines</a>
   <a href="/actualites" class={active === 'actualites' ? 'active' : ''}>Actualités</a>
   <a href="/recherche" class={active === 'recherche' ? 'active' : ''}>Rechercher</a>

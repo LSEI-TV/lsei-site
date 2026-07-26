@@ -101,3 +101,32 @@ collections:
       - { label: "Date de l'événement (le bandeau disparaît après)", name: "date", widget: "datetime", date_format: "DD/MM/YYYY", time_format: false, format: "YYYY-MM-DD" }
       - { label: "Lien (optionnel : direct YouTube, billetterie, info…)", name: "link", widget: "string", required: false }
       - { label: "Brouillon (ne pas publier)", name: "draft", widget: "boolean", default: false, required: false }
+
+  - name: "programme"
+    label: "Programme (grille TV)"
+    label_singular: "Diffusion"
+    folder: "src/content/programme"
+    create: true
+    slug: "{{year}}{{month}}{{day}}-{{hour}}{{minute}}-{{sport}}"
+    extension: "md"
+    format: "frontmatter"
+    summary: "{{date}} — {{sport}} {{category}}"
+    sortable_fields: ["date", "sport"]
+    fields:
+      - label: "Sport"
+        name: "sport"
+        widget: "select"
+        options:
+          - { label: "Basketball", value: "basket" }
+          - { label: "Billard", value: "billard" }
+          - { label: "Palets bretons", value: "palets" }
+          - { label: "Football", value: "football" }
+          - { label: "Beach-volley", value: "beach" }
+          - { label: "Bowling", value: "bowling" }
+          - { label: "Subbuteo", value: "subbuteo" }
+      - { label: "Catégorie / phase (ex. « Masters — 1/4 de finale »)", name: "category", widget: "string", required: false }
+      - { label: "Titre / adversaire (ex. « Fougères – Lorient »)", name: "title", widget: "string", required: false }
+      - { label: "Date et heure", name: "date", widget: "datetime", date_format: "DD/MM/YYYY", time_format: "HH:mm", format: "YYYY-MM-DDTHH:mm" }
+      - { label: "Image / vignette (optionnel — sinon dégradé du sport)", name: "image", widget: "image", required: false }
+      - { label: "Lien (YouTube / direct)", name: "link", widget: "string", required: false }
+      - { label: "Brouillon (ne pas publier)", name: "draft", widget: "boolean", default: false, required: false }

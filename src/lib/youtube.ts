@@ -503,6 +503,24 @@ export async function getCurrentLives(): Promise<LiveNow[]> {
   return [];
 }
 
+// Diffusions YouTube pour la GRILLE PROGRAMME : directs en cours + directs programmés,
+// avec leur date/heure réelle. Se combinent avec le programme saisi via /admin.
+export interface Broadcast { id: string; title: string; discipline: DisciplineSlug; date: string; live: boolean }
+export async function getBroadcasts(): Promise<Broadcast[]> {
+  if (!hasYouTube) return [];
+  try {
+    const { live, upcoming } = await fetchLiveState();
+    const nowIso = new Date().toISOString();
+    const out: Broadcast[] = [];
+    for (const l of live) out.push({ id: l.id, title: l.title, discipline: l.discipline, date: l.scheduled || nowIso, live: true });
+    for (const u of upcoming) out.push({ id: u.id, title: u.title, discipline: u.discipline, date: u.scheduled || nowIso, live: false });
+    return out;
+  } catch (e) {
+    console.warn('[YouTube] getBroadcasts → repli :', (e as Error).message);
+    return [];
+  }
+}
+
 export async function getTicker(): Promise<TickerItem[]> {
   if (hasYouTube) {
     try {

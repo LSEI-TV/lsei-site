@@ -385,6 +385,36 @@ a.evbanner:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 
 .evcar-dot { width: 9px; height: 9px; padding: 0; border: none; border-radius: 50%; background: var(--line-strong); cursor: pointer; transition: background .15s, width .15s; }
 .evcar-dot.active { background: var(--accent); width: 24px; border-radius: 5px; }
 
+/* Page Programme (grille TV) */
+.prog-filter { display: flex; flex-wrap: wrap; gap: 8px; }
+.prog-fbtn { font-size: 13px; font-weight: 700; padding: 7px 14px; border-radius: 100px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-soft); cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.prog-fbtn:hover { color: var(--ink); }
+.prog-fbtn.active { background: var(--dc, var(--accent)); border-color: var(--dc, var(--accent)); color: #fff; }
+.prog-day { margin-top: 30px; }
+.prog-day-h { font-family: var(--display); text-transform: capitalize; font-size: clamp(18px, 3vw, 24px); margin: 0 0 10px; padding-bottom: 8px; border-bottom: 2px solid var(--line); }
+.prog-rows { display: flex; flex-direction: column; }
+.prog-row { display: grid; grid-template-columns: 84px 52px 108px 1fr auto; align-items: center; gap: 12px; padding: 8px; border-bottom: 1px solid var(--line); text-decoration: none; color: inherit; transition: background .15s; }
+.prog-row:hover { background: var(--surface-2); }
+.prog-thumb { position: relative; width: 84px; aspect-ratio: 16 / 10; border-radius: 7px; overflow: hidden; background: var(--surface-2); }
+.prog-thumb img, .prog-thumb-duo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.prog-time { font-weight: 700; font-size: 15px; color: var(--ink); }
+.prog-tag { font-size: 11px; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; justify-self: start; white-space: nowrap; }
+.prog-what { min-width: 0; display: flex; flex-direction: column; }
+.prog-what b { font-size: 15px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
+.prog-sub { font-size: 12.5px; color: var(--ink-soft); }
+.prog-status { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; white-space: nowrap; }
+.prog-status.direct { color: var(--live); }
+.prog-status.avenir { color: var(--ink-faint); }
+.prog-status.encours { color: #3fae6b; }
+@media (max-width: 600px) {
+  .prog-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
+  .prog-thumb { width: 66px; }
+  .prog-time { order: 2; }
+  .prog-tag { order: 3; }
+  .prog-status { order: 4; margin-left: auto; }
+  .prog-what { order: 5; flex: 1 1 100%; }
+}
+
 /* ---------- CTA ---------- */
 .cta {
   position: relative; overflow: hidden; border-radius: 8px; background: var(--ink); color: #fff;
