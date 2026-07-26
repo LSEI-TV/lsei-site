@@ -165,16 +165,23 @@ const fmtArtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeri
         <aside class="chero-side">
           <span class="chero-photo"><span class="chero-photo-av">{name.slice(0, 1)}</span>{photo && <img src={photo} alt="" onerror="this.remove()" />}</span>
           {lastMatch && (
-            <div class="chero-last">
+            <div class="chero-last chero-duel">
               <div class="chero-last-h">Dernier match</div>
-              <a href={`/billard/joueur/${slugOf(lastMatch.oppId)}`} class="chero-last-row">
-                <span class="bphoto chero-last-ph"><span class="bavatar">{lastMatch.oppName.slice(0, 1)}</span>{lastOppPhoto && <img src={lastOppPhoto} alt="" onerror="this.remove()" />}</span>
-                <span class="chero-last-body">
-                  <span class={`chero-last-res ${lastMatch.win ? 'w' : 'l'}`}>{lastMatch.win ? 'Victoire' : 'Défaite'} {lastMatch.my}-{lastMatch.opp}</span>
-                  <span class="chero-last-opp">contre {lastMatch.oppName}</span>
-                  <span class="chero-last-meta">{lastTour?.level} {lastTour?.city} · {lastMatch.label}</span>
+              <a href={`/billard/joueur/${slugOf(lastMatch.oppId)}`} class="cd-row">
+                <span class="cd-fighter">
+                  <span class="bphoto cd-ph cd-me"><span class="bavatar">{name.slice(0, 1)}</span>{photo && <img src={photo} alt="" onerror="this.remove()" />}</span>
+                  <span class={`cd-badge ${lastMatch.win ? 'w' : 'l'}`}>{lastMatch.win ? 'Victoire' : 'Défaite'}</span>
+                </span>
+                <span class="cd-mid">
+                  <span class="cd-score mono">{lastMatch.my}<i>–</i>{lastMatch.opp}</span>
+                  <span class="cd-vs">VS</span>
+                </span>
+                <span class="cd-fighter">
+                  <span class="bphoto cd-ph"><span class="bavatar">{lastMatch.oppName.slice(0, 1)}</span>{lastOppPhoto && <img src={lastOppPhoto} alt="" onerror="this.remove()" />}</span>
+                  <span class="cd-oppname">{lastMatch.oppName}</span>
                 </span>
               </a>
+              <div class="cd-meta2">{lastTour?.level} {lastTour?.city} · {lastMatch.label}</div>
               <a href="#histo" class="chero-histo" data-open-histo>Voir l'historique →</a>
             </div>
           )}
