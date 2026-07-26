@@ -6,8 +6,10 @@
 #    `npx decap-server` dans un terminal, puis ouvrir http://localhost:4321/admin/
 
 backend:
-  name: git-gateway   # à adapter au déploiement (ex. github)
+  name: github
+  repo: LSEI-TV/lsei-site
   branch: main
+  base_url: https://sveltia-cms-auth.marc-poolos.workers.dev
 
 # Test en local sans authentification (nécessite `npx decap-server`)
 local_backend: true
