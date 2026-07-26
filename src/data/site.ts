@@ -189,7 +189,7 @@ export const stats: Stat[] = [
 export const legal = {
   orgName: 'LSEI — Le Sport en Image',
   orgType: 'Association loi 1901',
-  address: '5b rue du général Audibert, 35200 Rennes',
+  address: 'rue du général Audibert, 35200 Rennes',
   publisher: 'Association Le Sport en Image / Le Billard en Image',
   rna: 'N° RNA W931004350',
   host: {
