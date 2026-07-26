@@ -187,6 +187,105 @@ export function fromPov(m: Match, id: number) {
   };
 }
 
+// ============================================================
+//  FAITS MARQUANTS D'UNE SAISON (6 stats)
+//  Calcul partagé entre la page classement et la fiche joueur.
+//  prevR = résultats de la saison précédente (pour progression/baisse) ; optionnel.
+// ============================================================
+export interface Superlative {
+  key: string;        // identifiant technique
+  label: string;      // libellé affiché
+  playerId: number;   // joueur concerné
+  playerName: string;
+  value: string;      // valeur principale (ex. "+16 places")
+  sub?: string;       // détail secondaire
+}
+
+export function seasonSuperlatives(R: any, prevR?: any): Superlative[] {
+  const players = (R?.players || []) as any[];
+  const matches = (R?.matches || []) as any[];
+  const tournaments = (R?.tournaments || []) as any[];
+  const byId = new Map(players.map((p) => [p.id, p]));
+  const out: Superlative[] = [];
+
+  // 1 & 2 — Progression / baisse au classement vs saison précédente.
+  if (prevR) {
+    const prevRank = new Map((prevR.players as any[]).map((p) => [p.id, p.rank]));
+    let up: { p: any; d: number } | null = null;
+    let down: { p: any; d: number } | null = null;
+    for (const p of players) {
+      const pr = prevRank.get(p.id);
+      if (pr == null) continue;
+      const d = pr - p.rank; // positif = places gagnées
+      if (d > 0 && (!up || d > up.d)) up = { p, d };
+      if (d < 0 && (!down || d < down.d)) down = { p, d };
+    }
+    if (up) out.push({ key: 'progression', label: 'Plus forte progression', playerId: up.p.id, playerName: up.p.name, value: `+${up.d} places`, sub: `${up.p.rank}ᵉ cette saison` });
+    if (down) out.push({ key: 'baisse', label: 'Plus forte baisse', playerId: down.p.id, playerName: down.p.name, value: `${down.d} places`, sub: `${down.p.rank}ᵉ cette saison` });
+  }
+
+  // 3 — Plus longue série de victoires (dans la saison).
+  {
+    const per = new Map<number, { date: string; win: boolean }[]>();
+    for (const m of matches) {
+      for (const id of [m.aId, m.bId]) {
+        if (id == null) continue;
+        const r = fromPov(m, id);
+        (per.get(id) || per.set(id, []).get(id)!).push({ date: r.date, win: r.win });
+      }
+    }
+    let best: { id: number; streak: number } | null = null;
+    for (const [id, list] of per) {
+      list.sort((a, b) => (a.date < b.date ? -1 : 1));
+      let cur = 0, mx = 0;
+      for (const g of list) { if (g.win) { cur++; mx = Math.max(mx, cur); } else cur = 0; }
+      if (!best || mx > best.streak) best = { id, streak: mx };
+    }
+    if (best && best.streak > 1) out.push({ key: 'serie', label: 'Plus longue série de victoires', playerId: best.id, playerName: byId.get(best.id)?.name || '', value: `${best.streak} victoires d'affilée` });
+  }
+
+  // 4 — Meilleur pourcentage de victoires (min. 8 matchs pour être significatif).
+  {
+    const eligible = players.filter((p) => p.played >= 8);
+    const pool = eligible.length ? eligible : players.filter((p) => p.played > 0);
+    let best: any = null;
+    for (const p of pool) if (!best || p.winPct > best.winPct) best = p;
+    if (best && best.winPct > 0) out.push({ key: 'winpct', label: 'Meilleur % de victoires', playerId: best.id, playerName: best.name, value: `${best.winPct} %`, sub: `${best.wins} V – ${best.losses} D` });
+  }
+
+  // 5 — Plus large victoire (plus grand écart de manches).
+  {
+    let best: { m: any; margin: number } | null = null;
+    for (const m of matches) {
+      const margin = Math.abs((m.sA || 0) - (m.sB || 0));
+      if (!best || margin > best.margin) best = { m, margin };
+    }
+    if (best && best.margin > 0) {
+      const m = best.m;
+      const aWin = m.sA > m.sB;
+      out.push({ key: 'largevictoire', label: 'Plus large victoire', playerId: aWin ? m.aId : m.bId, playerName: aWin ? m.aName : m.bName, value: `${Math.max(m.sA, m.sB)}–${Math.min(m.sA, m.sB)}`, sub: `contre ${aWin ? m.bName : m.aName}` });
+    }
+  }
+
+  // 6 — Plus de tournois gagnés.
+  {
+    const wins = new Map<number, { name: string; n: number }>();
+    for (const t of tournaments) {
+      let w = t.winner;
+      if (!w) {
+        const fin = matches.find((m) => m.tid === t.id && ['final', 'grand final'].includes((m.round || '').toLowerCase()));
+        if (fin) w = fin.sA > fin.sB ? { id: fin.aId, name: fin.aName } : { id: fin.bId, name: fin.bName };
+      }
+      if (w && w.id != null) { const e = wins.get(w.id) || { name: w.name, n: 0 }; e.n++; wins.set(w.id, e); }
+    }
+    let best: { id: number; name: string; n: number } | null = null;
+    for (const [id, e] of wins) if (!best || e.n > best.n) best = { id, name: e.name, n: e.n };
+    if (best && best.n > 0) out.push({ key: 'tournois', label: 'Plus de tournois gagnés', playerId: best.id, playerName: best.name, value: best.n > 1 ? `${best.n} tournois` : `${best.n} tournoi` });
+  }
+
+  return out;
+}
+
 // Index des joueurs (toutes saisons d'un périmètre, dédoublonné) — pour la recherche.
 // Par défaut : la compétition Masters. Passer getFemmesSeasons() pour le féminin.
 export function allPlayers(seasonsList: Season[] = getSeasons()): { id: number; name: string; slug: string }[] {

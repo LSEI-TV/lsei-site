@@ -2,7 +2,7 @@
 import Base from '../../../../layouts/Base.astro';
 import HubNav from '../../../../components/HubNav.astro';
 import SeasonPicker from '../../../../components/SeasonPicker.astro';
-import { photoOf, playerSlugs } from '../../../../lib/billardStats';
+import { photoOf, playerSlugs, seasonSuperlatives } from '../../../../lib/billardStats';
 import { getSeasons, type Season } from '../../../../data/billard/seasons';
 const { slugOf } = playerSlugs(getSeasons());
 
@@ -14,6 +14,12 @@ const R = season.results!;
 const players = R.players as any[];
 const base = `/billard/saison/${season.slug}`;
 const cnt = { tourns: R.tournaments.length, players: players.length, matches: R.matches.length };
+
+// Faits marquants de la saison (6 stats). La saison précédente sert au calcul progression/baisse.
+const allSeasons = getSeasons();
+const curIdx = allSeasons.findIndex((s) => s.slug === season.slug);
+const prevSeason = allSeasons.slice(curIdx + 1).find((s) => s.results);
+const facts = seasonSuperlatives(R, prevSeason?.results);
 ---
 <Base title={`Classement ${season.label} — Blackball Master`} description={`Classement officiel FFB du Blackball Master, saison ${season.label}.`} active="disciplines">
   <HubNav season={season.slug} active="classement" archivesHref="/billard/archives" />
@@ -29,6 +35,24 @@ const cnt = { tourns: R.tournaments.length, players: players.length, matches: R.
       </div>
     </div>
   </section>
+
+  {facts.length > 0 && (
+    <section class="section" style="padding-bottom:0">
+      <div class="wrap">
+        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Faits marquants</div><h2>Les stats de la saison</h2></div></div>
+        <div class="sfacts">
+          {facts.map((f) => (
+            <a href={`/billard/joueur/${slugOf(f.playerId)}`} class="sfact">
+              <div class="sfact-lab">{f.label}</div>
+              <div class="sfact-player">{f.playerName}</div>
+              <div class="sfact-val">{f.value}</div>
+              {f.sub && <div class="sfact-sub">{f.sub}</div>}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
   <section class="section">
     <div class="wrap">

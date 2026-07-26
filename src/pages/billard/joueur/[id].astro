@@ -2,7 +2,7 @@
 import Base from '../../../layouts/Base.astro';
 import HubNav from '../../../components/HubNav.astro';
 import { getCollection } from 'astro:content';
-import { photoOf, fromPov, fmtDate, frRound, playersInText, playerSlugs } from '../../../lib/billardStats';
+import { photoOf, fromPov, fmtDate, frRound, playersInText, playerSlugs, seasonSuperlatives } from '../../../lib/billardStats';
 import { getSeasons, getPalmares } from '../../../data/billard/seasons';
 
 export function getStaticPaths() {
@@ -89,6 +89,17 @@ const titles: { label: string; slug: string; kind: 'saison' | 'france' }[] = [];
 for (const pl of palm) {
   if (pl.champ.id === pid) titles.push({ label: pl.label, slug: pl.slug, kind: 'saison' });
   if (pl.cdf && pl.cdf.id === pid) titles.push({ label: pl.label, slug: pl.slug, kind: 'france' });
+}
+
+// Distinctions : pour chaque saison jouée, les « faits marquants » que CE joueur détient.
+const allSeasonsList = getSeasons();
+const distinctions: { label: string; value: string; sub?: string; seasonLabel: string }[] = [];
+for (const x of bySeason) {
+  const i = allSeasonsList.findIndex((s) => s.slug === x.slug);
+  const prev = allSeasonsList.slice(i + 1).find((s) => s.results);
+  for (const sup of seasonSuperlatives(x.R, prev?.results)) {
+    if (sup.playerId === pid) distinctions.push({ label: sup.label, value: sup.value, sub: sup.sub, seasonLabel: x.label });
+  }
 }
 
 // Confrontations carrière : bilan cumulé + détail (quand / où) face à chaque adversaire.
@@ -213,6 +224,17 @@ const fmtArtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeri
             ))}
           </div>
         </div>
+      )}
+
+      {distinctions.length > 0 && (
+        <>
+          <div class="sec-head" style="margin-top:30px"><div><div class="eyebrow" style="color:var(--c-billard)">Records</div><h2>Distinctions par saison</h2></div></div>
+          <div class="car-dists">
+            {distinctions.map((d) => (
+              <span class="car-dist"><b>{d.label}</b> — {d.value} <em>· {d.seasonLabel}</em></span>
+            ))}
+          </div>
+        </>
       )}
 
       <div class="sec-head" style="margin-top:34px"><div><div class="eyebrow" style="color:var(--c-billard)">Parcours</div><h2>Saison par saison</h2></div></div>

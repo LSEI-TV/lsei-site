@@ -909,6 +909,23 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .chero-photo-c img { position: relative; z-index: 1; max-height: 520px; max-width: 100%; object-fit: contain; object-position: bottom center; filter: drop-shadow(0 24px 44px rgba(0, 0, 0, .55)); }
 .chero-photo-c::before { content: ''; position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); width: 94%; height: 88%; background: radial-gradient(ellipse at center, color-mix(in srgb, var(--dc) 48%, transparent) 0%, color-mix(in srgb, var(--dc) 18%, transparent) 38%, transparent 70%); filter: blur(8px); z-index: 0; }
 .chero-photo-c .chero-photo-av { font-family: var(--display); font-weight: 700; font-size: 130px; color: color-mix(in srgb, var(--dc) 55%, var(--ink-faint)); text-transform: uppercase; opacity: .6; z-index: 1; }
+
+/* Faits marquants de la saison (page classement) */
+.sfacts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.sfact { display: block; text-decoration: none; color: inherit; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 14px 16px; transition: border-color .15s, transform .15s; }
+.sfact:hover { border-color: var(--c-billard); transform: translateY(-2px); }
+.sfact-lab { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint); font-weight: 700; }
+.sfact-player { font-family: var(--display); font-weight: 700; font-size: 20px; line-height: 1.05; margin: 7px 0 3px; }
+.sfact-val { font-size: 14px; font-weight: 700; color: var(--c-billard); }
+.sfact-sub { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+@media (max-width: 820px) { .sfacts { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .sfacts { grid-template-columns: 1fr; } }
+
+/* Distinctions de la saison (fiche joueur) */
+.car-dists { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.car-dist { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 9px 13px; font-size: 13px; line-height: 1.4; }
+.car-dist b { color: var(--c-billard); }
+.car-dist em { font-style: normal; color: var(--ink-soft); }
 @media (max-width: 760px) {
   .chero, .chero-ufc { grid-template-columns: 1fr; gap: 22px; }
   .chero-side { width: 100%; }
