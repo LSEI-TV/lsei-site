@@ -16,6 +16,8 @@ concurrency:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    env:
+      TZ: Europe/Paris   # les horaires du programme sont saisis en heure française
     steps:
       - name: Récupérer le code
         uses: actions/checkout@v4
