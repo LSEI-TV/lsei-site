@@ -1,4 +1,16 @@
 ---
 import { PARA_LANDING_SEASON } from '../../data/billard/seasonsPara';
-return Astro.redirect('/para-billard/saison/' + PARA_LANDING_SEASON);
+const target = '/para-billard/saison/' + PARA_LANDING_SEASON;
 ---
+<!doctype html>
+<html lang="fr" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <script is:inline set:html={`location.replace(${JSON.stringify(target)})`}></script>
+    <style>html,body{margin:0;min-height:100vh;background:#0C0E13}</style>
+    <title>LSEI — Le Sport en Image</title>
+  </head>
+  <body></body>
+</html>
