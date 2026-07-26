@@ -36,7 +36,11 @@ import { site, stats, partners, cta } from '../data/site';
       <div class="partners">
         <div class="pl">Ils portent le projet</div>
         <div class="plist">
-          {partners.map((p) => <span>{p}</span>)}
+          {partners.map((p) => (
+            <a href={p.url} class="ptile-link" target="_blank" rel="noopener" title={p.name}>
+              <span class="ptile"><img src={p.logo} alt={p.name} loading="lazy" /></span>
+            </a>
+          ))}
         </div>
       </div>
     </div>

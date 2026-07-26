@@ -361,11 +361,12 @@ nav.main a.active { color: var(--ink); border-color: var(--accent); }
 .stat .lab { margin-top: 8px; font-size: 13px; color: var(--ink-soft); }
 .partners { padding: 0 0 40px; }
 .partners .pl { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); font-weight: 700; margin-bottom: 16px; }
-.plist { display: flex; flex-wrap: wrap; gap: 10px 10px; }
-.plist span {
-  font-size: 12.5px; font-weight: 650; color: var(--ink-soft);
-  border: 1px solid var(--line); border-radius: 100px; padding: 7px 14px; background: var(--surface-2);
-}
+.plist { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.ptile-link { display: block; text-decoration: none; }
+.ptile { display: flex; align-items: center; justify-content: center; width: 150px; height: 82px; background: #fff; border-radius: 12px; padding: 12px 16px; transition: transform .15s, box-shadow .15s; }
+.ptile img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.ptile-link:hover .ptile { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0, 0, 0, .18); }
+@media (max-width: 520px) { .ptile { width: 128px; height: 72px; } }
 
 /* ---------- CTA ---------- */
 .cta {

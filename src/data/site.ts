@@ -162,12 +162,15 @@ export function getDiscipline(slug: DisciplineSlug): Discipline {
   return d;
 }
 
-export const partners: string[] = [
-  'Fédération Française de Billard',
-  'Pays de Fougères Basket',
-  'Ligue de Bretagne de Football',
-  'Bambis Palets',
-  'Bowling Promotion',
+export interface Partner { name: string; logo: string; url?: string }
+
+export const partners: Partner[] = [
+  { name: 'Fédération Française de Billard', logo: '/partenaires/ffbillard.webp', url: 'https://www.ffbillard.com' },
+  { name: 'Pays de Fougères Basket', logo: '/partenaires/fougeres-basket.webp', url: 'https://www.paysdefougeresbasket.fr' },
+  { name: 'Ligue de Bretagne de Football', logo: '/partenaires/ligue-bretagne-foot.webp', url: 'https://footbretagne.fff.fr' },
+  { name: 'Bambis Palets', logo: '/partenaires/bambis-palets.webp', url: 'https://www.facebook.com/cfipalet.35' },
+  { name: 'Bowling Promotion', logo: '/partenaires/bowling-promotion.webp', url: 'https://www.bowlingpromotiontour.com' },
+  { name: 'Sport en France', logo: '/partenaires/sport-en-france.webp', url: 'https://sportenfrance.com' },
 ];
 
 export interface Stat { num: string; unit?: string; label: string }
