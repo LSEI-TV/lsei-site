@@ -62,7 +62,7 @@ const ogImage = image
 
     <style>
       .live-banner {
-        display: block;
+        display: none; /* caché par défaut ; révélé par JS uniquement si live */
         background: var(--live, #E5342B);
         color: #fff;
         text-align: center;
@@ -72,6 +72,7 @@ const ogImage = image
         padding: 9px 16px;
         text-decoration: none;
       }
+      .live-banner:not([hidden]) { display: block; }
       .live-banner:hover { filter: brightness(1.08); }
     </style>
 
