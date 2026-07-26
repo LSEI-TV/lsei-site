@@ -123,7 +123,7 @@ const fmtArtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeri
     <div class="wrap" style="max-width:900px">
       <a href={`/para-billard/saison/${latest.slug}/classement`} class="link" style="color:var(--c-billard);display:inline-block;margin-bottom:18px">← Classement {latest.label}</a>
 
-      <section class="chero" style="--dc:var(--c-billard)">
+      <section class="chero chero-ufc" style="--dc:var(--c-billard)">
         <div class="chero-main">
           <div class="chero-tags">
             <span class="chero-tag">Blackball Para-billard</span>
@@ -142,8 +142,10 @@ const fmtArtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeri
             {biggestCareer && <div class="chero-stat"><div class="chero-num">{biggestCareer.my}-{biggestCareer.opp}</div><div class="chero-lab">Plus large victoire</div></div>}
           </div>
         </div>
+        <div class="chero-photo-c">
+          {photo ? <img src={photo} alt={name} onerror="this.remove()" /> : <span class="chero-photo-av">{name.slice(0, 1)}</span>}
+        </div>
         <aside class="chero-side">
-          <span class="chero-photo"><span class="chero-photo-av">{name.slice(0, 1)}</span>{photo && <img src={photo} alt="" onerror="this.remove()" />}</span>
           {lastMatch && (
             <div class="chero-last chero-duel">
               <div class="chero-last-h">Dernier match</div>
