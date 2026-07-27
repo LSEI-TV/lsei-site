@@ -1,0 +1,23 @@
+VIGNETTES 16:9 DE LA GRILLE PROGRAMME
+=====================================
+
+Ici on range les images LARGES 16:9 (ideal 1920 x 1080) utilisees comme
+VIGNETTE d'une diffusion dans la grille Programme. Rangement par SAISON :
+
+  public/programme/2026-2027/
+  public/programme/2027-2028/
+  ...
+
+A ne pas confondre avec public/evenements/ :
+  - public/evenements/<saison>/  = AFFICHE FINE 1760x334 pour le BANDEAU d'accueil
+  - public/programme/<saison>/   = VIGNETTE 16:9 1920x1080 pour la GRILLE
+
+COMMENT S'EN SERVIR
+-------------------
+1) Depose ton image 16:9 ici, dans le dossier de la saison (WEBP de preference).
+2) Dans la ligne Programme (via /admin ou fiche .md), mets le champ image :
+     image: /programme/2026-2027/mon-image.webp
+   (ou demande a Claude de la brancher)
+
+Rappel : pour un LIVE YOUTUBE, aucune image a fournir - la grille prend
+automatiquement la vignette YouTube (deja en 16:9).
