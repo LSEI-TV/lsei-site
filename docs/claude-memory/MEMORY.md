@@ -8,6 +8,6 @@
 - [billard-import-historique](billard-import-historique.md) — pipeline Excel FFB → JSON (Masters 2015→2027), data-import/convert.py, limites données
 - [billard-para-cdf](billard-para-cdf.md) — le CdF para-billard officiel ne commence qu'en 2025/2026 (avant = tournois de promotion)
 - [billard-hub-structure](billard-hub-structure.md) — hub Billard à 2 niveaux (/billard/hub → Blackball / Snooker / Américain)
-- [lsei-deploiement](lsei-deploiement.md) — mise en ligne OVH + rebuild programmé (GitHub Actions) pour rafraîchir les vidéos YouTube
+- [lsei-deploiement](lsei-deploiement.md) — OVH héberge, GitHub Actions build+FTP (+ rebuild nocturne vidéos), Cloudflare = juste le Worker OAuth de l'admin
 - [basket-live-architecture](basket-live-architecture.md) — archi réelle (WebSocket comme PALET) vs README désynchronisé
 - [basket-live-todo](basket-live-todo.md) — travail restant (README, tests Playwright, garde conflit, P3 mineurs)

@@ -1,21 +1,19 @@
 ---
 name: lsei-deploiement
-description: Plan de mise en ligne du site LSEI (OVH) + rebuild automatique pour rafraîchir les vidéos YouTube
+description: Archi déploiement LSEI — OVH héberge, GitHub Actions build+FTP (+ rebuild nocturne vidéos), Cloudflare = Worker OAuth de l'admin
 metadata: 
   node_type: memory
   type: project
   originSessionId: da21c2bc-82e6-4514-9030-dcc992a759ea
+  modified: 2026-07-27T09:33:47.577Z
 ---
 
-Le site LSEI (`D:\LSEI - NEW SITE`, Astro **statique**) sera hébergé sur **OVH** (OVH SAS déjà renseigné dans les mentions légales).
+Site LSEI (`D:\LSEI - NEW SITE`, Astro **statique**, `site: https://lsei.tv`) versionné sur **GitHub `LSEI-TV/lsei-site`** (privé, `main`). **3 briques bien distinctes** (mises en place sur PC2, juillet 2026) :
 
-**Point clé** : les vidéos sont lues depuis l'API YouTube **au build** (`npm run build`), pas en temps réel. Toute modif YouTube (retirer/ajouter une vidéo, renommer une playlist) n'apparaît qu'au **prochain build + déploiement**.
+1. **Hébergement = OVH** (fichiers statiques). `lsei.tv` résout vers une IP OVH (164.132.235.17, `Server: Apache`) — c'est NORMAL. Cloudflare n'est PAS devant le site (pas de CDN/cache en frontal → pas de souci de cache/staleness).
+2. **CI/CD = GitHub Actions** :
+   - `.github/workflows/deploy.yml` : `push` main + **cron `0 4 * * *` (rebuild nocturne = refresh vidéos YouTube)** + manuel. Node 22, `npm run build`, **deploy `dist/` sur OVH par FTP** (secrets `FTP_*`, `YOUTUBE_API_KEY`; channel `UCYUOdKr28cOjLzHWv6pTpjQ`), ping IndexNow. → **refresh auto vidéos = DÉJÀ opérationnel.**
+   - `.github/workflows/live-status.yml` : cron `*/30 * * * *` → `scripts/check-live.mjs` écrit `live.json` (statut direct) envoyé seul sur OVH.
+3. **Cloudflare = 1 Worker OAuth** `sveltia-cms-auth.marc-poolos.workers.dev` (compte `marc-poolos`). Sert UNIQUEMENT à connecter l'**admin en ligne** Decap CMS (`lsei.tv/admin`, `public/admin/config.yml`, backend `github` repo LSEI-TV/lsei-site). Publier un article via l'admin → commit sur GitHub → rebuild → OVH.
 
-**À prévoir le jour J — rebuild programmé** pour que le site se rafraîchisse seul (ex. chaque nuit) :
-- Hébergement **mutualisé OVH seul** = ne peut PAS builder (cron PHP, pas Node). Il sert seulement les fichiers `dist/`.
-- **Solution recommandée** : code sur GitHub + **GitHub Actions** avec un workflow `schedule` (cron) qui exécute `npm run build` et déploie `dist/` sur OVH (FTP/SSH). Gratuit, robuste, marche avec le mutualisé.
-- Alternative : **VPS OVH** avec cron `npm run build` sur le serveur.
-
-Autres éléments de déploiement en attente : vraie clé `YOUTUBE_API_KEY` + `YOUTUBE_CHANNEL_ID` en variables d'env de prod ; placeholders légaux restants ; vrai logo.
-
-Voir [[lsei-new-site]], [[billard-femmes]].
+⚠️ NE PAS confondre : ce n'est ni Cloudflare Pages ni un CDN Cloudflare — juste le relais d'auth de l'admin. Voir [[lsei-new-site]].
