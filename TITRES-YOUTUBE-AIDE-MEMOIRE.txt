@@ -1,0 +1,92 @@
+==========================================================
+   AIDE-MEMOIRE - COMMENT NOMMER LES LIVES YOUTUBE (LSEI)
+==========================================================
+
+Le titre du live sert automatiquement au site :
+  - il CLASSE la diffusion (bon sport dans la grille + bonne categorie
+    dans la videotheque)
+  - il l'AFFICHE proprement dans la grille Programme (facon "guide TV")
+
+Il suffit donc de bien nommer le live sur YouTube. Rien d'autre a faire.
+
+
+----------------------------------------------------------
+  LA REGLE : 3 parties separees par une barre  " | "
+----------------------------------------------------------
+
+   <DISCIPLINE + niveau>  |  <phase ou date>  |  <affiche / contexte>
+
+  - 1re partie      = discipline + categorie/niveau
+  - partie(s) milieu = phase, journee, date... (autant qu'on veut)
+  - derniere partie = le match, ou le lieu / la competition
+
+  -> Mets toujours un ESPACE avant et apres la barre  |
+  -> Les majuscules et les emojis n'ont aucune importance
+
+
+----------------------------------------------------------
+  BILLARD  (Blackball)
+----------------------------------------------------------
+Modele :
+   BLACKBALL <CATEGORIE> | <PHASE> | <CONTEXTE>
+
+CATEGORIE (le mot qui range le replay) :
+   MASTERS   /   FEMMES   /   PARA-BILLARD   /   ESPOIRS
+
+PHASE :
+   FINALE   /   1/2 FINALE   /   1/4 FINALE   /   POULES   /   TOUR 1
+
+CONTEXTE (etape + ville, ou competition) :
+   TN7 - CAVAILLON        (= 7e Tournoi National, a Cavaillon)
+   Championnat de France
+   CDF - VILLENEUVE       (= Coupe de France, a Villeneuve)
+
+Exemples a copier :
+   BLACKBALL MASTERS | FINALE | Championnat de France
+   BLACKBALL MASTERS | 1/2 FINALE | TN7 - CAVAILLON
+   BLACKBALL FEMMES | FINALE | TN7 - CAVAILLON
+   BLACKBALL PARA-BILLARD | 1/2 FINALE | TN7 - CAVAILLON
+   BLACKBALL ESPOIRS | FINALE | TN7 - CAVAILLON
+
+/!\ Si plusieurs categories dans le titre, priorite :
+    PARA  >  FEMMES  >  ESPOIRS  >  MASTERS
+    -> Pour une finale MASTERS masculine, ne pas ecrire "femmes".
+
+
+----------------------------------------------------------
+  BASKET  (NM1)
+----------------------------------------------------------
+Modele :
+   BASKETBALL NM1 <SAISON> | JOURNEE <n> | <DATE> | <EQUIPE A> vs <EQUIPE B>
+
+Exemple a copier :
+   BASKETBALL NM1 25/26 | JOURNEE 22 | 03/05/2026 | Pays de Fougeres Basket vs Le Havre STB
+
+
+----------------------------------------------------------
+  AUTRES DISCIPLINES
+----------------------------------------------------------
+Meme principe, le 1er mot donne la discipline :
+   PALETS ...       SUBBUTEO ...       BEACH-VOLLEY ...
+   BOWLING ...      FOOTBALL ...
+
+
+----------------------------------------------------------
+  ABREVIATIONS DEVELOPPEES AUTOMATIQUEMENT A L'AFFICHAGE
+----------------------------------------------------------
+   TN1 ... TN12   ->  Tournoi National 1 ... 12
+   CDF           ->  Coupe de France
+   CDM           ->  Coupe du Monde
+   CHPT          ->  Championnat
+
+   Exemple :  TN7 - CAVAILLON   s'affiche   Tournoi National 7 - Cavaillon
+
+
+----------------------------------------------------------
+  A RETENIR
+----------------------------------------------------------
+  - Bien nommer le live = tout est automatique (grille + videotheque).
+  - Une fois le live cree sur YouTube, il apparait tout seul dans la
+    grille ; pense a SUPPRIMER la ligne d'annonce manuelle (via /admin)
+    pour eviter le doublon.
+  - Version technique detaillee : NOMENCLATURE-TITRES-YOUTUBE.md
