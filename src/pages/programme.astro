@@ -26,7 +26,7 @@ const auto = (await getBroadcasts()).map((b) => ({
   category: '',
   title: b.title,
   date: new Date(b.date),
-  thumb: `https://i.ytimg.com/vi/${b.id}/hqdefault.jpg`,
+  thumb: `https://i.ytimg.com/vi/${b.id}/maxresdefault.jpg`,
   link: `https://www.youtube.com/watch?v=${b.id}`,
   live: b.live,
 }));
@@ -91,7 +91,7 @@ for (const it of items) {
                   >
                     <span class="prog-thumb">
                       {it.thumb
-                        ? <img src={it.thumb} alt="" loading="lazy" />
+                        ? <img src={it.thumb} alt="" loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
                         : <span class="prog-thumb-duo" style={`background:linear-gradient(135deg,${d.from},${d.to})`}></span>}
                     </span>
                     <span class="prog-time mono">{it.live ? 'LIVE' : heure(it.date)}</span>

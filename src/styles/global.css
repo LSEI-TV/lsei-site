@@ -306,6 +306,7 @@ nav.main a.active { color: var(--ink); border-color: var(--accent); }
 .prog-thumb img, .prog-thumb span { display: block; width: 100%; height: 100%; object-fit: cover; }
 .prog .body .m { font-size: 11.5px; color: var(--ink-faint); margin-top: 2px; }
 .prog .tagd { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; margin-top: 6px; }
+.rail .prog-thumb { width: 68px; aspect-ratio: 16 / 9; border-radius: 5px; }
 .rail .more { display: block; text-align: center; padding: 12px; font-size: 12.5px; font-weight: 700; color: var(--accent); border-top: 1px solid var(--line); }
 .rail .more:hover { background: var(--surface-2); }
 

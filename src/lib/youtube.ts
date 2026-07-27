@@ -134,6 +134,8 @@ export interface ProgrammeItem {
   meta: string;
   /** discipline OU 'magazine' pour la couleur du tag */
   tag: DisciplineSlug | 'magazine';
+  id?: string;      // id de la vidéo YouTube (pour la miniature / le lien)
+  thumb?: string;   // miniature HD YouTube
 }
 
 // ---- utilitaire couleur du tag « au programme » ----
@@ -541,8 +543,8 @@ export async function getProgramme(): Promise<ProgrammeItem[]> {
       const fmt = (iso?: string) =>
         iso ? new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit' }).format(new Date(iso)) : 'À venir';
       return [
-        ...live.map((l): ProgrammeItem => ({ time: 'LIVE', live: true, title: l.title, meta: disciplineLabel(l.discipline), tag: l.discipline })),
-        ...upcoming.map((u): ProgrammeItem => ({ time: fmt(u.scheduled), live: false, title: u.title, meta: disciplineLabel(u.discipline), tag: u.discipline })),
+        ...live.map((l): ProgrammeItem => ({ time: 'LIVE', live: true, title: l.title, meta: disciplineLabel(l.discipline), tag: l.discipline, id: l.id, thumb: `https://i.ytimg.com/vi/${l.id}/maxresdefault.jpg` })),
+        ...upcoming.map((u): ProgrammeItem => ({ time: fmt(u.scheduled), live: false, title: u.title, meta: disciplineLabel(u.discipline), tag: u.discipline, id: u.id, thumb: `https://i.ytimg.com/vi/${u.id}/maxresdefault.jpg` })),
       ];
     } catch (e) {
       console.warn('[YouTube] getProgramme → repli sur la démo :', (e as Error).message);

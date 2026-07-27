@@ -5,7 +5,8 @@ import Thumb from '../components/Thumb.astro';
 import VideoPlayer from '../components/VideoPlayer.astro';
 import { disciplines, getDiscipline, partners, stats, cta } from '../data/site';
 import SportIcon from '../components/SportIcon.astro';
-import { getLiveFeature, getProgramme, getReplays, tagStyle } from '../lib/youtube';
+import { getLiveFeature, getBroadcasts, getReplays, tagStyle } from '../lib/youtube';
+import { parseProgTitle } from '../lib/programmeTitle';
 import { getCollection } from 'astro:content';
 import { articleCover } from '../lib/articles';
 import { getEvents } from '../lib/events';
@@ -20,7 +21,39 @@ const fmtArticleDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'num
 const events = await getEvents();
 
 const live = await getLiveFeature();
-const programme = await getProgramme();
+
+// « Au programme » : lives YouTube + annonces manuelles (/admin), triés par date.
+// UNE seule ligne par discipline = le PROCHAIN rendez-vous de chaque sport.
+// Quand un live se termine, il sort de la fenêtre et le suivant du même sport
+// prend sa place automatiquement (à la reconstruction suivante).
+const _now = Date.now();
+const _manualProg = (await getCollection('programme', ({ data }) => !data.draft)).map((p) => ({
+  sport: p.data.sport as string, date: p.data.date as Date, live: false,
+  thumb: p.data.image as string | undefined, category: p.data.category || '', title: p.data.title || '',
+  href: '/programme', id: undefined as string | undefined,   // annonce pas encore sur YouTube → page programme
+}));
+const _autoProg = (await getBroadcasts()).map((b) => ({
+  sport: b.discipline as string, date: new Date(b.date), live: b.live,
+  thumb: `https://i.ytimg.com/vi/${b.id}/maxresdefault.jpg`, category: '', title: b.title,
+  href: `https://www.youtube.com/watch?v=${b.id}`, id: b.id,   // live prêt sur YouTube → lu dans le grand lecteur
+}));
+// Auto (vrais lives YouTube) en premier : en cas d'égalité de date avec une annonce
+// manuelle du même sport, c'est le vrai live (lien vidéo) qui l'emporte.
+const _progSorted = [..._autoProg, ..._manualProg]
+  .filter((it) => it.live || it.date.valueOf() + 3 * 3600 * 1000 >= _now)
+  .sort((a, b) => (a.live === b.live ? a.date.valueOf() - b.date.valueOf() : a.live ? -1 : 1));
+const _CAP_PER_SPORT = 1, _MAX_ITEMS = 7, _perSport = new Map<string, number>();
+const programme: typeof _progSorted = [];
+for (const it of _progSorted) {
+  const c = _perSport.get(it.sport) || 0;
+  if (c >= _CAP_PER_SPORT) continue;      // diversité : plafond par discipline
+  _perSport.set(it.sport, c + 1);
+  programme.push(it);
+  if (programme.length >= _MAX_ITEMS) break;
+}
+const railDay = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Paris' });
+const railTime = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' });
+
 const replays = await getReplays({ limit: 3 });
 const liveCount = programme.filter((p) => p.live).length;
 // Si aucun direct/programme, le rail affiche la DERNIÈRE vidéo de CHAQUE discipline
@@ -39,6 +72,9 @@ if (!programme.length) {
 
 const liveDisc = live ? getDiscipline(live.discipline) : null;
 const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t as any).label);
+// Catégorie de la vidéo à la une (déduite du titre, ex. « Femmes »), sinon la discipline.
+const fmtCat = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '');
+const heroCat = live ? (fmtCat(parseProgTitle(live.title).kicker) || liveDisc?.name || '') : '';
 ---
 <Base active="direct">
   <Ticker />
@@ -59,7 +95,7 @@ const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t
             title={live.title}
           />
           <div class={`hero-kicker${live.isLive ? ' is-live' : ''}`}>
-            <span class="dot"></span>{live.isLive ? 'En direct' : 'À revoir'}<span class="sepk">·</span>{liveDisc.name}
+            <span class="dot"></span>{live.isLive ? 'En direct' : 'À revoir'}<span class="sepk">·</span><span class="hero-cat">{heroCat}</span>
           </div>
           <h1>{live.title}</h1>
           {live.dek && <p class="dek">{live.dek}</p>}
@@ -83,20 +119,33 @@ const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t
             )}
           </h2>
           {programme.length
-            ? programme.map((p) => (
-                <a href="/videotheque" class="prog">
-                  <div class={`time mono${p.live ? ' on' : ''}`}>{p.time}</div>
-                  <div class="body">
-                    <div class="t">{p.title}</div>
-                    <div class="m">{p.meta}</div>
-                    <span class="tagd" style={tagStyle(p.tag)}>{tagLabel(p.tag)}</span>
-                  </div>
-                </a>
-              ))
+            ? programme.map((it) => {
+                const pt = it.category ? null : parseProgTitle(it.title);
+                const main = it.category || pt?.main || it.title;
+                const bits = it.category ? [it.title] : (pt ? [pt.kicker, ...pt.badges] : []);
+                const sub = [railDay.format(it.date).replace('.', ''), ...bits].filter(Boolean).join(' · ');
+                const time = it.live ? 'LIVE' : railTime.format(it.date).replace(':', 'h');
+                const cat = pt ? fmtCat(pt.kicker) : '';
+                return (
+                  <a href={it.href} class="prog" {...(it.id ? { 'data-id': it.id, 'data-title': it.title, 'data-cat': cat } : {})}>
+                    <div class="prog-thumb">
+                      {it.thumb
+                        ? <img src={it.thumb} alt="" loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
+                        : <span style="background:linear-gradient(135deg,var(--surface-2),var(--surface))"></span>}
+                    </div>
+                    <div class={`time mono${it.live ? ' on' : ''}`}>{time}</div>
+                    <div class="body">
+                      <div class="t">{main}</div>
+                      {sub && <div class="m">{sub}</div>}
+                      <span class="tagd" style={tagStyle(it.sport)}>{tagLabel(it.sport)}</span>
+                    </div>
+                  </a>
+                );
+              })
             : railReplays.map((v) => {
                 const rd = getDiscipline(v.discipline);
                 return (
-                  <a href={`/replay/${v.id}`} class="prog" data-id={v.id} data-title={v.title} data-caption={v.caption}>
+                  <a href={`/replay/${v.id}`} class="prog" data-id={v.id} data-title={v.title} data-caption={v.caption} data-cat={fmtCat(parseProgTitle(v.title).kicker) || getDiscipline(v.discipline).label}>
                     <div class="prog-thumb">
                       {v.thumb
                         ? <img src={v.thumb} alt="" loading="lazy" />
@@ -109,7 +158,9 @@ const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t
                   </a>
                 );
               })}
-          <a href="/disciplines" class="more">Voir toutes les disciplines →</a>
+          {programme.length
+            ? <a href="/programme" class="more">Voir le programme →</a>
+            : <a href="/disciplines" class="more">Voir toutes les disciplines →</a>}
         </aside>
       </div>
     </section>
@@ -306,6 +357,9 @@ const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t
           hero.appendChild(f);
           var h1 = document.querySelector('.hero .lead h1');
           if (h1 && title) h1.textContent = title;
+          var cat = item.getAttribute('data-cat');
+          var catEl = document.querySelector('.hero .hero-cat');
+          if (catEl && cat) catEl.textContent = cat;
           hero.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
       });
