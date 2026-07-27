@@ -4,19 +4,54 @@ import HubNav from '../../../components/HubNav.astro';
 import { getCollection } from 'astro:content';
 import { photoOf, fromPov, fmtDate, frRound, playersInText, playerSlugs, seasonSuperlatives } from '../../../lib/billardStats';
 import { getSeasons, getPalmares } from '../../../data/billard/seasons';
+import rmixte2526 from '../../../data/billard/results-mixte-2025-2026.json';
+import rmixte2425 from '../../../data/billard/results-mixte-2024-2025.json';
+import rmixte2324 from '../../../data/billard/results-mixte-2023-2024.json';
 
 export function getStaticPaths() {
   // URL par slug lisible (christophe-lambert) + ancien lien numérique conservé.
   const { entries } = playerSlugs(getSeasons());
   const paths: any[] = [];
+  const used = new Set<string>();
   for (const { id, slug } of entries) {
+    used.add(slug);
     paths.push({ params: { id: slug }, props: { pid: id } });
     paths.push({ params: { id: String(id) }, props: { pid: id } });
+  }
+
+  // --- PROMUS d'une saison À VENIR (top 8 du Mixte National), pas encore au Masters. ---
+  // On leur crée une fiche « nouveau promu » montrant leur bilan Mixte de l'an passé.
+  // Dès que les vrais résultats Masters arriveront (même id Cuescore), la fiche
+  // deviendra automatiquement une fiche carrière complète — même URL.
+  const MIXTE: Record<string, any> = { '2025-2026': rmixte2526, '2024-2025': rmixte2425, '2023-2024': rmixte2324 };
+  const norm = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+  const knownIds = new Set<number>();
+  const knownNames = new Set<string>(); // certains joueurs ont un id Cuescore différent Mixte↔Masters
+  for (const s of getSeasons()) if (s.results) for (const p of s.results.players as any[]) { knownIds.add(p.id); knownNames.add(norm(p.name)); }
+  const slugify = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  for (const s of getSeasons()) {
+    if (s.results) continue; // uniquement les saisons SANS données (à venir)
+    const [ya, yb] = s.slug.split('-').map(Number);
+    const feeder = MIXTE[`${ya - 1}-${yb - 1}`];
+    if (!feeder) continue;
+    const promoted = (feeder.players as any[]).slice().sort((a, b) => a.rank - b.rank).slice(0, 8).filter((p) => !knownIds.has(p.id) && !knownNames.has(norm(p.name)));
+    for (const p of promoted) {
+      // Meilleure série de victoires du joueur dans le Mixte (pour la vitrine).
+      const ms = (feeder.matches as any[]).filter((m) => m.aId === p.id || m.bId === p.id).sort((a, b) => (a.date < b.date ? -1 : 1));
+      let cur = 0, streak = 0;
+      for (const m of ms) { const my = m.aId === p.id ? m.sA : m.sB, opp = m.aId === p.id ? m.sB : m.sA; if (my > opp) { cur++; streak = Math.max(streak, cur); } else cur = 0; }
+      const nc = { id: p.id, name: p.name, rank: p.rank, points: p.points, wins: p.wins, losses: p.losses, tourns: p.tourns, played: p.played, streak, feederLabel: `${ya - 1} / ${yb - 1}`, mastersLabel: s.label, mastersSlug: s.slug };
+      let base = slugify(p.name) || String(p.id), slug = base, k = 2;
+      while (used.has(slug)) slug = `${base}-${k++}`;
+      used.add(slug);
+      paths.push({ params: { id: slug }, props: { pid: p.id, nc } });
+      paths.push({ params: { id: String(p.id) }, props: { pid: p.id, nc } });
+    }
   }
   return paths;
 }
 
-const { pid } = Astro.props as { pid: number };
+const { pid, nc } = Astro.props as { pid: number; nc?: any };
 const { slugOf } = playerSlugs(getSeasons());
 const seasons = getSeasons().filter((s) => s.results); // récent d'abord
 
@@ -67,10 +102,11 @@ const seasonInfo = bySeason.map((x) => {
 });
 
 const latest = bySeason[0];
-const name = latest.p.name;
-const photo = photoOf(latest.p, latest.slug);
+const name = nc ? nc.name : latest.p.name;
+const photo = nc ? null : photoOf(latest.p, latest.slug);
+const ncPhoto = nc ? photoOf({ name: nc.name } as any, nc.mastersSlug) : null;
 // A quitté le Masters ? Oui si sa dernière saison n'est pas la saison jouée la plus récente.
-const leftAfter = latest.slug !== seasons[0].slug ? latest.label : null;
+const leftAfter = !nc && latest.slug !== seasons[0].slug ? latest.label : null;
 
 // Cumuls carrière (toutes saisons).
 const career = bySeason.reduce(
@@ -81,7 +117,7 @@ const career = bySeason.reduce(
   { played: 0, wins: 0, losses: 0, tourns: 0 },
 );
 const winPct = career.played ? Math.round((career.wins / career.played) * 100) : 0;
-const bestRank = Math.min(...bySeason.map((x) => x.p.rank));
+const bestRank = bySeason.length ? Math.min(...bySeason.map((x) => x.p.rank)) : 0;
 
 // Palmarès personnel : titres (champion de saison / champion de France).
 const palm = getPalmares();
@@ -148,10 +184,50 @@ const arts = (await getCollection('articles', ({ data }) => !data.draft && data.
   .slice(0, 4);
 const fmtArtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(dt);
 ---
-<Base title={`${name} — Fiche carrière · Blackball Master`} description={`Fiche carrière de ${name} au Blackball Master : palmarès, statistiques et confrontations sur ${bySeason.length} saison${bySeason.length > 1 ? 's' : ''}.`} active="disciplines">
-  <HubNav season={latest.slug} active="joueurs" archivesHref="/billard/archives" />
+<Base title={nc ? `${name} — Nouveau au Blackball Master ${nc.mastersLabel}` : `${name} — Fiche carrière · Blackball Master`} description={nc ? `${name} accède au Blackball Master ${nc.mastersLabel}, promu du Mixte National ${nc.feederLabel}.` : `Fiche carrière de ${name} au Blackball Master : palmarès, statistiques et confrontations sur ${bySeason.length} saison${bySeason.length > 1 ? 's' : ''}.`} active="disciplines">
+  <HubNav season={nc ? nc.mastersSlug : latest.slug} active="joueurs" archivesHref="/billard/archives" />
   <section class="section">
     <div class="wrap" style="max-width:1100px">
+      {nc ? (
+      <>
+      <a href={`/billard/saison/${nc.mastersSlug}/`} class="link" style="color:var(--c-billard);display:inline-block;margin-bottom:18px">← Saison {nc.mastersLabel} du Blackball Master</a>
+
+      <section class="chero chero-ufc" style="--dc:var(--c-billard)">
+        <div class="chero-main">
+          <div class="chero-tags">
+            <span class="chero-tag">Blackball Master · {nc.mastersLabel}</span>
+            <span class="chero-tag on">● Nouveau promu</span>
+          </div>
+          <div class="chero-eyebrow">Nouveau au Blackball Master</div>
+          <h1 class="chero-name">{name}</h1>
+          <div class="chero-record">Promu du <b>Mixte National {nc.feederLabel}</b></div>
+          <div class="chero-stats">
+            <div class="chero-stat"><div class="chero-num">{nc.rank}<sup>e</sup></div><div class="chero-lab">au Mixte National<br />{nc.feederLabel}</div></div>
+            <div class="chero-stat"><div class="chero-num">{nc.wins}–{nc.losses}</div><div class="chero-lab">Bilan V–D<br />(Mixte {nc.feederLabel})</div></div>
+            {nc.streak > 1 && <div class="chero-stat"><div class="chero-num">{nc.streak}</div><div class="chero-lab">Victoires d'affilée<br />(meilleure série)</div></div>}
+            <div class="chero-stat"><div class="chero-num">{nc.tourns}</div><div class="chero-lab">Tournois joués</div></div>
+          </div>
+        </div>
+        <div class="chero-photo-c">
+          {ncPhoto ? <img src={ncPhoto} alt={name} onerror="this.remove()" /> : <span class="chero-photo-av">{name.slice(0, 1)}</span>}
+        </div>
+      </section>
+
+      <div class="car-palm" style="margin-top:24px">
+        <div class="car-palm-h">Sa saison {nc.feederLabel} · Mixte National</div>
+        <div class="btiles" style="margin-top:14px">
+          <div class="btile" title="Classement final au Mixte National la saison précédente."><div class="bt-num" style="color:var(--c-billard)">{nc.rank}<sup>e</sup></div><div class="bt-lab">Classement Mixte</div></div>
+          <div class="btile" title="Points au classement Mixte National."><div class="bt-num">{nc.points}</div><div class="bt-lab">Points</div></div>
+          <div class="btile" title="Matchs gagnés (V) et perdus (D) au Mixte National."><div class="bt-num">{nc.wins}<span>-</span>{nc.losses}</div><div class="bt-lab">Bilan V-D</div></div>
+          <div class="btile" title="Matchs disputés au Mixte National."><div class="bt-num">{nc.played}</div><div class="bt-lab">Matchs joués</div></div>
+          <div class="btile" title="Tournois (étapes) disputés au Mixte National."><div class="bt-num">{nc.tourns}</div><div class="bt-lab">Tournois</div></div>
+        </div>
+      </div>
+
+      <p class="fj-help" style="margin-top:22px"><b>Fiche à venir :</b> {name} accède au Blackball Master pour la saison <b>{nc.mastersLabel}</b>. Sa fiche carrière — parcours étape par étape, confrontations, distinctions — s'enrichira <b>automatiquement</b> dès les premières étapes disputées. En attendant, voici son bilan de la saison précédente en <b>Mixte National {nc.feederLabel}</b>.</p>
+      </>
+      ) : (
+      <>
       <a href={`/billard/saison/${latest.slug}/classement`} class="link" style="color:var(--c-billard);display:inline-block;margin-bottom:18px">← Classement {latest.label}</a>
 
       <section class="chero chero-ufc" style="--dc:var(--c-billard)">
@@ -404,6 +480,8 @@ const fmtArtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeri
         </div>
       </div>
       </div>
+      </>
+      )}
     </div>
   </section>
 </Base>

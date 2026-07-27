@@ -102,17 +102,19 @@ if (!hasData) {
   // En cas de changement d'accession ponctuel, ajuster PROMOTED ou filtrer ci-dessous.
   const PROMOTED = 8;
   const knownMastersIds = new Set<number>();
-  for (const s of playedSeasons) for (const p of s.results!.players as any[]) knownMastersIds.add(p.id);
+  const mastersByName = new Map<string, number>(); // id Cuescore parfois différent Mixte↔Masters → on relie aussi par nom
+  for (const s of playedSeasons) for (const p of s.results!.players as any[]) { knownMastersIds.add(p.id); if (!mastersByName.has(_n(p.name))) mastersByName.set(_n(p.name), p.id); }
   newcomers = (feeder ? (feeder.players as any[]) : [])
     .slice()
     .sort((a, b) => a.rank - b.rank)
     .slice(0, PROMOTED)
     .map((p) => {
-      const back = knownMastersIds.has(p.id); // déjà passé par le Masters → joueur de retour
+      const bid = knownMastersIds.has(p.id) ? p.id : mastersByName.get(_n(p.name)); // déjà passé par le Masters → joueur de retour
+      const back = bid != null;
       return {
         name: p.name,
         url: photoOf(p, season.slug),
-        link: back ? `/billard/joueur/${slugOf(p.id)}` : null,
+        link: back ? `/billard/joueur/${slugOf(bid!)}` : `/billard/joueur/${p.id}`,
         badge: back
           ? '↩ De retour au Masters'
           : (feederCdFKey === _n(p.name) ? '🏆 Champion de France Mixte' : (p.rank === 1 ? '⭐ 1er du Mixte National' : null)),
