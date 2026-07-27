@@ -33,18 +33,26 @@ function _listPhotos(): { url: string; key: string; season: string | null }[] {
   const isImg = (f: string) => /\.(jpe?g|png|webp)$/i.test(f);
   const key = (f: string) => _norm(f.replace(/\.[^.]+$/, ''));
   const root = 'public/joueurs';
+  // Photos « à plat » dans public/joueurs/ = photo par défaut du joueur (sans saison).
   try {
     for (const f of readdirSync(root)) if (isImg(f)) out.push({ url: '/joueurs/' + f, key: key(f), season: null });
   } catch { /* dossier absent */ }
-  try {
-    const arch = root + '/archives joueurs';
-    for (const d of readdirSync(arch, { withFileTypes: true })) {
-      if (!d.isDirectory()) continue;
-      try {
-        for (const f of readdirSync(arch + '/' + d.name)) if (isImg(f)) out.push({ url: '/joueurs/archives joueurs/' + d.name + '/' + f, key: key(f), season: d.name });
-      } catch { /* ignore */ }
-    }
-  } catch { /* pas de sous-dossier archives */ }
+  // Photos rangées par COMPÉTITION puis par SAISON :
+  //   public/joueurs/{MASTERS,FEMMES,PARA-BILLARD}/AAAA-AAAA/
+  //   (+ ancien « archives joueurs » conservé pour compatibilité).
+  // On indexe par nom + saison : la photo de la bonne saison est privilégiée (maillots).
+  const groups = ['MASTERS', 'FEMMES', 'PARA-BILLARD', 'archives joueurs'];
+  for (const g of groups) {
+    const base = root + '/' + g;
+    try {
+      for (const d of readdirSync(base, { withFileTypes: true })) {
+        if (!d.isDirectory()) continue;
+        try {
+          for (const f of readdirSync(base + '/' + d.name)) if (isImg(f)) out.push({ url: '/joueurs/' + g + '/' + d.name + '/' + f, key: key(f), season: d.name });
+        } catch { /* ignore */ }
+      }
+    } catch { /* groupe absent */ }
+  }
   if (import.meta.env.PROD) _photoFiles = out;
   return out;
 }
@@ -106,7 +114,7 @@ const _titleCase = (s: string) =>
 // Saisons « photo seule » : sous-dossiers de public/joueurs/archives joueurs/ qui ne
 // correspondent à AUCUNE saison avec données. Renvoie, par saison, la liste des photos.
 export function photoOnlySeasons(dataSeasonSlugs: Set<string>) {
-  const arch = 'public/joueurs/archives joueurs';
+  const arch = 'public/joueurs/MASTERS';
   const out: { slug: string; label: string; players: { name: string; url: string; key: string }[] }[] = [];
   let dirs: string[] = [];
   try {
@@ -118,7 +126,7 @@ export function photoOnlySeasons(dataSeasonSlugs: Set<string>) {
     try { files = readdirSync(`${arch}/${d}`).filter((f) => /\.(jpe?g|png|webp)$/i.test(f)); } catch { /* ignore */ }
     if (!files.length) continue;
     const players = files
-      .map((f) => { const base = f.replace(/\.[^.]+$/, ''); return { name: _titleCase(base), url: `/joueurs/archives joueurs/${d}/${f}`, key: _norm(base) }; })
+      .map((f) => { const base = f.replace(/\.[^.]+$/, ''); return { name: _titleCase(base), url: `/joueurs/MASTERS/${d}/${f}`, key: _norm(base) }; })
       .sort((a, b) => a.name.localeCompare(b.name, 'fr'));
     out.push({ slug: d, label: d.replace('-', ' / '), players });
   }
