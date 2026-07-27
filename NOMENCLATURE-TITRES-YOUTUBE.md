@@ -26,18 +26,19 @@ Le nombre de parties est **libre** (3, 4, 5…). La casse et les émojis n'ont a
 
 ### 🎱 Billard
 ```
-BLACKBALL <CATÉGORIE> | <PHASE> | <CONTEXTE>
+BLACKBALL <CATÉGORIE> | <SAISON> | <PHASE> | <TN / contexte>
 ```
 - **CATÉGORIE** : `MASTERS` · `FEMMES` · `PARA-BILLARD` · `ESPOIRS` (range aussi le replay dans la vidéothèque)
-- **PHASE** : `FINALE` · `1/2 FINALE` · `1/4 FINALE` · `POULES` · `TOUR 1`…
-- **CONTEXTE** : `TN7 - CAVAILLON` · `Championnat de France` · `CDF - VILLENEUVE`…
+- **SAISON** : `26/27` (saison 2026-2027)
+- **PHASE** : `FINALE` · `1/2 FINALE` · `1/4 FINALE` · `1/8 FINALE` · `1/16 FINALE` · `POULES`
+- **TN / CONTEXTE** : `TN1` … `TN8` · `TN7 - CAVAILLON` · `Championnat de France` · `CDF - VILLENEUVE`…
 
 Exemples :
 ```
-BLACKBALL MASTERS | FINALE | Championnat de France
-BLACKBALL MASTERS | 1/2 FINALE | TN7 - CAVAILLON
-BLACKBALL FEMMES | FINALE | TN7 - CAVAILLON
-BLACKBALL PARA-BILLARD | FINALE | TN7 - CAVAILLON
+🎱 BLACKBALL FEMMES | 26/27 | 1/16 FINALE | TN1
+🎱 BLACKBALL MASTERS | 26/27 | FINALE | Championnat de France
+🎱 BLACKBALL PARA-BILLARD | 26/27 | 1/2 FINALE | TN7 - CAVAILLON
+🎱 BLACKBALL ESPOIRS | 26/27 | 1/4 FINALE | TN1
 ```
 
 ### 🏀 Basket
