@@ -8,15 +8,16 @@ import SportIcon from '../components/SportIcon.astro';
 import { getLiveFeature, getProgramme, getReplays, tagStyle } from '../lib/youtube';
 import { getCollection } from 'astro:content';
 import { articleCover } from '../lib/articles';
+import { getEvents } from '../lib/events';
 
 const latestArticles = (await getCollection('articles', ({ data }) => !data.draft && data.date.valueOf() <= Date.now()))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 const fmtArticleDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
 
-// Événements à mettre en avant (bandeau en haut) — disparaissent après la date de l'événement.
-const events = (await getCollection('evenements', ({ data }) => !data.draft && data.date.valueOf() + 86400000 > Date.now()))
-  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+// Événements à mettre en avant (bandeau) — collection /admin + affiches déposées
+// dans public/evenements/. Fenêtre d'affichage gérée dans getEvents().
+const events = await getEvents();
 
 const live = await getLiveFeature();
 const programme = await getProgramme();
@@ -151,15 +152,15 @@ const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t
           <div class="evcar-track">
             {events.map((e) => (
               <div class="evcar-slide">
-                {e.data.link
-                  ? <a href={e.data.link} class="evbanner" target={e.data.link.startsWith('http') ? '_blank' : undefined} rel="noopener" aria-label={e.data.title}><img src={e.data.image} alt={e.data.title} loading="lazy" /></a>
-                  : <div class="evbanner"><img src={e.data.image} alt={e.data.title} loading="lazy" /></div>}
+                {e.link
+                  ? <a href={e.link} class="evbanner" target={e.link.startsWith('http') ? '_blank' : undefined} rel="noopener" aria-label={e.title}><img src={e.image} alt={e.title} loading="lazy" /></a>
+                  : <div class="evbanner"><img src={e.image} alt={e.title} loading="lazy" /></div>}
               </div>
             ))}
           </div>
           {events.length > 1 && (
             <div class="evcar-dots">
-              {events.map((e, i) => <button type="button" class="evcar-dot" data-i={i} aria-label={`Voir : ${e.data.title}`}></button>)}
+              {events.map((e, i) => <button type="button" class="evcar-dot" data-i={i} aria-label={`Voir : ${e.title}`}></button>)}
             </div>
           )}
         </div>

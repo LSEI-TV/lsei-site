@@ -1,0 +1,36 @@
+COMMENT AJOUTER UN EVENEMENT AU BANDEAU "A L'AFFICHE"
+=====================================================
+
+Il suffit de DEPOSER une affiche (image) dans le sous-dossier de la SAISON
+concernee, bien nommee. Aucune fiche a ecrire. Puis demander a Claude de publier.
+
+RANGEMENT PAR SAISON
+--------------------
+  public/evenements/2026-2027/  -> evenements de la saison 2026-2027
+  public/evenements/2027-2028/  -> evenements de la saison 2027-2028
+  ...
+Le sous-dossier sert au RANGEMENT / ARCHIVAGE. Il n'influence pas l'affichage :
+ce sont les DATES DU NOM DE FICHIER qui commandent l'apparition et le retrait.
+(Un evenement passe reste archive dans son dossier de saison, sans s'afficher.)
+
+NOMMAGE DU FICHIER
+------------------
+  AAAA-MM-JJ - AAAA-MM-JJ - Titre de l'evenement.webp
+       |            |            |
+   apparait      disparait     titre affiche
+  (1re date)    (2e date)
+
+Exemple (a placer dans public/evenements/2026-2027/) :
+  2026-08-01 - 2026-09-06 - Coupe du Monde de Subbuteo.webp
+  -> le bandeau apparait le 1er aout, disparait apres le 6 septembre.
+
+Variante simple (une seule date = affiche tout de suite, retire apres) :
+  2026-09-06 - Coupe du Monde de Subbuteo.webp
+
+CONSEILS
+--------
+- Format WEBP de preference (leger). Glisser l'affiche sur le raccourci
+  "CONVERTIR EN WEBP" du Bureau si besoin.
+- Format d'image large facon banniere (ex. 1760 x 334) pour un beau rendu.
+- Le lien du bandeau pointe vers la chaine YouTube LSEI par defaut.
+  Pour un lien billetterie precis, passer plutot par /admin.

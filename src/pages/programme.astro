@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Thumb from '../components/Thumb.astro';
 import { disciplines, getDiscipline } from '../data/site';
 import { getBroadcasts } from '../lib/youtube';
+import { parseProgTitle } from '../lib/programmeTitle';
 import { getCollection } from 'astro:content';
 
 const now = Date.now();
@@ -79,6 +80,9 @@ for (const it of items) {
                 const d = getDiscipline(it.sport);
                 const st = it.live ? 'direct' : (it.date.valueOf() > now ? 'avenir' : 'encours');
                 const Tag = it.link ? 'a' : 'div';
+                // Entrées /admin : catégorie + titre déjà structurés. Directs YouTube :
+                // titre brut « guide TV » découpé selon la nomenclature « | ».
+                const pt = it.category ? null : parseProgTitle(it.title);
                 return (
                   <Tag
                     class="prog-row"
@@ -93,8 +97,20 @@ for (const it of items) {
                     <span class="prog-time mono">{it.live ? 'LIVE' : heure(it.date)}</span>
                     <span class="prog-tag" style={`background:${d.tagBg};color:${d.colorVar}`}>{d.label}</span>
                     <span class="prog-what">
-                      <b>{it.category || it.title || d.name}</b>
-                      {it.category && it.title && <span class="prog-sub">{it.title}</span>}
+                      {pt ? (
+                        <>
+                          {pt.kicker && <span class="prog-kick" style={`color:${d.colorVar}`}>{pt.kicker}</span>}
+                          <b>{pt.main || d.name}</b>
+                          {pt.badges.length > 0 && (
+                            <span class="prog-badges">{pt.badges.map((b) => <span class="prog-badge">{b}</span>)}</span>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <b>{it.category || it.title || d.name}</b>
+                          {it.category && it.title && <span class="prog-sub">{it.title}</span>}
+                        </>
+                      )}
                     </span>
                     <span class={`prog-status ${st}`}>{st === 'direct' ? '● En direct' : st === 'avenir' ? 'À venir' : 'En cours'}</span>
                   </Tag>
@@ -106,6 +122,12 @@ for (const it of items) {
       )}
     </div>
   </section>
+
+  <style>
+    .prog-kick { display:block; font-size:.66rem; font-weight:800; letter-spacing:.05em; text-transform:uppercase; margin-bottom:3px; }
+    .prog-badges { display:flex; flex-wrap:wrap; gap:5px; margin-top:5px; }
+    .prog-badge { font-size:.7rem; font-weight:600; line-height:1.4; padding:1px 8px; border-radius:999px; background:color-mix(in srgb, currentColor 12%, transparent); border:1px solid color-mix(in srgb, currentColor 22%, transparent); white-space:nowrap; opacity:.85; }
+  </style>
 
   <script is:inline>
     (function () {
