@@ -748,10 +748,10 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .hub-brand { display: inline-flex; align-items: center; gap: 9px; font-family: var(--display); text-transform: uppercase; font-weight: 700; font-size: 17px; color: var(--ink); letter-spacing: .02em; }
 .hub-brand em { font-style: normal; font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--ink-faint); }
 .hub-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--dc, var(--accent)); }
-.hub-links { display: flex; gap: 20px; margin-left: auto; flex-wrap: wrap; }
-.hub-links a { font-size: 13px; font-weight: 600; color: var(--ink-soft); padding: 4px 0; border-bottom: 2px solid transparent; }
-.hub-links a:hover { color: var(--ink); }
-.hub-links a.active { color: var(--dc, var(--accent)); border-color: var(--dc, var(--accent)); }
+.hub-links { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+.hub-links a { font-size: 13px; font-weight: 650; color: var(--ink-soft); padding: 7px 14px; border-radius: 999px; transition: background .15s, color .15s; }
+.hub-links a:hover { color: var(--ink); background: var(--surface-2); }
+.hub-links a.active { color: var(--dc, var(--accent)); background: color-mix(in srgb, var(--dc, var(--accent)) 13%, transparent); font-weight: 700; }
 
 .hub-top { padding-top: 30px; }
 .hub-hero { display: grid; grid-template-columns: 1.6fr 1fr; gap: 28px; align-items: start; }
@@ -877,6 +877,18 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .bname { font-weight: 650; color: var(--ink); }
 .btable .bwin { color: var(--ink); font-weight: 700; }
 .btable .bpts { color: var(--c-billard); font-weight: 800; }
+/* Classement sur TELEPHONE : on masque les colonnes secondaires -> tient sans scroll */
+@media (max-width: 620px) {
+  .btable { min-width: 0; font-size: 13px; }
+  .btable th, .btable td { padding: 9px 6px; }
+  .btable th:nth-child(4), .btable td:nth-child(4),   /* Tournois */
+  .btable th:nth-child(5), .btable td:nth-child(5),   /* Joues */
+  .btable th:nth-child(6), .btable td:nth-child(6),   /* V */
+  .btable th:nth-child(7), .btable td:nth-child(7),   /* D */
+  .btable th:nth-child(9), .btable td:nth-child(9) {  /* Diff */
+    display: none;
+  }
+}
 .bpos { color: #3fae6b; } .bneg { color: var(--live); }
 
 /* résumé des victoires (barres) */
