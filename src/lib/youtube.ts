@@ -159,7 +159,7 @@ const DISCIPLINE_RULES: { slug: DisciplineSlug; keywords: string[] }[] = [
   { slug: 'beach', keywords: ['beach', 'volley'] },
   { slug: 'basket', keywords: ['basket'] },
   { slug: 'palets', keywords: ['palet'] },
-  { slug: 'subbuteo', keywords: ['subbuteo'] },
+  { slug: 'subbuteo', keywords: ['subbuteo', 'fistf'] },
   { slug: 'football', keywords: ['football', 'foot'] },
   { slug: 'bowling', keywords: ['bowling'] },
   { slug: 'billard', keywords: ['billard', 'blackball', 'black-ball', 'snooker', 'pool', 'carambole', 'masters', 'ultimate', 'para-billard', 'handi-billard'] },
