@@ -78,41 +78,32 @@ for (const it of items) {
             <div class="prog-rows">
               {byDay.get(k)!.map((it) => {
                 const d = getDiscipline(it.sport);
-                const st = it.live ? 'direct' : (it.date.valueOf() > now ? 'avenir' : 'encours');
                 const Tag = it.link ? 'a' : 'div';
                 // Entrées /admin : catégorie + titre déjà structurés. Directs YouTube :
                 // titre brut « guide TV » découpé selon la nomenclature « | ».
                 const pt = it.category ? null : parseProgTitle(it.title);
+                const main = pt ? (pt.main || d.name) : (it.category || it.title || d.name);
+                const sub = pt ? [pt.kicker, ...pt.badges].filter(Boolean).join(' · ') : (it.category ? it.title : '');
                 return (
                   <Tag
-                    class="prog-row"
+                    class="prog"
                     data-sport={it.sport}
                     {...(it.link ? { href: it.link, target: it.link.startsWith('http') ? '_blank' : undefined, rel: 'noopener' } : {})}
                   >
-                    <span class="prog-thumb">
-                      {it.thumb
-                        ? <img src={it.thumb} alt="" loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
-                        : <span class="prog-thumb-duo" style={`background:linear-gradient(135deg,${d.from},${d.to})`}></span>}
+                    <span class="prog-media">
+                      <span class={`time mono prog-time-media${it.live ? ' on' : ''}`}>{it.live ? 'LIVE' : heure(it.date)}</span>
+                      <span class="prog-thumb">
+                        {it.thumb
+                          ? <img src={it.thumb} alt="" loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
+                          : <span class="prog-thumb-duo" style={`background:linear-gradient(135deg,${d.from},${d.to})`}></span>}
+                      </span>
                     </span>
-                    <span class="prog-time mono">{it.live ? 'LIVE' : heure(it.date)}</span>
-                    <span class="prog-tag" style={`background:${d.tagBg};color:${d.colorVar}`}>{d.label}</span>
-                    <span class="prog-what">
-                      {pt ? (
-                        <>
-                          {pt.kicker && <span class="prog-kick" style={`color:${d.colorVar}`}>{pt.kicker}</span>}
-                          <b>{pt.main || d.name}</b>
-                          {pt.badges.length > 0 && (
-                            <span class="prog-badges">{pt.badges.map((b) => <span class="prog-badge">{b}</span>)}</span>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          <b>{it.category || it.title || d.name}</b>
-                          {it.category && it.title && <span class="prog-sub">{it.title}</span>}
-                        </>
-                      )}
+                    <span class="body">
+                      <span class={`time mono prog-time-body${it.live ? ' on' : ''}`}>{it.live ? 'LIVE' : heure(it.date)}</span>
+                      <span class="t">{main}</span>
+                      {sub && <span class="m">{sub}</span>}
+                      <span class="tagd" style={`background:${d.tagBg};color:${d.colorVar}`}>{d.label}</span>
                     </span>
-                    <span class={`prog-status ${st}`}>{st === 'direct' ? '● En direct' : st === 'avenir' ? 'À venir' : 'En cours'}</span>
                   </Tag>
                 );
               })}

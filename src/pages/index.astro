@@ -55,6 +55,11 @@ const railDay = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numer
 const railTime = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' });
 
 const replays = await getReplays({ limit: 3 });
+// Version TELEPHONE/TABLETTE de « Derniers replays » : le dernier billard + le dernier basket.
+const replaysMobile = [
+  ...(await getReplays({ discipline: 'billard', limit: 1 })),
+  ...(await getReplays({ discipline: 'basket', limit: 1 })),
+];
 const liveCount = programme.filter((p) => p.live).length;
 // Si aucun direct/programme, le rail affiche la DERNIÈRE vidéo de CHAQUE discipline
 // (une par sport), en gardant l'ordre par heure réelle de diffusion la plus récente.
@@ -131,13 +136,16 @@ const heroStatusLabel = live ? (live.status === 'live' ? 'En direct' : live.stat
                 const subb = pt ? pt.badges.join(' · ') : '';
                 return (
                   <a href={it.href} class="prog" {...(it.id ? { 'data-id': it.id, 'data-title': cleanTitle, 'data-cat': cat, 'data-sub': subb } : {})}>
-                    <div class="prog-thumb">
-                      {it.thumb
-                        ? <img src={it.thumb} alt="" loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
-                        : <span style="background:linear-gradient(135deg,var(--surface-2),var(--surface))"></span>}
+                    <div class="prog-media">
+                      <div class={`time mono prog-time-media${it.live ? ' on' : ''}`}>{time}</div>
+                      <div class="prog-thumb">
+                        {it.thumb
+                          ? <img src={it.thumb} alt="" loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
+                          : <span style="background:linear-gradient(135deg,var(--surface-2),var(--surface))"></span>}
+                      </div>
                     </div>
-                    <div class={`time mono${it.live ? ' on' : ''}`}>{time}</div>
                     <div class="body">
+                      <div class={`time mono prog-time-body${it.live ? ' on' : ''}`}>{time}</div>
                       <div class="t">{main}</div>
                       {sub && <div class="m">{sub}</div>}
                       <span class="tagd" style={tagStyle(it.sport)}>{tagLabel(it.sport)}</span>
@@ -238,6 +246,25 @@ const heroStatusLabel = live ? (live.status === 'live' ? 'En direct' : live.stat
         dots.forEach(function (d, k) { d.addEventListener('click', function () { stop(); go(k); start(); }); });
         car.addEventListener('mouseenter', stop);
         car.addEventListener('mouseleave', start);
+        // Glisser au doigt (mobile) : swipe horizontal pour changer d'evenement.
+        var sx = 0, sy = 0, drag = false, lock = null, w = 0;
+        track.addEventListener('touchstart', function (e) { var t = e.touches[0]; sx = t.clientX; sy = t.clientY; drag = true; lock = null; w = car.clientWidth || 1; stop(); }, { passive: true });
+        track.addEventListener('touchmove', function (e) {
+          if (!drag) return;
+          var t = e.touches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+          if (lock === null) { lock = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y'; if (lock === 'x') track.style.transition = 'none'; }
+          if (lock === 'x') { e.preventDefault(); track.style.transform = 'translateX(calc(' + (-i * 100) + '% + ' + dx + 'px))'; }
+        }, { passive: false });
+        function endDrag(e) {
+          if (!drag) return; drag = false;
+          if (lock !== 'x') { start(); return; }
+          track.style.transition = '';
+          var t = (e.changedTouches && e.changedTouches[0]) || e, dx = t.clientX - sx, thr = Math.min(60, w * 0.15);
+          if (dx <= -thr) go(i + 1); else if (dx >= thr) go(i - 1); else go(i);
+          start();
+        }
+        track.addEventListener('touchend', endDrag);
+        track.addEventListener('touchcancel', endDrag);
         go(0); start();
       });
     })();
@@ -253,8 +280,22 @@ const heroStatusLabel = live ? (live.status === 'live' ? 'En direct' : live.stat
         </div>
         <a href="/videotheque" class="link">Toute la vidéothèque →</a>
       </div>
-      <div class="cards">
+      <div class="cards cards--v repl-desktop">
         {replays.map((v) => {
+          const d = getDiscipline(v.discipline);
+          return (
+            <a href={`/replay/${v.id}`} class="card" style={`--dc:${d.colorVar}`}>
+              <Thumb from={d.from} to={d.to} caption={v.caption} image={v.thumb} />
+              <div class="kicker">{v.kicker}</div>
+              <h3>{v.title}</h3>
+              {v.excerpt && <p class="ex">{v.excerpt}</p>}
+              <div class="meta"><span>{v.when}</span>{v.views && <Fragment><span class="sep"></span><span class="mono">{v.views} vues</span></Fragment>}</div>
+            </a>
+          );
+        })}
+      </div>
+      <div class="cards repl-mobile">
+        {replaysMobile.map((v) => {
           const d = getDiscipline(v.discipline);
           return (
             <a href={`/replay/${v.id}`} class="card" style={`--dc:${d.colorVar}`}>

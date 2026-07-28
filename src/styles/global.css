@@ -322,7 +322,28 @@ nav.main a.active { color: var(--ink); border-color: var(--accent); }
 .prog-thumb img, .prog-thumb span { display: block; width: 100%; height: 100%; object-fit: cover; }
 .prog .body .m { font-size: 11.5px; color: var(--ink-faint); margin-top: 2px; }
 .prog .tagd { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; margin-top: 6px; }
-.rail .prog-thumb { width: 68px; aspect-ratio: 16 / 9; border-radius: 5px; }
+/* Heure empilee AU-DESSUS de la vignette (gagne de la largeur pour le titre) */
+.prog-media { display: flex; flex-direction: column-reverse; align-items: flex-start; gap: 4px; flex: none; }
+.prog-media .time { min-width: 0; padding-top: 0; padding-left: 2px; }
+.prog .body { display: flex; flex-direction: column; align-items: flex-start; }
+/* Heure : SOUS la vignette (telephone) OU au-dessus du titre (tablette + PC) */
+.prog-time-body { display: none; }
+@media (min-width: 621px) {
+  .prog-media .prog-time-media { display: none; }
+  .prog-time-body { display: block; min-width: 0; margin-bottom: 2px; }
+}
+/* Page /programme : lignes au style de l'accueil (grande vignette + corps qui remplit) */
+.prog-rows .prog { align-items: center; }
+.prog-rows .prog .body { flex: 1; min-width: 0; }
+.prog-rows .prog .body .t { font-size: 15px; }
+.rail .prog-thumb { width: 100px; aspect-ratio: 16 / 9; border-radius: 6px; }
+@media (max-width: 940px) { .rail .prog-thumb { width: 140px; } }  /* tablette : vignettes plus grandes */
+/* Cadre « Au programme » : vignettes plus grandes sur telephone */
+@media (max-width: 620px) {
+  .prog { padding: 12px 14px; gap: 11px; }
+  .prog .time { min-width: 40px; }
+  .rail .prog-thumb { width: 104px; }
+}
 .rail .more { display: block; text-align: center; padding: 12px; font-size: 12.5px; font-weight: 700; color: var(--accent); border-top: 1px solid var(--line); }
 .rail .more:hover { background: var(--surface-2); }
 
@@ -355,6 +376,12 @@ nav.main a.active { color: var(--ink); border-color: var(--accent); }
 
 /* ---------- editorial grid ---------- */
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+/* « Derniers replays » : PC = liste complete · telephone/tablette = billard + basket seulement */
+.repl-mobile { display: none; }
+@media (max-width: 940px) {
+  .repl-desktop { display: none; }
+  .repl-mobile { display: grid; }
+}
 .card { display: flex; flex-direction: column; }
 .card .frame { aspect-ratio: 16/10; transition: box-shadow .25s ease, border-color .25s ease; }
 /* halo coloré (couleur de la discipline) autour de la miniature au survol */
@@ -410,9 +437,9 @@ a.evbanner:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 
 .prog-day { margin-top: 30px; }
 .prog-day-h { font-family: var(--display); text-transform: capitalize; font-size: clamp(18px, 3vw, 24px); margin: 0 0 10px; padding-bottom: 8px; border-bottom: 2px solid var(--line); }
 .prog-rows { display: flex; flex-direction: column; }
-.prog-row { display: grid; grid-template-columns: 84px 52px 108px 1fr auto; align-items: center; gap: 12px; padding: 8px; border-bottom: 1px solid var(--line); text-decoration: none; color: inherit; transition: background .15s; }
+.prog-row { display: grid; grid-template-columns: 132px 52px 108px 1fr auto; align-items: center; gap: 12px; padding: 8px; border-bottom: 1px solid var(--line); text-decoration: none; color: inherit; transition: background .15s; }
 .prog-row:hover { background: var(--surface-2); }
-.prog-thumb { position: relative; width: 84px; aspect-ratio: 16 / 10; border-radius: 7px; overflow: hidden; background: var(--surface-2); }
+.prog-thumb { position: relative; width: 180px; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: var(--surface-2); }
 .prog-thumb img, .prog-thumb-duo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .prog-time { font-weight: 700; font-size: 15px; color: var(--ink); }
 .prog-tag { font-size: 11px; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; justify-self: start; white-space: nowrap; }
@@ -425,7 +452,7 @@ a.evbanner:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 
 .prog-status.encours { color: #3fae6b; }
 @media (max-width: 600px) {
   .prog-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
-  .prog-thumb { width: 66px; }
+  .prog-thumb { width: 116px; }
   .prog-time { order: 2; }
   .prog-tag { order: 3; }
   .prog-status { order: 4; margin-left: auto; }
@@ -524,7 +551,8 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 }
 @media (max-width: 620px) {
   .stats { grid-template-columns: 1fr; }
-  .cards { grid-template-columns: 1fr; }
+  .cards { grid-template-columns: 1fr; }                  /* articles : 1 par ligne (plus lisible) */
+  .cards--v { grid-template-columns: 1fr 1fr; gap: 12px; }/* videos/replays : 2 par ligne sur telephone */
   .discs { grid-template-columns: 1fr 1fr; }
   .foot { grid-template-columns: 1fr; }
   .util .left span.hide { display: none; }
