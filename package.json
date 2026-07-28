@@ -10,7 +10,8 @@
     "preview": "astro preview",
     "astro": "astro",
     "cms": "decap-server",
-    "gen:season": "node scripts/generate-season.mjs"
+    "gen:season": "node scripts/generate-season.mjs",
+    "gen:tournament": "node scripts/generate-tournament.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

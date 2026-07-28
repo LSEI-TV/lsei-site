@@ -4,15 +4,15 @@ import HubNav from '../../../../components/HubNav.astro';
 import SeasonPicker from '../../../../components/SeasonPicker.astro';
 import PlayerSearch from '../../../../components/PlayerSearch.astro';
 import { photoOf, fromPov, seasonHighlights, playerSlugs } from '../../../../lib/billardStats';
-import { getParaSeasons, getParaPalmares, PARA_DEFAULT_SEASON } from '../../../../data/billard/seasonsPara';
-const { slugOf } = playerSlugs(getParaSeasons());
+import { getParaMvSeasons, getParaMvPalmares, PARAMV_DEFAULT_SEASON } from '../../../../data/billard/seasonsParaMalvoyants';
+const { slugOf } = playerSlugs(getParaMvSeasons());
 import type { Season } from '../../../../data/billard/seasons';
 
 export function getStaticPaths() {
-  return getParaSeasons().map((s) => ({ params: { season: s.slug }, props: { season: s } }));
+  return getParaMvSeasons().map((s) => ({ params: { season: s.slug }, props: { season: s } }));
 }
 const { season } = Astro.props as { season: Season };
-const base = `/para-billard/saison/${season.slug}`;
+const base = `/para-billard-malvoyants/saison/${season.slug}`;
 const calSeason = season;
 
 const R: any = season.results;
@@ -26,24 +26,24 @@ const spotResults = spot ? matches.filter((m) => m.aId === spot.id || m.bId === 
 const recent = hasData ? [...matches].sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 5) : [];
 const tourById = (tid: string) => (hasData ? R.tournaments.find((t: any) => t.id === tid) : undefined);
 const hi = hasData && matches.length ? seasonHighlights(R) : null;
-const palmares = getParaPalmares();
+const palmares = getParaMvPalmares();
 const cnt = hasData ? { players: players.length, tourns: R.tournaments.length, matches: matches.length } : null;
 
 const fmtShort = (iso: string) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }).format(new Date(iso));
 const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
 ---
-<Base title={`Para-billard fauteuil — Blackball Para-billard fauteuil ${season.label}`} description={`L'univers Para-billard fauteuil de LSEI : classement, joueurs et statistiques, saison ${season.label}.`} active="disciplines">
-  <HubNav season={season.slug} dataSeason={hasData ? season.slug : PARA_DEFAULT_SEASON} active="accueil" root="/para-billard" brand="Para-billard" sub="· Fauteuil" joueursLabel="Joueurs" videosHref="/disciplines/billard/categorie/para-billard" />
+<Base title={`Para-billard malvoyants — Blackball Para-billard malvoyants ${season.label}`} description={`L'univers Para-billard malvoyants de LSEI : classement, joueurs et statistiques, saison ${season.label}.`} active="disciplines">
+  <HubNav season={season.slug} dataSeason={hasData ? season.slug : PARAMV_DEFAULT_SEASON} active="accueil" root="/para-billard-malvoyants" brand="Para-billard" sub="· Malvoyants" joueursLabel="Joueurs" videosHref="/disciplines/billard/categorie/para-billard" />
 
   <section class="section hub-top" style="--dc:var(--c-billard)">
     <div class="wrap hub-hero">
       <div class="hub-lead">
-        <SeasonPicker current={season.slug} sub="" root="/para-billard" seasons={getParaSeasons()} />
-        <div class="hub-kick">Blackball Para-billard fauteuil · {season.label}</div>
+        <SeasonPicker current={season.slug} sub="" root="/para-billard-malvoyants" seasons={getParaMvSeasons()} />
+        <div class="hub-kick">Blackball Para-billard malvoyants · {season.label}</div>
         {hasData ? (
           <>
-            <h1 class="hub-h1">Le circuit national Para-billard fauteuil</h1>
-            <p class="dek" style="margin-top:8px">{cnt!.players} joueurs classés, {cnt!.tourns} étapes, {cnt!.matches} matchs. Le para-billard fauteuil de la Fédération Française de Billard : classement, fiches carrière et confrontations.</p>
+            <h1 class="hub-h1">Le circuit national Para-billard malvoyants</h1>
+            <p class="dek" style="margin-top:8px">{cnt!.players} joueurs classés, {cnt!.tourns} étapes, {cnt!.matches} matchs. Le para-billard malvoyants de la Fédération Française de Billard : classement, fiches carrière et confrontations.</p>
           </>
         ) : (
           <>
@@ -60,7 +60,7 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
                 <span class="et-num">{e.short}</span>
                 <span class="et-city">{e.place}</span>
                 <span class="et-date">{evDate(e.date)}</span>
-                {e.winner && <a class="et-winner" href={`/para-billard/joueur/${slugOf(e.winner.id)}`} title={`Vainqueur : ${e.winner.name}`}>🏆 {e.winner.name}</a>}
+                {e.winner && <a class="et-winner" href={`/para-billard-malvoyants/joueur/${slugOf(e.winner.id)}`} title={`Vainqueur : ${e.winner.name}`}>🏆 {e.winner.name}</a>}
               </div>
             ))}
           </div>
@@ -70,7 +70,7 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
       <aside class="hub-side">
         <div class="hub-card hub-search">
           <div class="hub-card-h"><span>Rechercher un joueur</span></div>
-          <PlayerSearch placeholder="Nom d'un joueur…" seasons={getParaSeasons()} hrefBase="/para-billard/joueur/" />
+          <PlayerSearch placeholder="Nom d'un joueur…" seasons={getParaMvSeasons()} hrefBase="/para-billard-malvoyants/joueur/" />
         </div>
 
         {hasData ? (
@@ -80,7 +80,7 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
           {top5.map((p) => {
             const src = photoOf(p, season.slug);
             return (
-              <a href={`/para-billard/joueur/${slugOf(p.id)}`} class="pod-row">
+              <a href={`/para-billard-malvoyants/joueur/${slugOf(p.id)}`} class="pod-row">
                 <span class="pod-rank">{p.rank}</span>
                 <span class="bphoto pod-ph"><span class="bavatar">{p.name.slice(0, 1)}</span>{src && <img src={src} alt="" onerror="this.remove()" />}</span>
                 <span class="pod-name">{p.name}</span>
@@ -93,7 +93,7 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
 
         <div class="hub-card hub-spot">
           <div class="hub-card-h"><span>Joueur à la une</span></div>
-          <a href={`/para-billard/joueur/${slugOf(spot.id)}`} class="spot-head">
+          <a href={`/para-billard-malvoyants/joueur/${slugOf(spot.id)}`} class="spot-head">
             <span class="bphoto spot-ph"><span class="bavatar">{spot.name.slice(0, 1)}</span>{spotPhoto && <img src={spotPhoto} alt="" onerror="this.remove()" />}</span>
             <span>
               <span class="spot-name">{spot.name}</span>
@@ -120,9 +120,9 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
               const aWin = m.sA > m.sB;
               return (
                 <div class="hr-row">
-                  <a href={`/para-billard/joueur/${slugOf(m.aId)}`} class={`hr-p ${aWin ? 'w' : ''}`}>{m.aName}</a>
+                  <a href={`/para-billard-malvoyants/joueur/${slugOf(m.aId)}`} class={`hr-p ${aWin ? 'w' : ''}`}>{m.aName}</a>
                   <span class="hr-sc mono">{m.sA}<i>—</i>{m.sB}</span>
-                  <a href={`/para-billard/joueur/${slugOf(m.bId)}`} class={`hr-p r ${!aWin ? 'w' : ''}`}>{m.bName}</a>
+                  <a href={`/para-billard-malvoyants/joueur/${slugOf(m.bId)}`} class={`hr-p r ${!aWin ? 'w' : ''}`}>{m.bName}</a>
                   <span class="hr-meta">{t?.level} · {evDate(m.date)}</span>
                 </div>
               );
@@ -149,31 +149,31 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
             <div class="fact-ic">🎯</div>
             <div class="fact-lab">Plus large victoire</div>
             <div class="fact-val">{hi.biggest.sw}–{hi.biggest.sl}</div>
-            <div class="fact-sub"><a href={`/para-billard/joueur/${slugOf(hi.biggest.winId)}`}>{hi.biggest.winName}</a> contre {hi.biggest.loseName}</div>
+            <div class="fact-sub"><a href={`/para-billard-malvoyants/joueur/${slugOf(hi.biggest.winId)}`}>{hi.biggest.winName}</a> contre {hi.biggest.loseName}</div>
           </div>
           <div class="fact">
             <div class="fact-ic">🔥</div>
             <div class="fact-lab">Plus longue série</div>
             <div class="fact-val">{hi.streak.n} victoires</div>
-            <div class="fact-sub">d'affilée · <a href={`/para-billard/joueur/${slugOf(hi.streak.id)}`}>{hi.streak.name}</a></div>
+            <div class="fact-sub">d'affilée · <a href={`/para-billard-malvoyants/joueur/${slugOf(hi.streak.id)}`}>{hi.streak.name}</a></div>
           </div>
           <div class="fact">
             <div class="fact-ic">🏆</div>
             <div class="fact-lab">Plus de victoires</div>
             <div class="fact-val">{hi.topWins.wins} matchs</div>
-            <div class="fact-sub">gagnés · <a href={`/para-billard/joueur/${slugOf(hi.topWins.id)}`}>{hi.topWins.name}</a></div>
+            <div class="fact-sub">gagnés · <a href={`/para-billard-malvoyants/joueur/${slugOf(hi.topWins.id)}`}>{hi.topWins.name}</a></div>
           </div>
           <div class="fact">
             <div class="fact-ic">📈</div>
             <div class="fact-lab">Meilleur pourcentage</div>
             <div class="fact-val">{hi.bestPct.winPct}%</div>
-            <div class="fact-sub">de victoires · <a href={`/para-billard/joueur/${slugOf(hi.bestPct.id)}`}>{hi.bestPct.name}</a></div>
+            <div class="fact-sub">de victoires · <a href={`/para-billard-malvoyants/joueur/${slugOf(hi.bestPct.id)}`}>{hi.bestPct.name}</a></div>
           </div>
           <div class="fact">
             <div class="fact-ic">⚡</div>
             <div class="fact-lab">Le plus actif</div>
             <div class="fact-val">{hi.mostActive.played} matchs</div>
-            <div class="fact-sub">disputés · <a href={`/para-billard/joueur/${slugOf(hi.mostActive.id)}`}>{hi.mostActive.name}</a></div>
+            <div class="fact-sub">disputés · <a href={`/para-billard-malvoyants/joueur/${slugOf(hi.mostActive.id)}`}>{hi.mostActive.name}</a></div>
           </div>
           <div class="fact">
             <div class="fact-ic">💡</div>
@@ -190,18 +190,18 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
   {palmares.length > 0 && (
     <section class="section" style="padding-top:0">
       <div class="wrap">
-        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Histoire</div><h2>Palmarès du Para-billard fauteuil</h2></div></div>
+        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Histoire</div><h2>Palmarès du Para-billard malvoyants</h2></div></div>
         <div class="palmares">
           {palmares.map((p) => (
             <div class="palm-row">
               <div class="palm-season">{p.label}</div>
-              <a href={`/para-billard/joueur/${slugOf(p.champ.id)}`} class="palm-card palm-champ">
+              <a href={`/para-billard-malvoyants/joueur/${slugOf(p.champ.id)}`} class="palm-card palm-champ">
                 <span class="palm-lab">Champion de saison</span>
                 <span class="palm-name">{p.champ.name}</span>
                 <span class="palm-sub">{p.champ.points} pts</span>
               </a>
               {p.cdf ? (
-                <a href={`/para-billard/joueur/${slugOf(p.cdf.id)}`} class="palm-card palm-cdf">
+                <a href={`/para-billard-malvoyants/joueur/${slugOf(p.cdf.id)}`} class="palm-card palm-cdf">
                   <span class="palm-lab">🏆 Champion de France</span>
                   <span class="palm-name">{p.cdf.name}</span>
                 </a>

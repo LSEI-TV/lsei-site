@@ -3,6 +3,7 @@
 import { LANDING_SEASON } from '../data/billard/seasons';
 import { FEMMES_LANDING_SEASON } from '../data/billard/seasonsFemmes';
 import { PARA_LANDING_SEASON } from '../data/billard/seasonsPara';
+import { PARAMV_LANDING_SEASON } from '../data/billard/seasonsParaMalvoyants';
 // « Accueil » (et le logo) ramènent toujours à la SAISON D'ARRIVÉE du hub (ex. 2026/2027),
 // pas à la saison de la page courante — sinon, depuis Classement/Joueurs (saison de données
 // 2025/2026), « Accueil » renverrait par erreur vers 2025/2026.
@@ -10,6 +11,7 @@ const LANDING: Record<string, string> = {
   '/billard': LANDING_SEASON,
   '/femmes': FEMMES_LANDING_SEASON,
   '/para-billard': PARA_LANDING_SEASON,
+  '/para-billard-malvoyants': PARAMV_LANDING_SEASON,
 };
 interface Props {
   season: string;

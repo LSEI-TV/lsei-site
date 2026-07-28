@@ -8,6 +8,7 @@ import { playerSlugs, photoOf } from '../lib/billardStats';
 import { getSeasons } from '../data/billard/seasons';
 import { getFemmesSeasons } from '../data/billard/seasonsFemmes';
 import { getParaSeasons } from '../data/billard/seasonsPara';
+import { getParaMvSeasons } from '../data/billard/seasonsParaMalvoyants';
 
 // Normalisation : minuscules, sans accents, ponctuation → espace. Sert à comparer
 // la requête et le contenu indexé de façon tolérante (« fougeres » trouve « Fougères »).
@@ -40,7 +41,8 @@ const billardD = getDiscipline('billard');
 const playerComps = [
   { seasons: getSeasons(), base: '/billard/joueur', label: 'Blackball Master', role: 'Joueur' },
   { seasons: getFemmesSeasons(), base: '/femmes/joueur', label: 'Blackball Femmes', role: 'Joueuse' },
-  { seasons: getParaSeasons(), base: '/para-billard/joueur', label: 'Para-billard', role: 'Joueur' },
+  { seasons: getParaSeasons(), base: '/para-billard/joueur', label: 'Para-billard fauteuil', role: 'Joueur' },
+  { seasons: getParaMvSeasons(), base: '/para-billard-malvoyants/joueur', label: 'Para-billard malvoyants', role: 'Joueur' },
 ];
 const playerItems: Item[] = [];
 for (const c of playerComps) {

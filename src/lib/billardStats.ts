@@ -4,6 +4,7 @@
 import { defaultSeason, getSeasons, type Season } from '../data/billard/seasons';
 import { getFemmesSeasons } from '../data/billard/seasonsFemmes';
 import { getParaSeasons } from '../data/billard/seasonsPara';
+import { getParaMvSeasons } from '../data/billard/seasonsParaMalvoyants';
 import { readdirSync } from 'node:fs';
 
 export interface Player {
@@ -41,7 +42,7 @@ function _listPhotos(): { url: string; key: string; season: string | null }[] {
   //   public/joueurs/{MASTERS,FEMMES,PARA-BILLARD}/AAAA-AAAA/
   //   (+ ancien « archives joueurs » conservé pour compatibilité).
   // On indexe par nom + saison : la photo de la bonne saison est privilégiée (maillots).
-  const groups = ['MASTERS', 'FEMMES', 'PARA-BILLARD', 'archives joueurs'];
+  const groups = ['MASTERS', 'FEMMES', 'PARA-BILLARD', 'PARA-BILLARD-MALVOYANTS', 'archives joueurs'];
   for (const g of groups) {
     const base = root + '/' + g;
     try {
@@ -63,7 +64,7 @@ let _wordIndex: Map<string, Set<number>> | null = null;
 function _wordCount(word: string): number {
   if (!_wordIndex) {
     _wordIndex = new Map();
-    for (const s of [...getSeasons(), ...getFemmesSeasons(), ...getParaSeasons()]) {
+    for (const s of [...getSeasons(), ...getFemmesSeasons(), ...getParaSeasons(), ...getParaMvSeasons()]) {
       if (!s.results) continue;
       for (const p of s.results.players as Player[]) {
         for (const part of (p.name || '').trim().split(/\s+/)) {

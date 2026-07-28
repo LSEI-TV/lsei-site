@@ -1070,15 +1070,15 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .bm-meta { grid-area: meta; font-size: 11.5px; color: var(--ink-faint); align-self: start; }
 
 /* page de choix Billard (Masters / Femmes) — direction « Champion à la une » */
-.bchoose { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; }
+.bchoose { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .bchoose-card { position: relative; display: flex; flex-direction: column; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--surface); padding: 24px 22px; overflow: hidden; transition: border-color .15s; }
 .bchoose-card::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--cc, var(--c-billard)); }
 .bchoose-card:hover { border-color: var(--cc, var(--c-billard)); }
-.bchoose-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--cc, var(--c-billard)); }
+.bchoose-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--cc, var(--c-billard)); line-height: 1.35; min-height: 2.7em; }
 .bchoose-title-link { display: inline-block; }
 .bchoose-title { font-family: var(--display); text-transform: uppercase; font-weight: 700; font-size: 29px; line-height: 1.05; color: var(--ink); margin: 5px 0 0; }
 .bchoose-title-link:hover .bchoose-title { color: var(--cc, var(--c-billard)); }
-.bchoose-desc { margin-top: 9px; font-size: 13px; line-height: 1.5; color: var(--ink-soft); min-height: 4.5em; }
+.bchoose-desc { margin-top: 9px; font-size: 13px; line-height: 1.5; color: var(--ink-soft); min-height: 78px; }
 
 /* champion à la une (or) */
 .champ-feature { display: flex; align-items: center; gap: 13px; margin-top: 18px; padding: 14px 16px; border-radius: 12px; border: 1px solid color-mix(in srgb, #E4B23C 55%, var(--line-strong)); background: color-mix(in srgb, #E4B23C 13%, var(--surface)); transition: border-color .15s, background .15s; }

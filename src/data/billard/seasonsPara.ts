@@ -7,7 +7,7 @@ import rp2526 from './results-para-2025-2026.json';
 import rp2425 from './results-para-2024-2025.json';
 import rp2324 from './results-para-2023-2024.json';
 
-export const COMPETITION_PARA = 'Blackball Para-billard';
+export const COMPETITION_PARA = 'Blackball Para-billard fauteuil';
 
 // Le Championnat de France de para-billard RECONNU par les instances ne commence
 // qu'en 2025/2026. Avant, les « CHF » n'étaient que des tournois de promotion

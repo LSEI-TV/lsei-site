@@ -3,28 +3,28 @@ import Base from '../../../../layouts/Base.astro';
 import HubNav from '../../../../components/HubNav.astro';
 import SeasonPicker from '../../../../components/SeasonPicker.astro';
 import { photoOf, playerSlugs } from '../../../../lib/billardStats';
-import { getParaSeasons } from '../../../../data/billard/seasonsPara';
-const { slugOf } = playerSlugs(getParaSeasons());
+import { getParaMvSeasons } from '../../../../data/billard/seasonsParaMalvoyants';
+const { slugOf } = playerSlugs(getParaMvSeasons());
 import type { Season } from '../../../../data/billard/seasons';
 
 export function getStaticPaths() {
-  return getParaSeasons().filter((s) => s.results).map((s) => ({ params: { season: s.slug }, props: { season: s } }));
+  return getParaMvSeasons().filter((s) => s.results).map((s) => ({ params: { season: s.slug }, props: { season: s } }));
 }
 const { season } = Astro.props as { season: Season };
 const R = season.results!;
 const players = R.players as any[];
 const cnt = { tourns: R.tournaments.length, players: players.length, matches: R.matches.length };
 ---
-<Base title={`Classement ${season.label} — Blackball Para-billard fauteuil`} description={`Classement officiel FFB du Para-billard fauteuil, saison ${season.label}.`} active="disciplines">
-  <HubNav season={season.slug} active="classement" root="/para-billard" brand="Para-billard" sub="· Fauteuil" joueursLabel="Joueurs" videosHref="/disciplines/billard/categorie/para-billard" />
+<Base title={`Classement ${season.label} — Blackball Para-billard malvoyants`} description={`Classement officiel FFB du Para-billard malvoyants, saison ${season.label}.`} active="disciplines">
+  <HubNav season={season.slug} active="classement" root="/para-billard-malvoyants" brand="Para-billard" sub="· Malvoyants" joueursLabel="Joueurs" videosHref="/disciplines/billard/categorie/para-billard" />
   <section class="disc-hero" style="--dc:var(--c-billard)">
     <div class="wrap">
-      <div class="kick" style="color:var(--c-billard)">Blackball Para-billard fauteuil · Classement</div>
+      <div class="kick" style="color:var(--c-billard)">Blackball Para-billard malvoyants · Classement</div>
       <h1>Classement de la saison</h1>
       <p>Classement officiel FFB · saison {season.label} — {cnt.tourns} étapes, {cnt.players} joueurs, {cnt.matches} matchs.</p>
       <div class="bar" style="background:var(--c-billard)"></div>
       <div class="bstat-nav">
-        <SeasonPicker current={season.slug} sub="/classement" onlyPlayed={true} root="/para-billard" seasons={getParaSeasons()} />
+        <SeasonPicker current={season.slug} sub="/classement" onlyPlayed={true} root="/para-billard-malvoyants" seasons={getParaMvSeasons()} />
         <span class="bstat-src">Source : FFB / Cuescore</span>
       </div>
     </div>
@@ -41,10 +41,10 @@ const cnt = { tourns: R.tournaments.length, players: players.length, matches: R.
             {players.map((p) => {
               const src = photoOf(p, season.slug);
               return (
-                <tr class="brow" data-href={`/para-billard/joueur/${slugOf(p.id)}`}>
+                <tr class="brow" data-href={`/para-billard-malvoyants/joueur/${slugOf(p.id)}`}>
                   <td class="brank">{p.rank}</td>
                   <td class="l">
-                    <a href={`/para-billard/joueur/${slugOf(p.id)}`} class="bplayer">
+                    <a href={`/para-billard-malvoyants/joueur/${slugOf(p.id)}`} class="bplayer">
                       <span class="bphoto"><span class="bavatar">{p.name.slice(0, 1)}</span>{src && <img src={src} alt="" loading="lazy" onerror="this.remove()" />}</span>
                       <span class="bname">{p.name}</span>
                     </a>
