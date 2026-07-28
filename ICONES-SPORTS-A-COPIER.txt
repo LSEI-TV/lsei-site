@@ -1,0 +1,35 @@
+================================================================
+   ICONES (EMOJIS) A COPIER-COLLER DANS LES TITRES YOUTUBE
+================================================================
+
+Selectionne l'emoji apres les " : ", copie-le (Ctrl+C),
+puis colle-le au DEBUT de ton titre YouTube (Ctrl+V).
+
+
+ICONE - BASKETBALL    : 🏀
+
+ICONE - BILLARD       : 🎱
+
+ICONE - PALETS        : 🟤
+
+ICONE - FOOTBALL      : ⚽
+
+ICONE - BEACH-VOLLEY  : 🏐
+
+ICONE - BOWLING       : 🎳
+
+ICONE - SUBBUTEO      : ⚽
+
+
+----------------------------------------------------------------
+Exemples de titres complets :
+
+🎱 BLACKBALL MASTERS | 26/27 | FINALE | Championnat de France
+🏀 BASKETBALL NM1 25/26 | JOURNEE 22 | 03/05/2026 | Fougeres vs Le Havre
+🟤 PALETS | COUPE DE FRANCE | FINALE | Lanrelas
+
+----------------------------------------------------------------
+Note : le foot et le subbuteo ont le meme ballon (⚽).
+Si tu veux les distinguer, tu peux changer l'un des deux
+(ex. subbuteo : 🥅 ou 🎽). A toi de voir.
+================================================================
