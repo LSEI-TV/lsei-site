@@ -16,7 +16,7 @@ if errorlevel 1 (
   echo   Serveur deja demarre, ouverture directe.
 )
 echo   Ouverture de la fenetre format TABLETTE...
-start chrome --new-window --window-size=810,1080 "http://localhost:4321"
+start chrome --app="http://localhost:4321" --window-size=810,1080 --window-position=100,40 --user-data-dir="%TEMP%\lsei-apercu-tab"
 echo.
 echo   Astuce : si tu utilises Edge, remplace "chrome" par "msedge" dans ce fichier.
 echo   Tu peux fermer cette fenetre noire.
