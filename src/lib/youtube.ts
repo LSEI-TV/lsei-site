@@ -114,6 +114,8 @@ export interface LiveFeature {
   href: string;
   /** true = direct en cours (badge + score) ; false = simple mise en avant */
   isLive: boolean;
+  /** 'live' = en direct · 'upcoming' = programmé (bientôt) · 'replay' = à revoir */
+  status: 'live' | 'upcoming' | 'replay';
   score?: string;
   dek?: string;
   venue?: string;
@@ -189,6 +191,7 @@ const MOCK_LIVE: LiveFeature = {
   discipline: 'basket',
   id: 'demo-live',
   isLive: true,
+  status: 'live',
   caption: 'Basketball · Poule A',
   score: 'PAYS DE FOUGÈRES 68 — 64 RUEIL · 4E QUART · 04:12',
   title: 'Fougères tient tête à Rueil dans un money-time bouillant',
@@ -334,17 +337,20 @@ async function fetchRealReplays(): Promise<Video[]> {
   //    pour les directs (elle ne suit pas l'ordre des matchs).
   const ids = [...map.keys()];
   const airTime = new Map<string, string>();
+  const upcomingIds = new Set<string>(); // lives PROGRAMMÉS, pas encore diffusés → exclus des replays
   for (let i = 0; i < ids.length; i += 50) {
     const chunk = ids.slice(i, i + 50);
     const res = await yt(`videos?part=liveStreamingDetails&id=${chunk.join(',')}`);
     for (const v of res.items || []) {
-      const st = v.liveStreamingDetails?.actualStartTime;
-      if (st) airTime.set(v.id, st);
+      const d = v.liveStreamingDetails;
+      if (d?.actualStartTime) airTime.set(v.id, d.actualStartTime);
+      else if (d?.scheduledStartTime) upcomingIds.add(v.id); // programmé mais jamais diffusé
     }
   }
 
   // 3) Trier par date effective (diffusion si live, sinon publication), plus récent d'abord.
-  const list = [...map.values()].map((m) => {
+  //    On EXCLUT les lives programmés non encore diffusés (ce ne sont pas des « replays »).
+  const list = [...map.values()].filter((m) => !upcomingIds.has(m.id)).map((m) => {
     const eff = airTime.get(m.id) || m.pub;
     return {
       eff,
@@ -454,35 +460,37 @@ async function fetchLiveState(): Promise<{ live: LiveVid[]; upcoming: LiveVid[] 
 
 export async function getLiveFeature(): Promise<LiveFeature | null> {
   if (hasYouTube) {
-    let live: LiveVid[] = [];
+    let state = { live: [] as LiveVid[], upcoming: [] as LiveVid[] };
     try {
-      live = (await fetchLiveState()).live;
+      state = await fetchLiveState();
     } catch (e) {
       console.warn('[YouTube] getLiveFeature (détection direct) :', (e as Error).message);
     }
-    if (live[0]) {
-      const l = live[0];
+    // 1) Un direct EN COURS → à la une, badge « En direct ».
+    if (state.live[0]) {
+      const l = state.live[0];
       return {
-        discipline: l.discipline,
-        id: l.id,
-        isLive: true,
-        caption: disciplineLabel(l.discipline),
-        title: l.title,
-        href: `https://www.youtube.com/watch?v=${l.id}`,
-        thumb: l.thumb,
+        discipline: l.discipline, id: l.id, isLive: true, status: 'live',
+        caption: disciplineLabel(l.discipline), title: l.title,
+        href: `https://www.youtube.com/watch?v=${l.id}`, thumb: l.thumb,
       };
     }
-    // pas de direct → on met en avant la dernière vidéo publiée
+    // 2) Pas de direct, mais un live PROGRAMMÉ → à la une, libellé « Bientôt » (compte à rebours).
+    const soon = [...state.upcoming].sort((a, b) => ((a.scheduled || '') < (b.scheduled || '') ? -1 : 1))[0];
+    if (soon) {
+      return {
+        discipline: soon.discipline, id: soon.id, isLive: false, status: 'upcoming',
+        caption: disciplineLabel(soon.discipline), title: soon.title,
+        href: `https://www.youtube.com/watch?v=${soon.id}`, thumb: soon.thumb,
+      };
+    }
+    // 3) Sinon → la dernière vidéo publiée (vrai replay), libellé « À revoir ».
     const [latest] = await getReplays({ limit: 1 });
     if (latest) {
       return {
-        discipline: latest.discipline,
-        id: latest.id,
-        isLive: false,
-        caption: latest.caption,
-        title: latest.title,
-        href: `/replay/${latest.id}`,
-        thumb: latest.thumb,
+        discipline: latest.discipline, id: latest.id, isLive: false, status: 'replay',
+        caption: latest.caption, title: latest.title,
+        href: `/replay/${latest.id}`, thumb: latest.thumb,
       };
     }
     return null;

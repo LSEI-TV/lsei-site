@@ -74,7 +74,11 @@ const liveDisc = live ? getDiscipline(live.discipline) : null;
 const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t as any).label);
 // Catégorie de la vidéo à la une (déduite du titre, ex. « Femmes »), sinon la discipline.
 const fmtCat = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '');
-const heroCat = live ? (fmtCat(parseProgTitle(live.title).kicker) || liveDisc?.name || '') : '';
+const heroPt = live ? parseProgTitle(live.title) : null;
+const heroCat = live ? (fmtCat(heroPt!.kicker) || liveDisc?.name || '') : '';
+const heroTitle = heroPt?.main || (live?.title ?? '');   // titre nettoyé (sans les « | » ni emoji)
+const heroSub = heroPt ? heroPt.badges.join(' · ') : ''; // ex. « 26/27 · 1/4 FINALE »
+const heroStatusLabel = live ? (live.status === 'live' ? 'En direct' : live.status === 'upcoming' ? 'Bientôt' : 'À revoir') : '';
 ---
 <Base active="direct">
   <Ticker />
@@ -94,20 +98,17 @@ const heroCat = live ? (fmtCat(parseProgTitle(live.title).kicker) || liveDisc?.n
             image={live.thumb}
             title={live.title}
           />
-          <div class={`hero-kicker${live.isLive ? ' is-live' : ''}`}>
-            <span class="dot"></span>{live.isLive ? 'En direct' : 'À revoir'}<span class="sepk">·</span><span class="hero-cat">{heroCat}</span>
+          <div class={`hero-kicker${live.isLive ? ' is-live' : ''}${live.status === 'upcoming' ? ' is-soon' : ''}`}>
+            <span class="dot"></span>{heroStatusLabel}<span class="sepk">·</span><span class="hero-cat">{heroCat}</span>
           </div>
-          <h1>{live.title}</h1>
+          <h1>{heroTitle}</h1>
+          {heroSub && <div class="hero-sub">{heroSub}</div>}
           {live.dek && <p class="dek">{live.dek}</p>}
-          {live.isLive ? (
+          {live.isLive && (
             <div class="byline">
               <span class="k">En direct</span>
               {live.venue && <Fragment><span class="sep"></span><span>{live.venue}</span></Fragment>}
               {live.viewers && <Fragment><span class="sep"></span><span class="mono">{live.viewers}</span></Fragment>}
-            </div>
-          ) : (
-            <div class="byline">
-              <span class="k">À revoir</span><span class="sep"></span><span>{liveDisc.name}</span>
             </div>
           )}
         </div>
@@ -126,8 +127,10 @@ const heroCat = live ? (fmtCat(parseProgTitle(live.title).kicker) || liveDisc?.n
                 const sub = [railDay.format(it.date).replace('.', ''), ...bits].filter(Boolean).join(' · ');
                 const time = it.live ? 'LIVE' : railTime.format(it.date).replace(':', 'h');
                 const cat = pt ? fmtCat(pt.kicker) : '';
+                const cleanTitle = pt?.main || it.title;
+                const subb = pt ? pt.badges.join(' · ') : '';
                 return (
-                  <a href={it.href} class="prog" {...(it.id ? { 'data-id': it.id, 'data-title': it.title, 'data-cat': cat } : {})}>
+                  <a href={it.href} class="prog" {...(it.id ? { 'data-id': it.id, 'data-title': cleanTitle, 'data-cat': cat, 'data-sub': subb } : {})}>
                     <div class="prog-thumb">
                       {it.thumb
                         ? <img src={it.thumb} alt="" loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
@@ -144,8 +147,9 @@ const heroCat = live ? (fmtCat(parseProgTitle(live.title).kicker) || liveDisc?.n
               })
             : railReplays.map((v) => {
                 const rd = getDiscipline(v.discipline);
+                const vpt = parseProgTitle(v.title);
                 return (
-                  <a href={`/replay/${v.id}`} class="prog" data-id={v.id} data-title={v.title} data-caption={v.caption} data-cat={fmtCat(parseProgTitle(v.title).kicker) || getDiscipline(v.discipline).label}>
+                  <a href={`/replay/${v.id}`} class="prog" data-id={v.id} data-title={vpt.main || v.title} data-caption={v.caption} data-cat={fmtCat(vpt.kicker) || rd.label} data-sub={vpt.badges.join(' · ')}>
                     <div class="prog-thumb">
                       {v.thumb
                         ? <img src={v.thumb} alt="" loading="lazy" />
@@ -360,6 +364,8 @@ const heroCat = live ? (fmtCat(parseProgTitle(live.title).kicker) || liveDisc?.n
           var cat = item.getAttribute('data-cat');
           var catEl = document.querySelector('.hero .hero-cat');
           if (catEl && cat) catEl.textContent = cat;
+          var subEl = document.querySelector('.hero .hero-sub');
+          if (subEl) subEl.textContent = item.getAttribute('data-sub') || '';
           hero.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
       });

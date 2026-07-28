@@ -53,45 +53,11 @@ const ogImage = image
     <meta name="twitter:image" content={ogImage} />
   </head>
   <body>
-    <a id="live-banner" class="live-banner" href="/direct" hidden></a>
     <Header active={active} />
     <slot />
     <Footer />
     <CookieBanner />
     <VideoModal />
-
-    <style>
-      .live-banner {
-        display: none; /* caché par défaut ; révélé par JS uniquement si live */
-        background: var(--live, #E5342B);
-        color: #fff;
-        text-align: center;
-        font-weight: 700;
-        font-size: 14px;
-        letter-spacing: .02em;
-        padding: 9px 16px;
-        text-decoration: none;
-      }
-      .live-banner:not([hidden]) { display: block; }
-      .live-banner:hover { filter: brightness(1.08); }
-    </style>
-
-    <script is:inline>
-      // Bandeau « EN DIRECT » : lit le petit fichier live.json (mis à jour toutes
-      // les 30 min par un robot) et affiche le bandeau si la chaîne est à l'antenne.
-      (function () {
-        fetch('/live.json?t=' + Date.now(), { cache: 'no-store' })
-          .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (d) {
-            if (!d || !d.live) return;
-            var b = document.getElementById('live-banner');
-            if (!b) return;
-            b.textContent = '🔴 EN DIRECT · ' + (d.title || 'LSEI est à l’antenne') + ' — Regarder';
-            b.hidden = false;
-          })
-          .catch(function () {});
-      })();
-    </script>
 
     <script is:inline>
       // Micro-animations : révélations au défilement, compteurs, bouton magnétique.
