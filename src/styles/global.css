@@ -346,6 +346,110 @@ nav.main a.active { color: var(--ink); border-color: var(--accent); }
 }
 .rail .more { display: block; text-align: center; padding: 12px; font-size: 12.5px; font-weight: 700; color: var(--accent); border-top: 1px solid var(--line); }
 .rail .more:hover { background: var(--surface-2); }
+.rail-list { display: contents; }
+
+/* ===== HERO « Mosaïque / guide TV » (option C) : lecteur à gauche + grille 2×2 à droite ===== */
+.hero--mosaic .rail-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
+.hero--mosaic .rail .prog { flex-direction: column; align-items: stretch; gap: 0; padding: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface-2); }
+.hero--mosaic .rail .prog:hover { border-color: var(--hero-accent, var(--line-strong)); background: var(--surface-2); }
+.hero--mosaic .rail .prog-media { width: 100%; display: block; }
+.hero--mosaic .rail .prog-thumb { width: 100%; aspect-ratio: 16 / 9; border-radius: 0; border: 0; border-bottom: 1px solid var(--line); }
+.hero--mosaic .rail .body { padding: 8px 10px 10px; }
+.hero--mosaic .rail .body .t { -webkit-line-clamp: 2; font-size: 13px; }
+.hero--mosaic .rail .body .m, .hero--mosaic .rail .body .tagd { display: none; }
+.hero--mosaic .rail .prog-time-body { font-size: 12px; margin-bottom: 3px; }
+
+/* ===== HERO « Régie TV / multiview » (option 1) ===== */
+.regie-bar { display: none; }
+.hero--regie .regie-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; padding: 8px 15px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.regie-brand { display: inline-flex; align-items: center; gap: 9px; font-family: var(--display); text-transform: uppercase; font-weight: 800; font-size: 12px; letter-spacing: .14em; color: var(--ink); }
+.regie-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--live); animation: pulseC 1.8s infinite; }
+.regie-clock { font-family: var(--mono); font-size: 13px; letter-spacing: .06em; color: var(--ink-soft); }
+/* Grand moniteur : bezel type écran de contrôle */
+.hero--regie .lead a.frame { border: 3px solid #0a0c10; }
+/* Mur de mini-moniteurs (multiview) : vignette plein cadre + bandeau-titre incrusté */
+.hero--regie .rail-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
+.hero--regie .rail .prog { position: relative; padding: 0; gap: 0; flex-direction: column; align-items: stretch; border: 1px solid var(--line-strong); border-radius: 5px; overflow: hidden; background: #000; }
+.hero--regie .rail .prog:hover { border-color: var(--hero-accent, var(--accent)); }
+.hero--regie .rail .prog-media, .hero--regie .rail .prog-thumb { width: 100%; }
+.hero--regie .rail .prog-thumb { aspect-ratio: 16 / 9; border: 0; border-radius: 0; }
+.hero--regie .rail .body { position: absolute; left: 0; right: 0; bottom: 0; padding: 6px 8px 5px; background: linear-gradient(transparent, rgba(4,5,8,.92)); align-items: flex-start; }
+.hero--regie .rail .body .t { font-family: var(--mono); font-size: 10.5px; line-height: 1.25; color: #fff; -webkit-line-clamp: 1; }
+.hero--regie .rail .body .m, .hero--regie .rail .body .tagd { display: none; }
+.hero--regie .rail .prog-time-body { display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .05em; color: var(--hero-accent, #66d9c8); margin-bottom: 1px; }
+
+/* ===== HERO « Maintenant / Ensuite » (option 3) : carte compte à rebours du prochain direct ===== */
+.next-card { display: block; margin: 12px 12px 6px; border: 1px solid var(--hero-accent, var(--line-strong)); border-radius: 10px; overflow: hidden; background: var(--surface-2); transition: transform .15s, box-shadow .15s; }
+.next-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.next-thumb { position: relative; display: block; aspect-ratio: 16 / 9; background: #111; }
+.next-thumb img, .next-thumb > span { display: block; width: 100%; height: 100%; object-fit: cover; }
+.next-badge { position: absolute; top: 9px; left: 9px; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 3px 7px; border-radius: 3px; }
+.next-info { display: block; padding: 12px 14px 14px; }
+.next-eyebrow { display: inline-flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--hero-accent, var(--accent)); }
+.next-eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulseC 1.8s infinite; }
+.next-title { display: block; font-size: 15px; font-weight: 700; line-height: 1.22; margin-top: 8px; }
+.next-count { display: block; font-family: var(--mono); font-size: 30px; font-weight: 700; letter-spacing: .01em; line-height: 1; margin-top: 12px; color: var(--ink); }
+.next-when { display: block; font-size: 12px; color: var(--ink-faint); margin-top: 6px; }
+/* Colonne droite épurée (juste la carte prochain direct) + bandeau bas pleine largeur */
+.rail--next { border: none; background: none; box-shadow: none; overflow: visible; align-self: start; }
+/* Carte carrousel « prochains directs » calée sur la HAUTEUR de la vidéo (JS). Chaque
+   slide : image en haut (réduite), textes + décompte en dessous, le tout dans le cadre. */
+.rail--next .next-card { margin: 0; position: relative; overflow: hidden; display: grid; }
+/* Slides empilées dans la même cellule → fondu enchaîné (opacité) au changement. */
+.next-slide { grid-area: 1 / 1; display: flex; flex-direction: column; color: inherit; text-decoration: none; opacity: 0; transition: opacity .55s ease; pointer-events: none; }
+.next-slide.is-active { opacity: 1; pointer-events: auto; }
+.next-slide .next-thumb { aspect-ratio: auto; flex: 1 1 auto; min-height: 90px; }
+.next-slide .next-info { flex: none; }
+.next-dots { position: absolute; top: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; z-index: 4; }
+.next-dot { width: 7px; height: 7px; border-radius: 50%; border: 0; padding: 0; background: rgba(255,255,255,.5); cursor: pointer; transition: background .15s; }
+.next-dot.on { background: #fff; }
+.next-cta { display: none; margin-top: 9px; font-size: 13px; font-weight: 700; color: var(--hero-accent, var(--accent)); }
+.lab-live { display: none; }
+.next-slide.is-live .lab-next { display: none; }
+.next-slide.is-live .lab-live { display: inline; }
+.next-slide.is-live .next-eyebrow, .next-slide.is-live .next-count { color: var(--live); }
+.next-slide.is-live .next-cta { display: block; }
+.hero-belt { margin-top: 26px; }
+.hero-belt-h { margin: 0 0 14px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+.hero-belt-h .live-mini { color: var(--live); display: inline-flex; align-items: center; gap: 6px; font-size: 11px; }
+.hero-belt-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
+.hero-belt .prog { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); align-items: center; }
+.hero-belt .prog:hover { border-color: var(--line-strong); background: var(--surface-2); }
+.hero-belt .prog-thumb { width: 104px; }
+.hero-belt-more { display: inline-block; margin-top: 16px; font-size: 13px; font-weight: 700; color: var(--accent); }
+
+/* ===== Spotlight billard (accueil) : le podium (top 3) du classement Masters ===== */
+.bspot { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: start; }
+.bpod { display: grid; grid-template-columns: repeat(3, 240px); gap: 14px; }
+.bpod-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 24px 16px 20px; border: 1px solid var(--line-strong); border-radius: 14px; background: var(--surface); transition: border-color .15s, transform .15s; }
+.bpod-card:hover { transform: translateY(-3px); border-color: var(--c-billard); }
+.bpod-ph { position: relative; width: 98px; height: 98px; border-radius: 50%; overflow: hidden; background: var(--surface-2); border: 2px solid var(--line-strong); display: grid; place-items: center; }
+.bpod-card.r1 .bpod-ph { border-color: #E4B23C; }
+.bpod-card.r2 .bpod-ph { border-color: #C6CAD2; }
+.bpod-card.r3 .bpod-ph { border-color: #CD8A54; }
+.bpod-ph img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+.bpod-av { font-family: var(--display); font-weight: 800; font-size: 38px; color: var(--ink-faint); }
+.bpod-rk { position: absolute; bottom: -3px; right: -3px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-weight: 800; font-size: 14px; color: #0c0e13; background: var(--line-strong); border: 3px solid var(--surface); }
+.bpod-card.r1 .bpod-rk { background: #E4B23C; }
+.bpod-card.r2 .bpod-rk { background: #C6CAD2; }
+.bpod-card.r3 .bpod-rk { background: #CD8A54; }
+.bpod-lab { margin-top: 8px; font-size: 10.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-faint); }
+.bpod-card.r1 .bpod-lab { color: #E4B23C; }
+.bpod-name { font-family: var(--display); text-transform: uppercase; font-weight: 800; font-size: 19px; line-height: 1.08; color: var(--ink); }
+.bpod-pts { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--c-billard); }
+.bpod-pts small { color: var(--ink-faint); }
+/* Tableau du classement (à droite des 3 cadres) */
+.bspot-rank { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); padding: 7px 8px 7px; display: flex; flex-direction: column; }
+.bspot-rank-h { padding: 7px 10px; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+.bspot-row { display: flex; align-items: center; gap: 12px; padding: 6px 10px; border-radius: 8px; }
+.bspot-row:hover { background: var(--surface-2); }
+.bspot-rk { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-weight: 800; font-size: 12px; background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line-strong); }
+.bspot-nm { flex: 1; min-width: 0; font-weight: 650; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bspot-pts { flex: none; font-family: var(--mono); font-size: 13px; color: var(--ink-soft); }
+.bspot-pts small { color: var(--ink-faint); }
+.bspot-more { margin: 8px 10px 0; font-size: 12.5px; font-weight: 700; color: var(--c-billard); }
+@media (max-width: 980px) { .bspot { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .bpod { grid-template-columns: 1fr; } }
 
 /* ---------- sections ---------- */
 .section { padding: 46px 0; }
