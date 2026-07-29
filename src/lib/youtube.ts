@@ -97,7 +97,7 @@ export const seasonFromSlug = (slug: string) => slug.replace('-', '/');
 // Saison lue dans un titre de playlist, ex. « 25/26 - BLACKBALL MASTERS » → "2025/2026",
 // « 2024/2025 - … » → "2024/2025". Renvoie '' si aucun motif de saison n'est présent.
 export function seasonFromTitle(title: string): string {
-  const m = (title || '').match(/\b(?:20)?(\d{2})\s*[\/\-]\s*(?:20)?(\d{2})\b/);
+  const m = (title || '').match(/\b(?:20)?(\d{2})\s*[\/\-_]\s*(?:20)?(\d{2})\b/);
   if (!m) return '';
   const y1 = 2000 + Number(m[1]);
   const y2 = 2000 + Number(m[2]);
