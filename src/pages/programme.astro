@@ -37,6 +37,10 @@ const auto = (await getBroadcasts()).map((b) => ({
 let items = [...manual, ...auto].filter((it) => it.live || it.date.valueOf() + 3 * 3600 * 1000 >= now);
 items.sort((a, b) => a.date.valueOf() - b.date.valueOf());
 
+// Sports réellement présents au programme → on n'affiche que ces boutons de filtre
+// (pas de filtre « fantôme » pour un sport sans aucune diffusion).
+const sportsPresent = new Set(items.map((it) => it.sport));
+
 // Groupement par jour (heure de Paris).
 const fmtDay = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: TZ });
 const fmtTime = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: TZ });
@@ -67,7 +71,7 @@ for (const it of items) {
     <div class="wrap">
       <div class="prog-filter" id="prog-filter">
         <button type="button" class="prog-fbtn active" data-sport="all">Tous</button>
-        {disciplines.map((d) => (
+        {disciplines.filter((d) => sportsPresent.has(d.slug)).map((d) => (
           <button type="button" class="prog-fbtn" data-sport={d.slug} style={`--dc:${d.colorVar}`}>{d.label}</button>
         ))}
       </div>
