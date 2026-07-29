@@ -143,7 +143,21 @@ for (const it of items) {
     .pc-t { font-family: var(--display); font-weight: 700; font-size: 15.5px; line-height: 1.2; color: var(--ink); }
     .pc-m { font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .03em; line-height: 1.35; }
     .pc-tag { align-self: flex-start; margin-top: 5px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 3px 8px; border-radius: 999px; }
-    @media (max-width: 620px) { .prog-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; } .pc-t { font-size: 13.5px; } .pc-body { padding: 9px 10px 11px; } }
+    /* Sur téléphone : chaque journée devient un CARROUSEL horizontal qu'on fait
+       défiler au doigt (accroche par vignette). Une journée à un seul live reste
+       en carte pleine largeur. */
+    @media (max-width: 620px) {
+      .prog-grid {
+        display: flex; gap: 12px; overflow-x: auto;
+        scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; padding-bottom: 2px;
+      }
+      .prog-grid::-webkit-scrollbar { display: none; }
+      .prog-card { flex: 0 0 74%; max-width: 300px; scroll-snap-align: start; }
+      .prog-card:only-child { flex-basis: 100%; max-width: none; }
+      .pc-t { font-size: 13.5px; }
+      .pc-body { padding: 9px 10px 11px; }
+    }
   </style>
 
   <script is:inline>
