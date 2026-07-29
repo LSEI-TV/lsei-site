@@ -1017,6 +1017,9 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .chero-photo-c { position: relative; align-self: stretch; min-height: 380px; display: flex; align-items: flex-end; justify-content: center; }
 .chero-photo-c img { position: relative; z-index: 1; max-height: 520px; max-width: 100%; object-fit: contain; object-position: bottom center; filter: drop-shadow(0 24px 44px rgba(0, 0, 0, .55)); }
 .chero-photo-c::before { content: ''; position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); width: 94%; height: 88%; background: radial-gradient(ellipse at center, color-mix(in srgb, var(--dc) 48%, transparent) 0%, color-mix(in srgb, var(--dc) 18%, transparent) 38%, transparent 70%); filter: blur(8px); z-index: 0; }
+/* Trait teinté collé à la base du joueur : une ligne fine (bords estompés + léger
+   éclat) posée au bas de la photo. Placée DEVANT le joueur (z-index 2). */
+.chero-photo-c::after { content: ''; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 92%; height: 2px; border-radius: 2px; background: linear-gradient(to right, transparent, color-mix(in srgb, var(--dc) 80%, transparent) 25%, color-mix(in srgb, var(--dc) 80%, transparent) 75%, transparent); box-shadow: 0 0 6px 0 color-mix(in srgb, var(--dc) 28%, transparent); z-index: 2; pointer-events: none; }
 .chero-photo-c .chero-photo-av { font-family: var(--display); font-weight: 700; font-size: 130px; color: color-mix(in srgb, var(--dc) 55%, var(--ink-faint)); text-transform: uppercase; opacity: .6; z-index: 1; }
 
 /* Faits marquants de la saison (page classement) */
