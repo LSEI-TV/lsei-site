@@ -306,27 +306,50 @@ async function fetchRealReplays(): Promise<Video[]> {
   if (_realReplays) return _realReplays;
   const playlists = await ytPaged(`playlists?part=snippet&channelId=${CHANNEL}`);
 
+  // Priorité des catégories billard : quand une même vidéo figure dans PLUSIEURS
+  // playlists (ex. un match Masters est aussi dans la playlist fourre-tout « Tournois
+  // Nationaux »), on garde la catégorie la plus SPÉCIFIQUE (Masters/Femmes/Para…),
+  // pas la première rencontrée — sinon la playlist générique « volerait » les vidéos.
+  const CAT_PRIORITY: Record<string, number> = {
+    'Masters': 0, 'Femmes': 0, 'Para-billard': 0, 'Espoirs': 0,
+    'Snooker': 1, 'Pool': 1, 'Billard américain': 1,
+    'Coupe de France': 2, 'Championnat': 2, 'Ligue de Bretagne': 3,
+    'Tournois Nationaux': 4, 'Autres': 5,
+  };
+  const catRank = (c?: string) => (c && c in CAT_PRIORITY ? CAT_PRIORITY[c] : 9);
+
   // 1) Collecter les vidéos des playlists classées, dédoublonnées par id.
   const map = new Map<string, RawVid>();
   for (const pl of playlists) {
     const disc = classifyPlaylist(pl.snippet?.title || '');
     if (!disc) continue; // playlist non reconnue ou ignorée (ex. « LES LIVES »)
     const plSeason = seasonFromTitle(pl.snippet?.title || ''); // ex. « 25/26 - … » → "2025/2026"
+    const plCat = disc === 'billard' ? billardCategory(pl.snippet?.title || '') : undefined;
     const items = await ytPaged(`playlistItems?part=snippet,contentDetails&playlistId=${pl.id}`);
     for (const it of items) {
       const s = it.snippet || {};
       const id = it.contentDetails?.videoId || s.resourceId?.videoId;
       const title: string = s.title || '';
-      if (!id || map.has(id) || title === 'Private video' || title === 'Deleted video') continue;
+      if (!id || title === 'Private video' || title === 'Deleted video') continue;
       // Ignorer les vidéos d'autres chaînes ajoutées à une playlist LSEI (ex. musique, références).
       if (s.videoOwnerChannelId && s.videoOwnerChannelId !== CHANNEL) continue;
+      const existing = map.get(id);
+      if (existing) {
+        // Déjà vue : on remplace la catégorie si CETTE playlist est plus spécifique
+        // (ex. « Masters » l'emporte sur « Tournois Nationaux »).
+        if (disc === 'billard' && catRank(plCat) < catRank(existing.category)) {
+          existing.category = plCat;
+          if (plSeason) existing.plSeason = plSeason;
+        }
+        continue;
+      }
       map.set(id, {
         id,
         discipline: disc,
         title,
         thumb: (s.thumbnails?.high || s.thumbnails?.medium || s.thumbnails?.default)?.url,
         pub: it.contentDetails?.videoPublishedAt || s.publishedAt || '',
-        category: disc === 'billard' ? billardCategory(pl.snippet?.title || '') : undefined,
+        category: plCat,
         plSeason,
       });
     }
