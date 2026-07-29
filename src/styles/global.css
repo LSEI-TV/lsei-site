@@ -737,6 +737,11 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .share--compact { gap: 6px; }
 .share--compact .share-btn { width: 28px; height: 28px; }
 .share--compact .share-btn svg { width: 14px; height: 14px; }
+/* Sur mobile, le bouton « partage natif » (ouvre le sélecteur d'applis → appli Facebook,
+   etc.) est mis en avant : placé en premier et coloré, car c'est le seul moyen d'ouvrir
+   une appli directement (Facebook bloque l'ouverture de son appli depuis un lien web). */
+.share--compact .share-native:not([hidden]) { order: -1; background: var(--accent); border-color: var(--accent); color: #fff; }
+.share--compact .share-native:not([hidden]):hover { background: var(--accent); color: #fff; }
 .share-copy.is-copied { color: var(--accent); border-color: var(--accent); }
 .share-copy.is-copied::after {
   content: "Copié\00a0!"; position: absolute; bottom: calc(100% + 7px); left: 50%; transform: translateX(-50%);
