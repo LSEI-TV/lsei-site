@@ -23,10 +23,10 @@ const comps = [
     href: `/billard/saison/${LANDING_SEASON}`,
     ficheBase: '/billard/joueur/',
     accent: '#7C4DD6', accentInk: '#ffffff', // violet (Masters)
-    eyebrow: 'Compétition<br>masculine',
+    eyebrow: 'Compétition',
     title: 'Masters',
     noun: 'joueurs',
-    desc: 'Le circuit national masculin : 8 Tournois Nationaux et le Championnat de France, où s’affrontent les meilleurs joueurs français.',
+    desc: 'Le circuit national masculin : 8 Tournois Nationaux et le Championnat de France.',
     R: m.results!, season: m.label,
     champSeasonLabel: 'Champion de saison', champFranceLabel: 'Champion de France',
     palm: mPalm,
@@ -35,10 +35,10 @@ const comps = [
     href: `/femmes`,
     ficheBase: '/femmes/joueur/',
     accent: '#F2B90A', accentInk: '#2a2205', // jaune (Femmes) — distingue la compétition
-    eyebrow: 'Compétition<br>féminine',
+    eyebrow: 'Compétition',
     title: 'Femmes',
     noun: 'joueuses',
-    desc: 'Le circuit national féminin : 8 Tournois Nationaux et le Championnat de France, qui réunit les meilleures joueuses françaises.',
+    desc: 'Le circuit national féminin : 8 Tournois Nationaux et le Championnat de France.',
     R: f.results!, season: f.label,
     champSeasonLabel: 'Championne de saison', champFranceLabel: 'Championne de France',
     palm: fPalm,
@@ -47,7 +47,7 @@ const comps = [
     href: `/para-billard`,
     ficheBase: '/para-billard/joueur/',
     accent: '#14A38B', accentInk: '#ffffff', // turquoise (Para-billard fauteuil)
-    eyebrow: 'Compétition Para-billard - fauteuil',
+    eyebrow: 'Para-billard',
     title: 'Fauteuil',
     noun: 'joueurs',
     desc: 'Le para-billard en fauteuil de la FFB : le circuit national des joueurs en situation de handicap.',
@@ -59,7 +59,7 @@ const comps = [
     href: `/para-billard-malvoyants`,
     ficheBase: '/para-billard-malvoyants/joueur/',
     accent: '#E0563B', accentInk: '#ffffff', // corail (Para-billard malvoyants)
-    eyebrow: 'Compétition Para-billard - malvoyants',
+    eyebrow: 'Para-billard',
     title: 'Malvoyants',
     noun: 'joueurs',
     desc: 'Le tout premier Championnat de France de para-billard malvoyants (Les Herbiers, 2026), une première historique.',
@@ -104,8 +104,7 @@ const comps = [
       <div class="bchoose">
         {comps.map((c) => (
           <div class="bchoose-card" style={`--cc:${c.accent};--cc-ink:${c.accentInk}`}>
-            <div class="bchoose-eyebrow" set:html={c.eyebrow}></div>
-            <a href={c.href} class="bchoose-title-link"><h2 class="bchoose-title">{c.title}</h2></a>
+            <a href={c.href} class="bchoose-title-link"><h2 class="bchoose-title"><span class="bt-cat">{c.eyebrow}</span> {c.title}</h2></a>
             <p class="bchoose-desc">{c.desc}</p>
 
             {c.feat && (
