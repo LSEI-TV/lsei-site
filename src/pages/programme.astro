@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Thumb from '../components/Thumb.astro';
+import ShareLinks from '../components/ShareLinks.astro';
 import { disciplines, getDiscipline } from '../data/site';
 import { getBroadcasts } from '../lib/youtube';
 import { parseProgTitle } from '../lib/programmeTitle';
@@ -8,6 +9,7 @@ import { getCollection } from 'astro:content';
 
 const now = Date.now();
 const TZ = 'Europe/Paris';
+const programmeUrl = new URL('/programme', Astro.site).href;
 
 // 1) Programme saisi manuellement via /admin.
 const manual = (await getCollection('programme', ({ data }) => !data.draft)).map((p) => ({
@@ -57,6 +59,7 @@ for (const it of items) {
       <h1>Le programme des diffusions</h1>
       <p>Les matchs à venir et en direct sur LSEI — filtrez par sport pour trouver vos rendez-vous.</p>
       <div class="bar" style="background:var(--accent)"></div>
+      <div class="prog-share"><ShareLinks url={programmeUrl} title="Le programme des diffusions LSEI — tous les prochains directs" /></div>
     </div>
   </section>
 
@@ -84,26 +87,30 @@ for (const it of items) {
                 const pt = it.category ? null : parseProgTitle(it.title);
                 const main = pt ? (pt.main || d.name) : (it.category || it.title || d.name);
                 const sub = pt ? [pt.kicker, ...pt.badges].filter(Boolean).join(' · ') : (it.category ? it.title : '');
+                // Partage de CETTE diffusion : le lien YouTube du direct si dispo, sinon la page programme.
+                const shareUrl = it.link && it.link.startsWith('http') ? it.link : programmeUrl;
+                const shareTitle = `${main}${sub ? ' — ' + sub : ''} · LSEI`;
                 return (
-                  <Tag
-                    class="prog-card"
-                    data-sport={it.sport}
-                    style={`--dc:${d.colorVar}`}
-                    {...(it.link ? { href: it.link, target: it.link.startsWith('http') ? '_blank' : undefined, rel: 'noopener' } : {})}
-                  >
-                    <span class="pc-thumb">
-                      {it.thumb
-                        ? <img src={it.thumb} alt="" loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
-                        : <span class="pc-thumb-duo" style={`background:linear-gradient(135deg,${d.from},${d.to})`}></span>}
-                      {it.live && <span class="pc-live">● LIVE</span>}
-                    </span>
-                    <span class="pc-body">
-                      <span class={`pc-time mono${it.live ? ' on' : ''}`}>{it.live ? 'En direct' : heure(it.date)}</span>
-                      <span class="pc-t">{main}</span>
-                      {sub && <span class="pc-m">{sub}</span>}
-                      <span class="pc-tag" style={`background:${d.tagBg};color:${d.colorVar}`}>{d.label}</span>
-                    </span>
-                  </Tag>
+                  <div class="prog-card" data-sport={it.sport} style={`--dc:${d.colorVar}`}>
+                    <Tag
+                      class="pc-link"
+                      {...(it.link ? { href: it.link, target: it.link.startsWith('http') ? '_blank' : undefined, rel: 'noopener' } : {})}
+                    >
+                      <span class="pc-thumb">
+                        {it.thumb
+                          ? <img src={it.thumb} alt="" loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
+                          : <span class="pc-thumb-duo" style={`background:linear-gradient(135deg,${d.from},${d.to})`}></span>}
+                        {it.live && <span class="pc-live">● LIVE</span>}
+                      </span>
+                      <span class="pc-body">
+                        <span class={`pc-time mono${it.live ? ' on' : ''}`}>{it.live ? 'En direct' : heure(it.date)}</span>
+                        <span class="pc-t">{main}</span>
+                        {sub && <span class="pc-m">{sub}</span>}
+                        <span class="pc-tag" style={`background:${d.tagBg};color:${d.colorVar}`}>{d.label}</span>
+                      </span>
+                    </Tag>
+                    <div class="pc-share"><ShareLinks url={shareUrl} title={shareTitle} compact /></div>
+                  </div>
                 );
               })}
             </div>
@@ -116,9 +123,12 @@ for (const it of items) {
   <style>
     /* Grille « guide TV » : les diffusions d'une journée s'affichent en vignettes
        côte à côte (ordre des horaires) et passent à la ligne quand c'est plein. */
+    .prog-share { margin-top: 18px; }
     .prog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
     .prog-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); transition: border-color .15s, transform .15s; }
-    a.prog-card:hover { border-color: var(--dc, var(--c-billard)); transform: translateY(-2px); }
+    .prog-card:hover { border-color: var(--dc, var(--c-billard)); transform: translateY(-2px); }
+    .pc-link { display: flex; flex-direction: column; flex: 1; color: inherit; text-decoration: none; }
+    .pc-share { display: flex; align-items: center; gap: 6px; padding: 8px 12px 10px; border-top: 1px solid var(--line); }
     .pc-thumb { position: relative; aspect-ratio: 16 / 9; background: var(--surface-2); }
     .pc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .pc-thumb-duo { display: block; width: 100%; height: 100%; }

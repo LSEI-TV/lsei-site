@@ -734,6 +734,9 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .share-btn svg { width: 18px; height: 18px; }
 .share-btn:hover { color: var(--ink); border-color: var(--ink-faint); background: var(--surface-2); }
 .share-btn[hidden] { display: none; }
+.share--compact { gap: 6px; }
+.share--compact .share-btn { width: 28px; height: 28px; }
+.share--compact .share-btn svg { width: 14px; height: 14px; }
 .share-copy.is-copied { color: var(--accent); border-color: var(--accent); }
 .share-copy.is-copied::after {
   content: "Copié\00a0!"; position: absolute; bottom: calc(100% + 7px); left: 50%; transform: translateX(-50%);
