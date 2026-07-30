@@ -35,7 +35,9 @@ const articleLd = {
   dateModified: article.data.date.toISOString(),
   inLanguage: 'fr-FR',
   mainEntityOfPage: { '@type': 'WebPage', '@id': shareUrl },
-  ...(article.data.author ? { author: { '@type': 'Person', name: article.data.author } } : { author: { '@type': 'Organization', name: 'LSEI — Le Sport en Image' } }),
+  ...(article.data.author
+    ? { author: { '@type': 'Person', name: article.data.author } }
+    : { author: { '@type': 'Organization', name: 'LSEI — Le Sport en Image', url: new URL('/', Astro.site).href } }),
   publisher: {
     '@type': 'Organization',
     name: 'LSEI — Le Sport en Image',
