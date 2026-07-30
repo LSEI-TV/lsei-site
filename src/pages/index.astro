@@ -24,14 +24,20 @@ const _compact = (n: number): string => {
   if (n >= 1_000) return Math.floor(n / 1_000) + ' K';
   return String(n);
 };
+// Chiffres qui ne dépendent PAS de l'API (toujours affichés).
+const _foundedStat = { num: '2005', label: 'Année de création de l’association Le Sport en Image.', raw: true };
+const _discStat = { num: String(disciplines.length), label: 'Disciplines couvertes en direct comme en replay, du parquet au tapis.' };
+const _partnersStat = { num: String(partners.length), label: 'Partenaires à nos côtés : fédérations, clubs et institutions.' };
 const liveStats = _ch
   ? [
+      _foundedStat,
       { num: _compact(_ch.subscribers), unit: '+', label: 'Abonnés sur YouTube, et une communauté qui grandit à chaque saison.' },
       { num: _compact(_ch.views), unit: '+', label: 'Vues cumulées sur nos directs et rediffusions.' },
       { num: _compact(_ch.videos), unit: _ch.videos >= 1000 ? '+' : '', label: 'Vidéos en ligne : matchs, directs et rediffusions.' },
-      { num: String(disciplines.length), label: 'Disciplines couvertes en direct comme en replay, du parquet au tapis.' },
+      _discStat,
+      _partnersStat,
     ]
-  : stats;
+  : [_foundedStat, _discStat, _partnersStat];
 
 const latestArticles = (await getCollection('articles', ({ data }) => !data.draft && data.date.valueOf() <= Date.now()))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -545,7 +551,7 @@ const slides = programme
       <div class="stats">
         {liveStats.map((s) => (
           <div class="stat">
-            <div class="num">{s.num}{s.unit && <span style="font-size:22px">{s.unit}</span>}</div>
+            <div class="num" data-nocount={(s as any).raw ? '' : undefined}>{s.num}{s.unit && <span style="font-size:22px">{s.unit}</span>}</div>
             <div class="lab">{s.label}</div>
           </div>
         ))}

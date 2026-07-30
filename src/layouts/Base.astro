@@ -110,7 +110,7 @@ const ogImage = image
               animateNum(e.target);
             });
           }, { threshold: 0.6 });
-          document.querySelectorAll('.stat .num').forEach(function (n) { cio.observe(n); });
+          document.querySelectorAll('.stat .num:not([data-nocount])').forEach(function (n) { cio.observe(n); });
         }
         function animateNum(el) {
           var textNode = null;
