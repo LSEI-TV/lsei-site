@@ -554,6 +554,28 @@ export async function getBroadcasts(): Promise<Broadcast[]> {
   }
 }
 
+// Statistiques publiques de la chaîne (abonnés, vues cumulées, nb de vidéos).
+// Sert au bloc « chiffres-clés » de l'accueil → toujours à jour, aucun chiffre saisi à la main.
+export interface ChannelStats { subscribers: number; views: number; videos: number }
+let _channelStats: ChannelStats | null | undefined;
+export async function getChannelStats(): Promise<ChannelStats | null> {
+  if (!hasYouTube) return null;
+  if (_channelStats !== undefined) return _channelStats;
+  try {
+    const data = await yt(`channels?part=statistics&id=${CHANNEL}`);
+    const s = data.items?.[0]?.statistics || {};
+    _channelStats = {
+      subscribers: Number(s.subscriberCount) || 0,
+      views: Number(s.viewCount) || 0,
+      videos: Number(s.videoCount) || 0,
+    };
+  } catch (e) {
+    console.warn('[YouTube] getChannelStats → repli :', (e as Error).message);
+    _channelStats = null;
+  }
+  return _channelStats;
+}
+
 export async function getTicker(): Promise<TickerItem[]> {
   if (hasYouTube) {
     try {

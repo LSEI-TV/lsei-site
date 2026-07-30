@@ -38,7 +38,7 @@ const seasonOptions = [
   ...seasons.map((s) => ({ label: `${s} · ${catVids.filter((v) => v.season === s).length}`, value: `/disciplines/billard/categorie/${catSlug}/saison/${seasonSlug(s)}` })),
 ];
 ---
-<Base title={`Billard — ${category}`} description={catText} active="disciplines">
+<Base title={`Billard — ${category}`} description={catText} active="disciplines" image={catVids[0]?.thumb}>
   <section class="disc-hero">
     <div class="wrap" style={`--dc:${disc.colorVar}`}>
       <div class="kick">{disc.label} · {category}</div>

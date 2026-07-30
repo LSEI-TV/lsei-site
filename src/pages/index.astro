@@ -5,13 +5,33 @@ import Thumb from '../components/Thumb.astro';
 import VideoPlayer from '../components/VideoPlayer.astro';
 import { disciplines, getDiscipline, partners, stats, cta, site } from '../data/site';
 import SportIcon from '../components/SportIcon.astro';
-import { getLiveFeature, getBroadcasts, getReplays, tagStyle } from '../lib/youtube';
+import { getLiveFeature, getBroadcasts, getReplays, getChannelStats, tagStyle } from '../lib/youtube';
 import { parseProgTitle } from '../lib/programmeTitle';
 import { getCollection } from 'astro:content';
 import { articleCover } from '../lib/articles';
 import { getEvents } from '../lib/events';
 import { defaultSeason, getPalmares, getSeasons, DEFAULT_SEASON } from '../data/billard/seasons';
 import { photoOf, playerSlugs } from '../lib/billardStats';
+
+// Chiffres-clés : tirés en direct de l'API YouTube (abonnés, vues, vidéos) + nb de
+// disciplines. Toujours à jour, aucun chiffre saisi à la main. Repli sur les chiffres
+// statiques (src/data/site.ts) si l'API n'est pas disponible au build (dev local sans clé).
+const _ch = await getChannelStats();
+// Format compact FR SANS surestimer : on tronque (14 200 → « 14 K », pas « 15 K »),
+// et l'unité « + » signale « au moins ».
+const _compact = (n: number): string => {
+  if (n >= 1_000_000) return String(Math.floor(n / 100_000) / 10).replace('.', ',') + ' M';
+  if (n >= 1_000) return Math.floor(n / 1_000) + ' K';
+  return String(n);
+};
+const liveStats = _ch
+  ? [
+      { num: _compact(_ch.subscribers), unit: '+', label: 'Abonnés sur YouTube, et une communauté qui grandit à chaque saison.' },
+      { num: _compact(_ch.views), unit: '+', label: 'Vues cumulées sur nos directs et rediffusions.' },
+      { num: _compact(_ch.videos), unit: _ch.videos >= 1000 ? '+' : '', label: 'Vidéos en ligne : matchs, directs et rediffusions.' },
+      { num: String(disciplines.length), label: 'Disciplines couvertes en direct comme en replay, du parquet au tapis.' },
+    ]
+  : stats;
 
 const latestArticles = (await getCollection('articles', ({ data }) => !data.draft && data.date.valueOf() <= Date.now()))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -523,7 +543,7 @@ const slides = programme
   <div class="band" id="club">
     <div class="wrap">
       <div class="stats">
-        {stats.map((s) => (
+        {liveStats.map((s) => (
           <div class="stat">
             <div class="num">{s.num}{s.unit && <span style="font-size:22px">{s.unit}</span>}</div>
             <div class="lab">{s.label}</div>

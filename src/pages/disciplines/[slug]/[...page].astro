@@ -34,7 +34,7 @@ const categoryOptions = [
   ...catCounts.map((c) => ({ label: `${c.category} · ${c.count}`, value: `/disciplines/billard/categorie/${categorySlug(c.category)}` })),
 ];
 ---
-<Base title={disc.name} description={disc.blurb} active="disciplines">
+<Base title={disc.name} description={disc.blurb} active="disciplines" image={videos[0]?.thumb}>
   {disc.hub && <HubNav season={LANDING_SEASON} dataSeason={DEFAULT_SEASON} active="videos" />}
   <section class="disc-hero">
     <div class="wrap" style={`--dc:${disc.colorVar}`}>
