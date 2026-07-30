@@ -71,7 +71,21 @@ const railTime = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-
 
 const replays = await getReplays({ limit: 3 });
 // Bandeau bas de la « une » (option C) : les derniers replays (les directs terminés y arrivent).
-const beltReplays = await getReplays({ limit: 4 });
+// « Derniers replays » : replays des 2 DERNIERS MOIS, triés par fraîcheur (getReplays() est
+// déjà trié du plus récent au plus ancien). 1 par discipline, SAUF billard et basket (jusqu'à 3).
+const _cut = new Date(_now); _cut.setMonth(_cut.getMonth() - 2);
+const _cutMs = _cut.getTime();
+const _allReplays = await getReplays();
+const _maxPer = (d: string) => (d === 'billard' || d === 'basket' ? 3 : 1);
+const _replCount = new Map<string, number>();
+const beltReplays: typeof _allReplays = [];
+for (const v of _allReplays) {
+  if (!v.date || new Date(v.date).getTime() < _cutMs) continue;   // fenêtre 2 mois
+  const c = _replCount.get(v.discipline) || 0;
+  if (c >= _maxPer(v.discipline)) continue;                        // plafond par discipline
+  _replCount.set(v.discipline, c + 1);
+  beltReplays.push(v);
+}
 // Version TELEPHONE/TABLETTE de « Derniers replays » : le dernier billard + le dernier basket.
 const replaysMobile = [
   ...(await getReplays({ discipline: 'billard', limit: 1 })),
@@ -217,24 +231,6 @@ const slides = programme
           )}
         </aside>
       </div>
-      {beltReplays.length > 0 && (
-        <div class="wrap hero-belt">
-          <h2 class="hero-belt-h">Derniers replays</h2>
-          <div class="hero-belt-list">
-            {beltReplays.map((v) => {
-              const rd = getDiscipline(v.discipline);
-              const vpt = parseProgTitle(v.title);
-              return (
-                <a href={`/replay/${v.id}`} class="prog">
-                  <div class="prog-media"><div class="prog-thumb">{v.thumb ? <img src={v.thumb} alt="" loading="lazy" /> : <span style={`background:linear-gradient(135deg,${rd.from},${rd.to})`}></span>}</div></div>
-                  <div class="body"><div class="t">{vpt.main || v.title}</div><div class="m">{v.caption}</div><span class="tagd" style={tagStyle(v.discipline)}>{rd.label}</span></div>
-                </a>
-              );
-            })}
-          </div>
-          <a href="/disciplines" class="more hero-belt-more">Voir la vidéothèque →</a>
-        </div>
-      )}
       <script is:inline>
         (function () {
           var els = document.querySelectorAll('[data-countdown]');
@@ -379,6 +375,65 @@ const slides = programme
         track.addEventListener('touchend', endDrag);
         track.addEventListener('touchcancel', endDrag);
         go(0); start();
+      });
+    })();
+  </script>
+
+  <!-- DERNIERS REPLAYS (replacé sous les événements) -->
+  {beltReplays.length > 0 && (
+    <section class="section">
+      <div class="wrap">
+        <div class="sec-head">
+          <div>
+            <div class="eyebrow">À revoir</div>
+            <h2>Derniers replays</h2>
+          </div>
+          <a href="/videotheque" class="link">Toute la vidéothèque →</a>
+        </div>
+        <div class="rcarousel">
+          <button type="button" class="rcar-nav rcar-prev" aria-label="Précédent">‹</button>
+          <div class="rcards">
+            {beltReplays.map((v) => {
+              const rd = getDiscipline(v.discipline);
+              const vpt = parseProgTitle(v.title);
+              return (
+                <a href={`/replay/${v.id}`} class="rcard" style={`--dc:${rd.colorVar}`}>
+                  <span class="rcard-h">
+                    <span class="rcard-cat" style={`color:${rd.colorVar}`}>{rd.label}</span>
+                    <span class="rcard-date">{v.when}</span>
+                  </span>
+                  <span class="rcard-img">
+                    {v.thumb ? <img src={v.thumb} alt="" loading="lazy" onerror={`this.onerror=null;this.style.display='none'`} /> : <span style={`background:linear-gradient(135deg,${rd.from},${rd.to})`}></span>}
+                  </span>
+                  <span class="rcard-t">{vpt.main || v.title}</span>
+                </a>
+              );
+            })}
+          </div>
+          <button type="button" class="rcar-nav rcar-next" aria-label="Suivant">›</button>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <script is:inline>
+    (function () {
+      document.querySelectorAll('.rcarousel').forEach(function (car) {
+        var track = car.querySelector('.rcards');
+        var prev = car.querySelector('.rcar-prev');
+        var next = car.querySelector('.rcar-next');
+        if (!track) return;
+        function step() { var c = track.querySelector('.rcard'); return (c ? c.getBoundingClientRect().width + 12 : 200) * 2; }
+        function upd() {
+          var max = track.scrollWidth - track.clientWidth - 2;
+          if (prev) prev.hidden = track.scrollLeft <= 2;
+          if (next) next.hidden = max <= 2 || track.scrollLeft >= max;
+        }
+        if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
+        if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
+        track.addEventListener('scroll', upd);
+        window.addEventListener('resize', upd);
+        upd();
       });
     })();
   </script>

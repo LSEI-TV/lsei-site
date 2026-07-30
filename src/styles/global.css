@@ -413,10 +413,29 @@ nav.main a.active { color: var(--ink); border-color: var(--accent); }
 .hero-belt-h { margin: 0 0 14px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; display: flex; align-items: center; gap: 10px; }
 .hero-belt-h .live-mini { color: var(--live); display: inline-flex; align-items: center; gap: 6px; font-size: 11px; }
 .hero-belt-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
-.hero-belt .prog { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); align-items: center; }
-.hero-belt .prog:hover { border-color: var(--line-strong); background: var(--surface-2); }
-.hero-belt .prog-thumb { width: 104px; }
+.hero-belt-list .prog { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); align-items: center; }
+.hero-belt-list .prog:hover { border-color: var(--line-strong); background: var(--surface-2); }
+.hero-belt-list .prog-thumb { width: 104px; }
 .hero-belt-more { display: inline-block; margin-top: 16px; font-size: 13px; font-weight: 700; color: var(--accent); }
+
+/* ===== Derniers replays : posters verticaux en carrousel (style guide TV) ===== */
+.rcarousel { position: relative; }
+.rcards { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; scroll-behavior: smooth; padding-bottom: 4px; }
+.rcards::-webkit-scrollbar { display: none; }
+.rcard { flex: 0 0 262px; scroll-snap-align: start; display: flex; flex-direction: column; border: 1px solid var(--line-strong); border-radius: 10px; overflow: hidden; background: #0e1016; transition: border-color .15s, transform .15s; }
+.rcard:hover { border-color: var(--dc, var(--accent)); transform: translateY(-3px); }
+.rcard-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 11px; background: var(--surface-2); border-bottom: 1px solid var(--line); }
+.rcard-cat { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rcard-date { font-size: 11px; font-weight: 700; color: var(--ink-soft); white-space: nowrap; }
+.rcard-img { position: relative; aspect-ratio: 16 / 9; background: #111; }
+.rcard-img img, .rcard-img > span { display: block; width: 100%; height: 100%; object-fit: cover; }
+.rcard-t { padding: 9px 11px 12px; font-size: 13px; font-weight: 650; line-height: 1.28; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rcar-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--ink); font-size: 22px; line-height: 1; display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(4px); }
+.rcar-nav:hover { background: var(--surface-2); border-color: var(--ink-faint); }
+.rcar-prev { left: -8px; }
+.rcar-next { right: -8px; }
+.rcar-nav[hidden] { display: none; }
+@media (max-width: 620px) { .rcard { flex-basis: 76%; } .rcar-nav { display: none; } }
 
 /* ===== Spotlight billard (accueil) : le podium (top 3) du classement Masters ===== */
 .bspot { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: start; }
