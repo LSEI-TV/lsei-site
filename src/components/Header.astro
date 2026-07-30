@@ -13,7 +13,7 @@ today = today.charAt(0).toUpperCase() + today.slice(1);
 <div class="util">
   <div class="wrap">
     <div class="left">
-      <span class="on-air"><span class="pulse"></span>ON AIR</span>
+      <a class="on-air" id="js-onair" href="/direct" hidden><span class="pulse"></span>En direct</a>
       <span><b id="js-today">{today}</b></span>
       <span class="hide">Web TV associative</span>
     </div>
@@ -63,6 +63,21 @@ today = today.charAt(0).toUpperCase() + today.slice(1);
       var d = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date());
       el.textContent = d.charAt(0).toUpperCase() + d.slice(1);
     } catch (e) {}
+  })();
+
+  // Badge « En direct » : affiché UNIQUEMENT quand un live est réellement en cours
+  // (live.json, régénéré toutes les 5 min). Sinon masqué — plus de « ON AIR » permanent.
+  (function () {
+    var el = document.getElementById('js-onair');
+    if (!el) return;
+    function sync() {
+      fetch('/live.json?_=' + Date.now(), { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) { el.hidden = !(d && d.live); })
+        .catch(function () {});
+    }
+    sync();
+    setInterval(sync, 60000);
   })();
 
   (function () {

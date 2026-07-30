@@ -121,7 +121,9 @@ img { max-width: 100%; }
 .theme-toggle:hover { color: var(--ink); border-color: var(--ink-faint); }
 
 /* ---------- identité TV : badge ON AIR ---------- */
-.on-air { display: inline-flex; align-items: center; gap: 6px; color: var(--live); font-weight: 800; letter-spacing: .14em; font-size: 10.5px; text-transform: uppercase; }
+.on-air { display: inline-flex; align-items: center; gap: 6px; color: var(--live); font-weight: 800; letter-spacing: .14em; font-size: 10.5px; text-transform: uppercase; text-decoration: none; }
+.on-air:hover { color: var(--live); opacity: .85; }
+.on-air[hidden] { display: none; }
 .on-air .pulse { width: 7px; height: 7px; }
 
 /* ---------- masthead ---------- */

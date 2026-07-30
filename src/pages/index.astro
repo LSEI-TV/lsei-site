@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import Ticker from '../components/Ticker.astro';
 import Thumb from '../components/Thumb.astro';
 import VideoPlayer from '../components/VideoPlayer.astro';
-import { disciplines, getDiscipline, partners, stats, cta } from '../data/site';
+import { disciplines, getDiscipline, partners, stats, cta, site } from '../data/site';
 import SportIcon from '../components/SportIcon.astro';
 import { getLiveFeature, getBroadcasts, getReplays, tagStyle } from '../lib/youtube';
 import { parseProgTitle } from '../lib/programmeTitle';
@@ -403,7 +403,7 @@ const slides = programme
                     <span class="rcard-date">{v.when}</span>
                   </span>
                   <span class="rcard-img">
-                    {v.thumb ? <img src={v.thumb} alt="" loading="lazy" onerror={`this.onerror=null;this.style.display='none'`} /> : <span style={`background:linear-gradient(135deg,${rd.from},${rd.to})`}></span>}
+                    {v.id ? <img src={`https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`} alt="" loading="lazy" onerror={`this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'`} /> : <span style={`background:linear-gradient(135deg,${rd.from},${rd.to})`}></span>}
                   </span>
                   <span class="rcard-t">{vpt.main || v.title}</span>
                 </a>
@@ -551,6 +551,10 @@ const slides = programme
           <div class="eyebrow">{cta.eyebrow}</div>
           <h2>{cta.title}</h2>
           <p>{cta.text}<br />{cta.text2}</p>
+          <div class="actions" style="justify-content:center;margin-top:22px">
+            <a href={site.social.facebook} target="_blank" rel="noopener" class="btn light">Nous contacter</a>
+            <a href="/le-club" class="btn outline">Découvrir LSEI</a>
+          </div>
         </div>
       </div>
     </div>
