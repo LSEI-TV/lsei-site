@@ -404,6 +404,7 @@ nav.main a.active { color: var(--ink); border-color: var(--accent); }
 }
 /* Téléphone : les prochains directs passent en CARROUSEL horizontal à défilement tactile. */
 @media (max-width: 620px) {
+  .rail--next, .nlist, .nlist-track { min-width: 0; }
   .nlist-track { flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px; }
   .nlist-track::-webkit-scrollbar { display: none; }
   .nlist-card { flex: 0 0 86%; scroll-snap-align: start; }
@@ -646,7 +647,7 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 
 /* ---------- responsive ---------- */
 @media (max-width: 940px) {
-  .hero-grid { grid-template-columns: 1fr; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
   .discs { grid-template-columns: repeat(2, 1fr); }
   .cards { grid-template-columns: 1fr 1fr; }
   .foot { grid-template-columns: 1fr 1fr; }
