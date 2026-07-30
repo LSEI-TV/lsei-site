@@ -1,12 +1,33 @@
 ---
 import Base from '../layouts/Base.astro';
 import { site, disciplines, getDiscipline } from '../data/site';
-import { getProgramme, tagStyle } from '../lib/youtube';
+import { getBroadcasts } from '../lib/youtube';
+import { parseProgTitle } from '../lib/programmeTitle';
 
 const channel = site.channelId;
-const programme = await getProgramme();
-const upcoming = programme.filter((p) => !p.live);
-const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t as any).label);
+const channelLiveUrl = `https://www.youtube.com/channel/${channel}/live`;
+const TZ = 'Europe/Paris';
+
+// Prochains directs = diffusions programmées (pas encore en cours), triées par horaire.
+const broadcasts = await getBroadcasts();
+const upcoming = broadcasts
+  .filter((b) => !b.live)
+  .sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf());
+
+// Groupement par jour (heure de Paris), comme la page Programme.
+const fmtDay = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: TZ });
+const fmtTime = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: TZ });
+const dayKeyFmt = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: TZ });
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const heure = (d: Date) => fmtTime.format(d).replace(':', 'h');
+
+const dayOrder: string[] = [];
+const byDay = new Map<string, typeof upcoming>();
+for (const b of upcoming) {
+  const k = dayKeyFmt.format(new Date(b.date));
+  if (!byDay.has(k)) { byDay.set(k, []); dayOrder.push(k); }
+  byDay.get(k)!.push(b);
+}
 
 // Couleurs/labels des disciplines pour le rendu côté navigateur (onglets, dégradés).
 const discMap = Object.fromEntries(disciplines.map((d) => {
@@ -24,43 +45,52 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
         <div class="bar" style="background:var(--live)"></div>
       </div>
 
-      <!-- Zone remplie côté navigateur depuis /live.json (rafraîchi toutes les 30 min par le workflow, sans reconstruction du site). -->
-      <div id="live-zone" data-channel={channel} style="margin-top:24px">
-        <div class="player">
-          <button class="facade frame" aria-label="Regarder le direct LSEI">
-            <div class="duo" style="background:linear-gradient(135deg,#3a0f12,#14161D);"></div>
-            <div class="grad"></div>
-            <span class="badge"><span class="pulse"></span>Direct</span>
-            <span class="play" aria-hidden="true">
-              <svg width="24" height="26" viewBox="0 0 20 22" fill="#fff"><path d="M0 0l20 11L0 22z"/></svg>
-            </span>
-            <div class="cap">
-              <div class="disc">LSEI — Le Sport en Image</div>
-              <div class="score">Cliquez pour vérifier si un direct est en cours</div>
-            </div>
-          </button>
+      <!-- Zone remplie côté navigateur depuis /live.json (rafraîchi toutes les 5 min par le workflow, sans reconstruction du site). -->
+      <div id="live-zone" data-channel={channel} data-channel-live={channelLiveUrl} style="margin-top:24px">
+        <!-- État initial (SSR) : hors antenne. Le JS le remplace dès qu'un live est détecté. -->
+        <div class="live-off">
+          <span class="live-off-tag">● Hors antenne</span>
+          <h2 class="live-off-h">Aucun direct en ce moment</h2>
+          <p class="live-off-p">Dès qu’un match démarre, il apparaît ici automatiquement. En attendant, retrouvez les prochains rendez-vous ci-dessous.</p>
+          <div class="live-off-actions">
+            <a class="btn ghost" href={channelLiveUrl} target="_blank" rel="noopener">Ouvrir la chaîne YouTube</a>
+          </div>
         </div>
       </div>
 
-      {upcoming.length > 0 && (
-        <div style="margin-top:40px">
+      {dayOrder.length > 0 && (
+        <div id="prochains" style="margin-top:44px">
           <div class="eyebrow">Prochains directs</div>
-          <div class="rail" style="margin-top:14px;box-shadow:none">
-            {upcoming.map((p) => (
-              <div class="prog">
-                <div class="time mono">{p.time}</div>
-                <div class="body">
-                  <div class="t">{p.title}</div>
-                  <div class="m">{p.meta}</div>
-                  <span class="tagd" style={tagStyle(p.tag)}>{tagLabel(p.tag)}</span>
-                </div>
+          {dayOrder.map((k) => (
+            <div class="ld">
+              <h2 class="ld-h">{cap(fmtDay.format(new Date(byDay.get(k)![0].date)))}</h2>
+              <div class="ld-grid">
+                {byDay.get(k)!.map((b) => {
+                  const d = getDiscipline(b.discipline);
+                  const pt = parseProgTitle(b.title);
+                  const main = pt.main || d.name;
+                  const sub = [pt.kicker, ...pt.badges].filter(Boolean).join(' · ');
+                  return (
+                    <a class="ld-card" href={`https://www.youtube.com/watch?v=${b.id}`} target="_blank" rel="noopener" style={`--dc:${d.colorVar}`}>
+                      <span class="ld-thumb">
+                        <img src={`https://i.ytimg.com/vi/${b.id}/maxresdefault.jpg`} alt="" loading="lazy" onerror={`this.onerror=null;this.src='https://i.ytimg.com/vi/${b.id}/hqdefault.jpg'`} />
+                      </span>
+                      <span class="ld-body">
+                        <span class="ld-time mono">{heure(new Date(b.date))}</span>
+                        <span class="ld-t">{main}</span>
+                        {sub && <span class="ld-m">{sub}</span>}
+                        <span class="ld-tag" style={`background:${d.tagBg};color:${d.colorVar}`}>{d.label}</span>
+                      </span>
+                    </a>
+                  );
+                })}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       )}
 
-      <p class="dek" style="margin-top:26px">
+      <p class="dek" style="margin-top:30px">
         Retrouvez tous nos matchs passés dans la <a href="/videotheque" style="color:var(--accent)">vidéothèque</a>.
       </p>
     </div>
@@ -70,12 +100,13 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
 <script type="application/json" id="disc-map" set:html={JSON.stringify(discMap)}></script>
 
 <script is:inline>
-  // La page /direct se remplit depuis /live.json (mis à jour toutes les 30 min).
+  // La page /direct se remplit depuis /live.json (mis à jour toutes les 5 min).
   // Aucun rebuild nécessaire : les onglets LIVE 1/2/3 apparaissent/disparaissent tout seuls.
   (function () {
     var zone = document.getElementById('live-zone');
     if (!zone) return;
     var channel = zone.getAttribute('data-channel');
+    var channelLive = zone.getAttribute('data-channel-live');
     var kick = document.getElementById('live-kick');
     var intro = document.getElementById('live-intro');
     var discMap = {};
@@ -84,6 +115,20 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
 
     function esc(s) { return (s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
     var PLAY = '<span class="play" aria-hidden="true"><svg width="24" height="26" viewBox="0 0 20 22" fill="#fff"><path d="M0 0l20 11L0 22z"/></svg></span>';
+
+    // Mini-version de parseProgTitle (lib/programmeTitle.ts) pour les titres live.
+    function parseTitle(t) {
+      var parts = (t || '').split('|').map(function (p) { return p.trim(); }).filter(Boolean);
+      if (parts.length <= 1) return { main: (t || '').trim(), sub: '' };
+      var lead = parts[0]
+        .replace(/^[^\p{L}\p{N}(]+/u, '')
+        .replace(/^(blackball|basketball|basket|palets?|subbuteo|football|foot|bowling|beach[- ]?volley|beach|volley|billard|snooker)\b[\s:–-]*/i, '')
+        .trim();
+      var main = parts[parts.length - 1];
+      var mid = parts.slice(1, -1);
+      var sub = [lead].concat(mid).filter(Boolean).join(' · ');
+      return { main: main, sub: sub };
+    }
 
     function embed(container, src, title) {
       var f = document.createElement('iframe');
@@ -102,15 +147,18 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
         '<div class="grad"></div><span class="badge"><span class="pulse"></span>Direct</span>' + PLAY + '</button></div>';
     }
 
-    function noLiveFacade() {
-      return '<div class="player"><button class="facade frame" aria-label="Regarder le direct LSEI">' +
-        '<div class="duo" style="background:linear-gradient(135deg,#3a0f12,#14161D);"></div>' +
-        '<div class="grad"></div><span class="badge"><span class="pulse"></span>Direct</span>' + PLAY +
-        '<div class="cap"><div class="disc">LSEI — Le Sport en Image</div><div class="score">Cliquez pour vérifier si un direct est en cours</div></div></button></div>';
+    // État hors antenne : pas de faux badge « Direct », pas de faux bouton lecture.
+    function offlineCard() {
+      return '<div class="live-off">' +
+        '<span class="live-off-tag">● Hors antenne</span>' +
+        '<h2 class="live-off-h">Aucun direct en ce moment</h2>' +
+        '<p class="live-off-p">Dès qu’un match démarre, il apparaît ici automatiquement. En attendant, retrouvez les prochains rendez-vous ci-dessous.</p>' +
+        '<div class="live-off-actions"><a class="btn ghost" href="' + esc(channelLive) + '" target="_blank" rel="noopener">Ouvrir la chaîne YouTube</a></div>' +
+        '</div>';
     }
 
     function wire() {
-      // Façade : clic → charge la vidéo (ou le direct de la chaîne si aucun id).
+      // Façade live : clic → charge la vidéo dans le lecteur.
       zone.querySelectorAll('.facade').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var player = btn.closest('.player');
@@ -129,7 +177,9 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
           var player = zone.querySelector('#live-main .player');
           if (player) embed(player, 'https://www.youtube-nocookie.com/embed/' + tab.getAttribute('data-id') + '?autoplay=1&rel=0', tab.getAttribute('data-title'));
           var titleEl = document.getElementById('live-main-title');
+          var subEl = document.getElementById('live-main-sub');
           if (titleEl) titleEl.textContent = tab.getAttribute('data-title') || '';
+          if (subEl) subEl.textContent = tab.getAttribute('data-sub') || '';
         });
       });
     }
@@ -142,7 +192,7 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
       if (!lives.length) {
         if (kick) kick.textContent = 'Le direct';
         if (intro) intro.textContent = 'Dès qu’un direct démarre sur notre chaîne, il s’affiche ici automatiquement. Sinon, retrouvez le prochain rendez-vous plus bas.';
-        zone.innerHTML = noLiveFacade();
+        zone.innerHTML = offlineCard();
         wire();
         return;
       }
@@ -154,12 +204,17 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
         html += '<div class="live-tabs" role="tablist" aria-label="Directs en cours">';
         lives.forEach(function (l, i) {
           var d = discMap[l.discipline] || {};
-          html += '<button type="button" class="live-tab' + (i === 0 ? ' active' : '') + '" data-id="' + l.id + '" data-title="' + esc(l.title) + '" style="--dc:' + (d.color || 'var(--live)') + '">' +
+          var p = parseTitle(l.title);
+          html += '<button type="button" class="live-tab' + (i === 0 ? ' active' : '') + '" data-id="' + l.id + '" data-title="' + esc(p.main) + '" data-sub="' + esc(p.sub) + '" style="--dc:' + (d.color || 'var(--live)') + '">' +
             '<span class="pulse"></span><b>LIVE ' + (i + 1) + '</b><span class="live-tab-disc">' + esc(d.label || '') + '</span></button>';
         });
         html += '</div>';
       }
-      html += '<div id="live-main">' + liveFacade(lives[0]) + '<h3 class="live-title" id="live-main-title">' + esc(lives[0].title) + '</h3></div>';
+      var p0 = parseTitle(lives[0].title);
+      html += '<div id="live-main">' + liveFacade(lives[0]) +
+        '<h3 class="live-title" id="live-main-title">' + esc(p0.main) + '</h3>' +
+        '<div class="live-sub" id="live-main-sub">' + esc(p0.sub) + '</div>' +
+        '</div>';
       zone.innerHTML = html;
       wire();
     }
@@ -168,17 +223,29 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
       fetch('/live.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (s) {
         var lives = (s && s.lives) ? s.lives : (s && s.live && s.id ? [{ id: s.id, title: s.title || 'Direct', discipline: 'billard' }] : []);
         render(lives);
-      }).catch(function () { /* pas de live.json → on garde la façade */ });
+      }).catch(function () { /* pas de live.json → on garde la carte hors antenne */ });
     }
 
-    // Façade initiale (SSR) cliquable tout de suite, puis on lit live.json.
-    wire();
+    // Carte hors antenne initiale (SSR) déjà en place ; on lit live.json tout de suite.
     refresh();
     setInterval(refresh, 60000); // recheck toutes les minutes tant que la page est ouverte
   })();
 </script>
 
 <style>
+  /* Carte « hors antenne » : honnête, pas de faux badge live ni faux bouton lecture. */
+  .live-off { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); padding: 44px 28px; text-align: center; }
+  .live-off-tag { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+  .live-off-h { font-family: var(--display); font-weight: 800; font-size: 22px; margin: 10px 0 0; color: var(--ink); }
+  .live-off-p { color: var(--ink-soft); font-family: var(--serif); font-size: 15px; max-width: 52ch; margin: 10px auto 0; }
+  .live-off-actions { margin-top: 22px; }
+
+  /* Titre du direct en cours (parsé). */
+  .live-title { font-family: var(--display); font-weight: 800; font-size: 20px; margin: 16px 0 0; color: var(--ink); }
+  .live-sub { color: var(--ink-faint); font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; margin-top: 4px; }
+  .live-sub:empty { display: none; }
+
+  /* Onglets multi-directs. */
   .live-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
   .live-tab {
     display: inline-flex; align-items: center; gap: 8px;
@@ -190,4 +257,23 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
   .live-tab-disc { color: var(--ink-faint); font-weight: 600; }
   .live-tab:hover { border-color: var(--dc, var(--live)); }
   .live-tab.active { border-color: var(--dc, var(--live)); background: color-mix(in srgb, var(--dc, var(--live)) 14%, var(--surface)); }
+
+  /* Prochains directs : liste groupée par jour, vignettes 16/9. */
+  .ld-h { font-family: var(--display); font-weight: 800; font-size: 15px; text-transform: capitalize; color: var(--ink); margin: 22px 0 12px; }
+  .ld-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .ld-card { display: flex; gap: 12px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); text-decoration: none; color: inherit; transition: border-color .15s, transform .15s; }
+  .ld-card:hover { border-color: var(--dc, var(--accent)); transform: translateY(-2px); }
+  .ld-thumb { position: relative; flex: 0 0 122px; aspect-ratio: 16 / 9; background: var(--surface-2); }
+  .ld-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ld-body { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px 10px 0; min-width: 0; }
+  .ld-time { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); }
+  .ld-t { font-family: var(--display); font-weight: 700; font-size: 14.5px; line-height: 1.2; color: var(--ink); }
+  .ld-m { font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .03em; line-height: 1.35; }
+  .ld-tag { align-self: flex-start; margin-top: 4px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 2px 7px; border-radius: 999px; }
+
+  @media (max-width: 620px) {
+    .ld-grid { grid-template-columns: 1fr; }
+    .live-off { padding: 34px 20px; }
+    .live-off-h { font-size: 19px; }
+  }
 </style>
