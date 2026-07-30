@@ -675,7 +675,16 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
   nav.main { display: none; }
 }
 @media (max-width: 620px) {
-  .stats { grid-template-columns: 1fr; }
+  /* Bloc chiffres → carrousel horizontal à glisser (gain de place sur téléphone) :
+     on voit une carte + un aperçu de la suivante, on fait défiler au doigt. */
+  .stats {
+    display: flex; grid-template-columns: none; max-width: none;
+    gap: 12px; overflow-x: auto; padding: 26px 0 24px;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .stats::-webkit-scrollbar { display: none; }
+  .stat { flex: 0 0 64%; max-width: 260px; scroll-snap-align: start; padding-right: 8px; }
   .cards { grid-template-columns: 1fr; }                  /* articles : 1 par ligne (plus lisible) */
   .cards--v { grid-template-columns: 1fr 1fr; gap: 12px; }/* videos/replays : 2 par ligne sur telephone */
   .discs { grid-template-columns: 1fr 1fr; }
