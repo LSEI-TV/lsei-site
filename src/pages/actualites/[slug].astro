@@ -22,8 +22,29 @@ const fmtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric',
 const citedPlayers = article.data.discipline === 'billard'
   ? playersInText(`${article.data.title} ${article.data.excerpt} ${article.body ?? ''}`)
   : [];
+
+// Données structurées article (SEO) : éligibilité aux résultats enrichis « Article ».
+const ogImageAbs = cover ? new URL(cover.fallback ?? cover.src, Astro.site).href : new URL('/og-image.jpg', Astro.site).href;
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'NewsArticle',
+  headline: article.data.title,
+  description: article.data.excerpt,
+  image: [ogImageAbs],
+  datePublished: article.data.date.toISOString(),
+  dateModified: article.data.date.toISOString(),
+  inLanguage: 'fr-FR',
+  mainEntityOfPage: { '@type': 'WebPage', '@id': shareUrl },
+  ...(article.data.author ? { author: { '@type': 'Person', name: article.data.author } } : { author: { '@type': 'Organization', name: 'LSEI — Le Sport en Image' } }),
+  publisher: {
+    '@type': 'Organization',
+    name: 'LSEI — Le Sport en Image',
+    logo: { '@type': 'ImageObject', url: new URL('/icon-512.png', Astro.site).href },
+  },
+};
 ---
-<Base title={article.data.title} description={article.data.excerpt} active="actualites" image={cover ? (cover.fallback ?? cover.src) : undefined}>
+<Base title={article.data.title} description={article.data.excerpt} active="actualites" ogType="article" image={cover ? (cover.fallback ?? cover.src) : undefined}>
+  <script type="application/ld+json" set:html={JSON.stringify(articleLd)} />
   <article class="section">
     <div class="wrap article-wrap">
       <a href="/actualites" class="link" style="display:inline-block;margin-bottom:18px">← Toutes les actualités</a>

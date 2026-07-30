@@ -36,7 +36,7 @@ const videoLd = {
   },
 };
 ---
-<Base title={video.title} description={video.excerpt} active="replays" image={video.thumb}>
+<Base title={video.title} description={video.excerpt} active="replays" ogType="video.other" image={video.thumb}>
   <script type="application/ld+json" set:html={JSON.stringify(videoLd)} />
   <section class="section">
     <div class="wrap watch">

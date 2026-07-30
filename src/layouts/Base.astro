@@ -12,14 +12,44 @@ interface Props {
   active?: string;
   /** image de partage spécifique à la page (ex. miniature d'une vidéo). Défaut : image du site. */
   image?: string;
+  /** type Open Graph : « website » (défaut), « article », « video.other »… */
+  ogType?: string;
 }
-const { title, description = site.description, active, image } = Astro.props;
+const { title, description = site.description, active, image, ogType = 'website' } = Astro.props;
 const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
 // URLs absolues (nécessaires pour le partage réseaux sociaux + le référencement).
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = image
   ? (image.startsWith('http') ? image : new URL(image, Astro.site).href)
   : new URL('/og-image.jpg', Astro.site).href;
+
+// Données structurées sitewide : identité de l'organisation (panneau de connaissance
+// Google, association aux réseaux sociaux) + le site + sa barre de recherche interne
+// (« sitelinks searchbox » dans les résultats Google).
+const siteHref = new URL('/', Astro.site).href;
+const orgLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'LSEI — Le Sport en Image',
+  alternateName: 'LSEI',
+  url: siteHref,
+  logo: new URL('/icon-512.png', Astro.site).href,
+  description: site.description,
+  sameAs: [site.social.youtube, site.social.facebook, site.social.instagram, site.social.tiktok],
+};
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: site.name,
+  url: siteHref,
+  inLanguage: 'fr-FR',
+  publisher: { '@type': 'Organization', name: 'LSEI — Le Sport en Image' },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: { '@type': 'EntryPoint', urlTemplate: new URL('/recherche?q={search_term_string}', Astro.site).href },
+    'query-input': 'required name=search_term_string',
+  },
+};
 ---
 <!doctype html>
 <html lang="fr" data-theme="dark">
@@ -38,7 +68,7 @@ const ogImage = image
     <!-- Open Graph (Facebook, WhatsApp, Messenger, LinkedIn…) -->
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:locale" content="fr_FR" />
@@ -51,6 +81,9 @@ const ogImage = image
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <!-- Données structurées (SEO) : organisation + site + recherche interne -->
+    <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteLd)} />
   </head>
   <body>
     <Header active={active} />
