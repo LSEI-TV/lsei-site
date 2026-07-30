@@ -378,42 +378,35 @@ nav.main a.active { color: var(--ink); border-color: var(--accent); }
 .hero--regie .rail .body .m, .hero--regie .rail .body .tagd { display: none; }
 .hero--regie .rail .prog-time-body { display: block; font-family: var(--mono); font-size: 9.5px; letter-spacing: .05em; color: var(--hero-accent, #66d9c8); margin-bottom: 1px; }
 
-/* ===== HERO « Maintenant / Ensuite » (option 3) : carte compte à rebours du prochain direct ===== */
-.next-card { display: block; margin: 12px 12px 6px; border: 1px solid var(--hero-accent, var(--line-strong)); border-radius: 10px; overflow: hidden; background: var(--surface-2); transition: transform .15s, box-shadow .15s; }
-.next-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
-.next-thumb { position: relative; display: block; aspect-ratio: 16 / 9; background: #111; }
-.next-thumb img, .next-thumb > span { display: block; width: 100%; height: 100%; object-fit: cover; }
-.next-badge { position: absolute; top: 9px; left: 9px; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 3px 7px; border-radius: 3px; }
-.next-info { display: block; padding: 12px 14px 14px; }
-.next-eyebrow { display: inline-flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--hero-accent, var(--accent)); }
-.next-eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulseC 1.8s infinite; }
-.next-title { display: block; font-size: 15px; font-weight: 700; line-height: 1.22; margin-top: 8px; }
-.next-count { display: block; font-family: var(--mono); font-size: 30px; font-weight: 700; letter-spacing: .01em; line-height: 1; margin-top: 12px; color: var(--ink); }
-.next-when { display: block; font-size: 12px; color: var(--ink-faint); margin-top: 6px; }
-/* Colonne droite épurée (juste la carte prochain direct) + bandeau bas pleine largeur */
+/* ===== HERO « Prochains directs » : liste de cartes horizontales (vignette gauche + décompte) ===== */
 .rail--next { border: none; background: none; box-shadow: none; overflow: visible; align-self: start; }
-/* Carte carrousel « prochains directs » calée sur la HAUTEUR de la vidéo (JS). Chaque
-   slide : image en haut (réduite), textes + décompte en dessous, le tout dans le cadre. */
-.rail--next .next-card { margin: 0; position: relative; overflow: hidden; display: grid; }
-/* Slides empilées dans la même cellule → fondu enchaîné (opacité) au changement. */
-.next-slide { grid-area: 1 / 1; display: flex; flex-direction: column; color: inherit; text-decoration: none; opacity: 0; transition: opacity .55s ease; pointer-events: none; }
-.next-slide.is-active { opacity: 1; pointer-events: auto; }
-.next-slide .next-thumb { aspect-ratio: auto; flex: 1 1 auto; min-height: 90px; }
-.next-slide .next-info { flex: none; }
-.next-dots { position: absolute; top: 10px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px; z-index: 4; }
-.next-dot { width: 7px; height: 7px; border-radius: 50%; border: 0; padding: 0; background: rgba(255,255,255,.5); cursor: pointer; transition: background .15s; }
-.next-dot.on { background: #fff; }
-.next-cta { display: none; margin-top: 9px; font-size: 13px; font-weight: 700; color: var(--hero-accent, var(--accent)); }
-.lab-live { display: none; }
-.next-slide.is-live .lab-next { display: none; }
-.next-slide.is-live .lab-live { display: inline; }
-.next-slide.is-live .next-eyebrow, .next-slide.is-live .next-count { color: var(--live); }
-.next-slide.is-live .next-cta { display: block; }
-/* Mobile/tablette : la carte n'est plus calée sur la vidéo (JS off) → vignette en 16:9,
-   même format et même largeur que la vidéo principale au-dessus → équilibre visuel. */
+.nlist { display: flex; flex-direction: column; gap: 8px; }
+.nlist-track { display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; min-height: 0; }
+.nlist-h { flex: none; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--hero-accent, var(--accent)); margin-bottom: 2px; }
+.nlist-card { display: flex; align-items: center; gap: 12px; flex: 1 1 0; min-height: 74px; padding: 8px 12px 8px 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: inherit; text-decoration: none; transition: border-color .15s, background .15s, transform .15s; }
+.nlist-card:hover { border-color: var(--hero-accent, var(--c-billard)); background: var(--surface-2); transform: translateY(-1px); }
+.nlist-thumb { position: relative; flex: none; width: 132px; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; background: #111; }
+.nlist-thumb img, .nlist-thumb > span { display: block; width: 100%; height: 100%; object-fit: cover; }
+.nlist-badge { position: absolute; top: 6px; left: 6px; font-size: 9px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; }
+.nlist-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.nlist-title { font-weight: 700; font-size: 14px; line-height: 1.2; color: var(--ink); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+.nlist-count { font-family: var(--mono); font-size: 18px; font-weight: 700; letter-spacing: .01em; color: var(--ink); line-height: 1.15; }
+.nlist-when { font-size: 11px; color: var(--ink-faint); }
+.nlist-live { display: none; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: var(--live); }
+.nlist-live .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulseC 1.8s infinite; }
+.nlist-card.is-live .nlist-count { display: none; }
+.nlist-card.is-live .nlist-live { display: inline-flex; }
+.nlist-card.is-live { border-color: color-mix(in srgb, var(--live) 55%, var(--line-strong)); }
+/* Tablette : la liste n'est plus calée sur la vidéo (JS off) → hauteur naturelle. */
 @media (max-width: 940px) {
-  .rail--next .next-card { height: auto; }
-  .next-slide .next-thumb { aspect-ratio: 16 / 9; flex: none; min-height: 0; }
+  .rail--next .nlist { height: auto !important; }
+  .nlist-card { flex: none; }
+}
+/* Téléphone : les prochains directs passent en CARROUSEL horizontal à défilement tactile. */
+@media (max-width: 620px) {
+  .nlist-track { flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px; }
+  .nlist-track::-webkit-scrollbar { display: none; }
+  .nlist-card { flex: 0 0 86%; scroll-snap-align: start; }
 }
 .hero-belt { margin-top: 26px; }
 .hero-belt-h { margin: 0 0 14px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; display: flex; align-items: center; gap: 10px; }

@@ -158,29 +158,26 @@ const slides = programme
 
         <aside class={`rail${slides.length ? ' rail--next' : ''}`}>
           {slides.length ? (
-            <div class="next-card is-carousel">
-              {slides.map((s, i) => (
-                <a href={s.href} class={`next-slide${i === 0 ? ' is-active' : ''}`} {...(s.id ? { 'data-id': s.id, 'data-title': s.main, 'data-cat': tagLabel(s.sport), 'data-sub': s.when } : {})}>
-                  <span class="next-thumb">
+            <div class="nlist">
+              <div class="nlist-h">Prochains directs</div>
+              <div class="nlist-track">
+              {slides.slice(0, 4).map((s) => (
+                <a href={s.href} class="nlist-card" {...(s.id ? { 'data-id': s.id, 'data-title': s.main, 'data-cat': tagLabel(s.sport), 'data-sub': s.when } : {})}>
+                  <span class="nlist-thumb">
                     {s.thumb
                       ? <img src={s.thumb} alt="" loading="lazy" onerror={s.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${s.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
                       : <span style="background:linear-gradient(135deg,var(--surface-2),var(--surface))"></span>}
-                    <span class="next-badge" style={tagStyle(s.sport)}>{tagLabel(s.sport)}</span>
+                    <span class="nlist-badge" style={tagStyle(s.sport)}>{tagLabel(s.sport)}</span>
                   </span>
-                  <span class="next-info">
-                    <span class="next-eyebrow"><span class="dot"></span><span class="lab-next">Prochain direct</span><span class="lab-live">C'est parti · en direct</span></span>
-                    <span class="next-title">{s.main}</span>
-                    <span class="next-count mono" data-countdown={s.iso}>—</span>
-                    <span class="next-when">{s.when}</span>
-                    <span class="next-cta">Regarder maintenant →</span>
+                  <span class="nlist-body">
+                    <span class="nlist-title">{s.main}</span>
+                    <span class="nlist-count mono" data-countdown={s.iso}>—</span>
+                    <span class="nlist-live"><span class="dot"></span>En direct — regarder →</span>
+                    <span class="nlist-when">{s.when}</span>
                   </span>
                 </a>
               ))}
-              {slides.length > 1 && (
-                <div class="next-dots">
-                  {slides.map((_, i) => <button type="button" class={`next-dot${i === 0 ? ' on' : ''}`} data-dot={i} aria-label={`Direct ${i + 1}`}></button>)}
-                </div>
-              )}
+              </div>
             </div>
           ) : (
             <Fragment>
@@ -260,8 +257,8 @@ const slides = programme
         // un slide passe en direct seulement quand SON live est réellement en cours, et revient
         // à la normale dès qu'il se termine — sans attendre la reconstruction du site.
         (function () {
-          var slides = [].slice.call(document.querySelectorAll('.next-slide[data-id]'));
-          if (!slides.length) return;
+          var cards = [].slice.call(document.querySelectorAll('.nlist-card[data-id]'));
+          if (!cards.length) return;
           function syncLive() {
             fetch('/live.json', { cache: 'no-store' })
               .then(function (r) { return r.ok ? r.json() : null; })
@@ -269,32 +266,15 @@ const slides = programme
                 var ids = {};
                 if (d && d.lives && d.lives.length) d.lives.forEach(function (l) { ids[l.id] = 1; });
                 else if (d && d.live && d.id) ids[d.id] = 1;
-                slides.forEach(function (s) { s.classList.toggle('is-live', !!ids[s.getAttribute('data-id')]); });
+                cards.forEach(function (s) { s.classList.toggle('is-live', !!ids[s.getAttribute('data-id')]); });
               })
               .catch(function () {});
           }
           syncLive(); setInterval(syncLive, 60000);
         })();
-        // Carrousel « prochains directs » : défilement toutes les 10 s + points de navigation.
+        // Cale la hauteur de la LISTE des prochains directs sur celle de la vidéo (2 colonnes only).
         (function () {
-          var card = document.querySelector('.next-card.is-carousel');
-          if (!card) return;
-          var slides = [].slice.call(card.querySelectorAll('.next-slide'));
-          var dots = [].slice.call(card.querySelectorAll('.next-dot'));
-          if (slides.length <= 1) return;
-          var idx = 0, timer;
-          function show(n) {
-            idx = (n + slides.length) % slides.length;
-            slides.forEach(function (s, k) { s.classList.toggle('is-active', k === idx); });
-            dots.forEach(function (d, k) { d.classList.toggle('on', k === idx); });
-          }
-          function auto() { timer = setInterval(function () { show(idx + 1); }, 10000); }
-          dots.forEach(function (d, k) { d.addEventListener('click', function (e) { e.preventDefault(); clearInterval(timer); show(k); auto(); }); });
-          auto();
-        })();
-        // Cale la hauteur de la carte « prochain direct » sur celle de la vidéo (2 colonnes only).
-        (function () {
-          var card = document.querySelector('.rail--next .next-card');
+          var card = document.querySelector('.rail--next .nlist');
           var frame = document.querySelector('.hero .lead .frame');
           if (!card || !frame) return;
           function sync() {
@@ -526,7 +506,7 @@ const slides = programme
     (function () {
       var hero = document.querySelector('.hero .player');
       if (!hero) return;
-      document.querySelectorAll('.rail .prog[data-id], .next-slide[data-id]').forEach(function (item) {
+      document.querySelectorAll('.rail .prog[data-id], .nlist-card[data-id]').forEach(function (item) {
         item.addEventListener('click', function (e) {
           e.preventDefault();
           var id = item.getAttribute('data-id');
