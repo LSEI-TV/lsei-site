@@ -7,13 +7,27 @@ import type { Page } from 'astro';
 interface Props { page: Page<Video> }
 const { page } = Astro.props;
 const videos = page.data;
+
+// Données structurées : liste ordonnée des vidéos de la page (aide Google à
+// comprendre la collection et à afficher un carrousel de vidéos).
+const itemListLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: videos.map((v, i) => ({
+    '@type': 'ListItem',
+    position: (page.currentPage - 1) * page.size + i + 1,
+    url: new URL(`/replay/${v.id}`, Astro.site).href,
+    name: v.title,
+  })),
+};
 ---
+<script type="application/ld+json" set:html={JSON.stringify(itemListLd)} />
 <div class="cards">
   {videos.map((v) => {
     const d = getDiscipline(v.discipline);
     return (
       <a href={`/replay/${v.id}`} class="card" style={`--dc:${d.colorVar}`}>
-        <Thumb from={d.from} to={d.to} caption={v.caption} image={v.thumb} />
+        <Thumb from={d.from} to={d.to} caption={v.caption} image={v.thumb} alt={v.title} />
         <div class="kicker">{v.kicker}</div>
         <h3>{v.title}</h3>
         {v.excerpt && <p class="ex">{v.excerpt}</p>}

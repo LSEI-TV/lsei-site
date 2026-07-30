@@ -55,8 +55,31 @@ for (const it of items) {
   if (!byDay.has(k)) { byDay.set(k, []); dayOrder.push(k); }
   byDay.get(k)!.push(it);
 }
+
+// Données structurées : chaque diffusion programmée = un événement sportif en ligne
+// (éligibilité aux résultats enrichis « Événement » de Google).
+const siteRoot = new URL('/', Astro.site).href;
+const eventsLd = items.map((it) => {
+  const d = getDiscipline(it.sport);
+  const pt = it.category ? null : parseProgTitle(it.title);
+  const nm = pt ? (pt.main || d.name) : (it.category || it.title || d.name);
+  const url = it.link && it.link.startsWith('http') ? it.link : programmeUrl;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SportsEvent',
+    name: nm,
+    startDate: it.date.toISOString(),
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+    location: { '@type': 'VirtualLocation', url },
+    ...(it.thumb ? { image: [it.thumb] } : {}),
+    url,
+    organizer: { '@type': 'Organization', name: 'LSEI — Le Sport en Image', url: siteRoot },
+  };
+});
 ---
 <Base title="Programme" description="Le programme des directs et diffusions LSEI : matchs à venir, en direct et rediffusions, tous sports." active="programme">
+  {eventsLd.length > 0 && <script type="application/ld+json" set:html={JSON.stringify(eventsLd)} />}
   <section class="disc-hero" style="--dc:var(--accent)">
     <div class="wrap">
       <div class="kick" style="color:var(--accent)">Au programme</div>
@@ -102,7 +125,7 @@ for (const it of items) {
                     >
                       <span class="pc-thumb">
                         {it.thumb
-                          ? <img src={it.thumb} alt="" loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
+                          ? <img src={it.thumb} alt={sub ? `${main} — ${sub}` : main} loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
                           : <span class="pc-thumb-duo" style={`background:linear-gradient(135deg,${d.from},${d.to})`}></span>}
                         {it.live && <span class="pc-live">● LIVE</span>}
                       </span>

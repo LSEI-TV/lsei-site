@@ -236,7 +236,7 @@ const slides = programme
                       const subb = pt ? pt.badges.join(' · ') : '';
                       return (
                         <a href={it.href} class="prog" {...(it.id ? { 'data-id': it.id, 'data-title': pt?.main || it.title, 'data-cat': cat, 'data-sub': subb } : {})}>
-                          <div class="prog-media"><div class={`time mono prog-time-media${it.live ? ' on' : ''}`}>{time}</div><div class="prog-thumb">{it.thumb ? <img src={it.thumb} alt="" loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} /> : <span style="background:linear-gradient(135deg,var(--surface-2),var(--surface))"></span>}</div></div>
+                          <div class="prog-media"><div class={`time mono prog-time-media${it.live ? ' on' : ''}`}>{time}</div><div class="prog-thumb">{it.thumb ? <img src={it.thumb} alt={main} loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} /> : <span style="background:linear-gradient(135deg,var(--surface-2),var(--surface))"></span>}</div></div>
                           <div class="body"><div class={`time mono prog-time-body${it.live ? ' on' : ''}`}>{time}</div><div class="t">{main}</div>{sub && <div class="m">{sub}</div>}<span class="tagd" style={tagStyle(it.sport)}>{tagLabel(it.sport)}</span></div>
                         </a>
                       );
@@ -429,7 +429,7 @@ const slides = programme
                     <span class="rcard-date">{v.when}</span>
                   </span>
                   <span class="rcard-img">
-                    {v.id ? <img src={`https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`} alt="" loading="lazy" onerror={`this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'`} /> : <span style={`background:linear-gradient(135deg,${rd.from},${rd.to})`}></span>}
+                    {v.id ? <img src={`https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`} alt={vpt.main || v.title} loading="lazy" onerror={`this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'`} /> : <span style={`background:linear-gradient(135deg,${rd.from},${rd.to})`}></span>}
                   </span>
                   <span class="rcard-t">{vpt.main || v.title}</span>
                 </a>

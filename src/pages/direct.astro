@@ -73,7 +73,7 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
                   return (
                     <a class="ld-card" href={`https://www.youtube.com/watch?v=${b.id}`} target="_blank" rel="noopener" style={`--dc:${d.colorVar}`}>
                       <span class="ld-thumb">
-                        <img src={`https://i.ytimg.com/vi/${b.id}/maxresdefault.jpg`} alt="" loading="lazy" onerror={`this.onerror=null;this.src='https://i.ytimg.com/vi/${b.id}/hqdefault.jpg'`} />
+                        <img src={`https://i.ytimg.com/vi/${b.id}/maxresdefault.jpg`} alt={sub ? `${main} — ${sub}` : main} loading="lazy" onerror={`this.onerror=null;this.src='https://i.ytimg.com/vi/${b.id}/hqdefault.jpg'`} />
                       </span>
                       <span class="ld-body">
                         <span class="ld-time mono">{heure(new Date(b.date))}</span>

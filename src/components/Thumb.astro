@@ -10,13 +10,15 @@ interface Props {
   href?: string;
   ariaLabel?: string;
   image?: string;
+  /** texte alternatif descriptif de la miniature (référencement Google Images) */
+  alt?: string;
 }
-const { from, to, caption, score, live = false, href, ariaLabel, image } = Astro.props;
+const { from, to, caption, score, live = false, href, ariaLabel, image, alt } = Astro.props;
 const Tag = href ? 'a' : 'div';
 ---
 <Tag class="frame" href={href} aria-label={ariaLabel}>
   {image
-    ? <img class="photo" src={image} alt="" loading="lazy" />
+    ? <img class="photo" src={image} alt={alt ?? caption ?? ''} loading="lazy" />
     : <div class="duo" style={`background:linear-gradient(135deg,${from},${to});`}></div>}
   <div class="grad"></div>
   {live && (

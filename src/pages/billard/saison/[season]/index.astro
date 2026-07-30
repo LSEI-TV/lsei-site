@@ -449,7 +449,7 @@ if (!hasData) {
         <div class="cards">
           {latest.map((v) => (
             <a href={`/replay/${v.id}`} class="card" style={`--dc:${d.colorVar}`}>
-              <Thumb from={d.from} to={d.to} caption={v.caption} image={v.thumb} />
+              <Thumb from={d.from} to={d.to} caption={v.caption} image={v.thumb} alt={v.title} />
               <div class="kicker">{v.kicker}</div>
               <h3>{v.title}</h3>
               <div class="meta"><span>{v.when}</span></div>
