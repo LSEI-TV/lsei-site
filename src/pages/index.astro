@@ -160,7 +160,7 @@ const slides = programme
           {slides.length ? (
             <div class="next-card is-carousel">
               {slides.map((s, i) => (
-                <a href={s.href} class={`next-slide${i === 0 ? ' is-active' : ''}`} {...(s.id ? { 'data-id': s.id, 'data-title': s.main } : {})}>
+                <a href={s.href} class={`next-slide${i === 0 ? ' is-active' : ''}`} {...(s.id ? { 'data-id': s.id, 'data-title': s.main, 'data-cat': tagLabel(s.sport), 'data-sub': s.when } : {})}>
                   <span class="next-thumb">
                     {s.thumb
                       ? <img src={s.thumb} alt="" loading="lazy" onerror={s.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${s.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
@@ -526,7 +526,7 @@ const slides = programme
     (function () {
       var hero = document.querySelector('.hero .player');
       if (!hero) return;
-      document.querySelectorAll('.rail .prog[data-id]').forEach(function (item) {
+      document.querySelectorAll('.rail .prog[data-id], .next-slide[data-id]').forEach(function (item) {
         item.addEventListener('click', function (e) {
           e.preventDefault();
           var id = item.getAttribute('data-id');
