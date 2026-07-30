@@ -409,6 +409,12 @@ nav.main a.active { color: var(--ink); border-color: var(--accent); }
 .next-slide.is-live .lab-live { display: inline; }
 .next-slide.is-live .next-eyebrow, .next-slide.is-live .next-count { color: var(--live); }
 .next-slide.is-live .next-cta { display: block; }
+/* Mobile/tablette : la carte n'est plus calée sur la vidéo (JS off) → vignette en 16:9,
+   même format et même largeur que la vidéo principale au-dessus → équilibre visuel. */
+@media (max-width: 940px) {
+  .rail--next .next-card { height: auto; }
+  .next-slide .next-thumb { aspect-ratio: 16 / 9; flex: none; min-height: 0; }
+}
 .hero-belt { margin-top: 26px; }
 .hero-belt-h { margin: 0 0 14px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; display: flex; align-items: center; gap: 10px; }
 .hero-belt-h .live-mini { color: var(--live); display: inline-flex; align-items: center; gap: 6px; font-size: 11px; }
