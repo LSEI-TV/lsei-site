@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import Thumb from '../components/Thumb.astro';
 import ShareLinks from '../components/ShareLinks.astro';
+import SportIcon from '../components/SportIcon.astro';
 import { disciplines, getDiscipline } from '../data/site';
 import { getBroadcasts } from '../lib/youtube';
 import { parseProgTitle } from '../lib/programmeTitle';
@@ -10,137 +10,182 @@ import { getCollection } from 'astro:content';
 const now = Date.now();
 const TZ = 'Europe/Paris';
 const programmeUrl = new URL('/programme', Astro.site).href;
+const siteRoot = new URL('/', Astro.site).href;
 
 // 1) Programme saisi manuellement via /admin.
 const manual = (await getCollection('programme', ({ data }) => !data.draft)).map((p) => ({
-  sport: p.data.sport,
-  category: p.data.category || '',
-  title: p.data.title || '',
-  date: p.data.date,
-  thumb: p.data.image,
-  link: p.data.link,
-  live: false,
+  sport: p.data.sport, category: p.data.category || '', title: p.data.title || '',
+  date: p.data.date, thumb: p.data.image, link: p.data.link, live: false,
 }));
-
 // 2) Directs YouTube détectés automatiquement (en cours + programmés).
 const auto = (await getBroadcasts()).map((b) => ({
-  sport: b.discipline,
-  category: '',
-  title: b.title,
-  date: new Date(b.date),
-  thumb: `https://i.ytimg.com/vi/${b.id}/maxresdefault.jpg`,
-  link: `https://www.youtube.com/watch?v=${b.id}`,
-  live: b.live,
+  sport: b.discipline, category: '', title: b.title, date: new Date(b.date),
+  thumb: `https://i.ytimg.com/vi/${b.id}/maxresdefault.jpg`, link: `https://www.youtube.com/watch?v=${b.id}`, live: b.live,
 }));
 
-// Fusion : on garde ce qui est en cours ou à venir (une diffusion reste listée jusqu'à ~3 h après le début).
 let items = [...manual, ...auto].filter((it) => it.live || it.date.valueOf() + 3 * 3600 * 1000 >= now);
 items.sort((a, b) => a.date.valueOf() - b.date.valueOf());
 
-// Sports réellement présents au programme → on n'affiche que ces boutons de filtre
-// (pas de filtre « fantôme » pour un sport sans aucune diffusion).
 const sportsPresent = new Set(items.map((it) => it.sport));
 
-// Groupement par jour (heure de Paris).
-const fmtDay = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: TZ });
 const fmtTime = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: TZ });
 const dayKeyFmt = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: TZ });
+const monthKeyFmt = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', timeZone: TZ });
+const monthLabelFmt = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric', timeZone: TZ });
+const dowFmt = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', timeZone: TZ });
+const dayNumFmt = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', timeZone: TZ });
+const monShortFmt = new Intl.DateTimeFormat('fr-FR', { month: 'short', timeZone: TZ });
+const yearFmt = new Intl.DateTimeFormat('fr-FR', { year: 'numeric', timeZone: TZ });
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const heure = (d: Date) => fmtTime.format(d).replace(':', 'h');
+const gcalFmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 
-const dayOrder: string[] = [];
-const byDay = new Map<string, typeof items>();
-for (const it of items) {
-  const k = dayKeyFmt.format(it.date);
-  if (!byDay.has(k)) { byDay.set(k, []); dayOrder.push(k); }
-  byDay.get(k)!.push(it);
-}
-
-// Données structurées : chaque diffusion programmée = un événement sportif en ligne
-// (éligibilité aux résultats enrichis « Événement » de Google).
-const siteRoot = new URL('/', Astro.site).href;
-const eventsLd = items.map((it) => {
-  const d = getDiscipline(it.sport);
+// Enrichit chaque item : titre parsé, horaire, lien Google Agenda, partage.
+const events = items.map((it) => {
+  const disc = getDiscipline(it.sport);
   const pt = it.category ? null : parseProgTitle(it.title);
-  const nm = pt ? (pt.main || d.name) : (it.category || it.title || d.name);
-  const url = it.link && it.link.startsWith('http') ? it.link : programmeUrl;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'SportsEvent',
-    name: nm,
-    startDate: it.date.toISOString(),
-    eventStatus: 'https://schema.org/EventScheduled',
-    eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
-    location: { '@type': 'VirtualLocation', url },
-    ...(it.thumb ? { image: [it.thumb] } : {}),
-    url,
-    organizer: { '@type': 'Organization', name: 'LSEI — Le Sport en Image', url: siteRoot },
-  };
+  const main = pt ? (pt.main || disc.name) : (it.category || it.title || disc.name);
+  const sub = pt ? [pt.kicker, ...pt.badges].filter(Boolean).join(' · ') : (it.category ? it.title : '');
+  const shareUrl = it.link && it.link.startsWith('http') ? it.link : programmeUrl;
+  const gcal = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(main + ' — LSEI')}&dates=${gcalFmt(it.date)}/${gcalFmt(new Date(it.date.valueOf() + 2 * 3600 * 1000))}&details=${encodeURIComponent('En direct sur LSEI · https://lsei.tv/direct')}`;
+  return { ...it, disc, main, sub, time: it.live ? 'En direct' : heure(it.date), gcal, shareUrl, shareTitle: `${main}${sub ? ' — ' + sub : ''} · LSEI` };
 });
+type Ev = (typeof events)[number];
+
+// Regroupement : mois → jours → événements.
+const monthOrder: string[] = [];
+const byMonth = new Map<string, Ev[]>();
+for (const e of events) {
+  const mk = monthKeyFmt.format(e.date);
+  if (!byMonth.has(mk)) { byMonth.set(mk, []); monthOrder.push(mk); }
+  byMonth.get(mk)!.push(e);
+}
+const daysOf = (list: Ev[]): Ev[][] => {
+  const order: string[] = [];
+  const map = new Map<string, Ev[]>();
+  for (const e of list) {
+    const k = dayKeyFmt.format(e.date);
+    if (!map.has(k)) { map.set(k, []); order.push(k); }
+    map.get(k)!.push(e);
+  }
+  return order.map((k) => map.get(k)!);
+};
+
+// Données structurées « Événement » (SEO).
+const eventsLd = events.map((e) => ({
+  '@context': 'https://schema.org', '@type': 'SportsEvent', name: e.main,
+  startDate: e.date.toISOString(), eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
+  location: { '@type': 'VirtualLocation', url: e.shareUrl },
+  ...(e.thumb ? { image: [e.thumb] } : {}), url: e.shareUrl,
+  organizer: { '@type': 'Organization', name: 'LSEI — Le Sport en Image', url: siteRoot },
+}));
+
+const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.onerror=null;this.src='${t.replace('maxresdefault', 'hqdefault')}'` : undefined);
 ---
 <Base title="Programme" description="Le programme des directs et diffusions LSEI : matchs à venir, en direct et rediffusions, tous sports." active="programme">
   {eventsLd.length > 0 && <script type="application/ld+json" set:html={JSON.stringify(eventsLd)} />}
-  <section class="disc-hero" style="--dc:var(--accent)">
-    <div class="wrap">
-      <div class="kick" style="color:var(--accent)">Au programme</div>
-      <h1>Le programme des diffusions</h1>
-      <p>Les matchs à venir et en direct sur LSEI — filtrez par sport pour trouver vos rendez-vous.</p>
-      <div class="bar" style="background:var(--accent)"></div>
-      <div class="prog-share"><ShareLinks url={programmeUrl} title="Le programme des diffusions LSEI — tous les prochains directs" /></div>
+
+  <!-- HERO pleine largeur (image dans public/programme-hero.webp, repli sombre sinon) -->
+  <section class="prog-hero">
+    <div class="prog-hero-media" aria-hidden="true"></div>
+    <div class="wrap prog-hero-in">
+      <div class="prog-hero-kick">Au programme</div>
+      <h1 class="prog-hero-h">Le programme des diffusions</h1>
+      <p class="prog-hero-p">Tous les matchs et événements à venir en direct sur LSEI.<br />Filtrez par sport pour trouver vos rendez-vous.</p>
+      <div class="prog-hero-share">
+        <span class="prog-hero-share-l">Partager</span>
+        <ShareLinks url={programmeUrl} title="Le programme des diffusions LSEI — tous les prochains directs" compact />
+      </div>
     </div>
   </section>
 
   <section class="section">
     <div class="wrap">
       <div class="prog-filter" id="prog-filter">
-        <button type="button" class="prog-fbtn active" data-sport="all">Tous</button>
+        <button type="button" class="prog-fbtn active" data-sport="all">
+          <svg class="pf-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Tous
+        </button>
         {disciplines.filter((d) => sportsPresent.has(d.slug)).map((d) => (
-          <button type="button" class="prog-fbtn" data-sport={d.slug} style={`--dc:${d.colorVar}`}>{d.label}</button>
+          <button type="button" class="prog-fbtn" data-sport={d.slug} style={`--dc:${d.colorVar}`}>
+            <SportIcon slug={d.slug} class="pf-ic" />{d.label}
+          </button>
         ))}
       </div>
 
-      {dayOrder.length === 0 ? (
-        <p class="dek" style="margin-top:24px">Aucune diffusion programmée pour le moment. Revenez bientôt — le programme se met à jour automatiquement dès qu'un direct est annoncé.</p>
+      {monthOrder.length === 0 ? (
+        <p class="dek" style="margin-top:26px">Aucune diffusion programmée pour le moment. Revenez bientôt — le programme se met à jour automatiquement dès qu'un direct est annoncé.</p>
       ) : (
-        dayOrder.map((k) => (
-          <div class="prog-day">
-            <h2 class="prog-day-h">{cap(fmtDay.format(byDay.get(k)![0].date))}</h2>
-            <div class="prog-grid">
-              {byDay.get(k)!.map((it) => {
-                const d = getDiscipline(it.sport);
-                const Tag = it.link ? 'a' : 'div';
-                // Entrées /admin : catégorie + titre déjà structurés. Directs YouTube :
-                // titre brut « guide TV » découpé selon la nomenclature « | ».
-                const pt = it.category ? null : parseProgTitle(it.title);
-                const main = pt ? (pt.main || d.name) : (it.category || it.title || d.name);
-                const sub = pt ? [pt.kicker, ...pt.badges].filter(Boolean).join(' · ') : (it.category ? it.title : '');
-                // Partage de CETTE diffusion : le lien YouTube du direct si dispo, sinon la page programme.
-                const shareUrl = it.link && it.link.startsWith('http') ? it.link : programmeUrl;
-                const shareTitle = `${main}${sub ? ' — ' + sub : ''} · LSEI`;
-                return (
-                  <div class="prog-card" data-sport={it.sport} style={`--dc:${d.colorVar}`}>
-                    <Tag
-                      class="pc-link"
-                      {...(it.link ? { href: it.link, target: it.link.startsWith('http') ? '_blank' : undefined, rel: 'noopener' } : {})}
-                    >
-                      <span class="pc-thumb">
-                        {it.thumb
-                          ? <img src={it.thumb} alt={sub ? `${main} — ${sub}` : main} loading="lazy" onerror={it.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${it.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
-                          : <span class="pc-thumb-duo" style={`background:linear-gradient(135deg,${d.from},${d.to})`}></span>}
-                        {it.live && <span class="pc-live">● LIVE</span>}
-                      </span>
-                      <span class="pc-body">
-                        <span class={`pc-time mono${it.live ? ' on' : ''}`}>{it.live ? 'En direct' : heure(it.date)}</span>
-                        <span class="pc-t">{main}</span>
-                        {sub && <span class="pc-m">{sub}</span>}
-                        <span class="pc-tag" style={`background:${d.tagBg};color:${d.colorVar}`}>{d.label}</span>
-                      </span>
-                    </Tag>
-                    <div class="pc-share"><ShareLinks url={shareUrl} title={shareTitle} compact /></div>
+        monthOrder.map((mk) => (
+          <div class="prog-month">
+            <h2 class="prog-month-h">{cap(monthLabelFmt.format(byMonth.get(mk)![0].date))}</h2>
+            {daysOf(byMonth.get(mk)!).map((dayEvents) => {
+              const d0 = dayEvents[0];
+              // Couleur de la carte date : celle du sport si tous les matchs du jour sont
+              // du même sport, sinon neutre (gris) pour ne pas induire en erreur.
+              const dayDc = dayEvents.every((e) => e.sport === d0.sport) ? d0.disc.colorVar : 'var(--line-strong)';
+              const dateBlock = (
+                <div class="pev-date">
+                  <span class="pev-dow">{cap(dowFmt.format(d0.date))}</span>
+                  <span class="pev-num">{dayNumFmt.format(d0.date)}</span>
+                  <span class="pev-mon">{monShortFmt.format(d0.date).replace('.', '')}</span>
+                  <span class="pev-yr">{yearFmt.format(d0.date)}</span>
+                </div>
+              );
+              return dayEvents.length === 1 ? (
+                <div class="pev" data-sport={d0.sport} style={`--dc:${d0.disc.colorVar}`}>
+                  {dateBlock}
+                  <div class="pev-main">
+                  <a class="pev-thumb" href={d0.link || programmeUrl} target={d0.link && d0.link.startsWith('http') ? '_blank' : undefined} rel="noopener" aria-label={d0.main}>
+                    {d0.thumb ? <img src={d0.thumb} alt={d0.main} loading="lazy" onerror={onerrorThumb(d0.thumb)} /> : <span class="pev-duo" style={`background:linear-gradient(135deg,${d0.disc.from},${d0.disc.to})`}></span>}
+                    <span class="pev-time mono">{d0.time}</span>
+                    <span class="pev-tag" style={`background:${d0.disc.tagBg};color:${d0.disc.colorVar}`}>{d0.disc.label}</span>
+                    {d0.live && <span class="pev-livebadge">● LIVE</span>}
+                  </a>
+                  <div class="pev-body">
+                    <div class="pev-head">
+                      <div class="pev-titles">
+                        <h3 class="pev-t">{d0.main}</h3>
+                        {d0.sub && <div class="pev-sub">{d0.sub}</div>}
+                      </div>
+                      <div class="pev-share"><ShareLinks url={d0.shareUrl} title={d0.shareTitle} compact /></div>
+                    </div>
+                    <div class="pev-actions">
+                      <a class="pev-watch" href={d0.link || programmeUrl} target={d0.link && d0.link.startsWith('http') ? '_blank' : undefined} rel="noopener">▸ {d0.live ? 'Regarder le direct' : 'Regarder en direct'}</a>
+                      <a class="pev-cal" href={d0.gcal} target="_blank" rel="noopener">＋ Ajouter au calendrier</a>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
+                  </div>
+                </div>
+              ) : (
+                <div class="pev-multi" style={`--dc:${dayDc}`}>
+                  {dateBlock}
+                  <div class="pev-car">
+                    <button type="button" class="pev-car-prev" aria-label="Précédent">‹</button>
+                    <div class="pev-car-track">
+                      {dayEvents.map((e) => (
+                        <div class="pmc" data-sport={e.sport} style={`--dc:${e.disc.colorVar}`}>
+                          <a class="pmc-thumb" href={e.link || programmeUrl} target={e.link && e.link.startsWith('http') ? '_blank' : undefined} rel="noopener" aria-label={e.main}>
+                            {e.thumb ? <img src={e.thumb} alt={e.main} loading="lazy" onerror={onerrorThumb(e.thumb)} /> : <span class="pev-duo" style={`background:linear-gradient(135deg,${e.disc.from},${e.disc.to})`}></span>}
+                            <span class="pev-tag" style={`background:${e.disc.tagBg};color:${e.disc.colorVar}`}>{e.disc.label}</span>
+                          </a>
+                          <div class="pmc-body">
+                            <div class="pmc-t">{e.main}</div>
+                            {e.sub && <div class="pmc-sub">{e.sub}</div>}
+                            <div class="pmc-time mono">{e.time}</div>
+                            <div class="pmc-actions">
+                              <a class="pev-watch sm" href={e.link || programmeUrl} target={e.link && e.link.startsWith('http') ? '_blank' : undefined} rel="noopener">Regarder</a>
+                              <a class="pev-cal sm" href={e.gcal} target="_blank" rel="noopener">＋ Calendrier</a>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <button type="button" class="pev-car-next" aria-label="Suivant">›</button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         ))
       )}
@@ -148,58 +193,150 @@ const eventsLd = items.map((it) => {
   </section>
 
   <style>
-    /* Grille « guide TV » : les diffusions d'une journée s'affichent en vignettes
-       côte à côte (ordre des horaires) et passent à la ligne quand c'est plein. */
-    .prog-share { margin-top: 18px; }
-    .prog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
-    .prog-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); transition: border-color .15s, transform .15s; }
-    .prog-card:hover { border-color: var(--dc, var(--c-billard)); transform: translateY(-2px); }
-    .pc-link { display: flex; flex-direction: column; flex: 1; color: inherit; text-decoration: none; }
-    .pc-share { display: flex; align-items: center; gap: 6px; padding: 8px 12px 10px; border-top: 1px solid var(--line); }
-    .pc-thumb { position: relative; aspect-ratio: 16 / 9; background: var(--surface-2); }
-    .pc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .pc-thumb-duo { display: block; width: 100%; height: 100%; }
-    .pc-live { position: absolute; top: 8px; left: 8px; font-family: var(--mono); font-size: 10.5px; font-weight: 800; letter-spacing: .04em; color: #fff; background: #e5231b; padding: 3px 7px; border-radius: 5px; }
-    .pc-body { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px 13px; }
-    .pc-time { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--ink-soft); }
-    .pc-time.on { color: #e5231b; }
-    .pc-t { font-family: var(--display); font-weight: 700; font-size: 15.5px; line-height: 1.2; color: var(--ink); }
-    .pc-m { font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .03em; line-height: 1.35; }
-    .pc-tag { align-self: flex-start; margin-top: 5px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 3px 8px; border-radius: 999px; }
-    /* Sur téléphone : chaque journée devient un CARROUSEL horizontal qu'on fait
-       défiler au doigt (accroche par vignette). Une journée à un seul live reste
-       en carte pleine largeur. */
+    /* ---------- HERO pleine largeur ---------- */
+    .prog-hero { position: relative; background: #0a0c11; overflow: hidden; }
+    .prog-hero-media {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(90deg, rgba(8,10,14,.97) 0%, rgba(8,10,14,.82) 34%, rgba(8,10,14,.35) 66%, rgba(8,10,14,.5) 100%),
+        linear-gradient(0deg, rgba(8,10,14,.55) 0%, transparent 45%),
+        url('/programme-hero.webp');
+      background-size: cover; background-position: right center;
+    }
+    .prog-hero-in { position: relative; padding: 60px 0 46px; }
+    .prog-hero-kick { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+    .prog-hero-h { font-family: var(--display); font-weight: 800; letter-spacing: -.02em; font-size: clamp(28px, 4.4vw, 46px); line-height: 1.02; margin: 12px 0 0; color: #fff; text-transform: uppercase; }
+    .prog-hero-p { color: rgba(255,255,255,.82); font-family: var(--serif); font-size: 16px; line-height: 1.5; margin: 14px 0 0; }
+    .prog-hero-share { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+    .prog-hero-share-l { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+
+    /* ---------- Filtres ---------- */
+    .prog-filter { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+    .prog-fbtn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 100px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); font-size: 13px; font-weight: 700; cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
+    .prog-fbtn .pf-ic { width: 16px; height: 16px; flex: none; color: var(--dc, var(--ink-faint)); }
+    .prog-fbtn:hover { border-color: var(--dc, var(--ink-faint)); }
+    .prog-fbtn.active { background: color-mix(in srgb, var(--dc, var(--accent)) 16%, var(--surface)); border-color: var(--dc, var(--accent)); color: var(--ink); }
+    .prog-fbtn.active .pf-ic { color: var(--dc, var(--accent)); }
+    .prog-fbtn[data-sport="all"].active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+    .prog-fbtn[data-sport="all"].active .pf-ic { color: var(--on-accent); }
+
+    /* ---------- Mois ---------- */
+    .prog-month { margin-top: 34px; }
+    .prog-month-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: .02em; font-size: 20px; color: var(--ink); margin: 0 0 16px; }
+
+    /* ---------- Grande ligne (1 événement) ---------- */
+    /* Deux cartes séparées : carte DATE à gauche + carte CONTENU à droite. */
+    .pev, .pev-multi { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 16px; align-items: stretch; margin-bottom: 14px; }
+    .pev-date { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 14px 8px; border-radius: 16px;
+      border: 1px solid color-mix(in srgb, var(--dc, var(--accent)) 62%, var(--line));
+      background: color-mix(in srgb, var(--dc, var(--accent)) 10%, var(--surface)); }
+    .pev-main { display: grid; grid-template-columns: 288px minmax(0, 1fr); gap: 20px; align-items: stretch; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); transition: border-color .15s; }
+    .pev-main:hover { border-color: color-mix(in srgb, var(--dc, var(--accent)) 45%, var(--line)); }
+    .pev-thumb { align-self: center; }
+    .pev-dow { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--dc, var(--accent)); }
+    .pev-num { font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1; color: var(--ink); margin: 3px 0; }
+    .pev-mon { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--dc, var(--accent)); }
+    .pev-yr { font-size: 10.5px; color: var(--ink-faint); margin-top: 1px; }
+    .pev-thumb { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 16 / 9; background: #111; display: block; }
+    .pev-thumb img, .pev-duo { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pev-time { position: absolute; left: 8px; bottom: 8px; font-size: 12px; font-weight: 800; color: #fff; background: rgba(8,10,14,.72); padding: 3px 8px; border-radius: 6px; backdrop-filter: blur(4px); }
+    .pev-tag { position: absolute; right: 8px; bottom: 8px; font-size: 9.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: 3px 8px; border-radius: 5px; }
+    .pev-livebadge { position: absolute; top: 8px; left: 8px; font-family: var(--mono); font-size: 10px; font-weight: 800; color: #fff; background: #e5231b; padding: 3px 7px; border-radius: 5px; }
+    .pev-body { display: flex; flex-direction: column; padding: 2px 4px 2px 0; min-width: 0; }
+    .pev-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+    .pev-t { font-family: var(--display); font-weight: 800; font-size: 20px; line-height: 1.15; color: var(--ink); margin: 0; }
+    .pev-sub { font-size: 13.5px; color: var(--ink-soft); margin-top: 5px; }
+    .pev-share { flex: none; }
+    .pev-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 16px; }
+    .pev-watch { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--dc, var(--accent)); color: var(--dc, var(--accent)); background: transparent; font-weight: 700; font-size: 13px; text-decoration: none; transition: background .15s; }
+    .pev-watch:hover { background: color-mix(in srgb, var(--dc, var(--accent)) 15%, transparent); }
+    .pev-cal { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--line-strong); color: var(--ink); background: transparent; font-weight: 700; font-size: 13px; text-decoration: none; transition: border-color .15s; }
+    .pev-cal:hover { border-color: var(--ink-faint); }
+    .pev-watch.sm, .pev-cal.sm { padding: 7px 11px; font-size: 12px; }
+
+    /* ---------- Jour à plusieurs matchs : carrousel ---------- */
+    .pev-car { position: relative; min-width: 0; }
+    .pev-car-track { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 2px; }
+    .pev-car-track::-webkit-scrollbar { display: none; }
+    .pmc { flex: 0 0 260px; scroll-snap-align: start; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface-2); transition: border-color .15s; }
+    .pmc:hover { border-color: color-mix(in srgb, var(--dc, var(--accent)) 45%, var(--line)); }
+    .pmc-thumb { position: relative; aspect-ratio: 16 / 9; display: block; background: #111; }
+    .pmc-thumb img, .pmc-thumb .pev-duo { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pmc-body { display: flex; flex-direction: column; gap: 4px; padding: 11px 12px 12px; flex: 1; }
+    .pmc-t { font-family: var(--display); font-weight: 700; font-size: 14.5px; line-height: 1.2; color: var(--ink); }
+    .pmc-sub { font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .03em; }
+    .pmc-time { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); }
+    .pmc-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 8px; }
+    .pev-car-prev, .pev-car-next { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--surface) 90%, transparent); color: var(--ink); font-size: 22px; line-height: 1; display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(4px); }
+    .pev-car-prev { left: -6px; }
+    .pev-car-next { right: -6px; }
+    .pev-car-prev:hover, .pev-car-next:hover { border-color: var(--ink-faint); background: var(--surface-2); }
+
+    /* ---------- Mobile ---------- */
+    /* Laptop / tablette : on GARDE les 3 colonnes (fidèle à la maquette), vignette un peu plus petite. */
+    /* Laptop / tablette : la vignette de la carte contenu rétrécit (on garde les 2 cartes). */
+    @media (max-width: 900px) {
+      .pev-main { grid-template-columns: 200px minmax(0, 1fr); }
+      .pev-t { font-size: 18px; }
+    }
+    /* Fenêtre étroite / téléphone : carte date en barre horizontale, vignette + infos empilées. */
     @media (max-width: 620px) {
-      .prog-grid {
-        display: flex; gap: 12px; overflow-x: auto;
-        scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; padding-bottom: 2px;
-      }
-      .prog-grid::-webkit-scrollbar { display: none; }
-      .prog-card { flex: 0 0 74%; max-width: 300px; scroll-snap-align: start; }
-      .prog-card:only-child { flex-basis: 100%; max-width: none; }
-      .pc-t { font-size: 13.5px; }
-      .pc-body { padding: 9px 10px 11px; }
+      .pev, .pev-multi { grid-template-columns: 1fr; gap: 10px; }
+      .pev-date { flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; padding: 10px 16px; }
+      .pev-num { font-size: 22px; margin: 0; }
+      .pev-main { grid-template-columns: 1fr; }
+      .pev-car-prev, .pev-car-next { display: none; }
+      .pmc { flex-basis: 84%; }
     }
   </style>
 
   <script is:inline>
+    // Filtres par sport : masque grandes lignes + cartes des carrousels, puis les
+    // conteneurs (jour à plusieurs / mois) devenus vides.
     (function () {
       var bar = document.getElementById('prog-filter');
       if (!bar) return;
       var btns = [].slice.call(bar.querySelectorAll('.prog-fbtn'));
-      var rows = [].slice.call(document.querySelectorAll('.prog-card'));
-      var days = [].slice.call(document.querySelectorAll('.prog-day'));
+      var rows = [].slice.call(document.querySelectorAll('.pev'));
+      var cards = [].slice.call(document.querySelectorAll('.pmc'));
+      var multis = [].slice.call(document.querySelectorAll('.pev-multi'));
+      var months = [].slice.call(document.querySelectorAll('.prog-month'));
+      function apply(s) {
+        rows.forEach(function (r) { r.style.display = (s === 'all' || r.getAttribute('data-sport') === s) ? '' : 'none'; });
+        cards.forEach(function (c) { c.style.display = (s === 'all' || c.getAttribute('data-sport') === s) ? '' : 'none'; });
+        multis.forEach(function (m) {
+          var any = [].slice.call(m.querySelectorAll('.pmc')).some(function (c) { return c.style.display !== 'none'; });
+          m.style.display = any ? '' : 'none';
+        });
+        months.forEach(function (mo) {
+          var any = [].slice.call(mo.querySelectorAll('.pev, .pev-multi')).some(function (x) { return x.style.display !== 'none'; });
+          mo.style.display = any ? '' : 'none';
+        });
+      }
       bar.addEventListener('click', function (e) {
         var b = e.target.closest('.prog-fbtn');
         if (!b) return;
-        var s = b.getAttribute('data-sport');
         btns.forEach(function (x) { x.classList.toggle('active', x === b); });
-        rows.forEach(function (r) { r.style.display = (s === 'all' || r.getAttribute('data-sport') === s) ? '' : 'none'; });
-        days.forEach(function (d) {
-          var any = [].slice.call(d.querySelectorAll('.prog-card')).some(function (r) { return r.style.display !== 'none'; });
-          d.style.display = any ? '' : 'none';
-        });
+        apply(b.getAttribute('data-sport'));
+      });
+    })();
+
+    // Flèche « suivant » des carrousels de jour.
+    (function () {
+      document.querySelectorAll('.pev-car').forEach(function (car) {
+        var track = car.querySelector('.pev-car-track');
+        var prev = car.querySelector('.pev-car-prev');
+        var next = car.querySelector('.pev-car-next');
+        if (!track) return;
+        function step() { var c = track.querySelector('.pmc'); return (c ? c.getBoundingClientRect().width + 14 : 260); }
+        function upd() {
+          var scrollable = (track.scrollWidth - track.clientWidth) > 8;
+          if (prev) prev.style.display = scrollable ? '' : 'none';
+          if (next) next.style.display = scrollable ? '' : 'none';
+        }
+        if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
+        if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
+        upd(); window.addEventListener('resize', upd);
       });
     })();
   </script>
