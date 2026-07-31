@@ -25,19 +25,27 @@ const _compact = (n: number): string => {
   return String(n);
 };
 // Chiffres qui ne dépendent PAS de l'API (toujours affichés).
-const _foundedStat = { num: '2005', label: 'Année de création de l’association Le Sport en Image.', raw: true };
-const _discStat = { num: String(disciplines.length), label: 'Disciplines couvertes en direct comme en replay, du parquet au tapis.' };
-const _partnersStat = { num: String(partners.length), label: 'Partenaires à nos côtés : fédérations, clubs et institutions.' };
+const _foundedStat = { num: '2005', label: 'Année de création', raw: true, ic: 'flag' };
+const _discStat = { num: String(disciplines.length), label: 'Disciplines couvertes', ic: 'grid' };
+const _partnersStat = { num: String(partners.length), label: 'Partenaires du projet', ic: 'partners' };
 const liveStats = _ch
   ? [
       _foundedStat,
-      { num: _compact(_ch.subscribers), unit: '+', label: 'Abonnés sur YouTube, et une communauté qui grandit à chaque saison.' },
-      { num: _compact(_ch.views), unit: '+', label: 'Vues cumulées sur nos directs et rediffusions.' },
-      { num: _compact(_ch.videos), unit: _ch.videos >= 1000 ? '+' : '', label: 'Vidéos en ligne : matchs, directs et rediffusions.' },
+      { num: _compact(_ch.subscribers), unit: '+', label: 'Abonnés YouTube', ic: 'users' },
+      { num: _compact(_ch.views), unit: '+', label: 'Vues cumulées', ic: 'eye' },
+      { num: _compact(_ch.videos), unit: _ch.videos >= 1000 ? '+' : '', label: 'Vidéos en ligne', ic: 'video' },
       _discStat,
       _partnersStat,
     ]
   : [_foundedStat, _discStat, _partnersStat];
+const STAT_ICONS: Record<string, string> = {
+  flag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>',
+  users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.2 20a6 6 0 0 1 11.6 0"/><path d="M16 5.4a3 3 0 0 1 0 5.5M21 20a6 6 0 0 0-4-5.7"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+  video: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3z"/></svg>',
+  grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  partners: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 6.6a4.5 4.5 0 0 0-6.4 0L12 9l-2.4-2.4a4.5 4.5 0 1 0-6.4 6.4L12 21.8l8.8-8.8a4.5 4.5 0 0 0 0-6.4z"/></svg>',
+};
 
 const latestArticles = (await getCollection('articles', ({ data }) => !data.draft && data.date.valueOf() <= Date.now()))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -142,6 +150,21 @@ const heroTitle = heroPt?.main || (live?.title ?? '');   // titre nettoyé (sans
 const heroSub = heroPt ? heroPt.badges.join(' · ') : ''; // ex. « 26/27 · 1/4 FINALE »
 const heroStatusLabel = live ? (live.status === 'live' ? 'En direct' : live.status === 'upcoming' ? 'Bientôt' : 'À revoir') : '';
 
+// À la une : date de l'événement (croisée avec le programme, même id) → date lisible,
+// décompte et lien « Ajouter au calendrier » (Google Agenda généré depuis la date).
+const heroProg = live ? programme.find((it) => it.id === live.id) : null;
+const heroDate = heroProg?.date ?? null;
+const _heroFullDate = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
+const heroDateLabel = heroDate
+  ? (() => { const s = _heroFullDate.format(heroDate); return s.charAt(0).toUpperCase() + s.slice(1) + ' · ' + railTime.format(heroDate).replace(':', 'h'); })()
+  : '';
+const heroWhenLabel = live?.isLive ? [live.venue, live.viewers].filter(Boolean).join(' · ') : heroDateLabel;
+const heroIso = heroDate ? heroDate.toISOString() : '';
+const _gcalFmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+const gcalUrl = heroDate
+  ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(heroTitle + ' — LSEI')}&dates=${_gcalFmt(heroDate)}/${_gcalFmt(new Date(heroDate.getTime() + 2 * 3600 * 1000))}&details=${encodeURIComponent('En direct sur LSEI — Le Sport en Image · https://lsei.tv/direct')}`
+  : '';
+
 // Concept 3 « Prochain direct » : le direct programmé le plus proche → carte compte à rebours.
 const nextLive = programme.find((it) => !it.live && it.date.valueOf() > _now) || null;
 const restProg = programme.filter((it) => it !== nextLive);
@@ -171,29 +194,48 @@ const slides = programme
     <section class="hero hero--now" style={`--hero-accent:${liveDisc.colorVar}`}>
       <div class="wrap hero-grid">
         <div class="lead">
-          <VideoPlayer
-            id={live.id}
-            from={liveDisc.from}
-            to={liveDisc.to}
-            live={live.isLive}
-            caption={live.caption}
-            score={live.isLive ? live.score : undefined}
-            image={live.thumb}
-            title={live.title}
-          />
-          <div class={`hero-kicker${live.isLive ? ' is-live' : ''}${live.status === 'upcoming' ? ' is-soon' : ''}`}>
-            <span class="dot"></span>{heroStatusLabel}<span class="sepk">·</span><span class="hero-cat">{heroCat}</span>
-          </div>
-          <h1>{heroTitle}</h1>
-          {heroSub && <div class="hero-sub">{heroSub}</div>}
-          {live.dek && <p class="dek">{live.dek}</p>}
-          {live.isLive && (
-            <div class="byline">
-              <span class="k">En direct</span>
-              {live.venue && <Fragment><span class="sep"></span><span>{live.venue}</span></Fragment>}
-              {live.viewers && <Fragment><span class="sep"></span><span class="mono">{live.viewers}</span></Fragment>}
+          <div class={`hero-stage${live.isLive ? ' is-live' : ''}`}>
+            <VideoPlayer
+              id={live.id}
+              from={liveDisc.from}
+              to={liveDisc.to}
+              live={live.isLive}
+              caption={live.caption}
+              score={live.isLive ? live.score : undefined}
+              image={live.thumb}
+              title={live.title}
+            />
+            <div class="hero-scrim" aria-hidden="true"></div>
+            <div class="hero-cap">
+              <span class={`hero-pill${live.isLive ? ' is-live' : ' is-soon'}`}>{live.isLive ? '● En direct' : 'À venir'}</span>
+              <h1>{heroTitle}</h1>
+              {heroCat && <div class="hero-comp">{heroCat}{heroSub ? ` · ${heroSub}` : ''}</div>}
+              {heroWhenLabel && (
+                <div class="hero-when">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+                  <span>{heroWhenLabel}</span>
+                </div>
+              )}
+              {!live.isLive && heroIso && (
+                <div class="hero-count" data-count={heroIso}>
+                  <span class="hcl">Dans</span>
+                  <span class="hcb"><span class="hcb-box"><b data-d>—</b></span><i>Jours</i></span>
+                  <span class="hcb"><span class="hcb-box"><b data-h>—</b></span><i>Heures</i></span>
+                  <span class="hcb"><span class="hcb-box"><b data-m>—</b></span><i>Min</i></span>
+                  <span class="hcb"><span class="hcb-box"><b data-s>—</b></span><i>Sec</i></span>
+                </div>
+              )}
+              <div class="hero-actions">
+                <button type="button" class="btn hero-play">▸ {live.isLive ? 'Regarder le direct' : 'Regarder'}</button>
+                {!live.isLive && gcalUrl && <a class="btn ghost hero-cal" href={gcalUrl} target="_blank" rel="noopener">＋ Ajouter au calendrier</a>}
+              </div>
             </div>
-          )}
+          </div>
+          <div class="hero-stats">
+            <a class="hst" id="js-hero-sport-link" href={`/disciplines/${liveDisc.slug}`} aria-label={`Vidéothèque ${liveDisc.label}`}><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg><span><b id="js-hero-sport">{liveDisc.label}</b><i>Sport</i></span></a>
+            <a class="hst" href={site.youtubeUrl} target="_blank" rel="noopener" aria-label="Chaîne YouTube LSEI"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="4"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/></svg><span><b>YouTube</b><i>Chaîne</i></span></a>
+          </div>
+          {live.dek && <p class="dek hero-dek">{live.dek}</p>}
         </div>
 
         <aside class={`rail${slides.length ? ' rail--next' : ''}`}>
@@ -202,22 +244,23 @@ const slides = programme
               <div class="nlist-h">Prochains directs</div>
               <div class="nlist-track">
               {slides.slice(0, 4).map((s) => (
-                <a href={s.href} class="nlist-card" {...(s.id ? { 'data-id': s.id, 'data-title': s.main, 'data-cat': tagLabel(s.sport), 'data-sub': s.when } : {})}>
+                <a href={s.href} class="nlist-card" {...(s.id ? { 'data-id': s.id, 'data-title': s.main, 'data-cat': tagLabel(s.sport), 'data-sub': s.when, 'data-dischref': `/disciplines/${s.sport}` } : {})}>
                   <span class="nlist-thumb">
                     {s.thumb
                       ? <img src={s.thumb} alt="" loading="lazy" onerror={s.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${s.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
                       : <span style="background:linear-gradient(135deg,var(--surface-2),var(--surface))"></span>}
-                    <span class="nlist-badge" style={tagStyle(s.sport)}>{tagLabel(s.sport)}</span>
                   </span>
                   <span class="nlist-body">
+                    <span class="nlist-cat" style={`color:${getDiscipline(s.sport).colorVar}`}>{tagLabel(s.sport)}</span>
                     <span class="nlist-title">{s.main}</span>
-                    <span class="nlist-count mono" data-countdown={s.iso}>—</span>
-                    <span class="nlist-live"><span class="dot"></span>En direct — regarder →</span>
                     <span class="nlist-when">{s.when}</span>
+                    <span class="nlist-live"><span class="dot"></span>En direct — regarder →</span>
                   </span>
+                  <span class="nlist-jx" data-jxshort={s.iso} style={tagStyle(s.sport)}>J‑—</span>
                 </a>
               ))}
               </div>
+              <a href="/programme" class="nlist-all">Voir tous les événements <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
             </div>
           ) : (
             <Fragment>
@@ -275,6 +318,54 @@ const slides = programme
           }
           tick(); setInterval(tick, 1000);
         })();
+        // « Regarder » (ou un clic sur l'image) lance la vidéo et masque l'habillage superposé.
+        (function () {
+          var stage = document.querySelector('.hero .hero-stage');
+          if (!stage) return;
+          var facade = stage.querySelector('.facade');
+          var playBtn = stage.querySelector('.hero-play');
+          if (facade) facade.addEventListener('click', function () { stage.classList.add('is-playing'); });
+          if (playBtn) playBtn.addEventListener('click', function () { if (facade) facade.click(); stage.classList.add('is-playing'); });
+        })();
+        // Badge « J-8 · dans 8 jours » : jours restants calculés dans le navigateur (toujours juste).
+        // Deux formats : le grand badge du hero ([data-jx], gros chiffre + libellé) et les
+        // pastilles compactes des cartes ([data-jxshort], juste « J-8 »).
+        (function () {
+          var big = [].slice.call(document.querySelectorAll('[data-jx]'));
+          var chips = [].slice.call(document.querySelectorAll('[data-jxshort]'));
+          if (!big.length && !chips.length) return;
+          function days(iso) { return Math.floor((new Date(iso).getTime() - Date.now()) / 86400000); }
+          function upd() {
+            big.forEach(function (el) {
+              var t = new Date(el.getAttribute('data-jx')).getTime() - Date.now();
+              var b = el.querySelector('b'), s = el.querySelector('span');
+              if (t <= 0) { if (b) b.textContent = '●'; if (s) s.textContent = 'en cours'; return; }
+              var d = Math.floor(t / 86400000);
+              if (d === 0) { if (b) b.textContent = "J‑0"; if (s) s.textContent = "aujourd'hui"; }
+              else { if (b) b.textContent = 'J‑' + d; if (s) s.textContent = 'dans ' + d + ' jour' + (d > 1 ? 's' : ''); }
+            });
+            chips.forEach(function (el) {
+              var d = days(el.getAttribute('data-jxshort'));
+              el.textContent = d <= 0 ? '●' : 'J‑' + d;
+            });
+          }
+          upd(); setInterval(upd, 60000);
+        })();
+        // Compte à rebours du hero en 4 cases (jours · heures · min · sec).
+        (function () {
+          var el = document.querySelector('.hero-count');
+          if (!el) return;
+          var iso = el.getAttribute('data-count');
+          var dEl = el.querySelector('[data-d]'), hEl = el.querySelector('[data-h]'), mEl = el.querySelector('[data-m]'), sEl = el.querySelector('[data-s]');
+          function p(n) { return (n < 10 ? '0' : '') + n; }
+          function tick() {
+            var t = new Date(iso).getTime() - Date.now(); if (t < 0) t = 0;
+            var s = Math.floor(t / 1000), d = Math.floor(s / 86400); s -= d * 86400;
+            var h = Math.floor(s / 3600); s -= h * 3600; var m = Math.floor(s / 60); s -= m * 60;
+            if (dEl) dEl.textContent = p(d); if (hEl) hEl.textContent = p(h); if (mEl) mEl.textContent = p(m); if (sEl) sEl.textContent = p(s);
+          }
+          tick(); setInterval(tick, 1000);
+        })();
         // Bascule « ● EN DIRECT » PRÉCISE via live.json (mis à jour toutes les 5 min, comme /direct) :
         // un slide passe en direct seulement quand SON live est réellement en cours, et revient
         // à la normale dès qu'il se termine — sans attendre la reconstruction du site.
@@ -301,8 +392,8 @@ const slides = programme
           if (!card || !frame) return;
           function sync() {
             if (window.matchMedia('(min-width: 941px)').matches) {
-              card.style.height = Math.round(frame.getBoundingClientRect().height) + 'px';
-            } else { card.style.height = ''; }
+              card.style.minHeight = Math.round(frame.getBoundingClientRect().height) + 'px';
+            } else { card.style.minHeight = ''; }
           }
           sync();
           window.addEventListener('resize', sync);
@@ -326,20 +417,21 @@ const slides = programme
       <div class="discs">
         {disciplines.map((d, i) => (
           <a href={d.hub ?? `/disciplines/${d.slug}`} class="disc-card" style={`--dc:${d.colorVar}`}>
-            <div class="n">{String(i + 1).padStart(2, '0')}</div>
-            <SportIcon slug={d.slug} />
+            <span class="disc-ico"><SportIcon slug={d.slug} /></span>
             <div class="name">{d.name}</div>
-            <div class="sub">{d.sub}</div>
-            {d.statsHub && <div class="disc-stats-badge">＋ Classements &amp; stats</div>}
+            <div class="disc-cta">Voir les événements <span aria-hidden="true">→</span></div>
           </a>
         ))}
       </div>
     </div>
   </section>
 
-  {events.length > 0 ? (
-    <section class="section evbanner-wrap">
+  {(events.length > 0 || beltReplays.length > 0) && (
+    <section class="section">
       <div class="wrap">
+        <div class="home-2col home-2col--media">
+          {events.length > 0 && (
+          <div class="hcol">
         <div class="sec-head">
           <div>
             <div class="eyebrow">À l'affiche</div>
@@ -362,11 +454,8 @@ const slides = programme
             </div>
           )}
         </div>
-      </div>
-    </section>
-  ) : (
-    <hr class="rule" />
-  )}
+          </div>
+          )}
   <script is:inline>
     (function () {
       document.querySelectorAll('.evcar[data-count]').forEach(function (car) {
@@ -405,10 +494,9 @@ const slides = programme
     })();
   </script>
 
-  <!-- DERNIERS REPLAYS (replacé sous les événements) -->
-  {beltReplays.length > 0 && (
-    <section class="section">
-      <div class="wrap">
+  <!-- DERNIERS REPLAYS -->
+          {beltReplays.length > 0 && (
+          <div class="hcol">
         <div class="sec-head">
           <div>
             <div class="eyebrow">À revoir</div>
@@ -438,6 +526,9 @@ const slides = programme
           </div>
           <button type="button" class="rcar-nav rcar-next" aria-label="Suivant">›</button>
         </div>
+          </div>
+          )}
+        </div>
       </div>
     </section>
   )}
@@ -451,9 +542,9 @@ const slides = programme
         if (!track) return;
         function step() { var c = track.querySelector('.rcard'); return (c ? c.getBoundingClientRect().width + 12 : 200) * 2; }
         function upd() {
-          var max = track.scrollWidth - track.clientWidth - 2;
-          if (prev) prev.hidden = track.scrollLeft <= 2;
-          if (next) next.hidden = max <= 2 || track.scrollLeft >= max;
+          var scrollable = (track.scrollWidth - track.clientWidth) > 2;
+          if (prev) prev.hidden = !scrollable;
+          if (next) next.hidden = !scrollable;
         }
         if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
         if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
@@ -464,18 +555,20 @@ const slides = programme
     })();
   </script>
 
-  <!-- SPOTLIGHT BILLARD : le podium (top 3) du classement Masters -->
-  {bilTop.length > 0 && (
-    <section class="section bspot-sec" style="--dc:var(--c-billard)">
+  <!-- LIGNE 2 : Podium billard + Actualités côte à côte -->
+  {(bilTop.length > 0 || latestArticles.length > 0) && (
+    <section class="section">
       <div class="wrap">
+        <div class="home-2col home-2col--cols">
+          {bilTop.length > 0 && (
+          <div class="hcol bspot-sec" style="--dc:var(--c-billard)">
         <div class="sec-head">
           <div>
-            <div class="eyebrow" style="color:var(--c-billard)">Le billard en image</div>
-            <h2>Blackball Masters — le podium {bilSeason.label}</h2>
+            <div class="eyebrow" style="color:var(--c-billard)">Blackball Masters</div>
+            <h2>Le podium · {bilSeason.label}</h2>
           </div>
           <a href={`/billard/saison/${DEFAULT_SEASON}/classement`} class="link">Classement complet →</a>
         </div>
-        <div class="bspot">
         <div class="bpod">
           {bilTop.map((p) => {
             const ph = photoOf(p, DEFAULT_SEASON);
@@ -493,27 +586,12 @@ const slides = programme
             );
           })}
         </div>
-        {bilTable.length > 0 && (
-          <div class="bspot-rank">
-            <div class="bspot-rank-h">Le classement · {bilSeason.label}</div>
-            {bilTable.map((p) => (
-              <a href={`/billard/joueur/${bilSlug(p.id)}`} class="bspot-row">
-                <span class="bspot-rk">{p.rank}</span>
-                <span class="bspot-nm">{p.name}</span>
-                <span class="bspot-pts mono">{p.points}<small> pts</small></span>
-              </a>
-            ))}
           </div>
-        )}
-        </div>
-      </div>
-    </section>
-  )}
+          )}
 
   <!-- ACTUALITÉS -->
-  {latestArticles.length > 0 && (
-    <section class="section">
-      <div class="wrap">
+          {latestArticles.length > 0 && (
+          <div class="hcol">
         <div class="sec-head">
           <div>
             <div class="eyebrow">Le mag</div>
@@ -537,25 +615,40 @@ const slides = programme
                 <div class="kicker">{fmtArticleDate(a.data.date)}</div>
                 <h3>{a.data.title}</h3>
                 <p class="ex">{a.data.excerpt}</p>
+                <span class="card-more">Lire la suite <span aria-hidden="true">→</span></span>
               </a>
             );
           })}
+        </div>
+          </div>
+          )}
         </div>
       </div>
     </section>
   )}
 
-  <!-- STATS + PARTNERS -->
-  <div class="band" id="club">
+  <!-- CHIFFRES-CLÉS (panneau dédié) -->
+  <section class="stats-sec" id="club">
     <div class="wrap">
-      <div class="stats">
-        {liveStats.map((s) => (
-          <div class="stat">
-            <div class="num" data-nocount={(s as any).raw ? '' : undefined}>{s.num}{s.unit && <span style="font-size:22px">{s.unit}</span>}</div>
-            <div class="lab">{s.label}</div>
-          </div>
-        ))}
+      <div class="stats-panel">
+        <div class="stats">
+          {liveStats.map((s) => (
+            <div class="stat">
+              <span class="stat-ic" set:html={STAT_ICONS[(s as any).ic] || ''}></span>
+              <span class="stat-body">
+                <span class="num" data-nocount={(s as any).raw ? '' : undefined}>{s.num}{s.unit && <span style="font-size:20px">{s.unit}</span>}</span>
+                <span class="lab">{s.label}</span>
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
+    </div>
+  </section>
+
+  <!-- PARTENAIRES (section distincte) -->
+  <section class="partners-sec">
+    <div class="wrap">
       <div class="partners">
         <div class="pl">Ils portent le projet</div>
         <div class="plist">
@@ -567,7 +660,7 @@ const slides = programme
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- CTA -->
   <section class="section">
@@ -603,13 +696,17 @@ const slides = programme
           f.setAttribute('title', title || 'Lecteur vidéo');
           hero.innerHTML = '';
           hero.appendChild(f);
+          var st = document.querySelector('.hero .hero-stage');
+          if (st) st.classList.add('is-playing');
           var h1 = document.querySelector('.hero .lead h1');
           if (h1 && title) h1.textContent = title;
           var cat = item.getAttribute('data-cat');
-          var catEl = document.querySelector('.hero .hero-cat');
-          if (catEl && cat) catEl.textContent = cat;
-          var subEl = document.querySelector('.hero .hero-sub');
-          if (subEl) subEl.textContent = item.getAttribute('data-sub') || '';
+          // Met à jour l'info « Sport » sous la vidéo (label + lien vidéothèque) selon la vignette choisie.
+          var sportEl = document.getElementById('js-hero-sport');
+          if (sportEl && cat) sportEl.textContent = cat;
+          var sportLink = document.getElementById('js-hero-sport-link');
+          var dh = item.getAttribute('data-dischref');
+          if (sportLink && dh) { sportLink.setAttribute('href', dh); sportLink.setAttribute('aria-label', 'Vidéothèque ' + (cat || '')); }
           hero.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
       });
