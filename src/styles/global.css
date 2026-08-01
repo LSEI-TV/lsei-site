@@ -596,8 +596,33 @@ a.hst:hover svg { color: inherit; }
   .home-2col--cols .sec-head h2 { min-height: 0; }
 }
 @media (max-width: 620px) {
-  .hcol .cards { grid-template-columns: 1fr; }
-  .hcol .bpod { grid-template-columns: 1fr; }
+  /* Podium + Actualités : carrousel horizontal glissable au doigt */
+  .bpod, .hcol .bpod,
+  .hcol .cards {
+    display: flex;
+    grid-template-columns: none;
+    grid-auto-rows: auto;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 12px;
+    padding: 2px 16px 10px;
+    margin-inline: -16px;            /* déborde jusqu'aux bords de l'écran */
+    scroll-padding-inline: 16px;
+    scrollbar-width: none;
+  }
+  .bpod::-webkit-scrollbar,
+  .hcol .cards::-webkit-scrollbar { display: none; }
+  .bpod-card {
+    scroll-snap-align: center;
+    flex: 0 0 76%;                    /* ~1 carte + aperçu de la suivante */
+    max-width: 76%;
+  }
+  .hcol .cards > .card {
+    scroll-snap-align: center;
+    flex: 0 0 82%;                    /* ~1 carte + aperçu de la suivante */
+    max-width: 82%;
+  }
 }
 
 .discs { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 12px; }
