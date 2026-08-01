@@ -442,9 +442,9 @@ a.hst:hover svg { color: inherit; }
 .nlist { display: flex; flex-direction: column; gap: 8px; }
 .nlist-track { display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; min-height: 0; }
 .nlist-h { flex: none; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--hero-accent, var(--accent)); margin-bottom: 2px; }
-.nlist-card { display: flex; align-items: center; gap: 12px; flex: 1 1 0; min-height: 74px; padding: 8px 12px 8px 8px; border: 1px solid color-mix(in srgb, #1E5AA8 26%, var(--line)); border-radius: 10px; background: color-mix(in srgb, #1E5AA8 16%, var(--surface)); color: inherit; text-decoration: none; transition: border-color .15s, background .15s, transform .15s; }
+.nlist-card { display: flex; align-items: center; gap: 12px; flex: 1 1 0; min-height: 62px; padding: 7px 12px 7px 7px; border: 1px solid color-mix(in srgb, #1E5AA8 26%, var(--line)); border-radius: 10px; background: color-mix(in srgb, #1E5AA8 16%, var(--surface)); color: inherit; text-decoration: none; transition: border-color .15s, background .15s, transform .15s; }
 .nlist-card:hover { border-color: var(--hero-accent, var(--c-billard)); background: color-mix(in srgb, #1E5AA8 26%, var(--surface)); transform: translateY(-1px); }
-.nlist-thumb { position: relative; flex: none; width: 132px; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; background: #111; }
+.nlist-thumb { position: relative; flex: none; width: 92px; aspect-ratio: 16 / 9; align-self: center; border-radius: 6px; overflow: hidden; background: #111; }
 .nlist-thumb img, .nlist-thumb > span { display: block; width: 100%; height: 100%; object-fit: cover; }
 .nlist-badge { position: absolute; top: 6px; left: 6px; font-size: 9px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; }
 .nlist-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
