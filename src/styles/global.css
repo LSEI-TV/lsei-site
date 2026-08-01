@@ -350,11 +350,18 @@ a.hst:hover svg { color: inherit; }
 .hst b { display: block; font-size: 13.5px; font-weight: 700; line-height: 1.1; }
 .hst i { display: block; font-size: 9.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
   color: var(--ink-faint); font-style: normal; margin-top: 2px; }
-@media (max-width: 560px) {
-  .hero-cap { padding: 14px 14px 15px; }
-  .hero-actions { gap: 8px; margin-top: 13px; }
+@media (max-width: 620px) {
+  /* Téléphone : l'habillage (titre, compte à rebours, boutons) passe SOUS l'image
+     au lieu d'être superposé (trop à l'étroit → se faisait couper). Tout est visible. */
+  .hero-stage { overflow: visible; }
+  .hero-scrim { display: none; }
+  .hero-cap { position: static; padding: 16px 2px 2px; }
+  .hero-cap h1 { font-size: clamp(24px, 8vw, 34px); text-shadow: none; }
+  .hero-actions { gap: 8px; margin-top: 14px; }
   .hero-actions .hero-play { padding: 10px 16px; }
-  .hero-cap h1 { font-size: clamp(24px, 8vw, 34px); }
+  .hero-count { gap: 8px; }
+  .hcb-box { min-width: 52px; padding: 10px 7px; }
+  .hcb-box b { font-size: 22px; }
 }
 
 /* schedule rail */
