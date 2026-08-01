@@ -795,7 +795,7 @@ a.evbanner:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 
    Activée en ajoutant la classe .disc-hero--banner + la variable --hero-img.
    Le bandeau reste CONTENU dans le cadre du site (comme le hub) et retombe
    sur un aplat sombre si la photo n'est pas encore déposée. */
-.disc-hero--banner { padding: 22px 24px 0; }
+.disc-hero--banner { padding: 22px 24px 26px; }
 .disc-hero--banner .wrap {
   position: relative; overflow: hidden;
   border-radius: 18px; border: 1px solid var(--line);
@@ -812,7 +812,7 @@ a.evbanner:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 
 .disc-hero--banner .link { color: #fff; opacity: .85; }
 .disc-hero--banner .link:hover { opacity: 1; }
 @media (max-width: 620px) {
-  .disc-hero--banner { padding: 16px 16px 0; }
+  .disc-hero--banner { padding: 16px 16px 20px; }
   .disc-hero--banner .wrap { padding: 30px 20px 26px; border-radius: 14px; }
 }
 
