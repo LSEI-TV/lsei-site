@@ -25,6 +25,11 @@ export const getStaticPaths = (async ({ paginate }) => {
 const { page, category, season } = Astro.props as { page: Page<Video>; category: string; season: string };
 const disc = disciplines.find((d) => d.slug === 'billard')!;
 const catSlug = categorySlug(category);
+const CATEGORY_HERO: Record<string, string> = {
+  snooker: '/billard/snooker-hero.webp',
+  'billard-americain': '/billard/americain-hero.webp',
+};
+const catHero = CATEGORY_HERO[catSlug];
 
 const all = await getReplays({ discipline: 'billard' });
 const catVids = all.filter((v) => v.category === category);
@@ -41,8 +46,8 @@ const seasonOptions = [
 ];
 ---
 <Base title={`Billard — ${category} · ${season}`} description={`Les vidéos de billard : ${category}, saison ${season}.`} active="disciplines">
-  <section class="disc-hero">
-    <div class="wrap" style={`--dc:${disc.colorVar}`}>
+  <section class={`disc-hero${catHero ? ' disc-hero--banner' : ''}`}>
+    <div class="wrap" style={`--dc:${disc.colorVar}${catHero ? `;--hero-img:url('${catHero}')` : ''}`}>
       <div class="kick">{disc.label} · {category} · {season}</div>
       <h1>{disc.name}</h1>
       <p>{disc.blurb}</p>

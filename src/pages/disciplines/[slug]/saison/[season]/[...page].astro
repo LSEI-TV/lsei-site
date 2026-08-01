@@ -29,8 +29,8 @@ const seasonOptions = [
 ];
 ---
 <Base title={`${disc.name} — Saison ${season}`} description={`Les vidéos ${disc.name} de la saison ${season}.`} active="disciplines">
-  <section class="disc-hero">
-    <div class="wrap" style={`--dc:${disc.colorVar}`}>
+  <section class={`disc-hero${disc.hero ? ' disc-hero--banner' : ''}`}>
+    <div class="wrap" style={`--dc:${disc.colorVar}${disc.hero ? `;--hero-img:url('${disc.hero}')` : ''}`}>
       <div class="kick">{disc.label} · Saison {season}</div>
       <h1>{disc.name}</h1>
       <p>{disc.blurb}</p>

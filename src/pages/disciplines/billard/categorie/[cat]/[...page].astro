@@ -31,6 +31,12 @@ const categoryOptions = [
 
 // Saisons présentes dans cette catégorie → filtre « Saison ».
 const catSlug = categorySlug(category);
+// Bandeau hero par catégorie (repli sombre si le fichier n'est pas déposé).
+const CATEGORY_HERO: Record<string, string> = {
+  snooker: '/billard/snooker-hero.webp',
+  'billard-americain': '/billard/americain-hero.webp',
+};
+const catHero = CATEGORY_HERO[catSlug];
 const catVids = (await getReplays({ discipline: 'billard' })).filter((v) => v.category === category);
 const seasons = [...new Set(catVids.map((v) => v.season).filter(Boolean))].sort().reverse() as string[];
 const seasonOptions = [
@@ -39,8 +45,8 @@ const seasonOptions = [
 ];
 ---
 <Base title={`Billard — ${category}`} description={catText} active="disciplines" image={catVids[0]?.thumb}>
-  <section class="disc-hero">
-    <div class="wrap" style={`--dc:${disc.colorVar}`}>
+  <section class={`disc-hero${catHero ? ' disc-hero--banner' : ''}`}>
+    <div class="wrap" style={`--dc:${disc.colorVar}${catHero ? `;--hero-img:url('${catHero}')` : ''}`}>
       <div class="kick">{disc.label} · {category}</div>
       <h1>{disc.name} — {category}</h1>
       <p>{catText}</p>

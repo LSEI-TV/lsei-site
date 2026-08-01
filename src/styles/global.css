@@ -791,6 +791,31 @@ a.evbanner:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 
 .disc-hero p { font-family: var(--serif); font-size: 17px; color: var(--ink-soft); margin: 14px 0 0; max-width: 62ch; line-height: 1.5; }
 .disc-hero .bar { height: 4px; width: 64px; background: var(--dc, var(--accent)); border-radius: 4px; margin-top: 22px; }
 
+/* ---- Variante « bandeau photo » du hero discipline ----
+   Activée en ajoutant la classe .disc-hero--banner + la variable --hero-img.
+   Le bandeau reste CONTENU dans le cadre du site (comme le hub) et retombe
+   sur un aplat sombre si la photo n'est pas encore déposée. */
+.disc-hero--banner { padding: 22px 24px 0; }
+.disc-hero--banner .wrap {
+  position: relative; overflow: hidden;
+  border-radius: 18px; border: 1px solid var(--line);
+  padding: 46px 44px 42px;
+  background:
+    linear-gradient(90deg, #070c16 0%, #070c16 41%, rgba(7,10,20,.78) 52%, rgba(7,10,20,.35) 70%, rgba(7,10,20,.15) 88%, rgba(7,10,20,.4) 100%),
+    linear-gradient(0deg, rgba(7,10,20,.5) 0%, transparent 46%),
+    var(--hero-img, none) right center / cover no-repeat,
+    #070c16;
+}
+.disc-hero--banner .kick { color: #fff; opacity: .82; }
+.disc-hero--banner h1 { color: #fff; }
+.disc-hero--banner p { color: rgba(255,255,255,.84); }
+.disc-hero--banner .link { color: #fff; opacity: .85; }
+.disc-hero--banner .link:hover { opacity: 1; }
+@media (max-width: 620px) {
+  .disc-hero--banner { padding: 16px 16px 0; }
+  .disc-hero--banner .wrap { padding: 30px 20px 26px; border-radius: 14px; }
+}
+
 /* ---------- footer ---------- */
 footer { background: var(--surface); border-top: 1px solid var(--line); margin-top: 8px; }
 .foot { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 24px; padding: 46px 0 30px; }

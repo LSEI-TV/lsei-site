@@ -36,8 +36,8 @@ const categoryOptions = [
 ---
 <Base title={disc.name} description={disc.blurb} active="disciplines" image={videos[0]?.thumb}>
   {disc.hub && <HubNav season={LANDING_SEASON} dataSeason={DEFAULT_SEASON} active="videos" />}
-  <section class="disc-hero">
-    <div class="wrap" style={`--dc:${disc.colorVar}`}>
+  <section class={`disc-hero${disc.hero ? ' disc-hero--banner' : ''}`}>
+    <div class="wrap" style={`--dc:${disc.colorVar}${disc.hero ? `;--hero-img:url('${disc.hero}')` : ''}`}>
       <div class="kick">{disc.label} · {disc.sub}</div>
       <h1>{disc.name}</h1>
       <p>{disc.blurb}</p>

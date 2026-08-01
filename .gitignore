@@ -14,3 +14,8 @@ node_modules/
 .DS_Store
 Thumbs.db
 *.log
+
+# images sources non déployées (le site ne sert que les .webp)
+public/billard/*.png
+public/heroes/*.png
+public/**/*-A-DEPOSER.txt

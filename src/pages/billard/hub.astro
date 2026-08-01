@@ -44,11 +44,15 @@ const ICONS: Record<string, string> = {
 <Base title="Billard — Le hub" description="Le hub Billard de LSEI : Blackball (Masters, Femmes, Para), Snooker et Billard américain." active="disciplines">
   <!-- HERO pleine largeur (image dans public/billard-hero.webp, repli sombre sinon) -->
   <section class="bh-hero">
-    <div class="bh-hero-media" aria-hidden="true"></div>
-    <div class="wrap bh-hero-in">
-      <div class="bh-crumb"><a href="/disciplines">LSEI</a><span aria-hidden="true">›</span>Billard</div>
-      <h1 class="bh-h">Le hub <span class="bl">Billard</span></h1>
-      <p class="bh-p">Trois univers sous un même toit. Le <b>Blackball</b> (nos compétitions nationales avec classements et fiches), le <b>Snooker</b> et le <b>Billard américain</b> (nos vidéos). Choisissez ce que vous voulez suivre.</p>
+    <div class="wrap">
+      <div class="bh-hero-box">
+        <div class="bh-hero-media" aria-hidden="true"></div>
+        <div class="bh-hero-in">
+          <div class="bh-crumb"><a href="/disciplines">LSEI</a><span aria-hidden="true">›</span>Billard</div>
+          <h1 class="bh-h">Le hub <span class="bl">Billard</span></h1>
+          <p class="bh-p">Trois univers sous un même toit. Le <b>Blackball</b> (nos compétitions nationales avec classements et fiches), le <b>Snooker</b> et le <b>Billard américain</b> (nos vidéos). Choisissez ce que vous voulez suivre.</p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -94,16 +98,17 @@ const ICONS: Record<string, string> = {
 
 <style>
   /* ---------- HERO pleine largeur ---------- */
-  .bh-hero { position: relative; background: #070c16; overflow: hidden; }
+  .bh-hero { position: relative; padding-top: 22px; }
+  .bh-hero-box { position: relative; overflow: hidden; border-radius: 18px; background: #070c16; border: 1px solid var(--line); }
   .bh-hero-media {
     position: absolute; inset: 0;
     background:
-      linear-gradient(90deg, rgba(7,10,20,.97) 0%, rgba(7,10,20,.82) 34%, rgba(7,10,20,.35) 66%, rgba(7,10,20,.5) 100%),
+      linear-gradient(90deg, #070c16 0%, #070c16 41%, rgba(7,10,20,.78) 52%, rgba(7,10,20,.35) 70%, rgba(7,10,20,.15) 88%, rgba(7,10,20,.4) 100%),
       linear-gradient(0deg, rgba(7,10,20,.55) 0%, transparent 45%),
       url('/billard-hero.webp');
     background-size: cover; background-position: right center;
   }
-  .bh-hero-in { position: relative; padding: 54px 0 44px; }
+  .bh-hero-in { position: relative; padding: 54px 44px 44px; }
   .bh-crumb { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.6); }
   .bh-crumb a { color: var(--c-billard); text-decoration: none; }
   .bh-h { font-family: var(--display); font-weight: 800; letter-spacing: -.02em; font-size: clamp(30px, 5vw, 54px); line-height: 1; margin: 12px 0 0; color: #fff; text-transform: uppercase; }
@@ -158,6 +163,8 @@ const ICONS: Record<string, string> = {
     .bh-stats { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 620px) {
+    .bh-hero-in { padding: 34px 20px 30px; }
+    .bh-hero-box { border-radius: 14px; }
     .bh-vlib { flex-wrap: wrap; }
     .bh-vlib-cta { flex-basis: 100%; }
     .bh-stats { grid-template-columns: 1fr; }

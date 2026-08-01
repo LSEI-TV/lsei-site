@@ -57,11 +57,14 @@ export interface Discipline {
   statsTitle?: string;
   /** page d'accueil du « hub » de la discipline (le site dans le site). Optionnel. */
   hub?: string;
+  /** image du bandeau hero (2400×800, sujet à droite). Repli sombre si absente. */
+  hero?: string;
 }
 
 export const disciplines: Discipline[] = [
   {
     slug: 'basket',
+    hero: '/heroes/basket.webp',
     name: 'Basketball',
     sub: 'Nationale Masculine 1',
     label: 'Basket',
@@ -75,6 +78,7 @@ export const disciplines: Discipline[] = [
   },
   {
     slug: 'billard',
+    hero: '/heroes/billard.webp',
     name: 'Billard',
     sub: 'Blackball, snooker & billard américain',
     label: 'Billard',
@@ -91,6 +95,7 @@ export const disciplines: Discipline[] = [
   },
   {
     slug: 'palets',
+    hero: '/heroes/palets.webp',
     name: 'Palets bretons',
     sub: 'Sur planche & terre',
     label: 'Palets',
@@ -104,6 +109,7 @@ export const disciplines: Discipline[] = [
   },
   {
     slug: 'football',
+    hero: '/heroes/football.webp',
     name: 'Football',
     sub: 'Ligue de Bretagne',
     label: 'Football',
@@ -117,6 +123,7 @@ export const disciplines: Discipline[] = [
   },
   {
     slug: 'beach',
+    hero: '/heroes/beach.webp',
     name: 'Beach-volley',
     sub: 'Coupe de France',
     label: 'Beach-volley',
@@ -130,6 +137,7 @@ export const disciplines: Discipline[] = [
   },
   {
     slug: 'bowling',
+    hero: '/heroes/bowling.webp',
     name: 'Bowling',
     sub: 'Compétitions & open',
     label: 'Bowling',
@@ -143,6 +151,7 @@ export const disciplines: Discipline[] = [
   },
   {
     slug: 'subbuteo',
+    hero: '/heroes/subbuteo.webp',
     name: 'Subbuteo',
     sub: 'Football de table',
     label: 'Subbuteo',
