@@ -14,83 +14,111 @@ const upcoming = broadcasts
   .filter((b) => !b.live)
   .sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf());
 
-// Groupement par jour (heure de Paris), comme la page Programme.
 const fmtDay = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: TZ });
 const fmtTime = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: TZ });
 const dayKeyFmt = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: TZ });
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const heure = (d: Date) => fmtTime.format(d).replace(':', 'h');
 
+// Enrichissement (titre parsé, horaire, iso pour le décompte).
+const events = upcoming.map((b) => {
+  const disc = getDiscipline(b.discipline);
+  const pt = parseProgTitle(b.title);
+  const main = pt.main || disc.name;
+  const sub = [pt.kicker, ...pt.badges].filter(Boolean).join(' · ');
+  return { ...b, disc, main, sub, time: heure(new Date(b.date)), iso: new Date(b.date).toISOString(),
+    yt: `https://www.youtube.com/watch?v=${b.id}`, thumb: `https://i.ytimg.com/vi/${b.id}/maxresdefault.jpg` };
+});
+type Ev = (typeof events)[number];
+
 const dayOrder: string[] = [];
-const byDay = new Map<string, typeof upcoming>();
-for (const b of upcoming) {
-  const k = dayKeyFmt.format(new Date(b.date));
+const byDay = new Map<string, Ev[]>();
+for (const e of events) {
+  const k = dayKeyFmt.format(new Date(e.date));
   if (!byDay.has(k)) { byDay.set(k, []); dayOrder.push(k); }
-  byDay.get(k)!.push(b);
+  byDay.get(k)!.push(e);
 }
 
-// Couleurs/labels des disciplines pour le rendu côté navigateur (onglets, dégradés).
 const discMap = Object.fromEntries(disciplines.map((d) => {
   const g = getDiscipline(d.slug);
   return [d.slug, { label: g.label, color: g.colorVar, from: g.from, to: g.to }];
 }));
+const onerr = (id: string) => `this.onerror=null;this.src='https://i.ytimg.com/vi/${id}/hqdefault.jpg'`;
 ---
 <Base title="Direct" description="Regarder LSEI en direct, en temps réel." active="direct">
-  <section class="section">
-    <div class="wrap" style="max-width:980px">
-      <div class="disc-hero" style="padding-top:0">
-        <div class="kick" id="live-kick" style="color:var(--live)">Le direct</div>
-        <h1>Regarder LSEI en direct</h1>
-        <p id="live-intro">Dès qu’un direct démarre sur notre chaîne, il s’affiche ici automatiquement. Sinon, retrouvez le prochain rendez-vous plus bas.</p>
-        <div class="bar" style="background:var(--live)"></div>
-      </div>
+  <!-- HERO pleine largeur (image dans public/direct-hero.webp, repli sombre sinon) -->
+  <section class="dr-hero">
+    <div class="dr-hero-media" aria-hidden="true"></div>
+    <div class="wrap dr-hero-in">
+      <div class="dr-hero-kick" id="live-kick">Le direct</div>
+      <h1 class="dr-hero-h">Regarder LSEI <span class="rd">en direct</span></h1>
+      <p class="dr-hero-p" id="live-intro">Dès qu’un direct démarre sur notre chaîne, il s’affiche ici automatiquement. Sinon, retrouvez le prochain rendez-vous plus bas.</p>
+    </div>
+  </section>
 
-      <!-- Zone remplie côté navigateur depuis /live.json (rafraîchi toutes les 5 min par le workflow, sans reconstruction du site). -->
-      <div id="live-zone" data-channel={channel} data-channel-live={channelLiveUrl} style="margin-top:24px">
-        <!-- État initial (SSR) : hors antenne. Le JS le remplace dès qu'un live est détecté. -->
+  <section class="section">
+    <div class="wrap">
+      <!-- Zone live (remplie depuis /live.json, rafraîchi toutes les 5 min). -->
+      <div id="live-zone" data-channel={channel} data-channel-live={site.youtubeUrl}>
         <div class="live-off">
           <span class="live-off-tag">● Hors antenne</span>
           <h2 class="live-off-h">Aucun direct en ce moment</h2>
           <p class="live-off-p">Dès qu’un match démarre, il apparaît ici automatiquement. En attendant, retrouvez les prochains rendez-vous ci-dessous.</p>
           <div class="live-off-actions">
-            <a class="btn ghost" href={channelLiveUrl} target="_blank" rel="noopener">Ouvrir la chaîne YouTube</a>
+            <a class="btn ghost" href={site.youtubeUrl} target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 7.5a3 3 0 0 0-2.1-2.1C19 5 12 5 12 5s-7 0-8.9.4A3 3 0 0 0 1 7.5 31 31 0 0 0 .7 12 31 31 0 0 0 1 16.5a3 3 0 0 0 2.1 2.1C5 19 12 19 12 19s7 0 8.9-.4a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .3-4.5 31 31 0 0 0-.3-4.5zM9.8 15.3V8.7l5.7 3.3z"/></svg>Ouvrir la chaîne YouTube</a>
           </div>
         </div>
       </div>
 
       {dayOrder.length > 0 && (
-        <div id="prochains" style="margin-top:44px">
+        <div id="prochains" class="dr-next">
           <div class="eyebrow">Prochains directs</div>
-          {dayOrder.map((k) => (
-            <div class="ld">
-              <h2 class="ld-h">{cap(fmtDay.format(new Date(byDay.get(k)![0].date)))}</h2>
-              <div class="ld-grid">
-                {byDay.get(k)!.map((b) => {
-                  const d = getDiscipline(b.discipline);
-                  const pt = parseProgTitle(b.title);
-                  const main = pt.main || d.name;
-                  const sub = [pt.kicker, ...pt.badges].filter(Boolean).join(' · ');
-                  return (
-                    <a class="ld-card" href={`https://www.youtube.com/watch?v=${b.id}`} target="_blank" rel="noopener" style={`--dc:${d.colorVar}`}>
-                      <span class="ld-thumb">
-                        <img src={`https://i.ytimg.com/vi/${b.id}/maxresdefault.jpg`} alt={sub ? `${main} — ${sub}` : main} loading="lazy" onerror={`this.onerror=null;this.src='https://i.ytimg.com/vi/${b.id}/hqdefault.jpg'`} />
-                      </span>
-                      <span class="ld-body">
-                        <span class="ld-time mono">{heure(new Date(b.date))}</span>
-                        <span class="ld-t">{main}</span>
-                        {sub && <span class="ld-m">{sub}</span>}
-                        <span class="ld-tag" style={`background:${d.tagBg};color:${d.colorVar}`}>{d.label}</span>
-                      </span>
-                    </a>
-                  );
-                })}
+          {dayOrder.map((k) => {
+            const dayEvents = byDay.get(k)!;
+            const d0 = dayEvents[0];
+            return (
+              <div class="dr-day">
+                <div class="dr-dayh">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+                  {cap(fmtDay.format(new Date(d0.date)))}
+                </div>
+                {dayEvents.length === 1 ? (
+                  <a class="dr-row" href={d0.yt} target="_blank" rel="noopener" data-sport={d0.discipline} style={`--dc:${d0.disc.colorVar}`} aria-label={d0.main}>
+                    <span class="dr-thumb"><img src={d0.thumb} alt={d0.main} loading="lazy" onerror={onerr(d0.id)} /></span>
+                    <span class="dr-info">
+                      <span class="dr-time">{d0.time}</span>
+                      <span class="dr-t">{d0.main}</span>
+                      {d0.sub && <span class="dr-m">{d0.sub}</span>}
+                      <span class="dr-tag" style={`background:${d0.disc.tagBg};color:${d0.disc.colorVar};border:1px solid color-mix(in srgb, ${d0.disc.colorVar} 50%, transparent)`}>{d0.disc.label}</span>
+                    </span>
+                    <span class="dr-cd" data-jdays={d0.iso}><small>Dans</small><b>—</b><small class="dr-cd-u">jours</small></span>
+                  </a>
+                ) : (
+                  <div class="dr-car">
+                    <button type="button" class="dr-car-prev" aria-label="Précédent">‹</button>
+                    <div class="dr-car-track">
+                      {dayEvents.map((e) => (
+                        <a class="drc" href={e.yt} target="_blank" rel="noopener" data-sport={e.discipline} style={`--dc:${e.disc.colorVar}`} aria-label={e.main}>
+                          <span class="drc-thumb"><img src={e.thumb} alt={e.main} loading="lazy" onerror={onerr(e.id)} /></span>
+                          <span class="drc-body">
+                            <span class="drc-time">{e.time}</span>
+                            <span class="drc-t">{e.main}</span>
+                            {e.sub && <span class="drc-m">{e.sub}</span>}
+                            <span class="dr-tag" style={`background:${e.disc.tagBg};color:${e.disc.colorVar};border:1px solid color-mix(in srgb, ${e.disc.colorVar} 50%, transparent)`}>{e.disc.label}</span>
+                          </span>
+                        </a>
+                      ))}
+                    </div>
+                    <button type="button" class="dr-car-next" aria-label="Suivant">›</button>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
-      <p class="dek" style="margin-top:30px">
+      <p class="dek" style="margin-top:32px">
         Retrouvez tous nos matchs passés dans la <a href="/videotheque" style="color:var(--accent)">vidéothèque</a>.
       </p>
     </div>
@@ -100,8 +128,7 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
 <script type="application/json" id="disc-map" set:html={JSON.stringify(discMap)}></script>
 
 <script is:inline>
-  // La page /direct se remplit depuis /live.json (mis à jour toutes les 5 min).
-  // Aucun rebuild nécessaire : les onglets LIVE 1/2/3 apparaissent/disparaissent tout seuls.
+  // Zone live remplie depuis /live.json (mis à jour toutes les 5 min).
   (function () {
     var zone = document.getElementById('live-zone');
     if (!zone) return;
@@ -116,60 +143,44 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
     function esc(s) { return (s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
     var PLAY = '<span class="play" aria-hidden="true"><svg width="24" height="26" viewBox="0 0 20 22" fill="#fff"><path d="M0 0l20 11L0 22z"/></svg></span>';
 
-    // Mini-version de parseProgTitle (lib/programmeTitle.ts) pour les titres live.
     function parseTitle(t) {
       var parts = (t || '').split('|').map(function (p) { return p.trim(); }).filter(Boolean);
       if (parts.length <= 1) return { main: (t || '').trim(), sub: '' };
-      var lead = parts[0]
-        .replace(/^[^\p{L}\p{N}(]+/u, '')
-        .replace(/^(blackball|basketball|basket|palets?|subbuteo|football|foot|bowling|beach[- ]?volley|beach|volley|billard|snooker)\b[\s:–-]*/i, '')
-        .trim();
+      var lead = parts[0].replace(/^[^\p{L}\p{N}(]+/u, '').replace(/^(blackball|basketball|basket|palets?|subbuteo|football|foot|bowling|beach[- ]?volley|beach|volley|billard|snooker)\b[\s:–-]*/i, '').trim();
       var main = parts[parts.length - 1];
       var mid = parts.slice(1, -1);
-      var sub = [lead].concat(mid).filter(Boolean).join(' · ');
-      return { main: main, sub: sub };
+      return { main: main, sub: [lead].concat(mid).filter(Boolean).join(' · ') };
     }
-
     function embed(container, src, title) {
       var f = document.createElement('iframe');
-      f.src = src;
-      f.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
-      f.setAttribute('allowfullscreen', '');
-      f.setAttribute('title', title || 'Direct LSEI');
-      container.innerHTML = '';
-      container.appendChild(f);
+      f.src = src; f.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
+      f.setAttribute('allowfullscreen', ''); f.setAttribute('title', title || 'Direct LSEI');
+      container.innerHTML = ''; container.appendChild(f);
     }
-
     function liveFacade(l) {
       var thumb = 'https://i.ytimg.com/vi/' + l.id + '/maxresdefault.jpg';
       return '<div class="player"><button class="facade frame" data-id="' + l.id + '" aria-label="' + esc(l.title) + '">' +
         '<img class="photo" src="' + thumb + '" alt="" onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + l.id + '/hqdefault.jpg\'" />' +
         '<div class="grad"></div><span class="badge"><span class="pulse"></span>Direct</span>' + PLAY + '</button></div>';
     }
-
-    // État hors antenne : pas de faux badge « Direct », pas de faux bouton lecture.
     function offlineCard() {
       return '<div class="live-off">' +
         '<span class="live-off-tag">● Hors antenne</span>' +
         '<h2 class="live-off-h">Aucun direct en ce moment</h2>' +
         '<p class="live-off-p">Dès qu’un match démarre, il apparaît ici automatiquement. En attendant, retrouvez les prochains rendez-vous ci-dessous.</p>' +
-        '<div class="live-off-actions"><a class="btn ghost" href="' + esc(channelLive) + '" target="_blank" rel="noopener">Ouvrir la chaîne YouTube</a></div>' +
+        '<div class="live-off-actions"><a class="btn ghost" href="' + esc(channelLive) + '" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23 7.5a3 3 0 0 0-2.1-2.1C19 5 12 5 12 5s-7 0-8.9.4A3 3 0 0 0 1 7.5 31 31 0 0 0 .7 12 31 31 0 0 0 1 16.5a3 3 0 0 0 2.1 2.1C5 19 12 19 12 19s7 0 8.9-.4a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .3-4.5 31 31 0 0 0-.3-4.5zM9.8 15.3V8.7l5.7 3.3z"/></svg>Ouvrir la chaîne YouTube</a></div>' +
         '</div>';
     }
-
     function wire() {
-      // Façade live : clic → charge la vidéo dans le lecteur.
       zone.querySelectorAll('.facade').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var player = btn.closest('.player');
           var id = btn.getAttribute('data-id');
-          var src = id
-            ? 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0'
+          var src = id ? 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0'
             : 'https://www.youtube.com/embed/live_stream?channel=' + channel + '&autoplay=1';
           embed(player, src, 'Direct LSEI');
         });
       });
-      // Onglets LIVE 1/2/3 : clic → le direct choisi se lance dans le grand lecteur.
       var tabs = zone.querySelectorAll('.live-tab');
       tabs.forEach(function (tab) {
         tab.addEventListener('click', function () {
@@ -183,22 +194,17 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
         });
       });
     }
-
     function render(lives) {
       var key = lives.map(function (l) { return l.id; }).join(',');
-      if (key === lastKey) return; // pas de changement → on ne coupe pas la lecture en cours
+      if (key === lastKey) return;
       lastKey = key;
-
       if (!lives.length) {
         if (kick) kick.textContent = 'Le direct';
         if (intro) intro.textContent = 'Dès qu’un direct démarre sur notre chaîne, il s’affiche ici automatiquement. Sinon, retrouvez le prochain rendez-vous plus bas.';
-        zone.innerHTML = offlineCard();
-        wire();
-        return;
+        zone.innerHTML = offlineCard(); wire(); return;
       }
       if (kick) kick.textContent = lives.length > 1 ? (lives.length + ' directs en cours') : 'En direct maintenant';
       if (intro) intro.textContent = lives.length > 1 ? 'Plusieurs directs — choisissez celui que vous voulez suivre.' : 'Lancez la lecture ci-dessous.';
-
       var html = '';
       if (lives.length > 1) {
         html += '<div class="live-tabs" role="tablist" aria-label="Directs en cours">';
@@ -213,67 +219,146 @@ const discMap = Object.fromEntries(disciplines.map((d) => {
       var p0 = parseTitle(lives[0].title);
       html += '<div id="live-main">' + liveFacade(lives[0]) +
         '<h3 class="live-title" id="live-main-title">' + esc(p0.main) + '</h3>' +
-        '<div class="live-sub" id="live-main-sub">' + esc(p0.sub) + '</div>' +
-        '</div>';
-      zone.innerHTML = html;
-      wire();
+        '<div class="live-sub" id="live-main-sub">' + esc(p0.sub) + '</div></div>';
+      zone.innerHTML = html; wire();
     }
-
     function refresh() {
       fetch('/live.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (s) {
         var lives = (s && s.lives) ? s.lives : (s && s.live && s.id ? [{ id: s.id, title: s.title || 'Direct', discipline: 'billard' }] : []);
         render(lives);
-      }).catch(function () { /* pas de live.json → on garde la carte hors antenne */ });
+      }).catch(function () {});
     }
+    refresh(); setInterval(refresh, 60000);
+  })();
 
-    // Carte hors antenne initiale (SSR) déjà en place ; on lit live.json tout de suite.
-    refresh();
-    setInterval(refresh, 60000); // recheck toutes les minutes tant que la page est ouverte
+  // Compte à rebours « Dans X jours » de chaque prochain direct (calculé dans le navigateur).
+  (function () {
+    var els = [].slice.call(document.querySelectorAll('.dr-cd[data-jdays]'));
+    if (!els.length) return;
+    function upd() {
+      els.forEach(function (el) {
+        var t = new Date(el.getAttribute('data-jdays')).getTime() - Date.now();
+        var b = el.querySelector('b'), u = el.querySelector('.dr-cd-u');
+        var top = el.querySelector('small');
+        if (t <= 0) { if (b) b.textContent = '●'; if (top) top.textContent = ''; if (u) u.textContent = 'en cours'; return; }
+        var d = Math.floor(t / 86400000);
+        if (d === 0) { var h = Math.floor(t / 3600000); if (top) top.textContent = 'Dans'; if (b) b.textContent = h; if (u) u.textContent = h > 1 ? 'heures' : 'heure'; }
+        else { if (top) top.textContent = 'Dans'; if (b) b.textContent = d; if (u) u.textContent = d > 1 ? 'jours' : 'jour'; }
+      });
+    }
+    upd(); setInterval(upd, 60000);
+  })();
+
+  // Flèches des carrousels de jour.
+  (function () {
+    document.querySelectorAll('.dr-car').forEach(function (car) {
+      var track = car.querySelector('.dr-car-track');
+      var prev = car.querySelector('.dr-car-prev');
+      var next = car.querySelector('.dr-car-next');
+      if (!track) return;
+      function step() { var c = track.querySelector('.drc'); return (c ? c.getBoundingClientRect().width + 14 : 260); }
+      function upd() {
+        var scrollable = (track.scrollWidth - track.clientWidth) > 8;
+        if (prev) prev.style.display = scrollable ? '' : 'none';
+        if (next) next.style.display = scrollable ? '' : 'none';
+      }
+      if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
+      if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
+      upd(); window.addEventListener('resize', upd);
+    });
   })();
 </script>
 
 <style>
-  /* Carte « hors antenne » : honnête, pas de faux badge live ni faux bouton lecture. */
-  .live-off { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); padding: 44px 28px; text-align: center; }
-  .live-off-tag { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
-  .live-off-h { font-family: var(--display); font-weight: 800; font-size: 22px; margin: 10px 0 0; color: var(--ink); }
-  .live-off-p { color: var(--ink-soft); font-family: var(--serif); font-size: 15px; max-width: 52ch; margin: 10px auto 0; }
-  .live-off-actions { margin-top: 22px; }
+  /* ---------- HERO pleine largeur ---------- */
+  .dr-hero { position: relative; background: #08060a; overflow: hidden; }
+  .dr-hero-media {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(90deg, rgba(8,7,11,.97) 0%, rgba(8,7,11,.82) 34%, rgba(8,7,11,.35) 66%, rgba(8,7,11,.5) 100%),
+      linear-gradient(0deg, rgba(8,7,11,.55) 0%, transparent 45%),
+      url('/direct-hero.webp');
+    background-size: cover; background-position: right center;
+  }
+  .dr-hero-in { position: relative; padding: 60px 0 46px; }
+  .dr-hero-kick { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--live); }
+  .dr-hero-h { font-family: var(--display); font-weight: 800; letter-spacing: -.02em; font-size: clamp(28px, 4.6vw, 48px); line-height: 1.02; margin: 12px 0 0; color: #fff; text-transform: uppercase; }
+  .dr-hero-h .rd { color: var(--live); }
+  .dr-hero-p { color: rgba(255,255,255,.82); font-family: var(--serif); font-size: 16px; line-height: 1.5; margin: 14px 0 0; }
 
-  /* Titre du direct en cours (parsé). */
+  /* ---------- Zone live (hors antenne) ---------- */
+  .live-off { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); padding: 28px; }
+  .live-off-tag { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--live); }
+  .live-off-h { font-family: var(--display); font-weight: 800; font-size: 22px; margin: 8px 0 0; color: var(--ink); }
+  .live-off-p { color: var(--ink-soft); font-family: var(--serif); font-size: 15px; max-width: 60ch; margin: 8px 0 0; }
+  .live-off-actions { margin-top: 18px; }
+  @media (min-width: 720px) {
+    .live-off { display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 24px; }
+    .live-off-tag { grid-column: 1; }
+    .live-off-h { grid-column: 1; }
+    .live-off-p { grid-column: 1; }
+    .live-off-actions { grid-column: 2; grid-row: 1 / 4; margin: 0; }
+  }
   .live-title { font-family: var(--display); font-weight: 800; font-size: 20px; margin: 16px 0 0; color: var(--ink); }
   .live-sub { color: var(--ink-faint); font-size: 12.5px; text-transform: uppercase; letter-spacing: .04em; margin-top: 4px; }
   .live-sub:empty { display: none; }
-
-  /* Onglets multi-directs. */
   .live-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
-  .live-tab {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line);
-    background: var(--surface); color: var(--ink); font-size: 13px; cursor: pointer;
-    transition: border-color .15s, background .15s;
-  }
+  .live-tab { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 13px; cursor: pointer; transition: border-color .15s, background .15s; }
   .live-tab b { font-weight: 800; letter-spacing: .04em; }
   .live-tab-disc { color: var(--ink-faint); font-weight: 600; }
   .live-tab:hover { border-color: var(--dc, var(--live)); }
   .live-tab.active { border-color: var(--dc, var(--live)); background: color-mix(in srgb, var(--dc, var(--live)) 14%, var(--surface)); }
 
-  /* Prochains directs : liste groupée par jour, vignettes 16/9. */
-  .ld-h { font-family: var(--display); font-weight: 800; font-size: 15px; text-transform: capitalize; color: var(--ink); margin: 22px 0 12px; }
-  .ld-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
-  .ld-card { display: flex; gap: 12px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); text-decoration: none; color: inherit; transition: border-color .15s, transform .15s; }
-  .ld-card:hover { border-color: var(--dc, var(--accent)); transform: translateY(-2px); }
-  .ld-thumb { position: relative; flex: 0 0 122px; aspect-ratio: 16 / 9; background: var(--surface-2); }
-  .ld-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .ld-body { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px 10px 0; min-width: 0; }
-  .ld-time { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); }
-  .ld-t { font-family: var(--display); font-weight: 700; font-size: 14.5px; line-height: 1.2; color: var(--ink); }
-  .ld-m { font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .03em; line-height: 1.35; }
-  .ld-tag { align-self: flex-start; margin-top: 4px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 2px 7px; border-radius: 999px; }
+  /* ---------- Prochains directs ---------- */
+  .dr-next { margin-top: 40px; }
+  .dr-next > .eyebrow { margin-bottom: 6px; }
+  .dr-day { margin-top: 20px; }
+  .dr-dayh { display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); margin-bottom: 12px; }
+  .dr-dayh svg { color: var(--live); }
 
+  /* Grande ligne (1 direct) */
+  .dr-row { display: grid; grid-template-columns: 220px minmax(0, 1fr) auto; align-items: center; gap: 20px; padding: 12px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); text-decoration: none; color: inherit; transition: border-color .15s; }
+  .dr-row:hover { border-color: color-mix(in srgb, var(--dc, var(--accent)) 50%, var(--line)); }
+  .dr-thumb { position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #111; align-self: center; }
+  .dr-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .dr-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .dr-time { font-family: var(--mono); font-size: 15px; font-weight: 800; color: var(--live); }
+  .dr-t { font-family: var(--display); font-weight: 800; font-size: 21px; line-height: 1.15; color: var(--ink); }
+  .dr-m { font-size: 12.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--ink-soft); }
+  .dr-tag { align-self: flex-start; margin-top: 4px; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; padding: 3px 9px; border-radius: 999px; }
+  .dr-cd { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-left: 22px; border-left: 1px solid var(--line); min-width: 96px; }
+  .dr-cd small { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+  .dr-cd b { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; color: var(--ink); margin: 2px 0; }
+
+  /* Jour à plusieurs directs : carrousel de cartes verticales */
+  .dr-car { position: relative; }
+  .dr-car-track { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 2px; }
+  .dr-car-track::-webkit-scrollbar { display: none; }
+  .drc { flex: 0 0 240px; scroll-snap-align: start; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); text-decoration: none; color: inherit; transition: border-color .15s; }
+  .drc:hover { border-color: color-mix(in srgb, var(--dc, var(--accent)) 50%, var(--line)); }
+  .drc-thumb { position: relative; aspect-ratio: 16 / 9; background: #111; }
+  .drc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .drc-body { display: flex; flex-direction: column; gap: 3px; padding: 11px 12px 12px; }
+  .drc-time { font-family: var(--mono); font-size: 12.5px; font-weight: 800; color: var(--live); }
+  .drc-t { font-family: var(--display); font-weight: 700; font-size: 14.5px; line-height: 1.2; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .drc-m { font-size: 10.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--ink-faint); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .dr-car-prev, .dr-car-next { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line-strong); background: color-mix(in srgb, var(--surface) 90%, transparent); color: var(--ink); font-size: 22px; line-height: 1; display: grid; place-items: center; cursor: pointer; backdrop-filter: blur(4px); }
+  .dr-car-prev { left: -6px; }
+  .dr-car-next { right: -6px; }
+  .dr-car-prev:hover, .dr-car-next:hover { border-color: var(--ink-faint); background: var(--surface-2); }
+
+  @media (max-width: 860px) {
+    .dr-row { grid-template-columns: 190px minmax(0, 1fr) auto; gap: 16px; }
+  }
   @media (max-width: 620px) {
-    .ld-grid { grid-template-columns: 1fr; }
-    .live-off { padding: 34px 20px; }
-    .live-off-h { font-size: 19px; }
+    /* Mobile : carte compacte (petite vignette à gauche), plus jamais d'image géante. */
+    .dr-row { grid-template-columns: 118px minmax(0, 1fr); grid-template-areas: "thumb info" "cd cd"; column-gap: 12px; row-gap: 8px; align-items: start; }
+    .dr-row .dr-thumb { grid-area: thumb; align-self: start; }
+    .dr-row .dr-info { grid-area: info; }
+    .dr-row .dr-cd { grid-area: cd; flex-direction: row; align-items: center; justify-content: flex-start; gap: 7px; border-left: 0; border-top: 1px solid var(--line); padding: 8px 0 0; min-width: 0; }
+    .dr-row .dr-cd b { font-size: 18px; margin: 0; }
+    .dr-t { font-size: 17px; }
+    .dr-car-prev, .dr-car-next { display: none; }
+    .drc { flex-basis: 82%; }
   }
 </style>
