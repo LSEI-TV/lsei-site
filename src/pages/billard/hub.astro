@@ -4,109 +4,162 @@
 // - Snooker & Billard américain : uniquement des vidéos -> vidéothèque de la catégorie
 import Base from '../../layouts/Base.astro';
 import { getReplays } from '../../lib/youtube';
+import { getSeasons } from '../../data/billard/seasons';
 
 const bilVids = await getReplays({ discipline: 'billard' });
 const nSnooker = bilVids.filter((v) => v.category === 'Snooker').length;
 const nAmericain = bilVids.filter((v) => v.category === 'Billard américain').length;
+const nSaisons = getSeasons().length;
 
 const types = [
   {
-    href: '/billard/blackball',
-    accent: 'var(--c-billard)',
-    eyebrow: 'Compétitions FFB · classements',
-    title: 'Blackball',
-    desc: 'Le circuit national de la FFB : Masters (hommes), Femmes et Para-billard (fauteuil & malvoyants). Classements officiels, joueurs, fiches carrière et 11 saisons d’archives.',
+    href: '/billard/blackball', accent: 'var(--c-billard)', icon: 'trophy', photo: '/billard/card-blackball.webp',
+    eyebrow: 'Compétitions FFB · classements', title: 'Blackball',
+    desc: `Le circuit national de la FFB : Masters (hommes, femmes et Para-billard), classements officiels, joueurs, fiches carrière et ${nSaisons} saisons d’archives.`,
     chips: ['Masters', 'Femmes', 'Para fauteuil', 'Para malvoyants'],
-    stat: '4 compétitions',
-    cta: 'Entrer dans le hub Blackball',
-    featured: true,
+    stat: '4 compétitions', cta: 'Entrer dans le hub Blackball', featured: true,
   },
   {
-    href: '/disciplines/billard/categorie/snooker',
-    accent: '#2FA36B',
-    eyebrow: 'Vidéos',
-    title: 'Snooker',
+    href: '/disciplines/billard/categorie/snooker', accent: '#2FA36B', icon: 'play', photo: '/billard/card-snooker.webp',
+    eyebrow: 'Vidéos', title: 'Snooker',
     desc: 'Le billard anglais à grande table : nos captations et rediffusions snooker.',
-    chips: [],
-    stat: `${nSnooker} vidéo${nSnooker > 1 ? 's' : ''}`,
-    cta: 'Voir les vidéos',
-    featured: false,
+    chips: [], stat: `${nSnooker} vidéo${nSnooker > 1 ? 's' : ''}`, cta: 'Voir les vidéos', featured: false,
   },
   {
-    href: '/disciplines/billard/categorie/billard-americain',
-    accent: '#D9642E',
-    eyebrow: 'Vidéos',
-    title: 'Billard américain',
+    href: '/disciplines/billard/categorie/billard-americain', accent: '#D9642E', icon: 'play', photo: '/billard/card-americain.webp',
+    eyebrow: 'Vidéos', title: 'Billard américain',
     desc: 'Pool 8 et 9 billes : nos captations et rediffusions de billard américain.',
-    chips: [],
-    stat: `${nAmericain} vidéo${nAmericain > 1 ? 's' : ''}`,
-    cta: 'Voir les vidéos',
-    featured: false,
+    chips: [], stat: `${nAmericain} vidéo${nAmericain > 1 ? 's' : ''}`, cta: 'Voir les vidéos', featured: false,
   },
 ];
+
+const ICONS: Record<string, string> = {
+  trophy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M6 4h12v5a6 6 0 0 1-12 0V4zM6 6H3v2a3 3 0 0 0 3 3M18 6h3v2a3 3 0 0 1-3 3"/></svg>',
+  play: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5 3.5-5 3.5z" fill="currentColor" stroke="none"/></svg>',
+  balls: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="9" r="4"/><circle cx="16" cy="9" r="4"/><circle cx="12" cy="16" r="4"/></svg>',
+  film: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5 3.5-5 3.5z" fill="currentColor" stroke="none"/></svg>',
+  users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.2 20a6 6 0 0 1 11.6 0"/><path d="M16 5.4a3 3 0 0 1 0 5.5M21 20a6 6 0 0 0-4-5.7"/></svg>',
+};
 ---
 <Base title="Billard — Le hub" description="Le hub Billard de LSEI : Blackball (Masters, Femmes, Para), Snooker et Billard américain." active="disciplines">
-  <section class="disc-hero" style="--dc:var(--c-billard)">
-    <div class="wrap">
-      <div class="kick" style="color:var(--c-billard)">LSEI · Billard</div>
-      <h1>Le hub Billard</h1>
-      <p>Trois univers sous un même toit. Le <b>Blackball</b> (nos compétitions nationales avec classements et fiches), le <b>Snooker</b> et le <b>Billard américain</b> (nos vidéos). Choisissez ce que vous voulez suivre.</p>
-      <div class="bar" style="background:var(--c-billard)"></div>
+  <!-- HERO pleine largeur (image dans public/billard-hero.webp, repli sombre sinon) -->
+  <section class="bh-hero">
+    <div class="bh-hero-media" aria-hidden="true"></div>
+    <div class="wrap bh-hero-in">
+      <div class="bh-crumb"><a href="/disciplines">LSEI</a><span aria-hidden="true">›</span>Billard</div>
+      <h1 class="bh-h">Le hub <span class="bl">Billard</span></h1>
+      <p class="bh-p">Trois univers sous un même toit. Le <b>Blackball</b> (nos compétitions nationales avec classements et fiches), le <b>Snooker</b> et le <b>Billard américain</b> (nos vidéos). Choisissez ce que vous voulez suivre.</p>
     </div>
   </section>
 
-  <section class="section" style="padding-top:0">
+  <section class="section">
     <div class="wrap">
-      <a href="/disciplines/billard" class="bchoose-video">
-        <span class="bchoose-video-ic">🎬</span>
-        <span class="bchoose-video-txt">
-          <span class="bchoose-video-t">Vidéothèque billard</span>
-          <span class="bchoose-video-s">Toutes les vidéos billard, tous univers confondus · {bilVids.length} vidéos</span>
+      <!-- Panneau vidéothèque -->
+      <a href="/disciplines/billard" class="bh-vlib">
+        <span class="bh-vlib-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M2 10h20M6 3l2 4M11 3l2 4M16 3l2 4"/><path d="M10 13.5l4 2.5-4 2.5z" fill="currentColor" stroke="none"/></svg></span>
+        <span class="bh-vlib-txt">
+          <span class="bh-vlib-t">Vidéothèque billard</span>
+          <span class="bh-vlib-s">Toutes les vidéos billard, tous univers confondus.<br />{bilVids.length} vidéos disponibles</span>
         </span>
-        <span class="bchoose-video-cta">Voir toutes les vidéos →</span>
+        <span class="bh-vlib-cta">Voir toutes les vidéos <span aria-hidden="true">→</span></span>
       </a>
 
-      <div class="gchoose">
+      <!-- 3 cartes univers -->
+      <div class="bh-grid">
         {types.map((t) => (
-          <a href={t.href} class={`gcard${t.featured ? ' is-featured' : ''}`} style={`--gc:${t.accent}`}>
-            <div class="gcard-top">
-              <div class="gcard-eyebrow">{t.eyebrow}</div>
-              <h2 class="gcard-title">{t.title}</h2>
-              <p class="gcard-desc">{t.desc}</p>
-              {t.chips.length > 0 && (
-                <div class="gcard-chips">{t.chips.map((ch) => <span>{ch}</span>)}</div>
-              )}
-            </div>
-            <div class="gcard-foot">
-              <span class="gcard-stat">{t.stat}</span>
-              <span class="gcard-cta">{t.cta} →</span>
+          <a href={t.href} class={`bh-card${t.featured ? ' is-featured' : ''}`} style={`--gc:${t.accent}`}>
+            <span class="bh-card-media" aria-hidden="true" style={`background-image:url('${t.photo}')`}></span>
+            <span class="bh-card-badge">{t.eyebrow}</span>
+            <h2 class="bh-card-title">{t.title}</h2>
+            <p class="bh-card-desc">{t.desc}</p>
+            {t.chips.length > 0 && <div class="bh-chips">{t.chips.map((ch) => <span>{ch}</span>)}</div>}
+            <div class="bh-card-foot">
+              <span class="bh-card-stat"><span class="bh-card-stat-ic" set:html={ICONS[t.icon]}></span>{t.stat}</span>
+              <span class="bh-card-cta">{t.cta} <span aria-hidden="true">→</span></span>
             </div>
           </a>
         ))}
+      </div>
+
+      <!-- Bandeau récap -->
+      <div class="bh-stats">
+        <div class="bh-stat"><span class="bh-stat-ic" style="color:var(--c-billard)" set:html={ICONS.balls}></span><span class="bh-stat-tx"><b>3 univers</b><i>Blackball, Snooker, Billard américain</i></span></div>
+        <div class="bh-stat"><span class="bh-stat-ic" style="color:#2FA36B" set:html={ICONS.film}></span><span class="bh-stat-tx"><b>{bilVids.length} vidéos</b><i>Captations, rediffusions et archives</i></span></div>
+        <div class="bh-stat"><span class="bh-stat-ic" style="color:#D9642E" set:html={ICONS.trophy}></span><span class="bh-stat-tx"><b>{nSaisons} saisons</b><i>D’archives et de compétitions disponibles</i></span></div>
+        <div class="bh-stat"><span class="bh-stat-ic" style="color:#8A7BE0" set:html={ICONS.users}></span><span class="bh-stat-tx"><b>Classements</b><i>Joueurs, classements et fiches carrière</i></span></div>
       </div>
     </div>
   </section>
 </Base>
 
 <style>
-  .gchoose { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 16px; align-items: stretch; }
-  .gcard {
-    display: flex; flex-direction: column; justify-content: space-between; gap: 20px;
-    border: 1px solid var(--line-strong); border-top: 3px solid var(--gc);
-    border-radius: 14px; background: var(--surface); padding: 22px 22px 18px;
-    text-decoration: none; color: inherit; transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  /* ---------- HERO pleine largeur ---------- */
+  .bh-hero { position: relative; background: #070c16; overflow: hidden; }
+  .bh-hero-media {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(90deg, rgba(7,10,20,.97) 0%, rgba(7,10,20,.82) 34%, rgba(7,10,20,.35) 66%, rgba(7,10,20,.5) 100%),
+      linear-gradient(0deg, rgba(7,10,20,.55) 0%, transparent 45%),
+      url('/billard-hero.webp');
+    background-size: cover; background-position: right center;
   }
-  .gcard:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -22px rgba(0,0,0,.7); border-color: var(--gc); }
-  .gcard.is-featured { background: color-mix(in srgb, var(--gc) 7%, var(--surface)); }
-  .gcard-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gc); margin-bottom: 8px; }
-  .gcard-title { font-family: var(--display); font-size: clamp(24px, 3vw, 34px); line-height: 1.05; margin: 0 0 10px; color: var(--ink); }
-  .gcard-desc { font-size: 14px; color: var(--ink-soft); line-height: 1.5; margin: 0; }
-  .gcard-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
-  .gcard-chips span { font-size: 12px; font-weight: 600; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 100px; padding: 4px 11px; }
-  .gcard-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
-  .gcard-stat { font-family: var(--display); font-weight: 700; font-size: 15px; color: var(--ink); }
-  .gcard-cta { font-size: 13px; font-weight: 700; color: var(--gc); white-space: nowrap; }
-  @media (max-width: 860px) {
-    .gchoose { grid-template-columns: 1fr; }
+  .bh-hero-in { position: relative; padding: 54px 0 44px; }
+  .bh-crumb { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.6); }
+  .bh-crumb a { color: var(--c-billard); text-decoration: none; }
+  .bh-h { font-family: var(--display); font-weight: 800; letter-spacing: -.02em; font-size: clamp(30px, 5vw, 54px); line-height: 1; margin: 12px 0 0; color: #fff; text-transform: uppercase; }
+  .bh-h .bl { color: var(--c-billard); display: block; }
+  .bh-p { color: rgba(255,255,255,.82); font-size: 16px; line-height: 1.5; margin: 14px 0 0; max-width: 62ch; }
+  .bh-p b { color: #fff; font-weight: 700; }
+
+  /* ---------- Panneau vidéothèque ---------- */
+  .bh-vlib { display: flex; align-items: center; gap: 18px; padding: 20px 24px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); text-decoration: none; color: inherit; transition: border-color .15s; }
+  .bh-vlib:hover { border-color: var(--line-strong); }
+  .bh-vlib-ic { flex: none; width: 54px; height: 54px; border-radius: 12px; display: grid; place-items: center; color: #b39bff; background: color-mix(in srgb, #8A7BE0 16%, var(--surface)); border: 1px solid color-mix(in srgb, #8A7BE0 30%, var(--line)); }
+  .bh-vlib-txt { flex: 1; min-width: 0; }
+  .bh-vlib-t { display: block; font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: .02em; font-size: 16px; color: var(--ink); }
+  .bh-vlib-s { display: block; font-size: 13.5px; color: var(--ink-soft); margin-top: 4px; line-height: 1.4; }
+  .bh-vlib-cta { flex: none; font-size: 13.5px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+
+  /* ---------- 3 cartes univers ---------- */
+  .bh-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 16px; align-items: stretch; margin-top: 16px; }
+  .bh-card { position: relative; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--line-strong); border-top: 3px solid var(--gc); border-radius: 16px; background: var(--surface); padding: 20px 22px 16px; text-decoration: none; color: inherit; transition: border-color .2s, transform .2s; }
+  .bh-card::after { content: ""; position: absolute; top: -30%; right: -20%; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, var(--gc), transparent 62%); opacity: .12; pointer-events: none; transition: opacity .2s; }
+  /* Photo de la carte (droite), fondue vers la gauche pour la lisibilité du texte.
+     Repli propre : si l'image n'existe pas, rien ne s'affiche (le halo coloré reste). */
+  .bh-card-media { position: absolute; inset: 0; z-index: 0; background-position: right center; background-size: cover; background-repeat: no-repeat; opacity: .55;
+    -webkit-mask-image: linear-gradient(90deg, transparent 12%, #000 78%); mask-image: linear-gradient(90deg, transparent 12%, #000 78%); pointer-events: none; transition: opacity .2s; }
+  .bh-card:hover .bh-card-media { opacity: .7; }
+  .bh-card-badge, .bh-card-title, .bh-card-desc, .bh-chips, .bh-card-foot { z-index: 1; }
+  .bh-card:hover { transform: translateY(-3px); border-color: var(--gc); }
+  .bh-card:hover::after { opacity: .2; }
+  .bh-card.is-featured { background: color-mix(in srgb, var(--gc) 7%, var(--surface)); }
+  .bh-card-badge { position: relative; align-self: flex-start; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--gc); background: color-mix(in srgb, var(--gc) 14%, transparent); border: 1px solid color-mix(in srgb, var(--gc) 40%, transparent); border-radius: 6px; padding: 4px 9px; }
+  .bh-card-title { position: relative; font-family: var(--display); font-weight: 800; font-size: clamp(22px, 2.6vw, 32px); line-height: 1.05; margin: 14px 0 0; color: var(--ink); }
+  .bh-card-desc { position: relative; font-size: 14px; color: var(--ink-soft); line-height: 1.5; margin: 10px 0 0; max-width: 42ch; }
+  .bh-chips { position: relative; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .bh-chips span { font-size: 12px; font-weight: 600; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 100px; padding: 4px 11px; }
+  .bh-card-foot { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 16px; }
+  .bh-card-stat { display: inline-flex; align-items: center; gap: 9px; font-family: var(--display); font-weight: 700; font-size: 15px; color: var(--ink); }
+  .bh-card-stat-ic { display: inline-flex; color: var(--gc); }
+  .bh-card-stat-ic svg { width: 22px; height: 22px; }
+  .bh-card-cta { font-size: 13px; font-weight: 700; color: var(--gc); white-space: nowrap; }
+
+  /* ---------- Bandeau récap ---------- */
+  .bh-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px 24px; margin-top: 24px; padding: 22px 26px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+  .bh-stat { display: flex; align-items: center; gap: 14px; }
+  .bh-stat-ic { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line-strong); display: inline-flex; align-items: center; justify-content: center; }
+  .bh-stat-ic svg { width: 21px; height: 21px; }
+  .bh-stat-tx { display: flex; flex-direction: column; min-width: 0; }
+  .bh-stat-tx b { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 15px; color: var(--ink); }
+  .bh-stat-tx i { font-size: 12px; color: var(--ink-soft); font-style: normal; margin-top: 2px; line-height: 1.3; }
+
+  @media (max-width: 940px) {
+    .bh-grid { grid-template-columns: 1fr; }
+    .bh-stats { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 620px) {
+    .bh-vlib { flex-wrap: wrap; }
+    .bh-vlib-cta { flex-basis: 100%; }
+    .bh-stats { grid-template-columns: 1fr; }
   }
 </style>

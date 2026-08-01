@@ -1,0 +1,8 @@
+Photos des 3 cartes du hub Billard (page /billard/hub).
+Dépose ici 3 images WebP, format ~800 x 600 px (sujet à DROITE, il sera fondu vers la gauche) :
+
+  card-blackball.webp   -> carte Blackball (une boule noire / 8-ball anglais)
+  card-snooker.webp     -> carte Snooker (table verte, billes rouges)
+  card-americain.webp   -> carte Billard américain (billes de pool, 9-ball)
+
+Tant qu'une photo est absente, la carte affiche juste un halo coloré (pas d'image cassée).

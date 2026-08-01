@@ -1655,3 +1655,24 @@ a.newc-link:hover { border-color: var(--c-billard); background: color-mix(in srg
 }
 @media (max-width: 460px) { .btiles { grid-template-columns: repeat(2, 1fr); } }
 
+
+/* ---- Justification des textes de paragraphe (toutes les pages) ---- */
+p,
+.lead, .lead-p, .hub-lead,
+.body, .nlist-body,
+.prose, .article-body,
+.bh-card-desc, .bchoose-desc,
+.champ-body, .newc-body, .car-palm-body,
+.chero-last-body {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+/* On ne justifie jamais les éléments courts / interface */
+.masthead p, .disc-nav p, .mobile-nav p,
+.btn, .hero-actions, nav, button,
+th, td, figcaption, .chip, .badge {
+  text-align: initial;
+  hyphens: manual;
+}
