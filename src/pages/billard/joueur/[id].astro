@@ -197,7 +197,7 @@ const personLd = {
   memberOf: { '@type': 'SportsOrganization', name: 'Blackball Master' },
 };
 ---
-<Base title={nc ? `${name} — Nouveau au Blackball Master ${nc.mastersLabel}` : `${name} — Fiche carrière · Blackball Master`} description={nc ? `${name} accède au Blackball Master ${nc.mastersLabel}, promu du Mixte National ${nc.feederLabel}.` : `Fiche carrière de ${name} au Blackball Master : palmarès, statistiques et confrontations sur ${bySeason.length} saison${bySeason.length > 1 ? 's' : ''}.`} active="disciplines">
+<Base title={nc ? `${name} — Nouveau au Blackball Master ${nc.mastersLabel}` : `${name} — Fiche carrière · Blackball Master`} description={nc ? `${name} accède au Blackball Master ${nc.mastersLabel}, promu du Mixte National ${nc.feederLabel}.` : `Fiche carrière de ${name} au Blackball Master : palmarès, statistiques et confrontations sur ${bySeason.length} saison${bySeason.length > 1 ? 's' : ''}.`} image={_playerPhoto ?? undefined} active="disciplines">
   <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
   <HubNav season={nc ? nc.mastersSlug : latest.slug} active="joueurs" archivesHref="/billard/archives" />
   <section class="section">
