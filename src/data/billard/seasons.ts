@@ -57,7 +57,7 @@ export function calFrom(results: ResultsData): SeasonEvent[] {
 // Calendrier 2026/2027 — saisi depuis l'affiche officielle FFB (prévisionnel).
 // Exporté pour être réutilisé par Femmes et Para (mêmes rendez-vous nationaux).
 export const cal2627: SeasonEvent[] = [
-  { short: 'TN1', name: 'Tournoi National 1', date: '2-4 oct. 2026', place: 'Lieu à venir', kind: 'tn' },
+  { short: 'TN1', name: 'Tournoi National 1', date: '2-4 oct. 2026', place: 'Fumel (47)', kind: 'tn' },
   { short: 'Mondial', name: 'Championnats du Monde', date: '21-28 oct. 2026', place: 'Londres (Angleterre)', kind: 'mondial' },
   { short: 'TN2', name: 'Tournoi National 2', date: '20-22 nov. 2026', place: 'Albi (81)', kind: 'tn' },
   { short: 'TN3', name: 'Tournoi National 3', date: 'Décembre 2026', place: 'Lieu à venir', kind: 'tn' },
