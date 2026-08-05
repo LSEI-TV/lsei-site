@@ -8,6 +8,7 @@ import { disciplines } from '../../../data/site';
 import { LANDING_SEASON, DEFAULT_SEASON } from '../../../data/billard/seasons';
 import { getReplays, getSeasonCounts, getBillardCategories, seasonSlug, seasonShort, categorySlug, type Video } from '../../../lib/youtube';
 import type { GetStaticPaths, Page } from 'astro';
+import { assetExists } from '../../../lib/publicAssets';
 
 export const getStaticPaths = (async ({ paginate }) => {
   const routes = [];
@@ -34,7 +35,7 @@ const categoryOptions = [
   ...catCounts.map((c) => ({ label: `${c.category} · ${c.count}`, value: `/disciplines/billard/categorie/${categorySlug(c.category)}` })),
 ];
 ---
-<Base title={disc.name} description={disc.blurb} active="disciplines" image={videos[0]?.thumb}>
+<Base title={disc.name} description={disc.blurb} preloadImage={assetExists(disc.hero) ? disc.hero : undefined} active="disciplines" image={videos[0]?.thumb}>
   {disc.hub && <HubNav season={LANDING_SEASON} dataSeason={DEFAULT_SEASON} active="videos" />}
   <section class={`disc-hero${disc.hero ? ' disc-hero--banner' : ''}`}>
     <div class="wrap" style={`--dc:${disc.colorVar}${disc.hero ? `;--hero-img:url('${disc.hero}')` : ''}`}>

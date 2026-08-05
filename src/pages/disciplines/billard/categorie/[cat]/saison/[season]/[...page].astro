@@ -1,5 +1,6 @@
 ---
 import Base from '../../../../../../../layouts/Base.astro';
+import { assetExists } from '../../../../../../../lib/publicAssets';
 import VideoGrid from '../../../../../../../components/VideoGrid.astro';
 import FilterMenu from '../../../../../../../components/FilterMenu.astro';
 import DisciplineNav from '../../../../../../../components/DisciplineNav.astro';
@@ -45,7 +46,7 @@ const seasonOptions = [
   ...seasons.map((s) => ({ label: `${s} · ${catVids.filter((v) => v.season === s).length}`, value: `/disciplines/billard/categorie/${catSlug}/saison/${seasonSlug(s)}`, selected: s === season })),
 ];
 ---
-<Base title={`Billard — ${category} · ${season}`} description={`Les vidéos de billard : ${category}, saison ${season}.`} active="disciplines">
+<Base title={`Billard — ${category} · ${season}`} description={`Les vidéos de billard : ${category}, saison ${season}.`} preloadImage={assetExists(catHero) ? catHero : undefined} active="disciplines">
   <section class={`disc-hero${catHero ? ' disc-hero--banner' : ''}`}>
     <div class="wrap" style={`--dc:${disc.colorVar}${catHero ? `;--hero-img:url('${catHero}')` : ''}`}>
       <div class="kick">{disc.label} · {category} · {season}</div>

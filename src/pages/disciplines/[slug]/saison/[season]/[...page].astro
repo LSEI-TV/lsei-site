@@ -6,6 +6,7 @@ import DisciplineNav from '../../../../../components/DisciplineNav.astro';
 import { disciplines } from '../../../../../data/site';
 import { getReplays, getSeasonCounts, seasonSlug, seasonShort, type Video } from '../../../../../lib/youtube';
 import type { GetStaticPaths, Page } from 'astro';
+import { assetExists } from '../../../../../lib/publicAssets';
 
 export const getStaticPaths = (async ({ paginate }) => {
   const routes = [];
@@ -28,7 +29,7 @@ const seasonOptions = [
   ...seasonCounts.map((s) => ({ label: `${s.season} · ${s.count}`, value: `/disciplines/${disc.slug}/saison/${seasonSlug(s.season)}`, selected: s.season === season })),
 ];
 ---
-<Base title={`${disc.name} — Saison ${season}`} description={`Les vidéos ${disc.name} de la saison ${season}.`} active="disciplines">
+<Base title={`${disc.name} — Saison ${season}`} description={`Les vidéos ${disc.name} de la saison ${season}.`} preloadImage={assetExists(disc.hero) ? disc.hero : undefined} active="disciplines">
   <section class={`disc-hero${disc.hero ? ' disc-hero--banner' : ''}`}>
     <div class="wrap" style={`--dc:${disc.colorVar}${disc.hero ? `;--hero-img:url('${disc.hero}')` : ''}`}>
       <div class="kick">{disc.label} · Saison {season}</div>

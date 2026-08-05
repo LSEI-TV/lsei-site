@@ -14,8 +14,10 @@ interface Props {
   image?: string;
   /** type Open Graph : « website » (défaut), « article », « video.other »… */
   ogType?: string;
+  /** image LCP à précharger (ex. bandeau hero de fond CSS) pour accélérer l'affichage. */
+  preloadImage?: string;
 }
-const { title, description = site.description, active, image, ogType = 'website' } = Astro.props;
+const { title, description = site.description, active, image, ogType = 'website', preloadImage } = Astro.props;
 const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
 // URLs absolues (nécessaires pour le partage réseaux sociaux + le référencement).
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -56,6 +58,7 @@ const websiteLd = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
     <meta name="msvalidate.01" content="970748FBB94C34B32E220835371EED23" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
