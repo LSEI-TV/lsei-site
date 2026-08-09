@@ -35,32 +35,44 @@ async function detectLives() {
   if (!ids.length) return [];
   const vids = await yt(`videos?part=snippet,liveStreamingDetails&id=${ids.join(',')}`);
   const lives = [];
+  const upcoming = [];
   for (const v of vids.items || []) {
     const d = v.liveStreamingDetails;
-    // en direct = diffusion commencée mais pas terminée
-    if (d && d.actualStartTime && !d.actualEndTime) {
-      const title = v.snippet?.title || 'Direct LSEI';
+    if (!d) continue;
+    const title = v.snippet?.title || 'Direct LSEI';
+    if (d.actualStartTime && !d.actualEndTime) {
+      // EN DIRECT = diffusion commencée mais pas terminée
       lives.push({ id: v.id, title, discipline: classify(title), start: d.actualStartTime });
+    } else if (d.scheduledStartTime && !d.actualStartTime) {
+      // PROGRAMMÉ = planifié, pas encore diffusé (pour la grille /programme et /direct)
+      upcoming.push({ id: v.id, title, discipline: classify(title), scheduled: d.scheduledStartTime });
     }
   }
-  // le plus tôt commencé en premier (ordre stable des onglets)
-  lives.sort((a, b) => (a.start < b.start ? -1 : 1));
-  return lives.map(({ id, title, discipline }) => ({ id, title, discipline }));
+  // Direct le PLUS RÉCEMMENT démarré en premier → un nouveau live prend la main
+  // sur /direct (avant, l'ancien live restait affiché en principal).
+  lives.sort((a, b) => (a.start < b.start ? 1 : -1));
+  // Programmés : le plus proche dans le temps en premier.
+  upcoming.sort((a, b) => (a.scheduled < b.scheduled ? -1 : 1));
+  return {
+    lives: lives.map(({ id, title, discipline }) => ({ id, title, discipline })),
+    upcoming: upcoming.map(({ id, title, discipline, scheduled }) => ({ id, title, discipline, scheduled })),
+  };
 }
 
 let out;
 try {
-  const lives = await detectLives();
+  const { lives, upcoming } = await detectLives();
   const first = lives[0];
   out = {
     live: lives.length > 0,
-    lives,                                    // liste complète (page /direct)
+    lives,                                    // directs EN COURS (page /direct)
+    upcoming,                                 // directs PROGRAMMÉS (grille /programme, temps réel)
     id: first?.id, title: first?.title,       // 1er direct (compat bandeau « ON AIR »)
     url: first ? `https://www.youtube.com/watch?v=${first.id}` : undefined,
   };
 } catch (e) {
   console.error('Erreur détection live :', e.message);
-  out = { live: false, lives: [], error: true }; // en cas d'erreur, pas de faux direct
+  out = { live: false, lives: [], upcoming: [], error: true }; // en cas d'erreur, pas de faux direct
 }
 out.updated = new Date().toISOString();
 writeFileSync('live.json', JSON.stringify(out));
