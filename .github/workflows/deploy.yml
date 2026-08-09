@@ -1,11 +1,13 @@
 name: Build & Deploy vers OVH
 
 # Quand se déclenche le déploiement automatique :
+#  - à chaque push (modif de code) → build RAPIDE qui lit le cache vidéos (aucun
+#    appel YouTube, donc zéro risque de quota).
+#  - le rafraîchissement des vidéos depuis YouTube est géré séparément par
+#    refresh-data.yml (2×/jour), qui met à jour le cache puis déploie.
 on:
   push:
     branches: [ main ]          # à chaque modif envoyée sur GitHub
-  schedule:
-    - cron: '0 4 * * *'         # chaque nuit à 04h00 UTC (06h en France l'été) → rafraîchit les vidéos YouTube
   workflow_dispatch:            # bouton "Run workflow" pour lancer à la demande
 
 # Empêche deux déploiements de tourner en même temps.

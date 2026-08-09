@@ -1,0 +1,79 @@
+name: Rafraîchir les vidéos YouTube
+
+# Va chercher les vidéos sur YouTube (appel coûteux), met à jour le cache commité,
+# déploie, puis recommite le cache pour que les builds normaux repartent des dernières
+# données. C'est le SEUL workflow qui interroge massivement YouTube → quota maîtrisé.
+on:
+  schedule:
+    - cron: '30 8 * * *'    # ~10h30 France (après la réinitialisation du quota YouTube)
+    - cron: '0 15 * * *'    # ~17h France
+  workflow_dispatch:        # bouton "Run workflow" pour lancer à la demande
+
+concurrency:
+  group: deploy-ovh         # même groupe que deploy.yml → jamais deux déploiements en même temps
+  cancel-in-progress: false
+
+permissions:
+  contents: write           # pour recommiter le cache mis à jour
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Europe/Paris
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Créer le fichier .env (avec rafraîchissement YouTube activé)
+        run: |
+          echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" >> .env
+          echo "YOUTUBE_CHANNEL_ID=UCYUOdKr28cOjLzHWv6pTpjQ" >> .env
+          echo "REFRESH_YOUTUBE=1" >> .env
+
+      - name: Construire (récupère YouTube + met à jour le cache)
+        run: npm run build
+
+      - name: Déployer sur OVH par FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          local-dir: ./dist/
+          server-dir: /site/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/live.json
+
+      - name: Recommiter le cache vidéos mis à jour
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/cache/replays.json
+          if git diff --staged --quiet; then
+            echo "Cache inchangé, rien à committer."
+          else
+            git commit -m "chore: rafraîchissement cache vidéos YouTube [skip ci]"
+            git push
+          fi
+
+      - name: Notifier IndexNow (Bing) des mises à jour
+        run: |
+          curl -sS -X POST "https://api.indexnow.org/indexnow" \
+            -H "Content-Type: application/json" \
+            -d '{"host":"lsei.tv","key":"4c1f9e7a2b8d43f6a09e5c7d1b3a6e82","keyLocation":"https://lsei.tv/4c1f9e7a2b8d43f6a09e5c7d1b3a6e82.txt","urlList":["https://lsei.tv/","https://lsei.tv/videotheque","https://lsei.tv/disciplines/billard"]}' || true
+          echo "IndexNow notifié."

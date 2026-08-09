@@ -269,6 +269,10 @@ const KEY = import.meta.env.YOUTUBE_API_KEY as string | undefined;
 const CHANNEL = import.meta.env.YOUTUBE_CHANNEL_ID as string | undefined;
 const hasYouTube = Boolean(KEY && CHANNEL);
 const API = 'https://www.googleapis.com/youtube/v3';
+// Mode « rafraîchissement » : seul le job programmé (REFRESH_YOUTUBE=1) va RÉELLEMENT
+// chercher toutes les vidéos sur YouTube (appel coûteux). Les déploiements normaux
+// lisent le cache commité → aucun risque de dépasser le quota, build rapide.
+const REFRESH = Boolean(import.meta.env.REFRESH_YOUTUBE);
 
 // -------- utilitaires API --------
 // Appel API avec délai d'expiration (évite qu'un appel qui pend ne bloque tout le
@@ -463,14 +467,19 @@ async function fetchRealReplays(): Promise<Video[]> {
 
 export async function getReplays(opts: { discipline?: DisciplineSlug; limit?: number } = {}): Promise<Video[]> {
   // Disciplines de la chaîne LSEI.
-  let others = MOCK_REPLAYS;
-  if (hasYouTube) {
+  let others: Video[];
+  if (REFRESH && hasYouTube) {
+    // Job de rafraîchissement programmé : on interroge YouTube et on met à jour le cache.
     try {
       others = await fetchRealReplays();
     } catch (e) {
-      console.warn('[YouTube] getReplays → repli sur la démo :', (e as Error).message);
-      others = MOCK_REPLAYS;
+      console.warn('[YouTube] rafraîchissement échoué → cache/démo :', (e as Error).message);
+      others = readReplaysCache() ?? MOCK_REPLAYS;
     }
+  } else {
+    // Déploiement NORMAL : aucun appel YouTube coûteux — on sert le cache commité
+    // (dernière liste connue), et la démo seulement s'il n'existe pas encore de cache.
+    others = readReplaysCache() ?? MOCK_REPLAYS;
   }
   // Le football vient TOUJOURS de la liste curatée (chaîne LBF TV), pas de l'API LSEI.
   let items = [...others, ...FOOTBALL_VIDEOS];
