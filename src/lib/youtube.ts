@@ -13,6 +13,7 @@
 
 import type { DisciplineSlug } from '../data/site';
 import { disciplines } from '../data/site';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
 export interface Video {
   /** identifiant de la vidéo YouTube (pour l'URL de lecture) */
@@ -270,10 +271,22 @@ const hasYouTube = Boolean(KEY && CHANNEL);
 const API = 'https://www.googleapis.com/youtube/v3';
 
 // -------- utilitaires API --------
-async function yt(path: string): Promise<any> {
-  const res = await fetch(`${API}/${path}&key=${KEY}`);
-  if (!res.ok) throw new Error(`YouTube API ${res.status} — ${(await res.text()).slice(0, 300)}`);
-  return res.json();
+// Appel API avec délai d'expiration (évite qu'un appel qui pend ne bloque tout le
+// build) + une petite relance sur latence/erreur serveur transitoire.
+async function yt(path: string, attempt = 0): Promise<any> {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 20000);
+  try {
+    const res = await fetch(`${API}/${path}&key=${KEY}`, { signal: ctrl.signal });
+    if (!res.ok) throw new Error(`YouTube API ${res.status} — ${(await res.text()).slice(0, 300)}`);
+    return await res.json();
+  } catch (e) {
+    const retriable = (e as Error).name === 'AbortError' || / 5\d\d /.test((e as Error).message || '');
+    if (retriable && attempt < 2) return yt(path, attempt + 1);
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function ytPaged(path: string, max = 500): Promise<any[]> {
@@ -300,10 +313,23 @@ function disciplineLabel(slug: DisciplineSlug): string {
 // -------- récupération réelle des replays (avec cache par build) --------
 let _realReplays: Video[] | null = null;
 
+// Cache de secours COMMITÉ : si un build ne parvient pas à joindre YouTube
+// (quota dépassé, panne réseau…), on repart de la dernière liste connue au lieu
+// de déployer un site vide. Rafraîchi à chaque build réussi.
+const REPLAYS_MIN = 50; // en dessous, on considère le fetch YouTube comme raté/partiel
+const REPLAYS_CACHE_FILE = 'src/data/cache/replays.json';
+function writeReplaysCache(v: Video[]): void {
+  try { mkdirSync('src/data/cache', { recursive: true }); writeFileSync(REPLAYS_CACHE_FILE, JSON.stringify(v)); } catch { /* non bloquant */ }
+}
+function readReplaysCache(): Video[] | null {
+  try { const v = JSON.parse(readFileSync(REPLAYS_CACHE_FILE, 'utf8')); return Array.isArray(v) && v.length ? (v as Video[]) : null; } catch { return null; }
+}
+
 interface RawVid { id: string; discipline: DisciplineSlug; title: string; thumb?: string; pub: string; category?: string; plSeason?: string }
 
 async function fetchRealReplays(): Promise<Video[]> {
   if (_realReplays) return _realReplays;
+  try {
   const playlists = await ytPaged(`playlists?part=snippet&channelId=${CHANNEL}`);
 
   // Priorité des catégories billard : quand une même vidéo figure dans PLUSIEURS
@@ -319,13 +345,28 @@ async function fetchRealReplays(): Promise<Video[]> {
   const catRank = (c?: string) => (c && c in CAT_PRIORITY ? CAT_PRIORITY[c] : 9);
 
   // 1) Collecter les vidéos des playlists classées, dédoublonnées par id.
+  //    Les items sont récupérés EN PARALLÈLE (par lots) — sinon 80 playlists en
+  //    série rendent le build interminable. Une playlist en échec (404/privée)
+  //    est simplement ignorée. On garde l'ordre des playlists pour un dédoublonnage
+  //    déterministe.
+  const classified = (playlists as any[])
+    .map((pl) => ({ pl, disc: classifyPlaylist(pl.snippet?.title || '') }))
+    .filter((x) => !!x.disc) as { pl: any; disc: DisciplineSlug }[];
+  const CONC = 8;
+  const withItems: { pl: any; disc: DisciplineSlug; items: any[] }[] = [];
+  for (let i = 0; i < classified.length; i += CONC) {
+    const batch = classified.slice(i, i + CONC);
+    const res = await Promise.all(batch.map(async ({ pl, disc }) => {
+      try { return { pl, disc, items: await ytPaged(`playlistItems?part=snippet,contentDetails&playlistId=${pl.id}`) }; }
+      catch { return { pl, disc, items: [] as any[] }; } // playlist inaccessible → ignorée
+    }));
+    withItems.push(...res);
+  }
+
   const map = new Map<string, RawVid>();
-  for (const pl of playlists) {
-    const disc = classifyPlaylist(pl.snippet?.title || '');
-    if (!disc) continue; // playlist non reconnue ou ignorée (ex. « LES LIVES »)
+  for (const { pl, disc, items } of withItems) {
     const plSeason = seasonFromTitle(pl.snippet?.title || ''); // ex. « 25/26 - … » → "2025/2026"
     const plCat = disc === 'billard' ? billardCategory(pl.snippet?.title || '') : undefined;
-    const items = await ytPaged(`playlistItems?part=snippet,contentDetails&playlistId=${pl.id}`);
     for (const it of items) {
       const s = it.snippet || {};
       const id = it.contentDetails?.videoId || s.resourceId?.videoId;
@@ -361,9 +402,12 @@ async function fetchRealReplays(): Promise<Video[]> {
   const ids = [...map.keys()];
   const airTime = new Map<string, string>();
   const upcomingIds = new Set<string>(); // lives PROGRAMMÉS, pas encore diffusés → exclus des replays
-  for (let i = 0; i < ids.length; i += 50) {
-    const chunk = ids.slice(i, i + 50);
-    const res = await yt(`videos?part=liveStreamingDetails&id=${chunk.join(',')}`);
+  const chunks: string[][] = [];
+  for (let i = 0; i < ids.length; i += 50) chunks.push(ids.slice(i, i + 50));
+  const detailResults = await Promise.all(
+    chunks.map((chunk) => yt(`videos?part=liveStreamingDetails&id=${chunk.join(',')}`).catch(() => ({ items: [] }))),
+  );
+  for (const res of detailResults) {
     for (const v of res.items || []) {
       const d = v.liveStreamingDetails;
       if (d?.actualStartTime) airTime.set(v.id, d.actualStartTime);
@@ -392,8 +436,29 @@ async function fetchRealReplays(): Promise<Video[]> {
     };
   });
   list.sort((a, b) => (a.eff < b.eff ? 1 : -1));
-  _realReplays = list.map((x) => x.v);
+  const fresh = list.map((x) => x.v);
+  const cached = readReplaysCache();
+  if (fresh.length >= REPLAYS_MIN && fresh.length >= (cached?.length ?? 0)) {
+    // fetch aussi complet (ou plus) que le cache → on rafraîchit le cache commité
+    writeReplaysCache(fresh);
+    _realReplays = fresh;
+  } else if (cached) {
+    // fetch partiel (quota épuisé en cours de route…) → on garde le cache, plus complet
+    _realReplays = cached;
+  } else {
+    _realReplays = fresh;
+  }
   return _realReplays;
+  } catch (e) {
+    // fetch impossible → repli sur le cache commité plutôt que la démo vide
+    const cached = readReplaysCache();
+    if (cached) {
+      console.warn(`[YouTube] fetchRealReplays a échoué → cache commité (${cached.length} vidéos) :`, (e as Error).message);
+      _realReplays = cached;
+      return cached;
+    }
+    throw e; // aucun cache disponible → getReplays basculera sur la démo
+  }
 }
 
 export async function getReplays(opts: { discipline?: DisciplineSlug; limit?: number } = {}): Promise<Video[]> {
