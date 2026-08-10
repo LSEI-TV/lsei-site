@@ -279,14 +279,14 @@ const REFRESH = Boolean(import.meta.env.REFRESH_YOUTUBE);
 // build) + une petite relance sur latence/erreur serveur transitoire.
 async function yt(path: string, attempt = 0): Promise<any> {
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 20000);
+  const timer = setTimeout(() => ctrl.abort(), 30000);
   try {
     const res = await fetch(`${API}/${path}&key=${KEY}`, { signal: ctrl.signal });
     if (!res.ok) throw new Error(`YouTube API ${res.status} — ${(await res.text()).slice(0, 300)}`);
     return await res.json();
   } catch (e) {
     const retriable = (e as Error).name === 'AbortError' || / 5\d\d /.test((e as Error).message || '');
-    if (retriable && attempt < 2) return yt(path, attempt + 1);
+    if (retriable && attempt < 3) return yt(path, attempt + 1);
     throw e;
   } finally {
     clearTimeout(timer);
@@ -442,12 +442,24 @@ async function fetchRealReplays(): Promise<Video[]> {
   list.sort((a, b) => (a.eff < b.eff ? 1 : -1));
   const fresh = list.map((x) => x.v);
   const cached = readReplaysCache();
-  if (fresh.length >= REPLAYS_MIN && fresh.length >= (cached?.length ?? 0)) {
-    // fetch aussi complet (ou plus) que le cache → on rafraîchit le cache commité
-    writeReplaysCache(fresh);
-    _realReplays = fresh;
+  if (fresh.length >= REPLAYS_MIN) {
+    let result: Video[];
+    if (!cached || fresh.length >= cached.length) {
+      // fetch complet (au moins aussi fourni que le cache) → il fait foi (enlève aussi
+      // les vidéos supprimées sur YouTube).
+      result = fresh;
+    } else {
+      // fetch PARTIEL (quelques playlists ont échoué : timeout/quota) → on UNION avec le
+      // cache pour ne rien perdre et récupérer quand même les nouveautés. Sur plusieurs
+      // rafraîchissements, le cache se complète tout seul jusqu'au total réel.
+      const byId = new Map<string, Video>(cached.map((v) => [v.id, v]));
+      for (const v of fresh) byId.set(v.id, v); // le fetch récent gagne sur les doublons
+      result = [...byId.values()].sort((a, b) => ((a.date || '') < (b.date || '') ? 1 : -1));
+    }
+    writeReplaysCache(result);
+    _realReplays = result;
   } else if (cached) {
-    // fetch partiel (quota épuisé en cours de route…) → on garde le cache, plus complet
+    // fetch quasi vide → on garde le cache, bien plus complet
     _realReplays = cached;
   } else {
     _realReplays = fresh;
@@ -613,18 +625,24 @@ export async function getCurrentLives(): Promise<LiveNow[]> {
 // Diffusions YouTube pour la GRILLE PROGRAMME : directs en cours + directs programmés,
 // avec leur date/heure réelle. Se combinent avec le programme saisi via /admin.
 export interface Broadcast { id: string; title: string; discipline: DisciplineSlug; date: string; live: boolean }
+function readBroadcastsCache(): Broadcast[] | null {
+  try { const v = JSON.parse(readFileSync('src/data/cache/broadcasts.json', 'utf8')); return Array.isArray(v) ? v as Broadcast[] : null; } catch { return null; }
+}
 export async function getBroadcasts(): Promise<Broadcast[]> {
-  if (!hasYouTube) return [];
+  if (!hasYouTube) return readBroadcastsCache() ?? [];
   try {
     const { live, upcoming } = await fetchLiveState();
     const nowIso = new Date().toISOString();
     const out: Broadcast[] = [];
     for (const l of live) out.push({ id: l.id, title: l.title, discipline: l.discipline, date: l.scheduled || nowIso, live: true });
     for (const u of upcoming) out.push({ id: u.id, title: u.title, discipline: u.discipline, date: u.scheduled || nowIso, live: false });
+    // Cache de secours : /programme et la « une » gardent les directs programmés même
+    // si un build n'atteint pas l'API (quota). Les événements passés sont filtrés par date.
+    try { mkdirSync('src/data/cache', { recursive: true }); writeFileSync('src/data/cache/broadcasts.json', JSON.stringify(out)); } catch { /* non bloquant */ }
     return out;
   } catch (e) {
-    console.warn('[YouTube] getBroadcasts → repli :', (e as Error).message);
-    return [];
+    console.warn('[YouTube] getBroadcasts → cache/repli :', (e as Error).message);
+    return readBroadcastsCache() ?? [];
   }
 }
 
