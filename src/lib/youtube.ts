@@ -643,9 +643,13 @@ export async function getChannelStats(): Promise<ChannelStats | null> {
       views: Number(s.viewCount) || 0,
       videos: Number(s.videoCount) || 0,
     };
+    // Cache de secours commité : évite que le bloc « chiffres-clés » perde ses
+    // stats YouTube si un futur build n'atteint pas l'API (quota).
+    try { mkdirSync('src/data/cache', { recursive: true }); writeFileSync('src/data/cache/channel-stats.json', JSON.stringify(_channelStats)); } catch { /* non bloquant */ }
   } catch (e) {
-    console.warn('[YouTube] getChannelStats → repli :', (e as Error).message);
-    _channelStats = null;
+    console.warn('[YouTube] getChannelStats → cache/repli :', (e as Error).message);
+    try { _channelStats = JSON.parse(readFileSync('src/data/cache/channel-stats.json', 'utf8')) as ChannelStats; }
+    catch { _channelStats = null; }
   }
   return _channelStats;
 }
