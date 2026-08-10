@@ -52,6 +52,11 @@ const events = items.map((it) => {
 });
 type Ev = (typeof events)[number];
 
+// Id vidéo YouTube extrait du lien (pour le dédoublonnage avec le temps réel).
+const vidOf = (link?: string) => { const m = /[?&]v=([\w-]+)/.exec(link || ''); return m ? m[1] : ''; };
+// Carte des disciplines (couleur/libellé/fond de tag) pour le rendu temps réel côté client.
+const discMap = Object.fromEntries(disciplines.map((d) => [d.slug, { label: d.label, color: d.colorVar, tagBg: d.tagBg }]));
+
 // Regroupement : mois → jours → événements.
 const monthOrder: string[] = [];
 const byMonth = new Map<string, Ev[]>();
@@ -113,8 +118,14 @@ const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.on
         ))}
       </div>
 
+      <div id="prog-rt" class="prog-month" hidden>
+        <h2 class="prog-month-h">En ce moment</h2>
+        <div id="prog-rt-list"></div>
+      </div>
+      <script id="prog-disc" type="application/json" set:html={JSON.stringify(discMap)}></script>
+
       {monthOrder.length === 0 ? (
-        <p class="dek" style="margin-top:26px">Aucune diffusion programmée pour le moment. Revenez bientôt — le programme se met à jour automatiquement dès qu'un direct est annoncé.</p>
+        <p id="prog-empty" class="dek" style="margin-top:26px">Aucune diffusion programmée pour le moment. Revenez bientôt — le programme se met à jour automatiquement dès qu'un direct est annoncé.</p>
       ) : (
         monthOrder.map((mk) => (
           <div class="prog-month">
@@ -133,7 +144,7 @@ const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.on
                 </div>
               );
               return dayEvents.length === 1 ? (
-                <div class="pev" data-sport={d0.sport} style={`--dc:${d0.disc.colorVar}`}>
+                <div class="pev" data-sport={d0.sport} data-vid={vidOf(d0.link)} style={`--dc:${d0.disc.colorVar}`}>
                   {dateBlock}
                   <div class="pev-main">
                   <a class="pev-thumb" href={d0.link || programmeUrl} target={d0.link && d0.link.startsWith('http') ? '_blank' : undefined} rel="noopener" aria-label={d0.main}>
@@ -164,7 +175,7 @@ const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.on
                     <button type="button" class="pev-car-prev" aria-label="Précédent">‹</button>
                     <div class="pev-car-track">
                       {dayEvents.map((e) => (
-                        <div class="pmc" data-sport={e.sport} style={`--dc:${e.disc.colorVar}`}>
+                        <div class="pmc" data-sport={e.sport} data-vid={vidOf(e.link)} style={`--dc:${e.disc.colorVar}`}>
                           <a class="pmc-thumb" href={e.link || programmeUrl} target={e.link && e.link.startsWith('http') ? '_blank' : undefined} rel="noopener" aria-label={e.main}>
                             {e.thumb ? <img src={e.thumb} alt={e.main} loading="lazy" onerror={onerrorThumb(e.thumb)} /> : <span class="pev-duo" style={`background:linear-gradient(135deg,${e.disc.from},${e.disc.to})`}></span>}
                             <span class="pev-tag" style={`background:${e.disc.tagBg};color:${e.disc.colorVar}`}>{e.disc.label}</span>
@@ -338,6 +349,53 @@ const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.on
         if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
         upd(); window.addEventListener('resize', upd);
       });
+    })();
+
+    // TEMPS RÉEL : injecte les directs (en cours + programmés) présents dans live.json
+    // mais absents de la grille statique (ex. live créé à la dernière minute), toutes les
+    // 60 s. Dédoublonné par id vidéo ; marque aussi « ● LIVE » les lignes déjà présentes.
+    (function () {
+      var host = document.getElementById('prog-rt');
+      if (!host) return;
+      var list = document.getElementById('prog-rt-list');
+      var empty = document.getElementById('prog-empty');
+      var DISC = {}; try { DISC = JSON.parse((document.getElementById('prog-disc') || {}).textContent || '{}'); } catch (e) {}
+      function esc(s) { return (s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+      function clean(t) { var p = (t || '').split('|').map(function (s) { return s.trim(); }).filter(Boolean); return p.length ? p[p.length - 1] : (t || ''); }
+      function fmtWhen(iso) { try { return new Date(iso).toLocaleString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } }
+      function existing() { var m = {}; [].slice.call(document.querySelectorAll('[data-vid]')).forEach(function (el) { var v = el.getAttribute('data-vid'); if (v) m[v] = el; }); return m; }
+      function row(ev, isLive) {
+        var d = DISC[ev.discipline] || { label: '', color: 'var(--accent)', tagBg: 'rgba(0,0,0,.35)' };
+        var href = 'https://www.youtube.com/watch?v=' + ev.id;
+        var when = isLive ? 'En direct maintenant' : fmtWhen(ev.scheduled);
+        return '<div class="pev" data-sport="' + ev.discipline + '" style="--dc:' + d.color + '">'
+          + '<div class="pev-date"><span class="pev-dow">' + (isLive ? 'Live' : 'Bientôt') + '</span><span class="pev-num">●</span></div>'
+          + '<div class="pev-main"><a class="pev-thumb" href="' + href + '" target="_blank" rel="noopener">'
+          + '<img src="https://i.ytimg.com/vi/' + ev.id + '/maxresdefault.jpg" alt="" loading="lazy" onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + ev.id + '/hqdefault.jpg\'" />'
+          + '<span class="pev-tag" style="background:' + d.tagBg + ';color:' + d.color + '">' + esc(d.label) + '</span>'
+          + (isLive ? '<span class="pev-livebadge">● LIVE</span>' : '')
+          + '</a><div class="pev-body"><div class="pev-head"><div class="pev-titles">'
+          + '<h3 class="pev-t">' + esc(clean(ev.title)) + '</h3><div class="pev-sub">' + esc(when) + '</div></div></div>'
+          + '<div class="pev-actions"><a class="pev-watch" href="' + href + '" target="_blank" rel="noopener">▸ ' + (isLive ? 'Regarder le direct' : 'Voir sur YouTube') + '</a></div>'
+          + '</div></div></div>';
+      }
+      function sync() {
+        fetch('/live.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+          if (!d) return;
+          var ex = existing();
+          var lives = d.lives || [];
+          var ups = d.upcoming || [];
+          lives.forEach(function (l) {
+            if (ex[l.id]) { var t = ex[l.id].querySelector('.pev-thumb'); if (t && !t.querySelector('.pev-livebadge')) { var b = document.createElement('span'); b.className = 'pev-livebadge'; b.textContent = '● LIVE'; t.appendChild(b); } }
+          });
+          var html = '';
+          lives.forEach(function (l) { if (!ex[l.id]) html += row(l, true); });
+          ups.forEach(function (u) { if (!ex[u.id]) html += row(u, false); });
+          if (html) { list.innerHTML = html; host.hidden = false; if (empty) empty.style.display = 'none'; }
+          else { host.hidden = true; }
+        }).catch(function () {});
+      }
+      sync(); setInterval(sync, 60000);
     })();
   </script>
 </Base>
