@@ -269,6 +269,37 @@ const slides = programme
       var upd = function () { chips.forEach(function (el) { var d = Math.floor((new Date(el.getAttribute('data-jxshort')).getTime() - Date.now()) / 86400000); el.textContent = d <= 0 ? '●' : 'J‑' + d; }); };
       upd(); setInterval(upd, 60000);
     })();
+    // Synchro TEMPS RÉEL de la « une » avec live.json (mis à jour toutes les 5 min) :
+    // dès qu'un direct est en cours, l'accueil bascule en ● EN DIRECT et pointe dessus,
+    // sans attendre une reconstruction du site.
+    (function () {
+      var hero = document.querySelector('.mhero');
+      if (!hero) return;
+      var pill = hero.querySelector('.hero-pill');
+      var h1 = hero.querySelector('.mhero-h');
+      var playBtn = hero.querySelector('.hero-play');
+      var count = hero.querySelector('.hero-count');
+      var when = hero.querySelector('.mhero-when');
+      var sub = hero.querySelector('.mhero-sub');
+      function clean(t) { var p = (t || '').split('|').map(function (s) { return s.trim(); }).filter(Boolean); return p.length ? p[p.length - 1] : (t || ''); }
+      function sync() {
+        fetch('/live.json', { cache: 'no-store' })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            var lives = (d && d.lives) ? d.lives : (d && d.live && d.id ? [{ id: d.id, title: d.title || 'Direct' }] : []);
+            if (!lives.length) return; // pas de direct : on garde la une construite (à venir / à revoir)
+            var l = lives[0];
+            if (pill) { pill.textContent = '● En direct'; pill.classList.add('is-live'); pill.classList.remove('is-soon'); }
+            if (h1) h1.textContent = clean(l.title);
+            if (playBtn) { playBtn.setAttribute('href', 'https://www.youtube.com/watch?v=' + l.id); playBtn.setAttribute('target', '_blank'); playBtn.textContent = '▸ Regarder le direct'; }
+            if (count) count.style.display = 'none';
+            if (when) when.style.display = 'none';
+            if (sub) sub.style.display = 'none';
+          })
+          .catch(function () {});
+      }
+      sync(); setInterval(sync, 60000);
+    })();
   </script>
 
   <!-- DISCIPLINES -->
