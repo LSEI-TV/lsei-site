@@ -131,9 +131,8 @@ const ICONS: Record<string, string> = {
   .bh-card::after { content: ""; position: absolute; top: -30%; right: -20%; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, var(--gc), transparent 62%); opacity: .12; pointer-events: none; transition: opacity .2s; }
   /* Photo de la carte (droite), fondue vers la gauche pour la lisibilité du texte.
      Repli propre : si l'image n'existe pas, rien ne s'affiche (le halo coloré reste). */
-  .bh-card-media { position: absolute; inset: 0; z-index: 0; background-position: right center; background-size: cover; background-repeat: no-repeat; opacity: .55;
-    -webkit-mask-image: linear-gradient(90deg, transparent 12%, #000 78%); mask-image: linear-gradient(90deg, transparent 12%, #000 78%); pointer-events: none; transition: opacity .2s; }
-  .bh-card:hover .bh-card-media { opacity: .7; }
+  .bh-card-media { position: absolute; inset: 0; z-index: 0; background-position: right center; background-size: cover; background-repeat: no-repeat; opacity: 1;
+    -webkit-mask-image: linear-gradient(90deg, transparent 44%, #000 82%); mask-image: linear-gradient(90deg, transparent 44%, #000 82%); pointer-events: none; }
   .bh-card-badge, .bh-card-title, .bh-card-desc, .bh-chips, .bh-card-foot { z-index: 1; }
   .bh-card:hover { transform: translateY(-3px); border-color: var(--gc); }
   .bh-card:hover::after { opacity: .2; }
