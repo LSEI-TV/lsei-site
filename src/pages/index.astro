@@ -10,7 +10,7 @@ import { parseProgTitle } from '../lib/programmeTitle';
 import { getCollection } from 'astro:content';
 import { articleCover } from '../lib/articles';
 import { getEvents } from '../lib/events';
-import { assetExists } from '../lib/publicAssets';
+import { assetExists, assetUrl } from '../lib/publicAssets';
 import { defaultSeason, getPalmares, getSeasons, DEFAULT_SEASON } from '../data/billard/seasons';
 import { photoOf, playerSlugs } from '../lib/billardStats';
 
@@ -187,13 +187,13 @@ const slides = programme
     };
   });
 ---
-<Base active="direct" preloadImage={assetExists('/home-hero.webp') ? '/home-hero.webp' : undefined}>
+<Base active="direct" preloadImage={assetExists('/home-hero.webp') ? assetUrl('/home-hero.webp') : undefined}>
   <Ticker />
 
   <!-- HERO — « une » cinématique (Variante C : corps clair, une sombre) -->
   {live && liveDisc && (
     <section class="mhero" style={`--hero-accent:${liveDisc.colorVar}`}>
-      <div class="mhero-media" style="background-image:url('/home-hero.webp')" aria-hidden="true"></div>
+      <div class="mhero-media" style={`background-image:url('${assetUrl('/home-hero.webp')}')`} aria-hidden="true"></div>
       <div class="wrap mhero-in">
         <span class={`hero-pill${live.isLive ? ' is-live' : ' is-soon'}`}>{live.isLive ? '● En direct' : (live.status === 'upcoming' ? 'En direct bientôt' : 'À revoir')}{heroCat ? ` · ${heroCat}` : ''}</span>
         <h1 class="mhero-h">{heroTitle}</h1>
