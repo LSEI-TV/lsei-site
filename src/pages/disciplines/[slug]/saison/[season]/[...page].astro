@@ -7,6 +7,8 @@ import { disciplines } from '../../../../../data/site';
 import { getReplays, getSeasonCounts, seasonSlug, seasonShort, type Video } from '../../../../../lib/youtube';
 import type { GetStaticPaths, Page } from 'astro';
 import { assetExists } from '../../../../../lib/publicAssets';
+import ClubShowcase from '../../../../../components/ClubShowcase.astro';
+import { clubForDiscipline } from '../../../../../data/clubs';
 
 export const getStaticPaths = (async ({ paginate }) => {
   const routes = [];
@@ -22,6 +24,7 @@ export const getStaticPaths = (async ({ paginate }) => {
 }) satisfies GetStaticPaths;
 
 const { page, disc, season } = Astro.props as { page: Page<Video>; disc: (typeof disciplines)[number]; season: string };
+const club = clubForDiscipline(disc.slug);
 
 const seasonCounts = await getSeasonCounts(disc.slug);
 const seasonOptions = [
@@ -29,15 +32,19 @@ const seasonOptions = [
   ...seasonCounts.map((s) => ({ label: `${s.season} · ${s.count}`, value: `/disciplines/${disc.slug}/saison/${seasonSlug(s.season)}`, selected: s.season === season })),
 ];
 ---
-<Base title={`${disc.name} — Saison ${season}`} description={`Les vidéos ${disc.name} de la saison ${season}.`} preloadImage={assetExists(disc.hero) ? disc.hero : undefined} active="disciplines">
-  <section class={`disc-hero${disc.hero ? ' disc-hero--banner' : ''}`}>
-    <div class="wrap" style={`--dc:${disc.colorVar}${disc.hero ? `;--hero-img:url('${disc.hero}')` : ''}`}>
-      <div class="kick">{disc.label} · Saison {season}</div>
-      <h1>{disc.name}</h1>
-      <p>{disc.blurb}</p>
-      <div class="bar"></div>
-    </div>
-  </section>
+<Base title={`${club ? club.name : disc.name} — Saison ${season}`} description={`Les matchs de la saison ${season}.`} preloadImage={club?.hero ?? (assetExists(disc.hero) ? disc.hero : undefined)} active="disciplines">
+  {club ? (
+    <ClubShowcase club={club} matchs={page.total} saisons={seasonCounts.length} showIntro={false} />
+  ) : (
+    <section class={`disc-hero${disc.hero ? ' disc-hero--banner' : ''}`}>
+      <div class="wrap" style={`--dc:${disc.colorVar}${disc.hero ? `;--hero-img:url('${disc.hero}')` : ''}`}>
+        <div class="kick">{disc.label} · Saison {season}</div>
+        <h1>{disc.name}</h1>
+        <p>{disc.blurb}</p>
+        <div class="bar"></div>
+      </div>
+    </section>
+  )}
 
   <section class="section">
     <div class="wrap" style={`--dc:${disc.colorVar}`}>

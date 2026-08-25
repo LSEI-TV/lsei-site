@@ -1,0 +1,87 @@
+---
+// Vitrine « club » réutilisable : hero cinématique (photo du club) + présentation
+// éditoriale + carte club (logo, compétition, lien, chiffres). Piloté par une fiche
+// de src/data/clubs.ts. La vidéothèque par saison est rendue séparément par la page.
+import type { Club } from '../data/clubs';
+import { getDiscipline } from '../data/site';
+
+interface Props {
+  club: Club;
+  matchs: number;   // nb de matchs/vidéos (calculé)
+  saisons: number;  // nb de saisons filmées (calculé)
+  showIntro?: boolean; // présentation détaillée (page d'accueil du club uniquement)
+}
+const { club, matchs, saisons, showIntro = true } = Astro.props;
+const dc = getDiscipline(club.discipline).colorVar;
+---
+<section class="club-hero" style={`--dc:${dc}`}>
+  <div class="club-hero-media" style={`background-image:url('${club.hero}')`} aria-hidden="true"></div>
+  <div class="wrap club-hero-in">
+    <div class="club-crumb"><a href="/disciplines">LSEI</a><span aria-hidden="true">›</span>{club.kicker}</div>
+    <div class="club-k">{club.kicker}</div>
+    <h1 class="club-h">{club.name}</h1>
+    <p class="club-blurb">{club.blurb}</p>
+  </div>
+</section>
+
+{showIntro && (
+  <section class="section club-intro-sec" style={`--dc:${dc}`}>
+    <div class="wrap">
+      <div class="eyebrow" style={`color:${dc}`}>Le club</div>
+      <h2 class="club-sec-h">Un pilier du basket breton</h2>
+      <div class="club-intro">
+        <div class="club-txt">
+          {club.intro.map((p) => <p set:html={p} />)}
+        </div>
+        <aside class="club-card">
+          <span class="club-card-logo" style={`background-image:url('${club.logo}')`}></span>
+          <h3>{club.name}</h3>
+          <div class="club-card-comp" style={`color:${dc}`}>{club.competition}</div>
+          <a class="club-card-site" href={club.url} target="_blank" rel="noopener" style={`color:${dc}`}>Site officiel du club →</a>
+          <div class="club-stats">
+            <div class="club-stat"><b>{saisons}</b><i>Saisons filmées</i></div>
+            <div class="club-stat"><b>{matchs}</b><i>Matchs en ligne</i></div>
+            <div class="club-stat"><b>{club.highlight.num}</b><i>{club.highlight.label}</i></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  /* ---------- Hero cinématique du club (plein cadre, corps clair du site) ---------- */
+  .club-hero { position: relative; overflow: hidden; background: #0a0e17; }
+  .club-hero-media { position: absolute; inset: 0; background-size: cover; background-position: right center; background-color: #0a0e17; }
+  .club-hero-media::after { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, #0a0e17 4%, rgba(10,14,23,.6) 46%, rgba(10,14,23,.2) 78%, rgba(10,14,23,.5) 100%),
+                linear-gradient(0deg, rgba(10,14,23,.7) 0%, transparent 55%); }
+  .club-hero-in { position: relative; padding: 22px 0 54px; }
+  .club-crumb { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  .club-crumb a { color: rgba(255,255,255,.8); text-decoration: none; }
+  .club-k { margin-top: 20px; font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in srgb, var(--dc) 55%, #fff); }
+  .club-h { color: #fff; font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.02em; font-size: clamp(32px, 5.2vw, 56px); line-height: .96; margin: 10px 0 8px; max-width: 16ch; }
+  .club-blurb { color: rgba(255,255,255,.86); font-size: 16px; line-height: 1.5; max-width: 46ch; }
+
+  /* ---------- Présentation éditoriale ---------- */
+  .club-sec-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.01em; font-size: clamp(22px, 3vw, 28px); color: var(--ink); margin: 4px 0 20px; }
+  .club-intro { display: grid; grid-template-columns: 1.55fr 1fr; gap: 24px; align-items: start; }
+  .club-txt p { font-size: 15.5px; line-height: 1.65; color: var(--ink-soft); margin-bottom: 14px; }
+  .club-txt p :global(b) { color: var(--ink); font-weight: 700; }
+  .club-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+  .club-card-logo { display: block; width: 76px; height: 76px; border-radius: 14px; background-color: #fff; background-position: center; background-size: contain; background-repeat: no-repeat; border: 1px solid var(--line); }
+  .club-card h3 { font-family: var(--display); text-transform: uppercase; font-weight: 800; font-size: 18px; margin: 14px 0 2px; color: var(--ink); }
+  .club-card-comp { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+  .club-card-site { display: inline-flex; margin-top: 14px; font-size: 13.5px; font-weight: 700; text-decoration: none; }
+  .club-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; border-top: 1px solid var(--line); padding-top: 16px; }
+  .club-stat b { display: block; font-size: 22px; font-weight: 800; color: var(--ink); font-family: var(--display); }
+  .club-stat i { font-style: normal; font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .04em; }
+
+  @media (max-width: 820px) {
+    .club-intro { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 620px) {
+    .club-hero-in { padding: 16px 0 34px; }
+    .club-hero-media::after { background: linear-gradient(0deg, #0a0e17 34%, rgba(10,14,23,.4) 100%); }
+  }
+</style>
