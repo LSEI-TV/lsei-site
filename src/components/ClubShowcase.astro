@@ -56,7 +56,7 @@ const dc = getDiscipline(club.discipline).colorVar;
   .club-hero-media::after { content: ""; position: absolute; inset: 0;
     background: linear-gradient(90deg, #0a0e17 4%, rgba(10,14,23,.6) 46%, rgba(10,14,23,.2) 78%, rgba(10,14,23,.5) 100%),
                 linear-gradient(0deg, rgba(10,14,23,.7) 0%, transparent 55%); }
-  .club-hero-in { position: relative; padding: 22px 0 54px; }
+  .club-hero-in { position: relative; padding-top: 22px; padding-bottom: 54px; }
   .club-crumb { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.55); }
   .club-crumb a { color: rgba(255,255,255,.8); text-decoration: none; }
   .club-k { margin-top: 20px; font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in srgb, var(--dc) 55%, #fff); }
@@ -81,7 +81,7 @@ const dc = getDiscipline(club.discipline).colorVar;
     .club-intro { grid-template-columns: 1fr; }
   }
   @media (max-width: 620px) {
-    .club-hero-in { padding: 16px 0 34px; }
+    .club-hero-in { padding-top: 16px; padding-bottom: 34px; }
     .club-hero-media::after { background: linear-gradient(0deg, #0a0e17 34%, rgba(10,14,23,.4) 100%); }
   }
 </style>

@@ -1734,7 +1734,7 @@ th, td, figcaption, .chip, .badge {
 .mhero-media::after { content: ""; position: absolute; inset: 0;
   background: linear-gradient(90deg, #0A0E1A 4%, rgba(10,14,26,.62) 46%, rgba(10,14,26,.2) 76%, rgba(10,14,26,.55) 100%),
               linear-gradient(0deg, rgba(10,14,26,.7) 0%, transparent 55%); }
-.mhero-in { position: relative; padding: 62px 0 54px; }
+.mhero-in { position: relative; padding-top: 62px; padding-bottom: 54px; }
 .mhero-h { color: #fff; font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.02em;
   font-size: clamp(30px, 5vw, 54px); line-height: .98; margin: 12px 0 8px; max-width: 18ch; }
 .mhero-sub { color: rgba(255,255,255,.85); font-size: 13.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
@@ -1743,7 +1743,7 @@ th, td, figcaption, .chip, .badge {
 .mhero .hero-play { background: #fff; color: #14161d; }
 .mhero .hero-count { margin-top: 24px; }
 @media (max-width: 620px) {
-  .mhero-in { padding: 34px 0 32px; }
+  .mhero-in { padding-top: 34px; padding-bottom: 32px; }
   .mhero-h { font-size: clamp(26px, 8vw, 34px); }
   .mhero-media::after { background: linear-gradient(0deg, #0A0E1A 34%, rgba(10,14,26,.45) 100%); }
 }
