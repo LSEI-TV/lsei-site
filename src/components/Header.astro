@@ -43,16 +43,15 @@ today = today.charAt(0).toUpperCase() + today.slice(1);
       </button>
     </div>
   </div>
+  <nav class="mobile-nav" id="mobile-nav">
+    <a href="/" class={active === 'direct' ? 'active' : ''}>Accueil</a>
+    <a href="/programme" class={active === 'programme' ? 'active' : ''}>Programme</a>
+    <a href="/disciplines" class={active === 'disciplines' ? 'active' : ''}>Disciplines</a>
+    <a href="/actualites" class={active === 'actualites' ? 'active' : ''}>Actualités</a>
+    <a href="/recherche" class={active === 'recherche' ? 'active' : ''}>Rechercher</a>
+    <a href="/direct">▸ Regarder le direct</a>
+  </nav>
 </header>
-
-<nav class="mobile-nav" id="mobile-nav">
-  <a href="/" class={active === 'direct' ? 'active' : ''}>Accueil</a>
-  <a href="/programme" class={active === 'programme' ? 'active' : ''}>Programme</a>
-  <a href="/disciplines" class={active === 'disciplines' ? 'active' : ''}>Disciplines</a>
-  <a href="/actualites" class={active === 'actualites' ? 'active' : ''}>Actualités</a>
-  <a href="/recherche" class={active === 'recherche' ? 'active' : ''}>Rechercher</a>
-  <a href="/direct">▸ Regarder le direct</a>
-</nav>
 
 <script is:inline>
   // Date du jour, calculée dans le navigateur → toujours à jour (pas figée au build).
