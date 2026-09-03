@@ -36,6 +36,7 @@ const dowFmt = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', timeZone: TZ 
 const dayNumFmt = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', timeZone: TZ });
 const monShortFmt = new Intl.DateTimeFormat('fr-FR', { month: 'short', timeZone: TZ });
 const yearFmt = new Intl.DateTimeFormat('fr-FR', { year: 'numeric', timeZone: TZ });
+const dayFullFmt = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: TZ });
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const heure = (d: Date) => fmtTime.format(d).replace(':', 'h');
 const gcalFmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
@@ -132,67 +133,34 @@ const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.on
             <h2 class="prog-month-h">{cap(monthLabelFmt.format(byMonth.get(mk)![0].date))}</h2>
             {daysOf(byMonth.get(mk)!).map((dayEvents) => {
               const d0 = dayEvents[0];
-              // Couleur de la carte date : celle du sport si tous les matchs du jour sont
-              // du même sport, sinon neutre (gris) pour ne pas induire en erreur.
-              const dayDc = dayEvents.every((e) => e.sport === d0.sport) ? d0.disc.colorVar : 'var(--line-strong)';
-              const dateBlock = (
-                <div class="pev-date">
-                  <span class="pev-dow">{cap(dowFmt.format(d0.date))}</span>
-                  <span class="pev-num">{dayNumFmt.format(d0.date)}</span>
-                  <span class="pev-mon">{monShortFmt.format(d0.date).replace('.', '')}</span>
-                  <span class="pev-yr">{yearFmt.format(d0.date)}</span>
-                </div>
-              );
-              return dayEvents.length === 1 ? (
-                <div class="pev" data-sport={d0.sport} data-vid={vidOf(d0.link)} style={`--dc:${d0.disc.colorVar}`}>
-                  {dateBlock}
-                  <div class="pev-main">
-                  <a class="pev-thumb" href={d0.link || programmeUrl} target={d0.link && d0.link.startsWith('http') ? '_blank' : undefined} rel="noopener" aria-label={d0.main}>
-                    {d0.thumb ? <img src={d0.thumb} alt={d0.main} loading="lazy" onerror={onerrorThumb(d0.thumb)} /> : <span class="pev-duo" style={`background:linear-gradient(135deg,${d0.disc.from},${d0.disc.to})`}></span>}
-                    <span class="pev-time mono">{d0.time}</span>
-                    <span class="pev-tag" style={`background:${d0.disc.tagBg};color:${d0.disc.colorVar}`}>{d0.disc.label}</span>
-                    {d0.live && <span class="pev-livebadge">● LIVE</span>}
-                  </a>
-                  <div class="pev-body">
-                    <div class="pev-head">
-                      <div class="pev-titles">
-                        <h3 class="pev-t">{d0.main}</h3>
-                        {d0.sub && <div class="pev-sub">{d0.sub}</div>}
-                      </div>
-                      <div class="pev-share"><ShareLinks url={d0.shareUrl} title={d0.shareTitle} compact /></div>
-                    </div>
-                    <div class="pev-actions">
-                      <a class="pev-watch" href={d0.link || programmeUrl} target={d0.link && d0.link.startsWith('http') ? '_blank' : undefined} rel="noopener">▸ {d0.live ? 'Regarder le direct' : 'Regarder en direct'}</a>
-                      <a class="pev-cal" href={d0.gcal} target="_blank" rel="noopener">＋ Ajouter au calendrier</a>
-                    </div>
+              // Couleur de l'accent du jour : celle du sport si tous les matchs du jour
+              // sont du même sport, sinon l'accent générique.
+              const dayDc = dayEvents.every((e) => e.sport === d0.sport) ? d0.disc.colorVar : 'var(--accent)';
+              return (
+                <div class="pday" style={`--dc:${dayDc}`}>
+                  <div class="pday-head">
+                    <span class="pday-date">{cap(dayFullFmt.format(d0.date))}</span>
+                    <span class="pday-count">{dayEvents.length} diffusion{dayEvents.length > 1 ? 's' : ''}</span>
                   </div>
-                  </div>
-                </div>
-              ) : (
-                <div class="pev-multi" style={`--dc:${dayDc}`}>
-                  {dateBlock}
-                  <div class="pev-car">
-                    <button type="button" class="pev-car-prev" aria-label="Précédent">‹</button>
-                    <div class="pev-car-track">
-                      {dayEvents.map((e) => (
-                        <div class="pmc" data-sport={e.sport} data-vid={vidOf(e.link)} style={`--dc:${e.disc.colorVar}`}>
-                          <a class="pmc-thumb" href={e.link || programmeUrl} target={e.link && e.link.startsWith('http') ? '_blank' : undefined} rel="noopener" aria-label={e.main}>
-                            {e.thumb ? <img src={e.thumb} alt={e.main} loading="lazy" onerror={onerrorThumb(e.thumb)} /> : <span class="pev-duo" style={`background:linear-gradient(135deg,${e.disc.from},${e.disc.to})`}></span>}
-                            <span class="pev-tag" style={`background:${e.disc.tagBg};color:${e.disc.colorVar}`}>{e.disc.label}</span>
-                          </a>
-                          <div class="pmc-body">
-                            <div class="pmc-t">{e.main}</div>
-                            {e.sub && <div class="pmc-sub">{e.sub}</div>}
-                            <div class="pmc-time mono">{e.time}</div>
-                            <div class="pmc-actions">
-                              <a class="pev-watch sm" href={e.link || programmeUrl} target={e.link && e.link.startsWith('http') ? '_blank' : undefined} rel="noopener">Regarder</a>
-                              <a class="pev-cal sm" href={e.gcal} target="_blank" rel="noopener">＋ Calendrier</a>
-                            </div>
+                  <div class="pday-grid">
+                    {dayEvents.map((e) => (
+                      <div class="pmc" data-sport={e.sport} data-vid={vidOf(e.link)} style={`--dc:${e.disc.colorVar}`}>
+                        <a class="pmc-thumb" href={e.link || programmeUrl} target={e.link && e.link.startsWith('http') ? '_blank' : undefined} rel="noopener" aria-label={e.main}>
+                          {e.thumb ? <img src={e.thumb} alt={e.main} loading="lazy" onerror={onerrorThumb(e.thumb)} /> : <span class="pev-duo" style={`background:linear-gradient(135deg,${e.disc.from},${e.disc.to})`}></span>}
+                          <span class="pev-time mono">{e.time}</span>
+                          <span class="pev-tag" style={`background:${e.disc.tagBg};color:${e.disc.colorVar}`}>{e.disc.label}</span>
+                          {e.live && <span class="pev-livebadge">● LIVE</span>}
+                        </a>
+                        <div class="pmc-body">
+                          <div class="pmc-t">{e.main}</div>
+                          {e.sub && <div class="pmc-sub">{e.sub}</div>}
+                          <div class="pmc-actions">
+                            <a class="pev-watch sm" href={e.link || programmeUrl} target={e.link && e.link.startsWith('http') ? '_blank' : undefined} rel="noopener">▸ Regarder</a>
+                            <a class="pev-cal sm" href={e.gcal} target="_blank" rel="noopener">＋ Cal.</a>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                    <button type="button" class="pev-car-next" aria-label="Suivant">›</button>
+                      </div>
+                    ))}
                   </div>
                 </div>
               );
@@ -234,6 +202,14 @@ const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.on
     /* ---------- Mois ---------- */
     .prog-month { margin-top: 34px; }
     .prog-month-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: .02em; font-size: 20px; color: var(--ink); margin: 0 0 16px; }
+
+    /* ---------- Jour : en-tête + grille uniforme (toutes les diffusions du jour) ---------- */
+    .pday { margin-bottom: 26px; }
+    .pday-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; margin: 0 0 13px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+    .pday-date { font-family: var(--display); font-weight: 800; font-size: 15px; text-transform: uppercase; letter-spacing: .03em; color: var(--ink); }
+    .pday-date::before { content: ''; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--dc, var(--accent)); margin-right: 9px; vertical-align: middle; }
+    .pday-count { font-size: 12px; font-weight: 700; color: var(--dc, var(--accent)); background: color-mix(in srgb, var(--dc, var(--accent)) 13%, var(--surface)); padding: 3px 10px; border-radius: 100px; }
+    .pday-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(228px, 1fr)); gap: 14px; }
 
     /* ---------- Grande ligne (1 événement) ---------- */
     /* Deux cartes séparées : carte DATE à gauche + carte CONTENU à droite. */
@@ -308,19 +284,20 @@ const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.on
       var bar = document.getElementById('prog-filter');
       if (!bar) return;
       var btns = [].slice.call(bar.querySelectorAll('.prog-fbtn'));
-      var rows = [].slice.call(document.querySelectorAll('.pev'));
-      var cards = [].slice.call(document.querySelectorAll('.pmc'));
-      var multis = [].slice.call(document.querySelectorAll('.pev-multi'));
-      var months = [].slice.call(document.querySelectorAll('.prog-month'));
       function apply(s) {
-        rows.forEach(function (r) { r.style.display = (s === 'all' || r.getAttribute('data-sport') === s) ? '' : 'none'; });
-        cards.forEach(function (c) { c.style.display = (s === 'all' || c.getAttribute('data-sport') === s) ? '' : 'none'; });
-        multis.forEach(function (m) {
-          var any = [].slice.call(m.querySelectorAll('.pmc')).some(function (c) { return c.style.display !== 'none'; });
-          m.style.display = any ? '' : 'none';
+        // Cartes de la grille (.pmc) + lignes du bloc temps réel (.pev).
+        [].slice.call(document.querySelectorAll('.pmc, .pev')).forEach(function (c) {
+          c.style.display = (s === 'all' || c.getAttribute('data-sport') === s) ? '' : 'none';
         });
-        months.forEach(function (mo) {
-          var any = [].slice.call(mo.querySelectorAll('.pev, .pev-multi')).some(function (x) { return x.style.display !== 'none'; });
+        // Jour sans carte visible → masqué.
+        [].slice.call(document.querySelectorAll('.pday')).forEach(function (d) {
+          var any = [].slice.call(d.querySelectorAll('.pmc')).some(function (c) { return c.style.display !== 'none'; });
+          d.style.display = any ? '' : 'none';
+        });
+        // Mois sans rien de visible → masqué (le bloc « En ce moment » est géré à part).
+        [].slice.call(document.querySelectorAll('.prog-month')).forEach(function (mo) {
+          if (mo.id === 'prog-rt') return;
+          var any = [].slice.call(mo.querySelectorAll('.pmc, .pev')).some(function (x) { return x.style.display !== 'none'; });
           mo.style.display = any ? '' : 'none';
         });
       }
@@ -329,25 +306,6 @@ const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.on
         if (!b) return;
         btns.forEach(function (x) { x.classList.toggle('active', x === b); });
         apply(b.getAttribute('data-sport'));
-      });
-    })();
-
-    // Flèche « suivant » des carrousels de jour.
-    (function () {
-      document.querySelectorAll('.pev-car').forEach(function (car) {
-        var track = car.querySelector('.pev-car-track');
-        var prev = car.querySelector('.pev-car-prev');
-        var next = car.querySelector('.pev-car-next');
-        if (!track) return;
-        function step() { var c = track.querySelector('.pmc'); return (c ? c.getBoundingClientRect().width + 14 : 260); }
-        function upd() {
-          var scrollable = (track.scrollWidth - track.clientWidth) > 8;
-          if (prev) prev.style.display = scrollable ? '' : 'none';
-          if (next) next.style.display = scrollable ? '' : 'none';
-        }
-        if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
-        if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
-        upd(); window.addEventListener('resize', upd);
       });
     })();
 
