@@ -9,7 +9,6 @@ import { getLiveFeature, getBroadcasts, getReplays, getChannelStats, tagStyle } 
 import { parseProgTitle } from '../lib/programmeTitle';
 import { getCollection } from 'astro:content';
 import { articleCover } from '../lib/articles';
-import { getEvents } from '../lib/events';
 import { assetExists, assetUrl } from '../lib/publicAssets';
 import { defaultSeason, getPalmares, getSeasons, DEFAULT_SEASON } from '../data/billard/seasons';
 import { photoOf, playerSlugs } from '../lib/billardStats';
@@ -52,10 +51,6 @@ const latestArticles = (await getCollection('articles', ({ data }) => !data.draf
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 const fmtArticleDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
-
-// Événements à mettre en avant (bandeau) — collection /admin + affiches déposées
-// dans public/evenements/. Fenêtre d'affichage gérée dans getEvents().
-const events = await getEvents();
 
 // Spotlight billard (remplace l'ancienne section replays) : champion en titre + haut du classement.
 const bilSeason = defaultSeason();
