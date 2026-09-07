@@ -543,10 +543,11 @@ async function fetchLiveState(): Promise<{ live: LiveVid[]; upcoming: LiveVid[] 
   const live: LiveVid[] = [];
   const upcoming: LiveVid[] = [];
   if (uploads) {
-    const recent = await ytPaged(`playlistItems?part=contentDetails&playlistId=${uploads}`, 50);
-    const ids = recent.map((r) => r.contentDetails?.videoId).filter(Boolean).slice(0, 50);
-    if (ids.length) {
-      const vids = await yt(`videos?part=snippet,liveStreamingDetails&id=${ids.join(',')}`);
+    const recent = await ytPaged(`playlistItems?part=contentDetails&playlistId=${uploads}`, 200);
+    const ids = recent.map((r) => r.contentDetails?.videoId).filter(Boolean).slice(0, 200);
+    // L'API videos accepte 50 IDs max par appel → on découpe en lots de 50.
+    for (let k = 0; k < ids.length; k += 50) {
+      const vids = await yt(`videos?part=snippet,liveStreamingDetails&id=${ids.slice(k, k + 50).join(',')}`);
       for (const v of vids.items || []) {
         const d = v.liveStreamingDetails;
         if (!d) continue; // vidéo normale (pas un direct)

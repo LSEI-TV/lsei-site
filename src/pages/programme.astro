@@ -119,6 +119,14 @@ const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.on
         ))}
       </div>
 
+      {monthOrder.length > 1 && (
+        <div class="prog-months" id="prog-months" role="group" aria-label="Choisir le mois">
+          {monthOrder.map((mk, i) => (
+            <button type="button" class={`prog-mbtn${i === 0 ? ' is-on' : ''}`} data-month={mk}>{cap(monthLabelFmt.format(byMonth.get(mk)![0].date))}</button>
+          ))}
+        </div>
+      )}
+
       <div id="prog-rt" class="prog-month" hidden>
         <h2 class="prog-month-h">En ce moment</h2>
         <div id="prog-rt-list"></div>
@@ -128,9 +136,9 @@ const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.on
       {monthOrder.length === 0 ? (
         <p id="prog-empty" class="dek" style="margin-top:26px">Aucune diffusion programmée pour le moment. Revenez bientôt — le programme se met à jour automatiquement dès qu'un direct est annoncé.</p>
       ) : (
-        monthOrder.map((mk) => (
-          <div class="prog-month">
-            <h2 class="prog-month-h">{cap(monthLabelFmt.format(byMonth.get(mk)![0].date))}</h2>
+        monthOrder.map((mk, i) => (
+          <div class="prog-month" data-month={mk} style={i === 0 ? undefined : 'display:none'}>
+            {monthOrder.length === 1 && <h2 class="prog-month-h">{cap(monthLabelFmt.format(byMonth.get(mk)![0].date))}</h2>}
             {daysOf(byMonth.get(mk)!).map((dayEvents) => {
               const d0 = dayEvents[0];
               // Couleur de l'accent du jour : celle du sport si tous les matchs du jour
@@ -198,6 +206,12 @@ const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.on
     .prog-fbtn.active .pf-ic { color: var(--dc, var(--accent)); }
     .prog-fbtn[data-sport="all"].active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
     .prog-fbtn[data-sport="all"].active .pf-ic { color: var(--on-accent); }
+
+    /* ---------- Onglets par mois ---------- */
+    .prog-months { display: flex; flex-wrap: wrap; gap: 8px; margin: -14px 0 28px; }
+    .prog-mbtn { font: inherit; font-family: var(--display); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: .03em; padding: 9px 18px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-soft); cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
+    .prog-mbtn:hover { color: var(--ink); border-color: var(--ink-faint); }
+    .prog-mbtn.is-on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 
     /* ---------- Mois ---------- */
     .prog-month { margin-top: 34px; }
@@ -278,35 +292,48 @@ const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.on
   </style>
 
   <script is:inline>
-    // Filtres par sport : masque grandes lignes + cartes des carrousels, puis les
-    // conteneurs (jour à plusieurs / mois) devenus vides.
+    // Filtres combinés : SPORT (boutons) + MOIS (onglets). On affiche le mois actif
+    // (un onglet à la fois) et, dans ce mois, uniquement le sport choisi.
     (function () {
-      var bar = document.getElementById('prog-filter');
-      if (!bar) return;
-      var btns = [].slice.call(bar.querySelectorAll('.prog-fbtn'));
-      function apply(s) {
-        // Cartes de la grille (.pmc) + lignes du bloc temps réel (.pev).
+      var sportBar = document.getElementById('prog-filter');
+      var monthBar = document.getElementById('prog-months');
+      var monthBtns = monthBar ? [].slice.call(monthBar.querySelectorAll('.prog-mbtn')) : [];
+      var activeSport = 'all';
+      var activeMonth = monthBtns.length ? monthBtns[0].getAttribute('data-month') : 'all';
+      function apply() {
+        // Cartes (grille) + lignes temps réel : filtrées par sport.
         [].slice.call(document.querySelectorAll('.pmc, .pev')).forEach(function (c) {
-          c.style.display = (s === 'all' || c.getAttribute('data-sport') === s) ? '' : 'none';
+          c.style.display = (activeSport === 'all' || c.getAttribute('data-sport') === activeSport) ? '' : 'none';
         });
         // Jour sans carte visible → masqué.
         [].slice.call(document.querySelectorAll('.pday')).forEach(function (d) {
           var any = [].slice.call(d.querySelectorAll('.pmc')).some(function (c) { return c.style.display !== 'none'; });
           d.style.display = any ? '' : 'none';
         });
-        // Mois sans rien de visible → masqué (le bloc « En ce moment » est géré à part).
+        // Mois : visible seulement s'il est l'onglet actif ET contient des cartes visibles.
+        // (« En ce moment » — #prog-rt — est géré à part par le temps réel.)
         [].slice.call(document.querySelectorAll('.prog-month')).forEach(function (mo) {
           if (mo.id === 'prog-rt') return;
-          var any = [].slice.call(mo.querySelectorAll('.pmc, .pev')).some(function (x) { return x.style.display !== 'none'; });
-          mo.style.display = any ? '' : 'none';
+          var monthOk = (activeMonth === 'all' || mo.getAttribute('data-month') === activeMonth);
+          var any = [].slice.call(mo.querySelectorAll('.pmc')).some(function (x) { return x.style.display !== 'none'; });
+          mo.style.display = (monthOk && any) ? '' : 'none';
         });
       }
-      bar.addEventListener('click', function (e) {
+      if (sportBar) sportBar.addEventListener('click', function (e) {
         var b = e.target.closest('.prog-fbtn');
         if (!b) return;
-        btns.forEach(function (x) { x.classList.toggle('active', x === b); });
-        apply(b.getAttribute('data-sport'));
+        [].slice.call(sportBar.querySelectorAll('.prog-fbtn')).forEach(function (x) { x.classList.toggle('active', x === b); });
+        activeSport = b.getAttribute('data-sport');
+        apply();
       });
+      if (monthBar) monthBar.addEventListener('click', function (e) {
+        var b = e.target.closest('.prog-mbtn');
+        if (!b) return;
+        monthBtns.forEach(function (x) { x.classList.toggle('is-on', x === b); });
+        activeMonth = b.getAttribute('data-month');
+        apply();
+      });
+      apply();
     })();
 
     // TEMPS RÉEL : injecte les directs (en cours + programmés) présents dans live.json
