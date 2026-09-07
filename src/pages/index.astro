@@ -216,32 +216,6 @@ const slides = programme
     </section>
   )}
 
-  <!-- PROCHAINS DIRECTS -->
-  {slides.length > 0 && (
-    <section class="section" style="padding-bottom:0">
-      <div class="wrap">
-        <div class="sec-head"><div><div class="eyebrow">À venir</div><h2>Prochains directs</h2></div><a href="/programme" class="link">Tous les événements →</a></div>
-        <div class="pdrow">
-          {slides.slice(0, 4).map((s) => (
-            <a href={s.href} class="pdcard" style={`--dc:${getDiscipline(s.sport).colorVar}`}>
-              <span class="pdthumb">
-                {s.thumb
-                  ? <img src={s.thumb} alt="" loading="lazy" onerror={s.thumb.includes('maxresdefault') ? `this.onerror=null;this.src='${s.thumb.replace('maxresdefault', 'hqdefault')}'` : undefined} />
-                  : <span></span>}
-                <span class="pdjx" data-jxshort={s.iso} style={`background:${getDiscipline(s.sport).colorVar}`}>J‑—</span>
-              </span>
-              <span class="pdbody">
-                <span class="pdcat" style={`color:${getDiscipline(s.sport).colorVar}`}>{tagLabel(s.sport)}</span>
-                <span class="pdtitle">{s.main}</span>
-                <span class="pdwhen">{s.when}</span>
-              </span>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
-  )}
-
   <script is:inline>
     (function () {
       var el = document.querySelector('.hero-count');
@@ -257,12 +231,6 @@ const slides = programme
         };
         tick(); setInterval(tick, 1000);
       }
-    })();
-    (function () {
-      var chips = [].slice.call(document.querySelectorAll('[data-jxshort]'));
-      if (!chips.length) return;
-      var upd = function () { chips.forEach(function (el) { var d = Math.floor((new Date(el.getAttribute('data-jxshort')).getTime() - Date.now()) / 86400000); el.textContent = d <= 0 ? '●' : 'J‑' + d; }); };
-      upd(); setInterval(upd, 60000);
     })();
     // Synchro TEMPS RÉEL de la « une » avec live.json (mis à jour toutes les 5 min) :
     // dès qu'un direct est en cours, l'accueil bascule en ● EN DIRECT et pointe dessus,
