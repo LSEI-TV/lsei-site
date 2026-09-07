@@ -161,6 +161,15 @@ const gcalUrl = heroDate
   ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(heroTitle + ' — LSEI')}&dates=${_gcalFmt(heroDate)}/${_gcalFmt(new Date(heroDate.getTime() + 2 * 3600 * 1000))}&details=${encodeURIComponent('En direct sur LSEI — Le Sport en Image · https://lsei.tv/direct')}`
   : '';
 
+// Bouton « Regarder » de la une :
+// - diffusion À VENIR → on envoie vers la CHAÎNE (le lien d'une vidéo à venir mène à son
+//   replay une fois passée, tant que le site n'a pas été reconstruit) ;
+// - direct EN COURS ou REPLAY → vers la vidéo précise.
+// (Quand un direct démarre, le script temps réel repointe de toute façon le bouton dessus.)
+const heroBtnHref = !live ? site.youtubeUrl
+  : live.status === 'upcoming' ? site.youtubeUrl
+  : (live.id ? `https://www.youtube.com/watch?v=${live.id}` : (live.href || site.youtubeUrl));
+
 // Concept 3 « Prochain direct » : le direct programmé le plus proche → carte compte à rebours.
 const nextLive = programme.find((it) => !it.live && it.date.valueOf() > _now) || null;
 const restProg = programme.filter((it) => it !== nextLive);
@@ -209,7 +218,7 @@ const slides = programme
           </div>
         )}
         <div class="hero-actions">
-          <a class="btn hero-play" href={live.id ? `https://www.youtube.com/watch?v=${live.id}` : (live.href || site.youtubeUrl)} target={live.id ? '_blank' : undefined} rel="noopener">▸ {live.isLive ? 'Regarder le direct' : 'Regarder'}</a>
+          <a class="btn hero-play" href={heroBtnHref} target="_blank" rel="noopener">▸ {live.isLive ? 'Regarder le direct' : 'Regarder'}</a>
           {!live.isLive && gcalUrl && <a class="btn ghost hero-cal" href={gcalUrl} target="_blank" rel="noopener">＋ Ajouter au calendrier</a>}
         </div>
       </div>
