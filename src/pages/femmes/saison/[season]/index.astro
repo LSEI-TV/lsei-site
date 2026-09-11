@@ -3,6 +3,7 @@ import Base from '../../../../layouts/Base.astro';
 import HubNav from '../../../../components/HubNav.astro';
 import SeasonPicker from '../../../../components/SeasonPicker.astro';
 import PlayerSearch from '../../../../components/PlayerSearch.astro';
+import AffichesTournois from '../../../../components/AffichesTournois.astro';
 import { photoOf, fromPov, seasonHighlights, playerSlugs } from '../../../../lib/billardStats';
 import { getFemmesSeasons, getFemmesPalmares, FEMMES_DEFAULT_SEASON } from '../../../../data/billard/seasonsFemmes';
 const { slugOf } = playerSlugs(getFemmesSeasons());
@@ -136,6 +137,8 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
           <p class="dek" style="margin:6px 0 0">Ils s'afficheront ici au fil de la saison {season.label}, dès les premières étapes disputées.</p>
         </div>
         )}
+
+        <AffichesTournois calendar={calSeason.calendar} seasonSlug={calSeason.slug} seasonStatus={season.status} />
       </aside>
     </div>
   </section>

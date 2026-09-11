@@ -1,0 +1,195 @@
+---
+// MINI-SITE CLUB (« site dans le site ») — Présentation + Effectif + Stats.
+// Généré pour chaque club NM1 ayant `hasSite: true`. Gabarit réutilisable.
+import Base from '../../layouts/Base.astro';
+import { NM1_LABEL, NM1_POOL, SEASON, SEASON_START, nmClubs, nmClubBy, rosterOf, nm1Standings, seasonStarted } from '../../data/basket';
+import { clubs as clubFiches } from '../../data/clubs';
+import { assetExists, assetUrl } from '../../lib/publicAssets';
+
+export function getStaticPaths() {
+  return nmClubs.filter((c) => c.hasSite).map((c) => ({ params: { slug: c.slug }, props: { slug: c.slug } }));
+}
+const { slug } = Astro.props as { slug: string };
+const club = nmClubBy(slug)!;
+const fiche = clubFiches.find((f) => f.slug === slug) || null;
+const roster = rosterOf(slug);
+const standings = nm1Standings();
+const rank = standings.findIndex((r) => r.slug === slug);
+const myRow = rank >= 0 ? standings[rank] : null;
+const started = seasonStarted();
+
+// Stats d'équipe (moyennes) + leaders, calculés depuis l'effectif.
+const withStats = roster.filter((p) => p.stats);
+const teamPts = withStats.reduce((s, p) => s + (p.stats!.pts), 0);
+const leader = (key: 'pts' | 'reb' | 'ast') =>
+  withStats.length ? withStats.reduce((b, p) => (p.stats![key] > b.stats![key] ? p : b)) : null;
+const leaders = [
+  { lab: 'Points', key: 'pts' as const, unit: 'pts', p: leader('pts') },
+  { lab: 'Rebonds', key: 'reb' as const, unit: 'reb', p: leader('reb') },
+  { lab: 'Passes', key: 'ast' as const, unit: 'pd', p: leader('ast') },
+];
+const initials = (n: string) => n.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+const cc = club.color;
+const hasLogo = assetExists(club.logo);
+const logoSrc = hasLogo ? assetUrl(club.logo!) : null;
+---
+<Base title={`${club.name} — ${NM1_LABEL}`} description={fiche?.blurb ?? `${club.name}, club de ${NM1_LABEL} filmé par LSEI.`} active="disciplines">
+  <!-- Nav club -->
+  <div class="cl-nav" style={`--cc:${cc}`}>
+    <div class="wrap">
+      <a href="/basket" class="cl-back">← {NM1_LABEL}</a>
+      <span class="cl-nav-club">
+        <span class="cl-nav-logo">{logoSrc ? <img src={logoSrc} alt="" /> : <b>{club.short}</b>}</span>
+        {club.name}
+      </span>
+      <nav class="cl-links">
+        <a href="#presentation">Présentation</a>
+        <a href="#effectif">Effectif</a>
+        <a href="#stats">Stats</a>
+        <a href="/disciplines/basket">Vidéos</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- HERO club -->
+  <section class="cl-hero" style={`--cc:${cc}${fiche?.hero ? `;--hero:url('${fiche.hero}')` : ''}`}>
+    <div class="wrap cl-hero-in">
+      <span class="cl-logo-big">{logoSrc ? <img src={logoSrc} alt={club.name} /> : <b>{club.short}</b>}</span>
+      <div class="cl-hero-txt">
+        <div class="cl-kick">{fiche?.kicker ?? `Basket · ${NM1_LABEL}`}</div>
+        <h1 class="cl-h">{club.name}</h1>
+        {fiche?.blurb && <p class="cl-blurb">{fiche.blurb}</p>}
+        <div class="cl-hero-stats">
+          {started && myRow && <div><b>{rank + 1}<sup>e</sup></b><span>Classement</span></div>}
+          {started && myRow && <div><b>{myRow.w}-{myRow.l}</b><span>Bilan</span></div>}
+          <div><b>{NM1_POOL}</b><span>NM1 · {SEASON}</span></div>
+          <div><b>{roster.length}</b><span>Joueurs</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      {!started && <div class="cl-sample">🗓️ <b>Saison {SEASON}</b> — le championnat débute le {SEASON_START}. Les statistiques des joueurs s'afficheront dès la 1ʳᵉ journée.</div>}
+
+      <!-- PRÉSENTATION -->
+      {fiche?.intro?.length ? (
+        <div id="presentation" class="cl-block">
+          <div class="sec-head"><div><div class="eyebrow" style={`color:${cc}`}>Le club</div><h2>Présentation</h2></div></div>
+          <div class="cl-intro">{fiche.intro.map((p) => <p set:html={p}></p>)}</div>
+        </div>
+      ) : null}
+
+      <!-- EFFECTIF -->
+      <div id="effectif" class="cl-block">
+        <div class="sec-head"><div><div class="eyebrow" style={`color:${cc}`}>L'équipe</div><h2>Effectif</h2></div></div>
+        <div class="cl-roster">
+          {roster.map((p) => (
+            <div class="cl-player" style={`--cc:${cc}`}>
+              {p.number != null && <span class="cl-num">{p.number}</span>}
+              <span class="cl-av">{p.photo ? <img src={p.photo} alt={p.name} onerror="this.remove()" /> : <span class="cl-av-i">{initials(p.name)}</span>}</span>
+              <span class="cl-pname">{p.name}</span>
+              <span class="cl-pmeta">{p.pos}{p.height ? ` · ${p.height}` : ''}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- STATS -->
+      {withStats.length > 0 && (
+        <div id="stats" class="cl-block">
+          <div class="sec-head"><div><div class="eyebrow" style={`color:${cc}`}>Saison</div><h2>Statistiques</h2></div></div>
+          <div class="cl-leaders">
+            {leaders.map((L) => L.p && (
+              <div class="cl-leader" style={`--cc:${cc}`}>
+                <div class="cl-leader-lab">Meilleur · {L.lab}</div>
+                <div class="cl-leader-val">{L.p.stats![L.key].toFixed(1).replace('.', ',')}<small> {L.unit}/match</small></div>
+                <div class="cl-leader-name">#{L.p.number} {L.p.name}</div>
+              </div>
+            ))}
+          </div>
+          <table class="cl-stats">
+            <thead><tr><th>#</th><th>Joueur</th><th>Poste</th><th>J</th><th>Pts</th><th>Reb</th><th>Pd</th></tr></thead>
+            <tbody>
+              {[...roster].filter((p) => p.stats).sort((a, b) => b.stats!.pts - a.stats!.pts).map((p) => (
+                <tr>
+                  <td class="cl-st-n">{p.number}</td>
+                  <td class="cl-st-name">{p.name}</td>
+                  <td class="cl-st-pos">{p.pos}</td>
+                  <td>{p.stats!.g}</td>
+                  <td class="cl-st-pts">{p.stats!.pts.toFixed(1).replace('.', ',')}</td>
+                  <td>{p.stats!.reb.toFixed(1).replace('.', ',')}</td>
+                  <td>{p.stats!.ast.toFixed(1).replace('.', ',')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {fiche?.url && <a href={fiche.url} target="_blank" rel="noopener" class="cl-official" style={`--cc:${cc}`}>Site officiel du club ↗</a>}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .cl-nav { position: sticky; top: 0; z-index: 30; background: var(--surface); border-bottom: 1px solid var(--line); }
+  .cl-nav .wrap { display: flex; align-items: center; gap: 18px; min-height: 52px; flex-wrap: wrap; }
+  .cl-back { font-size: 13px; font-weight: 700; color: var(--cc); text-decoration: none; }
+  .cl-nav-club { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 14px; color: var(--ink); }
+  .cl-nav-logo { width: 26px; height: 26px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: color-mix(in srgb, var(--cc) 16%, var(--surface-2)); font-size: 10px; font-weight: 800; color: var(--cc); }
+  .cl-nav-logo img { width: 100%; height: 100%; object-fit: contain; }
+  .cl-links { margin-left: auto; display: flex; gap: 18px; }
+  .cl-links a { font-size: 13px; font-weight: 600; color: var(--ink-soft); text-decoration: none; }
+  .cl-links a:hover { color: var(--cc); }
+
+  .cl-hero { position: relative; overflow: hidden; background: linear-gradient(135deg, color-mix(in srgb, var(--cc) 22%, #0a0c11), #0a0c11); border-bottom: 1px solid var(--line); }
+  .cl-hero-in { position: relative; display: flex; align-items: center; gap: 26px; padding: 40px 0; flex-wrap: wrap; }
+  .cl-logo-big { width: 108px; height: 108px; border-radius: 20px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; overflow: hidden; flex: none; }
+  .cl-logo-big img { width: 82%; height: 82%; object-fit: contain; }
+  .cl-logo-big b { font-family: var(--display); font-weight: 800; font-size: 34px; color: #fff; }
+  .cl-kick { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: color-mix(in srgb, var(--cc) 60%, #fff); }
+  .cl-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(26px, 4vw, 44px); line-height: 1.02; margin: 8px 0 0; color: #fff; }
+  .cl-blurb { color: rgba(255,255,255,.82); font-size: 15px; margin: 10px 0 0; max-width: 560px; }
+  .cl-hero-stats { display: flex; gap: 26px; margin-top: 18px; }
+  .cl-hero-stats b { font-family: var(--display); font-weight: 800; font-size: 24px; color: #fff; display: block; line-height: 1; }
+  .cl-hero-stats sup { font-size: .5em; }
+  .cl-hero-stats span { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: rgba(255,255,255,.6); }
+
+  .cl-sample { background: color-mix(in srgb, #E0A020 14%, var(--surface)); border: 1px solid color-mix(in srgb, #E0A020 45%, var(--line)); border-radius: 10px; padding: 11px 15px; font-size: 13.5px; margin-bottom: 26px; }
+  .cl-block { margin-bottom: 36px; }
+  .cl-intro p { color: var(--ink-soft); font-size: 15px; line-height: 1.6; margin: 0 0 12px; }
+  .cl-intro :global(b) { color: var(--ink); }
+
+  .cl-roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+  .cl-player { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; padding: 18px 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  .cl-num { position: absolute; top: 8px; left: 10px; font-family: var(--display); font-weight: 800; font-size: 15px; color: var(--cc); }
+  .cl-av { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: color-mix(in srgb, var(--cc) 14%, var(--surface-2)); }
+  .cl-av img { width: 100%; height: 100%; object-fit: cover; }
+  .cl-av-i { font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--cc); }
+  .cl-pname { font-weight: 700; font-size: 13.5px; color: var(--ink); margin-top: 4px; }
+  .cl-pmeta { font-size: 11.5px; color: var(--ink-faint); }
+
+  .cl-leaders { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 18px; }
+  .cl-leader { border: 1px solid var(--line); border-top: 3px solid var(--cc); border-radius: 12px; background: var(--surface); padding: 14px 16px; }
+  .cl-leader-lab { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-faint); font-weight: 700; }
+  .cl-leader-val { font-family: var(--display); font-weight: 800; font-size: 30px; color: var(--ink); line-height: 1.1; margin: 4px 0 2px; }
+  .cl-leader-val small { font-size: .4em; color: var(--ink-soft); font-weight: 600; }
+  .cl-leader-name { font-size: 13px; color: var(--ink-soft); font-weight: 600; }
+
+  .cl-stats { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .cl-stats th { text-align: center; font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-faint); padding: 7px 6px; border-bottom: 1px solid var(--line); }
+  .cl-stats td { text-align: center; padding: 8px 6px; border-bottom: 1px solid var(--line); color: var(--ink-soft); }
+  .cl-stats .cl-st-n { font-weight: 800; color: var(--cc); }
+  .cl-stats .cl-st-name { text-align: left; font-weight: 700; color: var(--ink); }
+  .cl-stats .cl-st-pos { text-align: left; color: var(--ink-faint); }
+  .cl-stats .cl-st-pts { font-weight: 800; color: var(--ink); }
+
+  .cl-official { display: inline-block; margin-top: 6px; font-weight: 700; font-size: 14px; color: var(--cc); text-decoration: none; border: 1px solid var(--cc); border-radius: 8px; padding: 9px 16px; }
+
+  @media (max-width: 620px) {
+    .cl-links { width: 100%; margin-left: 0; }
+    .cl-hero-in { gap: 18px; }
+  }
+</style>

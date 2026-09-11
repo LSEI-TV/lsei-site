@@ -1,0 +1,23 @@
+AFFICHES DES TOURNOIS — Blackball Master, saison 2026-2027
+==========================================================
+
+Dépose l'affiche de chaque tournoi dans CE dossier, nommée EXACTEMENT
+d'après le tournoi (format portrait, .webp de préférence, .png accepté) :
+
+    tn1.webp        → Tournoi National 1  (Fumel)
+    mondial.webp    → Championnats du Monde (Londres)
+    tn2.webp        → Tournoi National 2  (Albi)
+    tn3.webp        → Tournoi National 3  (à venir)
+    tn4.webp        → Tournoi National 4  (Villeneuve-sur-Lot)
+    tn5.webp        → Tournoi National 5  (Hazebrouck)
+    tn6.webp        → Tournoi National 6  (Châtellerault)
+    tn7.webp        → Tournoi National 7  (St Fulgent)
+    tn8-cdf.webp    → Tournoi National 8 & Coupe de France (Villeneuve-sur-Lot)
+    france.webp     → Championnats de France (Nord)
+
+Le site affiche l'affiche automatiquement dès qu'elle est présente.
+Tant qu'un fichier manque, un emplacement « Affiche à venir » s'affiche
+à la place (aucune image cassée).
+
+Astuce : CONVERTIR-EN-WEBP.bat (racine du projet) convertit un PNG/JPG en WEBP.
+Si tu ne peux fournir qu'un .png, nomme-le p.ex. tn1.png et préviens-moi.

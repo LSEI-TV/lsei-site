@@ -64,6 +64,7 @@ export interface Discipline {
 export const disciplines: Discipline[] = [
   {
     slug: 'basket',
+    hub: '/basket',
     hero: '/heroes/basket.webp',
     name: 'Basketball',
     sub: 'Nationale Masculine 1',

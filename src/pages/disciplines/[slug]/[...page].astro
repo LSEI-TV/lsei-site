@@ -42,7 +42,7 @@ const categoryOptions = [
 ];
 ---
 <Base title={club ? club.name : disc.name} description={club ? club.blurb : disc.blurb} preloadImage={club?.hero ?? (assetExists(disc.hero) ? disc.hero : undefined)} active="disciplines" image={videos[0]?.thumb}>
-  {disc.hub && <HubNav season={LANDING_SEASON} dataSeason={DEFAULT_SEASON} active="videos" />}
+  {disc.slug === 'billard' && <HubNav season={LANDING_SEASON} dataSeason={DEFAULT_SEASON} active="videos" />}
 
   {club ? (
     <ClubShowcase club={club} matchs={page.total} saisons={seasonCounts.length} showIntro={page.currentPage === 1} />

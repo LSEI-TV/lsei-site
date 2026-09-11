@@ -1,0 +1,45 @@
+LOGOS DES CLUBS — Basketball NM1, Poule B, saison 2026-2027
+===========================================================
+
+Dépose le logo de chaque club dans SON dossier, en le nommant EXACTEMENT :
+
+    logo.webp
+
+(format .webp de préférence ; .png accepté si besoin — voir plus bas.)
+
+Exemple : le logo du Pays de Fougères se trouve dans
+    public/basket/fougeres/logo.webp   ✅ (déjà en place)
+
+Le site affiche automatiquement le logo dès qu'il est présent.
+Tant qu'un dossier n'a pas de logo.webp, une pastille avec les
+initiales du club s'affiche à la place (aucune image cassée).
+
+Pourquoi des noms de dossiers en minuscules sans accents ni espaces ?
+--------------------------------------------------------------------
+Le serveur en ligne (Linux) est sensible à la casse et aux accents dans
+les adresses. « fougeres » fonctionne partout ; « PAYS FOUGERES BASKET »
+ou « Fougères » casseraient l'affichage une fois en ligne. Le vrai nom du
+club (avec accents et majuscules) est géré dans le code, pas dans le dossier.
+
+Correspondance dossier → club (Poule B 2026-2027)
+-------------------------------------------------
+  fougeres     → Pays de Fougères      (logo en place)
+  angers       → Angers
+  bordeaux     → Bordeaux
+  challans     → Challans
+  chartres     → Chartres
+  laval        → Laval
+  lorient      → Lorient
+  pole-france  → Pôle France (INSEP / CFBB)
+  rennes       → Rennes
+  sables       → Les Sables d'Olonne
+  tarbes       → Tarbes Lourdes
+  toulouse     → Toulouse
+  tours        → Tours
+  vitre        → Vitré
+
+Astuce : pour convertir un PNG/JPG en WEBP, tu peux utiliser
+CONVERTIR-EN-WEBP.bat à la racine du projet.
+
+Si tu ne peux mettre qu'un .png : nomme-le logo.png et préviens-moi,
+je basculerai le code sur .png pour ce club.

@@ -1,0 +1,155 @@
+---
+// Cadre « Affiches des tournois » réutilisable (Masters, Femmes, Para fauteuil,
+// Para malvoyants). Affiche uniquement les affiches réellement déposées dans
+// public/<folder>/<saison>/<slug>.webp, + un compte à rebours du prochain
+// rendez-vous. Le cadre se cale en hauteur sur le calendrier (cf. script).
+import { assetExists, assetUrl } from '../lib/publicAssets';
+import type { SeasonEvent } from '../data/billard/seasons';
+
+interface Props {
+  calendar: SeasonEvent[];
+  seasonSlug: string;
+  seasonStatus?: string;
+  /** dossier public des affiches (par défaut partagé avec le Masters). */
+  folder?: string;
+}
+const { calendar, seasonSlug, seasonStatus, folder = '/billard/affiches' } = Astro.props;
+
+const evSlug = (e: SeasonEvent) =>
+  e.slug ?? e.short.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const datePhrase = (d: string) => {
+  const m = d.match(/^(\d+)\s*-\s*(\d+)\s+(.+)$/);
+  return m ? `du ${m[1]} au ${m[2]} ${m[3]}` : d;
+};
+const posters = calendar
+  .map((e) => {
+    const path = e.poster ?? `${folder}/${seasonSlug}/${evSlug(e)}.webp`;
+    return { e, src: assetExists(path) ? assetUrl(path) : null };
+  })
+  .filter((p): p is { e: SeasonEvent; src: string } => p.src !== null);
+const showPosters = posters.length > 0 || seasonStatus === 'upcoming';
+const upcomingEvents = calendar
+  .filter((e) => e.start)
+  .map((e) => ({ start: e.start, short: e.short, place: e.place, date: datePhrase(e.date) }));
+---
+{showPosters && (
+  <div class="hub-card aff-card" data-aff-card>
+    <div class="hub-card-h"><span>Affiches des tournois</span></div>
+    <div class="aff-body">
+      <div class="aff-grid">
+        {posters.map(({ e, src }) => (
+          <div class={`aff k-${e.kind}`}>
+            <a href={src} target="_blank" rel="noopener" class="aff-img" title={`${e.name} — ${e.place} · ${e.date}`}>
+              <img src={src} alt={`Affiche ${e.name} — ${e.place}`} loading="lazy" /><span class="aff-zoom">⤢</span>
+            </a>
+            <span class="aff-cap"><b>{e.short}</b> · {e.place}</span>
+            <span class="aff-org">Une compétition de la</span>
+            <a href="https://www.ffbillard.com/" target="_blank" rel="noopener" class="aff-ffb">FFBILLARD</a>
+          </div>
+        ))}
+      </div>
+      <div class="aff-next" data-aff-next hidden>
+        <div class="an-lab">⏱ Prochain rendez-vous</div>
+        <div class="an-count"><b data-an-days>—</b><span data-an-unit>jours</span></div>
+        <div class="an-tn" data-an-tn></div>
+        <div class="an-place" data-an-place></div>
+        <div class="an-date" data-an-date></div>
+      </div>
+    </div>
+    <script type="application/json" data-aff-events set:html={JSON.stringify(upcomingEvents)}></script>
+  </div>
+)}
+
+<style>
+  /* Le haut ET la hauteur de la carte sont calés sur le calendrier par script
+     (voir plus bas), indépendamment de la hauteur des colonnes. */
+  .aff-card { display: flex; flex-direction: column; }
+  /* Corps en 2 colonnes : affiche(s) à gauche, compte à rebours à droite. */
+  .aff-body { display: flex; gap: 14px; flex: 1 1 auto; min-height: 0; }
+  /* Colonne affiches : empilées, alignées à gauche ; défilement fin sans flèches. */
+  .aff-grid { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; flex: 0 0 auto; width: 150px; min-height: 0; overflow-y: auto; scrollbar-width: thin; }
+  .aff-grid::-webkit-scrollbar { width: 7px; }
+  .aff-grid::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+  .aff-grid::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--ink) 20%, transparent); border-radius: 7px; }
+  .aff-grid::-webkit-scrollbar-track { background: transparent; }
+  .aff { display: flex; flex-direction: column; align-items: flex-start; text-decoration: none; color: inherit; width: 100%; }
+  .aff-img { position: relative; display: block; width: 100%; aspect-ratio: 210 / 297; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--surface-2); }
+  .aff-img img { width: 100%; height: 100%; object-fit: contain; display: block; transition: transform .25s ease; }
+  .aff-img:hover img { transform: scale(1.04); }
+  .aff-zoom { position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; font-size: 12px; color: #fff; background: rgba(0,0,0,.55); opacity: 0; transition: opacity .2s; }
+  .aff-img:hover .aff-zoom { opacity: 1; }
+  .aff-cap { width: 100%; padding: 7px 2px 0; font-size: 11.5px; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .aff-cap b { color: var(--ink); }
+  .aff-org { display: block; margin-top: 4px; font-size: 10.5px; color: var(--ink-faint); line-height: 1.2; }
+  .aff-ffb { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .03em; color: var(--c-billard); text-decoration: none; }
+  .aff-ffb:hover { text-decoration: underline; }
+  .aff.k-coupe .aff-img, .aff.k-france .aff-img { box-shadow: inset 0 3px 0 var(--c-billard); }
+  /* Compte à rebours « prochain rendez-vous » */
+  .aff-next { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; text-align: center; padding: 12px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--c-billard) 22%, var(--line)); background: color-mix(in srgb, var(--c-billard) 8%, var(--surface-2)); }
+  .an-lab { font-size: 10.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-faint); }
+  .an-count { margin: 8px 0 6px; }
+  .an-count b { font-family: var(--display); font-weight: 800; font-size: 40px; line-height: 1; color: var(--c-billard); }
+  .an-count span { display: none; }
+  .an-tn { font-weight: 800; font-size: 15px; color: var(--ink); }
+  .an-place { font-size: 12.5px; color: var(--ink-soft); }
+  .an-date { font-size: 12px; color: var(--ink-faint); margin-top: 2px; }
+  @media (max-width: 860px) { .aff-body { flex-direction: column; } .aff-grid { width: 168px; } }
+</style>
+
+<script>
+  // Cale le HAUT (marge) et la HAUTEUR de la carte « Affiches » sur le calendrier,
+  // indépendamment de la hauteur des colonnes. Appels directs (pas de rAF, suspendu
+  // en arrière-plan). En mobile / 1 colonne : position/hauteur naturelles.
+  const syncAffHeight = () => {
+    const card = document.querySelector('[data-aff-card]') as HTMLElement | null;
+    const cal = document.querySelector('.parcours-box') as HTMLElement | null;
+    if (!card) return;
+    card.style.marginTop = '';
+    card.style.height = '';
+    if (cal) cal.style.minHeight = '';
+    if (!cal || !window.matchMedia('(min-width: 861px)').matches) return;
+    const calR = cal.getBoundingClientRect();
+    const cardR = card.getBoundingClientRect(); // taille/position NATURELLES après reset
+    // La carte ne remonte jamais (marge ≥ 0, pas de chevauchement du cadre du dessus).
+    const mt = Math.max(0, calR.top - cardR.top);
+    const cardTop = cardR.top + mt;
+    // Bas commun = le plus bas entre le calendrier et le contenu naturel de la carte.
+    // Si la carte a besoin de plus de place, on AGRANDIT le calendrier d'autant → les
+    // deux cadres finissent au même niveau, et l'affiche tient sans ascenseur.
+    const desiredBottom = Math.max(calR.bottom, cardTop + cardR.height);
+    if (desiredBottom > calR.bottom + 1) cal.style.minHeight = (desiredBottom - calR.top) + 'px';
+    card.style.marginTop = mt + 'px';
+    card.style.height = (desiredBottom - cardTop) + 'px';
+  };
+  syncAffHeight();
+  window.addEventListener('resize', syncAffHeight);
+  window.addEventListener('load', syncAffHeight);
+  document.fonts?.ready.then(syncAffHeight);
+  [100, 400, 1000].forEach((t) => setTimeout(syncAffHeight, t));
+
+  // Compte à rebours du prochain rendez-vous (calculé côté client → toujours juste).
+  const panel = document.querySelector('[data-aff-next]') as HTMLElement | null;
+  const dataEl = document.querySelector('[data-aff-events]');
+  if (panel && dataEl) {
+    let events: { start: string; short: string; place: string; date: string }[] = [];
+    try { events = JSON.parse(dataEl.textContent || '[]'); } catch { events = []; }
+    const now = new Date(); now.setHours(0, 0, 0, 0);
+    const next = events
+      .map((e) => ({ ...e, d: new Date(e.start + 'T00:00:00') }))
+      .filter((e) => !isNaN(e.d.getTime()))
+      .sort((a, b) => a.d.getTime() - b.d.getTime())
+      .find((e) => e.d.getTime() >= now.getTime());
+    const set = (sel: string, txt: string) => { const el = panel.querySelector(sel); if (el) el.textContent = txt; };
+    if (next) {
+      const days = Math.round((next.d.getTime() - now.getTime()) / 86400000);
+      set('[data-an-days]', days <= 0 ? "C'est parti !" : 'J-' + days);
+      set('[data-an-tn]', next.short);
+      set('[data-an-place]', next.place);
+      set('[data-an-date]', next.date);
+      panel.hidden = false;
+    } else {
+      panel.hidden = true;
+    }
+    syncAffHeight();
+  }
+</script>

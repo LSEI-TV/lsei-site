@@ -1,0 +1,142 @@
+---
+// HUB BASKETBALL — page « championnat » NM1 : logos des clubs + calendrier + classement.
+// Clic sur un club (avec mini-site) → /clubs/<slug>. « Site dans le site » façon NBA.
+import Base from '../layouts/Base.astro';
+import { getDiscipline } from '../data/site';
+import { NM1_LABEL, NM1_POOL, SEASON, SEASON_START, nmClubs, nmClubBy, nm1Calendar, nm1Standings, seasonStarted } from '../data/basket';
+import { assetExists, assetUrl } from '../lib/publicAssets';
+
+const d = getDiscipline('basket');
+const standings = nm1Standings();
+const started = seasonStarted();
+const fmtDay = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Paris' });
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const clubHref = (slug: string) => { const c = nmClubBy(slug); return c?.hasSite ? `/clubs/${slug}` : null; };
+---
+<Base title="Basketball — Nationale Masculine 1" description="Le championnat NM1 sur LSEI : les clubs, le calendrier et le classement." active="disciplines">
+  <section class="nb-hero" style={`--dc:${d.colorVar}`}>
+    <div class="wrap">
+      <div class="nb-crumb"><a href="/disciplines">LSEI</a><span aria-hidden="true">›</span>Basketball</div>
+      <h1 class="nb-h">Basketball · <span style={`color:${d.colorVar}`}>{NM1_LABEL}</span></h1>
+      <p class="nb-p">Les clubs du championnat, le calendrier et le classement. Cliquez sur un club pour entrer dans son espace.</p>
+      <div class="nb-bar" style={`background:${d.colorVar}`}></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      {!started && (
+        <div class="nb-info">🗓️ <b>Saison {SEASON} · {NM1_POOL}</b> — le championnat débute le {SEASON_START}. Les scores et le classement s'afficheront au fil des journées.</div>
+      )}
+
+      <!-- CLUBS -->
+      <div class="sec-head"><div><div class="eyebrow" style={`color:${d.colorVar}`}>Les clubs</div><h2>{NM1_POOL}</h2></div></div>
+      <div class="nb-clubs">
+        {nmClubs.map((c) => {
+          const href = clubHref(c.slug);
+          const inner = (
+            <Fragment>
+              <span class="nb-logo" style={`--cc:${c.color}`}>
+                {assetExists(c.logo) ? <img src={assetUrl(c.logo!)} alt={c.name} loading="lazy" /> : <span class="nb-logo-txt">{c.short}</span>}
+              </span>
+              <span class="nb-club-name">{c.name}</span>
+              <span class="nb-club-city">{c.city}</span>
+              {href ? <span class="nb-club-cta" style={`color:${c.color}`}>Voir le club →</span> : <span class="nb-club-soon">Bientôt</span>}
+            </Fragment>
+          );
+          return href
+            ? <a href={href} class="nb-club is-active" style={`--cc:${c.color}`}>{inner}</a>
+            : <div class="nb-club" style={`--cc:${c.color}`}>{inner}</div>;
+        })}
+      </div>
+
+      <div class="nb-grid">
+        <!-- CALENDRIER -->
+        <div class="nb-col">
+          <div class="sec-head"><div><div class="eyebrow" style={`color:${d.colorVar}`}>Calendrier</div><h2>Pays de Fougères · {SEASON}</h2></div></div>
+          <div class="nb-cal">
+            {nm1Calendar.map((m) => {
+              const h = nmClubBy(m.homeSlug), a = nmClubBy(m.awaySlug);
+              const played = m.homeScore != null && m.awayScore != null;
+              const dt = new Date(m.date);
+              return (
+                <div class="nb-match">
+                  <span class="nb-match-date">{cap(fmtDay.format(dt)).replace(/\.$/, '')}{m.round && <i>J{m.round}</i>}</span>
+                  <span class="nb-team nb-team-h"><span class="nb-team-n">{h?.short}</span><span class="nb-dot" style={`background:${h?.color}`}></span></span>
+                  <span class="nb-score">{played ? `${m.homeScore} – ${m.awayScore}` : 'vs'}</span>
+                  <span class="nb-team nb-team-a"><span class="nb-dot" style={`background:${a?.color}`}></span><span class="nb-team-n">{a?.short}</span></span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <!-- CLASSEMENT -->
+        <div class="nb-col">
+          <div class="sec-head"><div><div class="eyebrow" style={`color:${d.colorVar}`}>Classement</div><h2>{NM1_POOL}</h2></div></div>
+          <table class="nb-rank">
+            <thead><tr><th>#</th><th>Club</th><th>J</th><th>V</th><th>D</th><th>Pts</th></tr></thead>
+            <tbody>
+              {standings.map((r, i) => {
+                const c = nmClubBy(r.slug);
+                return (
+                  <tr class={r.slug === 'fougeres' ? 'is-me' : ''}>
+                    <td class="nb-rk">{i + 1}</td>
+                    <td class="nb-rc"><span class="nb-dot" style={`background:${c?.color}`}></span>{c?.short}</td>
+                    <td>{r.played}</td><td>{r.w}</td><td>{r.l}</td><td class="nb-pts">{r.pts}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nb-hero { padding: 40px 0 8px; }
+  .nb-crumb { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); }
+  .nb-crumb a { color: var(--dc); text-decoration: none; }
+  .nb-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.02em; font-size: clamp(28px, 4.4vw, 46px); line-height: 1.02; margin: 12px 0 0; color: var(--ink); }
+  .nb-p { color: var(--ink-soft); font-size: 15.5px; margin: 12px 0 0; max-width: 640px; }
+  .nb-bar { width: 64px; height: 4px; border-radius: 3px; margin-top: 16px; }
+
+  .nb-info { background: color-mix(in srgb, var(--dc) 8%, var(--surface)); border: 1px solid color-mix(in srgb, var(--dc) 30%, var(--line)); color: var(--ink); border-radius: 10px; padding: 11px 15px; font-size: 13.5px; margin-bottom: 26px; }
+
+  /* Clubs */
+  .nb-clubs { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 12px; }
+  .nb-club { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 20px 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); text-decoration: none; color: inherit; transition: border-color .15s, transform .15s, box-shadow .15s; }
+  .nb-club.is-active:hover { border-color: var(--cc); transform: translateY(-3px); box-shadow: 0 16px 34px -22px rgba(0,0,0,.6); }
+  .nb-logo { width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; overflow: hidden; background: color-mix(in srgb, var(--cc) 14%, var(--surface-2)); border: 1px solid color-mix(in srgb, var(--cc) 40%, var(--line)); }
+  .nb-logo img { width: 100%; height: 100%; object-fit: contain; }
+  .nb-logo-txt { font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--cc); }
+  .nb-club-name { font-weight: 700; font-size: 14px; color: var(--ink); line-height: 1.2; margin-top: 4px; }
+  .nb-club-city { font-size: 12px; color: var(--ink-faint); }
+  .nb-club-cta { font-size: 12px; font-weight: 700; margin-top: 4px; }
+  .nb-club-soon { font-size: 11px; font-weight: 700; color: var(--ink-faint); background: var(--surface-2); border-radius: 100px; padding: 2px 10px; margin-top: 4px; }
+
+  /* Calendrier + classement */
+  .nb-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 30px 34px; align-items: start; margin-top: 26px; }
+  .nb-cal { display: flex; flex-direction: column; gap: 8px; }
+  .nb-match { display: grid; grid-template-columns: 96px 1fr auto 1fr; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 10px 14px; }
+  .nb-match-date { display: flex; flex-direction: column; font-size: 11.5px; font-weight: 700; color: var(--ink-soft); line-height: 1.3; }
+  .nb-match-date i { font-style: normal; color: var(--ink-faint); font-weight: 600; }
+  .nb-team { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .nb-team-h { justify-content: flex-end; }
+  .nb-team-n { font-weight: 700; font-size: 13px; }
+  .nb-dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+  .nb-score { font-family: var(--mono); font-weight: 800; font-size: 14px; color: var(--ink); white-space: nowrap; }
+  .nb-rank { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .nb-rank th { text-align: center; font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-faint); padding: 6px 4px; border-bottom: 1px solid var(--line); }
+  .nb-rank td { text-align: center; padding: 8px 4px; border-bottom: 1px solid var(--line); color: var(--ink-soft); }
+  .nb-rank .nb-rk { font-weight: 800; color: var(--ink); }
+  .nb-rank .nb-rc { text-align: left; display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--ink); }
+  .nb-rank .nb-pts { font-weight: 800; color: var(--ink); }
+  .nb-rank tr.is-me td { background: color-mix(in srgb, var(--dc) 8%, transparent); }
+
+  @media (max-width: 760px) {
+    .nb-grid { grid-template-columns: 1fr; }
+  }
+</style>

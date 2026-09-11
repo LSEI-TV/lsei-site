@@ -26,7 +26,7 @@ const articles = defineCollection({
 const social = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/social' }),
   schema: z.object({
-    platform: z.enum(['facebook', 'instagram']),
+    platform: z.enum(['facebook', 'instagram', 'youtube']),
     date: z.coerce.date(),
     caption: z.string(),
     // lien vers la publication d'origine (Facebook/Instagram)

@@ -12,6 +12,7 @@ import { photoOf, fromPov, seasonHighlights, playerSlugs, photoOnlySeasons, play
 import SportIcon from '../../../../components/SportIcon.astro';
 import PlayerSearch from '../../../../components/PlayerSearch.astro';
 import { getSeasons, getPalmares, DEFAULT_SEASON, type Season } from '../../../../data/billard/seasons';
+import AffichesTournois from '../../../../components/AffichesTournois.astro';
 import rmixte2526 from '../../../../data/billard/results-mixte-2025-2026.json';
 import rmixte2425 from '../../../../data/billard/results-mixte-2024-2025.json';
 import rmixte2324 from '../../../../data/billard/results-mixte-2023-2024.json';
@@ -60,6 +61,7 @@ const fmtArticleDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'nu
 const fmtShort = (iso: string) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }).format(new Date(iso));
 const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
 const palmares = getPalmares();
+
 
 // Entrées & sorties : mouvements de l'effectif du Masters vs la saison précédente
 // (le Blackball Master est un plateau restreint : des joueurs entrent, d'autres sortent).
@@ -270,6 +272,8 @@ if (!hasData) {
             <p class="dek" style="margin:6px 0 0">Ils s'afficheront ici au fil de la saison {season.label}, dès les premières étapes disputées.</p>
           </div>
         )}
+
+        <AffichesTournois calendar={calSeason.calendar} seasonSlug={calSeason.slug} seasonStatus={season.status} />
       </aside>
     </div>
   </section>

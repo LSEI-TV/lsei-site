@@ -79,9 +79,10 @@ collections:
         options:
           - { label: "Facebook", value: "facebook" }
           - { label: "Instagram", value: "instagram" }
+          - { label: "YouTube (post communauté)", value: "youtube" }
       - { label: "Date", name: "date", widget: "datetime", date_format: "DD/MM/YYYY", time_format: false, format: "YYYY-MM-DD" }
       - { label: "Légende (texte du post)", name: "caption", widget: "text" }
-      - { label: "Lien vers la publication", name: "link", widget: "string", hint: "Collez l'adresse (URL) du post Facebook ou Instagram" }
+      - { label: "Lien vers la publication", name: "link", widget: "string", hint: "Collez l'adresse (URL) du post Facebook, Instagram ou YouTube (onglet Communauté)" }
       - { label: "Image du post (téléversez-la)", name: "image", widget: "image", required: false }
       - { label: "Brouillon (ne pas publier)", name: "draft", widget: "boolean", default: false, required: false }
 

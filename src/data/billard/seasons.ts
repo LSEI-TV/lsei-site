@@ -21,6 +21,12 @@ export interface SeasonEvent {
   short: string; name: string; date: string; place: string;
   kind: 'tn' | 'coupe' | 'mondial' | 'france';
   winner?: { id: number; name: string };
+  /** identifiant court stable pour retrouver l'affiche (sinon dérivé de `short`). */
+  slug?: string;
+  /** affiche du tournoi (repli auto : /billard/affiches/<saison>/<slug>.webp). */
+  poster?: string;
+  /** date de début ISO (AAAA-MM-JJ) — pour le compte à rebours « prochain rendez-vous ». */
+  start?: string;
 }
 export interface ResultsData {
   competition: string; season: string;
@@ -57,16 +63,16 @@ export function calFrom(results: ResultsData): SeasonEvent[] {
 // Calendrier 2026/2027 — saisi depuis l'affiche officielle FFB (prévisionnel).
 // Exporté pour être réutilisé par Femmes et Para (mêmes rendez-vous nationaux).
 export const cal2627: SeasonEvent[] = [
-  { short: 'TN1', name: 'Tournoi National 1', date: '2-4 oct. 2026', place: 'Fumel (47)', kind: 'tn' },
-  { short: 'Mondial', name: 'Championnats du Monde', date: '21-28 oct. 2026', place: 'Londres (Angleterre)', kind: 'mondial' },
-  { short: 'TN2', name: 'Tournoi National 2', date: '20-22 nov. 2026', place: 'Albi (81)', kind: 'tn' },
-  { short: 'TN3', name: 'Tournoi National 3', date: 'Décembre 2026', place: 'Lieu à venir', kind: 'tn' },
-  { short: 'TN4', name: 'Tournoi National 4', date: '15-17 janv. 2027', place: 'Villeneuve-sur-Lot (47)', kind: 'tn' },
-  { short: 'TN5', name: 'Tournoi National 5', date: '19-21 févr. 2027', place: 'Hazebrouck (59)', kind: 'tn' },
-  { short: 'TN6', name: 'Tournoi National 6', date: '12-14 mars 2027', place: 'Châtellerault (86)', kind: 'tn' },
-  { short: 'TN7', name: 'Tournoi National 7', date: '9-11 avr. 2027', place: 'St Fulgent (85)', kind: 'tn' },
-  { short: 'TN8 · CDF', name: 'Tournoi National 8 & Coupe de France', date: '6-9 mai 2027', place: 'Villeneuve-sur-Lot (47)', kind: 'coupe' },
-  { short: 'France', name: 'Championnats de France', date: '25-27 juin 2027', place: 'Hauts-de-France, Nord (59)', kind: 'france' },
+  { short: 'TN1', slug: 'tn1', name: 'Tournoi National 1', date: '2-4 oct. 2026', place: 'Fumel (47)', kind: 'tn', start: '2026-10-02' },
+  { short: 'Mondial', slug: 'mondial', name: 'Championnats du Monde', date: '21-28 oct. 2026', place: 'Londres (Angleterre)', kind: 'mondial', start: '2026-10-21' },
+  { short: 'TN2', slug: 'tn2', name: 'Tournoi National 2', date: '20-22 nov. 2026', place: 'Albi (81)', kind: 'tn', start: '2026-11-20' },
+  { short: 'TN3', slug: 'tn3', name: 'Tournoi National 3', date: 'Décembre 2026', place: 'Lieu à venir', kind: 'tn', start: '2026-12-01' },
+  { short: 'TN4', slug: 'tn4', name: 'Tournoi National 4', date: '15-17 janv. 2027', place: 'Villeneuve-sur-Lot (47)', kind: 'tn', start: '2027-01-15' },
+  { short: 'TN5', slug: 'tn5', name: 'Tournoi National 5', date: '19-21 févr. 2027', place: 'Hazebrouck (59)', kind: 'tn', start: '2027-02-19' },
+  { short: 'TN6', slug: 'tn6', name: 'Tournoi National 6', date: '12-14 mars 2027', place: 'Châtellerault (86)', kind: 'tn', start: '2027-03-12' },
+  { short: 'TN7', slug: 'tn7', name: 'Tournoi National 7', date: '9-11 avr. 2027', place: 'St Fulgent (85)', kind: 'tn', start: '2027-04-09' },
+  { short: 'TN8 · CDF', slug: 'tn8-cdf', name: 'Tournoi National 8 & Coupe de France', date: '6-9 mai 2027', place: 'Villeneuve-sur-Lot (47)', kind: 'coupe', start: '2027-05-06' },
+  { short: 'France', slug: 'france', name: 'Championnats de France', date: '25-27 juin 2027', place: 'Hauts-de-France, Nord (59)', kind: 'france', start: '2027-06-25' },
 ];
 
 // La plus récente en premier.
