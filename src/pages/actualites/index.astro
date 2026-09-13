@@ -6,6 +6,7 @@ import { disciplines } from '../../data/site';
 import { articleCover } from '../../lib/articles';
 import SportIcon from '../../components/SportIcon.astro';
 import { PLATFORMS } from '../../lib/social';
+import { assetExists } from '../../lib/publicAssets';
 
 const articles = (await getCollection('articles', ({ data }) => !data.draft && data.date.valueOf() <= Date.now())).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
@@ -74,7 +75,7 @@ const socialPosts = (await getCollection('social', ({ data }) => !data.draft)).s
             return (
               <a href={`/actualites/reseaux/${p.id}`} class="card social-card" style={`--pc:${pf.color}`}>
                 <div class="frame">
-                  {p.data.image
+                  {assetExists(p.data.image)
                     ? <img class="photo" src={p.data.image} alt="" loading="lazy" />
                     : <div class="duo social-ph"><span class="soc-ph-ico" set:html={pf.icon}></span></div>}
                   <div class="grad"></div>

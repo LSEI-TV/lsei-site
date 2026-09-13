@@ -5,6 +5,7 @@ import Base from '../../../layouts/Base.astro';
 import ShareLinks from '../../../components/ShareLinks.astro';
 import { getCollection } from 'astro:content';
 import { PLATFORMS } from '../../../lib/social';
+import { assetExists } from '../../../lib/publicAssets';
 
 export async function getStaticPaths() {
   const posts = await getCollection('social', ({ data }) => !data.draft);
@@ -13,6 +14,7 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const pf = PLATFORMS[post.data.platform] ?? PLATFORMS.facebook;
+const hasImg = assetExists(post.data.image); // image réellement présente dans public/uploads
 const fmtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(dt);
 const shareUrl = new URL(`/actualites/reseaux/${post.id}`, Astro.site).href;
 const title = `${pf.label} · ${fmtDate(post.data.date)}`;
@@ -27,7 +29,7 @@ const title = `${pf.label} · ${fmtDate(post.data.date)}`;
       </div>
       <div class="article-meta">{fmtDate(post.data.date)}</div>
 
-      {post.data.image
+      {hasImg
         ? <img class="article-cover" src={post.data.image} alt="" />
         : <div class="soc-hero" style={`--pc:${pf.color}`}><span class="soc-hero-ico" set:html={pf.icon}></span></div>}
 
