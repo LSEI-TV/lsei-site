@@ -1026,7 +1026,7 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .social-card .cap .disc { display: inline-flex; align-items: center; gap: 7px; background: var(--pc, var(--accent)); color: #fff; padding: 4px 9px; border-radius: 4px; }
 .social-card .cap .plat-ico { width: 13px; height: 13px; display: inline-flex; }
 .social-card .cap .plat-ico svg { width: 100%; height: 100%; }
-.social-cap { font-family: var(--serif); font-size: 14.5px; color: var(--ink-soft); margin: 8px 0 0; line-height: 1.45; }
+.social-cap { font-family: var(--serif); font-size: 14.5px; color: var(--ink-soft); margin: 8px 0 0; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .social-more { display: inline-block; margin-top: 10px; font-size: 12.5px; font-weight: 700; color: var(--pc, var(--accent)); }
 
 /* ---------- partage réseaux (articles, replay, popup vidéo) — sans tracking ---------- */
