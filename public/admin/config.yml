@@ -84,6 +84,7 @@ collections:
       - { label: "Légende (texte du post)", name: "caption", widget: "text" }
       - { label: "Lien vers la publication", name: "link", widget: "string", hint: "Collez l'adresse (URL) du post Facebook, Instagram ou YouTube (onglet Communauté)" }
       - { label: "Image du post (téléversez-la)", name: "image", widget: "image", required: false }
+      - { label: "Vidéo YouTube à afficher (optionnel)", name: "video", widget: "string", required: false, hint: "Collez le lien d'une vidéo YouTube (ou son ID) pour l'intégrer, lisible directement sur la page" }
       - { label: "Brouillon (ne pas publier)", name: "draft", widget: "boolean", default: false, required: false }
 
   - name: "evenements"

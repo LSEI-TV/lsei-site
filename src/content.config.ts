@@ -33,6 +33,8 @@ const social = defineCollection({
     link: z.string().url(),
     // image du post (téléversée via l'admin) — optionnelle
     image: z.string().optional(),
+    // vidéo YouTube à intégrer sur la page (lien ou ID) — optionnelle
+    video: z.string().optional(),
     draft: z.boolean().default(false),
   }),
 });

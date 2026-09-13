@@ -4,6 +4,7 @@
 import Base from '../../../layouts/Base.astro';
 import ShareLinks from '../../../components/ShareLinks.astro';
 import { getCollection } from 'astro:content';
+import VideoPlayer from '../../../components/VideoPlayer.astro';
 import { PLATFORMS } from '../../../lib/social';
 import { assetExists } from '../../../lib/publicAssets';
 
@@ -15,6 +16,13 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const pf = PLATFORMS[post.data.platform] ?? PLATFORMS.facebook;
 const hasImg = assetExists(post.data.image); // image réellement présente dans public/uploads
+// Vidéo YouTube à intégrer (lien ou ID) → lecteur « clic pour lire ».
+const ytId = (s?: string): string | null => {
+  if (!s) return null;
+  const m = s.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/) || s.match(/^([\w-]{11})$/);
+  return m ? m[1] : null;
+};
+const videoId = ytId(post.data.video);
 const fmtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(dt);
 const shareUrl = new URL(`/actualites/reseaux/${post.id}`, Astro.site).href;
 const title = `${pf.label} · ${fmtDate(post.data.date)}`;
@@ -29,9 +37,11 @@ const title = `${pf.label} · ${fmtDate(post.data.date)}`;
       </div>
       <div class="article-meta">{fmtDate(post.data.date)}</div>
 
-      {hasImg
-        ? <img class="article-cover" src={post.data.image} alt="" />
-        : <div class="soc-hero" style={`--pc:${pf.color}`}><span class="soc-hero-ico" set:html={pf.icon}></span></div>}
+      {videoId
+        ? <div class="soc-video"><VideoPlayer id={videoId} from={pf.color} to={pf.color} image={hasImg ? post.data.image : undefined} title={post.data.caption} /></div>
+        : hasImg
+          ? <img class="article-cover" src={post.data.image} alt="" />
+          : <div class="soc-hero" style={`--pc:${pf.color}`}><span class="soc-hero-ico" set:html={pf.icon}></span></div>}
 
       <p class="soc-caption">{post.data.caption}</p>
 
@@ -46,7 +56,8 @@ const title = `${pf.label} · ${fmtDate(post.data.date)}`;
 </Base>
 
 <style>
-  .soc-badge { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--pc); }
+  .soc-badge { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--pc); margin-top: 4px; }
+  .soc-video { margin: 4px 0 8px; }
   .soc-badge-ico { width: 20px; height: 20px; display: inline-flex; }
   .soc-badge-ico :global(svg) { width: 100%; height: 100%; }
   .soc-hero { aspect-ratio: 16/9; border-radius: var(--r); display: grid; place-items: center; background: var(--pc); margin: 4px 0 8px; }
