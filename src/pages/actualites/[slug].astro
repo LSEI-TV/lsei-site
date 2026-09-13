@@ -52,7 +52,7 @@ const articleLd = {
       <a href="/actualites" class="link" style="display:inline-block;margin-bottom:18px">← Toutes les actualités</a>
       <h1 class="article-title">{article.data.title}</h1>
       <div class="article-meta">{article.data.author && <Fragment>{article.data.author} · </Fragment>}{fmtDate(article.data.date)}</div>
-      {cover && <img class="article-cover" src={cover.src} alt="" onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />}
+      {cover && <img class="article-cover" src={cover.src} alt={article.data.title} onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />}
       <div class="prose article-body" set:html={bodyHtml}></div>
       {citedPlayers.length > 0 && (
         <div class="artplayers">

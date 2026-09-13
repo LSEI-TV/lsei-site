@@ -33,7 +33,7 @@ const cc = club.color;
 const hasLogo = assetExists(club.logo);
 const logoSrc = hasLogo ? assetUrl(club.logo!) : null;
 ---
-<Base title={`${club.name} — ${NM1_LABEL}`} description={fiche?.blurb ?? `${club.name}, club de ${NM1_LABEL} filmé par LSEI.`} active="disciplines">
+<Base title={`${club.name} — Basket ${NM1_LABEL} (NM1)`} description={fiche?.blurb ?? `${club.name} (${club.city}) — ${NM1_LABEL} ${NM1_POOL} ${SEASON} : calendrier, effectif, résultats et vidéos du club, filmés par LSEI.`} active="disciplines">
   <!-- Nav club -->
   <div class="cl-nav" style={`--cc:${cc}`}>
     <div class="wrap">

@@ -73,6 +73,7 @@ const ICONS: Record<string, string> = {
         {types.map((t) => (
           <a href={t.href} class={`bh-card${t.featured ? ' is-featured' : ''}`} style={`--gc:${t.accent}`}>
             <span class="bh-card-media" aria-hidden="true" style={`background-image:url('${t.photo}')`}></span>
+            <span class="bh-card-scrim" aria-hidden="true"></span>
             <span class="bh-card-badge">{t.eyebrow}</span>
             <h2 class="bh-card-title">{t.title}</h2>
             <p class="bh-card-desc">{t.desc}</p>
@@ -127,19 +128,22 @@ const ICONS: Record<string, string> = {
 
   /* ---------- 3 cartes univers ---------- */
   .bh-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 16px; align-items: stretch; margin-top: 16px; }
-  .bh-card { position: relative; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--line-strong); border-top: 3px solid var(--gc); border-radius: 16px; background: var(--surface); padding: 20px 22px 16px; text-decoration: none; color: inherit; transition: border-color .2s, transform .2s; }
+  .bh-card { --card-bg: var(--surface); position: relative; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--line-strong); border-top: 3px solid var(--gc); border-radius: 16px; background: var(--card-bg); padding: 20px 22px 16px; text-decoration: none; color: inherit; transition: border-color .2s, transform .2s; }
   .bh-card::after { content: ""; position: absolute; top: -30%; right: -20%; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, var(--gc), transparent 62%); opacity: .12; pointer-events: none; transition: opacity .2s; }
   /* Photo de la carte (droite), fondue vers la gauche pour la lisibilité du texte.
      Repli propre : si l'image n'existe pas, rien ne s'affiche (le halo coloré reste). */
   .bh-card-media { position: absolute; inset: 0; z-index: 0; background-position: right center; background-size: cover; background-repeat: no-repeat; opacity: 1;
-    -webkit-mask-image: linear-gradient(90deg, transparent 44%, #000 82%); mask-image: linear-gradient(90deg, transparent 44%, #000 82%); pointer-events: none; }
+    -webkit-mask-image: linear-gradient(90deg, transparent 50%, #000 88%); mask-image: linear-gradient(90deg, transparent 50%, #000 88%); pointer-events: none; }
+  /* Voile : fond de carte opaque à gauche (texte lisible), estompé vers la photo à droite. */
+  .bh-card-scrim { position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background: linear-gradient(90deg, var(--card-bg) 0%, var(--card-bg) 48%, color-mix(in srgb, var(--card-bg) 55%, transparent) 68%, transparent 86%); }
   .bh-card-badge, .bh-card-title, .bh-card-desc, .bh-chips, .bh-card-foot { z-index: 1; }
   .bh-card:hover { transform: translateY(-3px); border-color: var(--gc); }
   .bh-card:hover::after { opacity: .2; }
-  .bh-card.is-featured { background: color-mix(in srgb, var(--gc) 7%, var(--surface)); }
+  .bh-card.is-featured { --card-bg: color-mix(in srgb, var(--gc) 7%, var(--surface)); background: var(--card-bg); }
   .bh-card-badge { position: relative; align-self: flex-start; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--gc); background: color-mix(in srgb, var(--gc) 14%, transparent); border: 1px solid color-mix(in srgb, var(--gc) 40%, transparent); border-radius: 6px; padding: 4px 9px; }
   .bh-card-title { position: relative; font-family: var(--display); font-weight: 800; font-size: clamp(22px, 2.6vw, 32px); line-height: 1.05; margin: 14px 0 0; color: var(--ink); }
-  .bh-card-desc { position: relative; font-size: 14px; color: var(--ink-soft); line-height: 1.5; margin: 10px 0 0; max-width: 42ch; }
+  .bh-card-desc { position: relative; font-size: 14px; color: var(--ink-soft); line-height: 1.5; margin: 10px 0 0; max-width: 30ch; }
   .bh-chips { position: relative; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
   .bh-chips span { font-size: 12px; font-weight: 600; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 100px; padding: 4px 11px; }
   .bh-card-foot { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 16px; }

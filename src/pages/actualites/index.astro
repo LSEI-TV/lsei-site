@@ -40,7 +40,7 @@ const socialPosts = (await getCollection('social', ({ data }) => !data.draft)).s
               <a href={`/actualites/${a.id}`} class="card" style={d ? `--dc:${d.colorVar}` : ''}>
                 <div class="frame">
                   {cover
-                    ? <img class="photo" src={cover.src} alt="" loading="lazy" onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />
+                    ? <img class="photo" src={cover.src} alt={a.data.title} loading="lazy" onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />
                     : <div class="duo" style={d ? `background:linear-gradient(135deg,${d.from},${d.to})` : 'background:linear-gradient(135deg,#1E40E5,#0a1a6b)'}></div>}
                   <div class="grad"></div>
                   {d && <div class="cap"><div class="disc"><SportIcon slug={d.slug} class="disc-tag-ic" />{d.label}</div></div>}
@@ -76,7 +76,7 @@ const socialPosts = (await getCollection('social', ({ data }) => !data.draft)).s
               <a href={`/actualites/reseaux/${p.id}`} class="card social-card" style={`--pc:${pf.color}`}>
                 <div class="frame">
                   {assetExists(p.data.image)
-                    ? <img class="photo" src={p.data.image} alt="" loading="lazy" />
+                    ? <img class="photo" src={p.data.image} alt={p.data.caption?.split('\n')[0] || pf.label} loading="lazy" />
                     : <div class="duo social-ph"><span class="soc-ph-ico" set:html={pf.icon}></span></div>}
                   <div class="grad"></div>
                   <div class="cap"><div class="disc"><span class="plat-ico" set:html={pf.icon}></span>{pf.label}</div></div>

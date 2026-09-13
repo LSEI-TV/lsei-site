@@ -13,7 +13,7 @@ const fmtDay = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeri
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const clubHref = (slug: string) => { const c = nmClubBy(slug); return c?.hasSite ? `/clubs/${slug}` : null; };
 ---
-<Base title="Basketball — Nationale Masculine 1" description="Le championnat NM1 sur LSEI : les clubs, le calendrier et le classement." active="disciplines">
+<Base title={`Basketball ${NM1_LABEL} (NM1) — ${NM1_POOL}`} description={`${NM1_LABEL} (NM1) ${NM1_POOL} ${SEASON} sur LSEI : les clubs, le calendrier, le classement et les vidéos — du Pays de Fougères Basket à toute la poule.`} active="disciplines">
   <section class="nb-hero" style={`--dc:${d.colorVar}`}>
     <div class="wrap">
       <div class="nb-crumb"><a href="/disciplines">LSEI</a><span aria-hidden="true">›</span>Basketball</div>

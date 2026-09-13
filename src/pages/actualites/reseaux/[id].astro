@@ -25,7 +25,9 @@ const ytId = (s?: string): string | null => {
 const videoId = ytId(post.data.video);
 const fmtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(dt);
 const shareUrl = new URL(`/actualites/reseaux/${post.id}`, Astro.site).href;
-const title = `${pf.label} · ${fmtDate(post.data.date)}`;
+// Titre = 1re ligne de la légende (meilleur référencement) ; repli sur plateforme + date.
+const firstLine = (post.data.caption || '').split('\n').map((s) => s.trim()).find(Boolean) || '';
+const title = firstLine || `${pf.label} · ${fmtDate(post.data.date)}`;
 ---
 <Base title={title} description={post.data.caption} active="actualites" image={post.data.image}>
   <article class="section">
@@ -40,7 +42,7 @@ const title = `${pf.label} · ${fmtDate(post.data.date)}`;
       {videoId
         ? <div class="soc-video"><VideoPlayer id={videoId} from={pf.color} to={pf.color} image={hasImg ? post.data.image : undefined} title={post.data.caption} /></div>
         : hasImg
-          ? <img class="article-cover" src={post.data.image} alt="" />
+          ? <img class="article-cover" src={post.data.image} alt={firstLine || pf.label} />
           : <div class="soc-hero" style={`--pc:${pf.color}`}><span class="soc-hero-ico" set:html={pf.icon}></span></div>}
 
       <p class="soc-caption">{post.data.caption}</p>
