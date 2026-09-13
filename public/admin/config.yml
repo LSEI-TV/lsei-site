@@ -70,7 +70,7 @@ collections:
     slug: "{{year}}-{{month}}-{{day}}-{{platform}}"
     extension: "md"
     format: "frontmatter"
-    summary: "{{platform}} — {{date}}"
+    summary: "{{caption | truncate(80)}}  ·  {{platform}} — {{date}}"
     sortable_fields: ["date"]
     fields:
       - label: "Réseau social"
