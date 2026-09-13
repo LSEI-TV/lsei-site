@@ -1,0 +1,58 @@
+---
+// Page interne d'une « Publication réseaux » (Facebook / Instagram / YouTube).
+// On garde le visiteur sur lsei.tv : image + légende + bouton vers le post d'origine.
+import Base from '../../../layouts/Base.astro';
+import ShareLinks from '../../../components/ShareLinks.astro';
+import { getCollection } from 'astro:content';
+import { PLATFORMS } from '../../../lib/social';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('social', ({ data }) => !data.draft);
+  return posts.map((p) => ({ params: { id: p.id }, props: { post: p } }));
+}
+
+const { post } = Astro.props;
+const pf = PLATFORMS[post.data.platform] ?? PLATFORMS.facebook;
+const fmtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(dt);
+const shareUrl = new URL(`/actualites/reseaux/${post.id}`, Astro.site).href;
+const title = `${pf.label} · ${fmtDate(post.data.date)}`;
+---
+<Base title={title} description={post.data.caption} active="actualites" image={post.data.image}>
+  <article class="section">
+    <div class="wrap article-wrap">
+      <a href="/actualites" class="link" style="display:inline-block;margin-bottom:18px">← Toutes les actualités</a>
+
+      <div class="soc-badge" style={`--pc:${pf.color}`}>
+        <span class="soc-badge-ico" set:html={pf.icon}></span>{pf.label}
+      </div>
+      <div class="article-meta">{fmtDate(post.data.date)}</div>
+
+      {post.data.image
+        ? <img class="article-cover" src={post.data.image} alt="" />
+        : <div class="soc-hero" style={`--pc:${pf.color}`}><span class="soc-hero-ico" set:html={pf.icon}></span></div>}
+
+      <p class="soc-caption">{post.data.caption}</p>
+
+      <a href={post.data.link} target="_blank" rel="noopener" class="soc-cta" style={`--pc:${pf.color}`}>
+        <span class="soc-cta-ico" set:html={pf.icon}></span>
+        Voir la publication sur {pf.label} ↗
+      </a>
+
+      <div class="article-share"><ShareLinks url={shareUrl} title={title} /></div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .soc-badge { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--pc); }
+  .soc-badge-ico { width: 20px; height: 20px; display: inline-flex; }
+  .soc-badge-ico :global(svg) { width: 100%; height: 100%; }
+  .soc-hero { aspect-ratio: 16/9; border-radius: var(--r); display: grid; place-items: center; background: var(--pc); margin: 4px 0 8px; }
+  .soc-hero-ico { width: 84px; height: 84px; color: #fff; opacity: .95; }
+  .soc-hero-ico :global(svg) { width: 100%; height: 100%; }
+  .soc-caption { font-size: 18px; line-height: 1.6; color: var(--ink); white-space: pre-line; margin: 22px 0; }
+  .soc-cta { display: inline-flex; align-items: center; gap: 9px; font-weight: 800; font-size: 14px; color: #fff; background: var(--pc); border-radius: 100px; padding: 12px 20px; text-decoration: none; }
+  .soc-cta:hover { filter: brightness(1.06); }
+  .soc-cta-ico { width: 18px; height: 18px; display: inline-flex; }
+  .soc-cta-ico :global(svg) { width: 100%; height: 100%; }
+</style>
