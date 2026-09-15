@@ -182,6 +182,9 @@ export const partners: Partner[] = [
   { name: 'Palet Club Lanrelas', logo: '/partenaires/palet-club-lanrelas.webp', url: 'https://paletclublanrelas.fr' },
   { name: 'Bowling Promotion', logo: '/partenaires/bowling-promotion.webp', url: 'https://www.bowlingpromotiontour.com' },
   { name: 'Sport en France', logo: '/partenaires/sport-en-france.webp', url: 'https://sportenfrance.com' },
+  { name: 'Christophe Lambert', logo: '/partenaires/logo-cl-noir.webp', url: 'https://christophelambert8pool.com' },
+  { name: 'FISTF', logo: '/partenaires/fistf.webp', url: 'https://fistf.com' },
+  { name: '3FTS', logo: '/partenaires/3fts.webp', url: 'https://3fts.fr' },
 ];
 
 export interface Stat { num: string; unit?: string; label: string }

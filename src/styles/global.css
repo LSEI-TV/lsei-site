@@ -677,7 +677,7 @@ a.hst:hover svg { color: inherit; }
 .stat .lab { margin-top: 5px; font-size: 12.5px; color: var(--ink-soft); }
 .partners { padding: 0 0 40px; }
 .partners .pl { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); font-weight: 700; margin-bottom: 16px; }
-.plist { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; align-items: center; }
+.plist { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 12px; align-items: center; }
 .ptile-link { display: block; text-decoration: none; }
 .ptile { display: flex; align-items: center; justify-content: center; width: 100%; height: 82px; background: #fff; border-radius: 12px; padding: 12px 14px; transition: transform .15s, box-shadow .15s; }
 .ptile img { max-width: 100%; max-height: 100%; object-fit: contain; }
