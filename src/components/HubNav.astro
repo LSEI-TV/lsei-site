@@ -4,6 +4,7 @@ import { LANDING_SEASON } from '../data/billard/seasons';
 import { FEMMES_LANDING_SEASON } from '../data/billard/seasonsFemmes';
 import { PARA_LANDING_SEASON } from '../data/billard/seasonsPara';
 import { PARAMV_LANDING_SEASON } from '../data/billard/seasonsParaMalvoyants';
+import HubSwitch from './HubSwitch.astro';
 // « Accueil » (et le logo) ramènent toujours à la SAISON D'ARRIVÉE du hub (ex. 2026/2027),
 // pas à la saison de la page courante — sinon, depuis Classement/Joueurs (saison de données
 // 2025/2026), « Accueil » renverrait par erreur vers 2025/2026.
@@ -38,6 +39,7 @@ const items = [
   ...(archivesHref ? [{ key: 'archives', label: 'Archives joueurs', href: archivesHref }] : []),
 ];
 ---
+<HubSwitch active={root} />
 <div class="hub-nav" style="--dc:var(--c-billard)">
   <div class="wrap">
     <a href={base} class="hub-brand"><span class="hub-dot"></span>{brand} <em>{sub}</em></a>

@@ -2,6 +2,7 @@
 // Hub BLACKBALL : on choisit la compétition (Masters, Femmes ou Para), avec un
 // résumé de chacune (chiffres, podium, champion en titre). Sous-niveau du Hub Billard.
 import Base from '../../layouts/Base.astro';
+import HubSwitch from '../../components/HubSwitch.astro';
 import { getReplays } from '../../lib/youtube';
 import { defaultSeason, getPalmares, DEFAULT_SEASON, LANDING_SEASON } from '../../data/billard/seasons';
 import { femmesDefaultSeason, getFemmesPalmares, FEMMES_DEFAULT_SEASON } from '../../data/billard/seasonsFemmes';
@@ -80,6 +81,8 @@ const comps = [
 });
 ---
 <Base title="Billard — Le hub Blackball" description="Le hub Blackball de LSEI : choisissez la compétition Masters (hommes), Femmes, Para-billard fauteuil ou Para-billard malvoyants." preloadImage="/billard/blackball-hero.webp" active="disciplines">
+  <HubSwitch />
+
   <section class="disc-hero disc-hero--banner" style="--dc:var(--c-billard)">
     <div class="wrap" style="--hero-img:url('/billard/blackball-hero.webp')">
       <a href="/billard/hub" class="link" style="display:inline-block;margin-bottom:14px">← Hub Billard</a>
@@ -104,7 +107,7 @@ const comps = [
       <div class="bchoose">
         {comps.map((c) => (
           <div class="bchoose-card" style={`--cc:${c.accent};--cc-ink:${c.accentInk}`}>
-            <a href={c.href} class="bchoose-title-link"><h2 class="bchoose-title"><span class="bt-cat">{c.eyebrow}</span> {c.title}</h2></a>
+            <a href={c.href} class="bchoose-title-link"><h2 class="bchoose-title"><span class="bt-arrow" aria-hidden="true">→</span><span class="bt-cat">{c.eyebrow}</span> {c.title}</h2></a>
             <p class="bchoose-desc">{c.desc}</p>
 
             {c.feat && (

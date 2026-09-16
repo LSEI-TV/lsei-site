@@ -98,6 +98,11 @@ interface Newcomer { name: string; url: string | null; link: string | null; badg
 let newcomers: Newcomer[] = [];
 let newcHelp = '';
 
+// Effectif officiel des permanents engagés (saison à venir). Chaque nom est relié
+// à sa fiche si le joueur a déjà disputé le Masters (correspondance par nom).
+type RosterView = { name: string; country: string; link: string | null; url: string | null };
+let rosterView: RosterView[] = [];
+
 if (!hasData) {
   // Saison à venir : RÈGLE D'ACCESSION — les PROMOTED premiers du Mixte National (feeder)
   // montent au Masters. Piloté par le classement (source d'autorité), photo si dispo.
@@ -106,6 +111,22 @@ if (!hasData) {
   const knownMastersIds = new Set<number>();
   const mastersByName = new Map<string, number>(); // id Cuescore parfois différent Mixte↔Masters → on relie aussi par nom
   for (const s of playedSeasons) for (const p of s.results!.players as any[]) { knownMastersIds.add(p.id); if (!mastersByName.has(_n(p.name))) mastersByName.set(_n(p.name), p.id); }
+
+  if (season.roster) {
+    // Liste OFFICIELLE des engagés. Lien vers la fiche si le joueur a déjà disputé
+    // le Masters (correspondance par nom normalisé). Affichée SOUS les accédants.
+    rosterView = season.roster.map((e) => {
+      const id = mastersByName.get(_n(e.name));
+      return {
+        name: e.name,
+        country: e.country,
+        link: id != null ? `/billard/joueur/${slugOf(id)}` : null,
+        url: id != null ? photoOf({ id, name: e.name } as any, season.slug) : null,
+      };
+    });
+  }
+  // Accédants (prédiction Mixte National → Masters) : toujours calculés, affichés
+  // JUSTE AU-DESSUS du cadre des permanents engagés.
   newcomers = (feeder ? (feeder.players as any[]) : [])
     .slice()
     .sort((a, b) => a.rank - b.rank)
@@ -299,6 +320,31 @@ if (!hasData) {
             );
             return n.link
               ? <a href={n.link} class="newc-card newc-link">{body}</a>
+              : <div class="newc-card">{body}</div>;
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {rosterView.length > 0 && (
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Le plateau</div><h2>Les {rosterView.length} permanents engagés · {season.label}</h2></div></div>
+        <p class="fj-help" style="margin-top:0">Effectif officiel des joueurs engagés au Blackball Master (permanents FFB). Le tirage et le classement s'afficheront dès la première étape ; cliquez sur un joueur pour ouvrir sa fiche.</p>
+        <div class="newc-grid">
+          {rosterView.map((r) => {
+            const body = (
+              <>
+                <span class="bphoto newc-ph"><span class="bavatar">{r.name.slice(0, 1)}</span>{r.url && <img src={r.url} alt="" loading="lazy" onerror="this.remove()" />}</span>
+                <div class="newc-body">
+                  <div class="newc-name">{r.name}</div>
+                  {r.link && <div class="newc-prov">Voir la fiche →</div>}
+                </div>
+              </>
+            );
+            return r.link
+              ? <a href={r.link} class="newc-card newc-link">{body}</a>
               : <div class="newc-card">{body}</div>;
           })}
         </div>

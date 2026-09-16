@@ -1059,6 +1059,15 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .modal-share { margin-top: 16px; }
 
 /* ============ Hub discipline (maquette « site dans le site ») ============ */
+/* Sélecteur de compétition (bande fine au-dessus de la sous-nav du hub). */
+.hub-switch { background: var(--surface-2); border-top: 1px solid var(--line); }
+.hub-switch .wrap { display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 5px 24px; flex-wrap: wrap; }
+.hub-switch-lab { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+.hub-switch-nav { display: flex; gap: 6px; flex-wrap: wrap; }
+.hub-switch-nav a { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); transition: background .15s, color .15s, border-color .15s; }
+.hub-switch-nav a:hover { color: var(--ink); border-color: var(--dc, var(--c-billard)); }
+.hub-switch-nav a.is-on { color: #fff; background: var(--dc, var(--c-billard)); border-color: var(--dc, var(--c-billard)); }
+
 .hub-nav { background: var(--surface); border-top: 1px solid var(--line); border-bottom: 2px solid var(--dc, var(--accent)); }
 .hub-nav .wrap { display: flex; align-items: center; gap: 24px; min-height: 52px; flex-wrap: wrap; padding: 6px 24px; }
 .hub-brand { display: inline-flex; align-items: center; gap: 9px; font-family: var(--display); text-transform: uppercase; font-weight: 700; font-size: 17px; color: var(--ink); letter-spacing: .02em; }
@@ -1397,6 +1406,8 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .bchoose-title-link { display: inline-block; }
 .bchoose-title { font-family: var(--display); text-transform: uppercase; font-weight: 700; font-size: 23px; line-height: 1.1; color: var(--ink); margin: 0; }
 .bchoose-title .bt-cat { color: var(--cc, var(--c-billard)); }
+.bchoose-title .bt-arrow { color: var(--cc, var(--c-billard)); display: inline-block; margin-right: 5px; transition: transform .18s ease; }
+.bchoose-title-link:hover .bt-arrow { transform: translateX(3px); }
 .bchoose-title-link:hover .bchoose-title { opacity: .85; }
 .bchoose-desc { margin-top: 8px; font-size: 13px; line-height: 1.45; color: var(--ink-soft); min-height: 40px; }
 

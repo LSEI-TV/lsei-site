@@ -32,12 +32,18 @@ export interface ResultsData {
   competition: string; season: string;
   tournaments: any[]; players: any[]; matches: any[];
 }
+/** Un joueur engagé (permanent) sur une saison à venir — avant tout résultat.
+ *  `country` : code ISO-3 (FRA, MAR, DZA…). Le lien vers la fiche est résolu à
+ *  l'affichage par correspondance de nom avec les saisons déjà jouées. */
+export interface RosterEntry { name: string; country: string }
 export interface Season {
   slug: string; label: string; short: string;
   status: 'past' | 'current' | 'upcoming';
   competition: string;
   calendar: SeasonEvent[];
   results?: ResultsData;
+  /** effectif officiel des permanents engagés (saison à venir, sans résultats). */
+  roster?: RosterEntry[];
 }
 
 // Calendrier dérivé des tournois joués d'une saison.
@@ -75,9 +81,39 @@ export const cal2627: SeasonEvent[] = [
   { short: 'France', slug: 'france', name: 'Championnats de France', date: '25-27 juin 2027', place: 'Hauts-de-France, Nord (59)', kind: 'france', start: '2027-06-25' },
 ];
 
+// Effectif officiel des 24 permanents engagés au Blackball Master 2026/2027.
+// Source : liste des inscrits Cuescore (FFB — Permanents Blackball Master).
+// Pas de stats : le tirage et le classement s'afficheront au fil des étapes.
+export const roster2627: RosterEntry[] = [
+  { name: 'Alexandre Buscetti', country: 'FRA' },
+  { name: 'Alexis Klinka', country: 'FRA' },
+  { name: 'Benjamin Piel', country: 'FRA' },
+  { name: 'Christophe Lambert', country: 'FRA' },
+  { name: 'Christophe Thebeault', country: 'FRA' },
+  { name: 'Cyrille Loncle', country: 'FRA' },
+  { name: 'Damien Joly', country: 'FRA' },
+  { name: 'Elie Christidis', country: 'FRA' },
+  { name: 'Ismail Zegour', country: 'MAR' },
+  { name: 'Julien Duquesnoy', country: 'FRA' },
+  { name: 'Julien Leroux', country: 'FRA' },
+  { name: 'Killian Ballon', country: 'FRA' },
+  { name: 'Leonardo Moreira', country: 'FRA' },
+  { name: 'Léo Ostrowska', country: 'FRA' },
+  { name: 'Mohammed Amine Himid', country: 'MAR' },
+  { name: 'Nathan Gambino', country: 'FRA' },
+  { name: 'Nicolas Grandemange Denizot', country: 'FRA' },
+  { name: 'Nordine Mokhtar Mehache', country: 'DZA' },
+  { name: 'Paul Coldrick', country: 'FRA' },
+  { name: 'Quentin Dumont', country: 'FRA' },
+  { name: 'Simon Pellissier', country: 'FRA' },
+  { name: 'Thomas Louboutin', country: 'FRA' },
+  { name: 'Yannick Beaufils', country: 'FRA' },
+  { name: 'Yasser Amrani Hanchi', country: 'MAR' },
+];
+
 // La plus récente en premier.
 export const seasons: Season[] = [
-  { slug: '2026-2027', label: '2026 / 2027', short: '26/27', status: 'upcoming', competition: 'Blackball Master', calendar: cal2627 },
+  { slug: '2026-2027', label: '2026 / 2027', short: '26/27', status: 'upcoming', competition: 'Blackball Master', calendar: cal2627, roster: roster2627 },
   { slug: '2025-2026', label: '2025 / 2026', short: '25/26', status: 'current', competition: 'Blackball Master', calendar: calFrom(r2526 as ResultsData), results: r2526 as ResultsData },
   { slug: '2024-2025', label: '2024 / 2025', short: '24/25', status: 'past', competition: 'Blackball Master', calendar: calFrom(r2425 as ResultsData), results: r2425 as ResultsData },
   { slug: '2023-2024', label: '2023 / 2024', short: '23/24', status: 'past', competition: 'Blackball Master', calendar: calFrom(r2324 as ResultsData), results: r2324 as ResultsData },

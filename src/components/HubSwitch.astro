@@ -1,0 +1,36 @@
+---
+// Sélecteur de compétition Blackball : basculer directement d'un hub à l'autre
+// (Masters ↔ Femmes ↔ Para Fauteuil ↔ Para Malvoyants). Chaque lien pointe vers
+// la SAISON D'ARRIVÉE de la compétition. `active` = root de la compétition courante
+// (ex. '/billard') ; laisser vide sur une page « parente » (choix des compétitions).
+import { LANDING_SEASON } from '../data/billard/seasons';
+import { FEMMES_LANDING_SEASON } from '../data/billard/seasonsFemmes';
+import { PARA_LANDING_SEASON } from '../data/billard/seasonsPara';
+import { PARAMV_LANDING_SEASON } from '../data/billard/seasonsParaMalvoyants';
+
+interface Props { active?: string }
+const { active } = Astro.props;
+
+const LANDING: Record<string, string> = {
+  '/billard': LANDING_SEASON,
+  '/femmes': FEMMES_LANDING_SEASON,
+  '/para-billard': PARA_LANDING_SEASON,
+  '/para-billard-malvoyants': PARAMV_LANDING_SEASON,
+};
+const COMPS = [
+  { root: '/billard', label: 'Masters' },
+  { root: '/femmes', label: 'Femmes' },
+  { root: '/para-billard', label: 'Para Fauteuil' },
+  { root: '/para-billard-malvoyants', label: 'Para Malvoyants' },
+];
+---
+<div class="hub-switch" style="--dc:var(--c-billard)">
+  <div class="wrap">
+    <span class="hub-switch-lab">Blackball</span>
+    <nav class="hub-switch-nav" aria-label="Changer de compétition Blackball">
+      {COMPS.map((c) => (
+        <a href={`${c.root}/saison/${LANDING[c.root]}`} class={c.root === active ? 'is-on' : ''} aria-current={c.root === active ? 'page' : undefined}>{c.label}</a>
+      ))}
+    </nav>
+  </div>
+</div>
