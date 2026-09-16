@@ -94,6 +94,8 @@ const upcomingEvents = calendar
   .an-place { font-size: 12.5px; color: var(--ink-soft); }
   .an-date { font-size: 12px; color: var(--ink-faint); margin-top: 2px; }
   @media (max-width: 860px) { .aff-body { flex-direction: column; } .aff-grid { width: 168px; } }
+  /* Secours Safari < 15 : sans aspect-ratio, l'affiche (portrait A4) s'ecrase a zero. */
+  @supports not (aspect-ratio: 210 / 297) { .aff-img { min-height: 240px; } }
 </style>
 
 <script>

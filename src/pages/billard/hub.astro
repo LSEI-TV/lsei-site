@@ -139,11 +139,11 @@ const ICONS: Record<string, string> = {
   .bh-card:hover { transform: translateY(-3px); border-color: var(--gc); box-shadow: 0 22px 48px -24px rgba(0,0,0,.7); }
   .bh-card:hover .bh-card-media { transform: scale(1.05); }
   .bh-card.is-featured { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gc) 40%, transparent); }
-  .bh-card-badge { position: relative; align-self: flex-start; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #fff; background: color-mix(in srgb, var(--gc) 88%, #000); border: 1px solid rgba(255,255,255,.18); border-radius: 6px; padding: 4px 9px; }
+  .bh-card-badge { position: relative; align-self: flex-start; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #fff; background: var(--gc); background: color-mix(in srgb, var(--gc) 88%, #000); border: 1px solid rgba(255,255,255,.18); border-radius: 6px; padding: 4px 9px; }
   .bh-card-title { position: relative; font-family: var(--display); font-weight: 800; font-size: clamp(24px, 2.7vw, 34px); line-height: 1.05; margin: 14px 0 0; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.4); }
   .bh-card-desc { position: relative; font-size: 14px; color: rgba(255,255,255,.86); line-height: 1.5; margin: 10px 0 0; max-width: 36ch; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
   .bh-chips { position: relative; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
-  .bh-chips span { font-size: 12px; font-weight: 600; color: #fff; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.28); border-radius: 100px; padding: 4px 11px; backdrop-filter: blur(2px); }
+  .bh-chips span { font-size: 12px; font-weight: 600; color: #fff; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.28); border-radius: 100px; padding: 4px 11px; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
   .bh-card-foot { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 16px; }
   .bh-card-stat { display: inline-flex; align-items: center; gap: 9px; font-family: var(--display); font-weight: 700; font-size: 15px; color: #fff; }
   .bh-card-stat-ic { display: inline-flex; color: color-mix(in srgb, var(--gc) 55%, #fff); }

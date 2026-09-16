@@ -70,4 +70,6 @@ const title = firstLine || `${pf.label} · ${fmtDate(post.data.date)}`;
   .soc-cta:hover { filter: brightness(1.06); }
   .soc-cta-ico { width: 18px; height: 18px; display: inline-flex; }
   .soc-cta-ico :global(svg) { width: 100%; height: 100%; }
+  /* Secours Safari < 15 : sans aspect-ratio, le bandeau perd sa hauteur. */
+  @supports not (aspect-ratio: 16 / 9) { .soc-hero { min-height: 200px; } }
 </style>

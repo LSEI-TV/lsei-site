@@ -104,37 +104,47 @@ const websiteLd = {
         var hasIO = 'IntersectionObserver' in window;
 
         // 1) Révélations au défilement
+        // IMPORTANT : les éléments .reveal-* sont à opacity:0 tant que le JS ne
+        // leur ajoute pas .reveal-in. Si quoi que ce soit échoue ici (Safari
+        // capricieux, erreur inattendue), la page resterait à moitié vide. On
+        // enveloppe donc tout dans un try/catch qui, en cas de pépin, RETIRE
+        // has-reveal → tout redevient visible instantanément.
         if (!reduce && hasIO) {
-          root.classList.add('has-reveal');
-          var fade = [];
-          document.querySelectorAll('.cards > .card, .discs > .disc-card').forEach(function (el) {
-            el.classList.add('reveal-fade'); fade.push(el);
-          });
-          var up = [];
-          document.querySelectorAll('.stats, .cta, .band .partners, .section > .wrap > .sec-head').forEach(function (el) {
-            el.classList.add('reveal-up'); up.push(el);
-          });
-          [fade, up].forEach(function (list) {
-            list.forEach(function (el) {
-              var idx = Array.prototype.indexOf.call(el.parentElement.children, el);
-              el.style.transitionDelay = Math.min(idx, 6) * 60 + 'ms';
+          try {
+            root.classList.add('has-reveal');
+            var fade = [];
+            document.querySelectorAll('.cards > .card, .discs > .disc-card').forEach(function (el) {
+              el.classList.add('reveal-fade'); fade.push(el);
             });
-          });
-          var io = new IntersectionObserver(function (entries) {
-            entries.forEach(function (e) {
-              if (e.isIntersecting) { e.target.classList.add('reveal-in'); io.unobserve(e.target); }
+            var up = [];
+            document.querySelectorAll('.stats, .cta, .band .partners, .section > .wrap > .sec-head').forEach(function (el) {
+              el.classList.add('reveal-up'); up.push(el);
             });
-          }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
-          fade.concat(up).forEach(function (el) { io.observe(el); });
+            [fade, up].forEach(function (list) {
+              list.forEach(function (el) {
+                var idx = Array.prototype.indexOf.call(el.parentElement.children, el);
+                el.style.transitionDelay = Math.min(idx, 6) * 60 + 'ms';
+              });
+            });
+            var io = new IntersectionObserver(function (entries) {
+              entries.forEach(function (e) {
+                if (e.isIntersecting) { e.target.classList.add('reveal-in'); io.unobserve(e.target); }
+              });
+            }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+            fade.concat(up).forEach(function (el) { io.observe(el); });
 
-          // Filet de sécurité : si l'observateur ne se déclenche jamais (cas rare
-          // ou navigateur capricieux), on révèle tout après 3,5 s → aucun contenu
-          // ne peut rester invisible.
-          setTimeout(function () {
-            document.querySelectorAll('.reveal-fade:not(.reveal-in), .reveal-up:not(.reveal-in)').forEach(function (el) {
-              el.classList.add('reveal-in');
-            });
-          }, 3500);
+            // Filet de sécurité : si l'observateur ne se déclenche jamais (onglet
+            // en arrière-plan, navigateur capricieux), on révèle TOUT après 1,2 s
+            // → aucun contenu ne peut rester invisible.
+            setTimeout(function () {
+              document.querySelectorAll('.reveal-fade:not(.reveal-in), .reveal-up:not(.reveal-in)').forEach(function (el) {
+                el.classList.add('reveal-in');
+              });
+            }, 1200);
+          } catch (err) {
+            // Dernier recours : on désactive complètement l'effet, rien ne reste caché.
+            root.classList.remove('has-reveal');
+          }
         }
 
         // 2) Compteurs animés (chiffres-clés)
