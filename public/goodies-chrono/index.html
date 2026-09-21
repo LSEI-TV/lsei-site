@@ -651,6 +651,10 @@ html, body { overflow-x: hidden; }
   font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
   color: var(--dim); font-weight: 700;
   margin-bottom: 4px;
+  line-height: 1.3;
+  min-height: 2.6em;               /* réserve 2 lignes → aligne les inputs quand les labels ont des longueurs différentes */
+  display: flex;
+  align-items: flex-end;
 }
 .match-setup-item { min-width: 0; overflow: hidden; }
 .match-setup-item input {
