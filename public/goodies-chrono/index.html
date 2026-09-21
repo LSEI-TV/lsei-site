@@ -153,6 +153,37 @@ html, body { overflow-x: hidden; }
   transition: background .2s, transform .2s;
 }
 .page-dot.active { background: var(--orange); transform: scale(1.2); }
+
+/* Flèches nav latérales : cachées par défaut, apparaissent sur écran ≥ 900 px */
+.nav-side {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  width: 48px; height: 48px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 1;
+  display: none;                       /* cachée sur mobile/tablette : swipe suffit */
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  transition: background .15s, transform .1s, opacity .15s;
+}
+.nav-side:hover:not(:disabled) { background: var(--card); }
+.nav-side:active:not(:disabled) { transform: translateY(-50%) scale(0.94); }
+.nav-side.nav-left  { left: 16px; }
+.nav-side.nav-right { right: 16px; }
+.nav-side:disabled { opacity: 0.25; cursor: default; }
+@media (min-width: 900px) {
+  .nav-side { display: flex; }
+}
 .topbar-logo {
   height: 40px;
   width: auto;
@@ -681,72 +712,6 @@ html, body { overflow-x: hidden; }
   .player-score { font-size: 80px; }
 }
 
-/* Dashboard PC (≥ 1400 px de large, paysage) : 3 panneaux côte à côte.
-   Chaque page est visible en même temps → arbitre / commentateur voit tout d'un coup.
-   Idéal en régie LSEI ou projeté sur 2ᵉ écran. */
-@media (min-width: 1400px) and (orientation: landscape) {
-  .topbar {
-    padding-left: 20px;
-    padding-right: 20px;
-    border-bottom: 1px solid var(--border);
-  }
-  #navArrow { display: none; }
-  .page-dots { display: none; }
-
-  .pages {
-    display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) minmax(0, 1fr);
-    gap: 14px;
-    padding: 14px;
-    overflow: hidden;
-    scroll-snap-type: none;
-    width: 100%;
-    max-width: 1800px;
-    margin: 0 auto;
-  }
-
-  /* Chaque .page devient un panneau — plus de scroll horizontal, chacun scroll interne */
-  .page {
-    flex: none;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    background: var(--surface);
-    padding: 12px;
-    scroll-snap-align: none;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-  }
-  .page > .footer-lsei { display: none; }
-
-  /* Désactive le grid 2-col paysage tablette qui interfère sur pageMain */
-  #pageMain { display: block; padding: 0; max-width: none; }
-  #pageMain > .section, #pageMain > .context-bar {
-    margin: 6px 0 !important;
-    max-width: none;
-    grid-area: auto !important;
-    align-self: auto !important;
-  }
-
-  /* Sections plein largeur du panneau */
-  .section, .context-bar { max-width: none !important; margin: 6px 0; }
-
-  /* Chrono compact pour tenir dans son panneau (~380 px) */
-  .chrono-val { font-size: 96px; padding: 12px 10px; margin-bottom: 10px; }
-  .chrono-btn { font-size: 18px; padding: 14px 8px; }
-  .player-score { font-size: 62px; padding: 4px 8px 12px; }
-  .score-btn { font-size: 20px; padding: 12px 6px; }
-  #pageMain .scores { grid-template-columns: 1fr 1fr; gap: 8px; }
-
-  /* Feuille de match : bien lisible dans le panneau central */
-  .team-score-summary .side-score { font-size: 42px; }
-  .match-side select { font-size: 12px; }
-  .match-play-btn { padding: 10px 4px; font-size: 14px; }
-
-  /* Historique : liste bien étalée */
-  .history-list { max-height: none; }
-}
 
 /* Tablette PAYSAGE (≥ 900 px de large, orientation landscape) : layout 2 colonnes.
    Chrono à gauche (presets + grand cadre + boutons Démarrer/Reset),
@@ -1314,6 +1279,10 @@ html, body { overflow-x: hidden; }
   <div class="page-dot" data-page="1"></div>
   <div class="page-dot" data-page="2"></div>
 </div>
+
+<!-- Flèches navigation latérales (PC uniquement) -->
+<button class="nav-side nav-left" id="navLeft" type="button" aria-label="Page précédente" title="Page précédente (←)">‹</button>
+<button class="nav-side nav-right" id="navRight" type="button" aria-label="Page suivante" title="Page suivante (→)">›</button>
 
 <script>
 'use strict';
@@ -1979,6 +1948,10 @@ function updateNav(idx) {
   if (brand) {
     brand.textContent = idx === 0 ? '🎱 Chrono Billard' : (idx === 1 ? '📋 Feuille de match équipe' : '🏅 Historique');
   }
+  const navL = document.getElementById('navLeft');
+  const navR = document.getElementById('navRight');
+  if (navL) navL.disabled = idx === 0;
+  if (navR) navR.disabled = idx === 2;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -2134,6 +2107,13 @@ function init() {
   document.getElementById('navArrow').addEventListener('click', () => {
     goToPage((currentPage + 1) % 3);
     vibrate(20);
+  });
+  // Flèches latérales PC : gauche = page précédente, droite = page suivante
+  document.getElementById('navLeft').addEventListener('click', () => {
+    if (currentPage > 0) { goToPage(currentPage - 1); vibrate(15); }
+  });
+  document.getElementById('navRight').addEventListener('click', () => {
+    if (currentPage < 2) { goToPage(currentPage + 1); vibrate(15); }
   });
   document.querySelectorAll('.page-dot').forEach(dot => {
     dot.addEventListener('click', () => goToPage(parseInt(dot.dataset.page, 10)));
