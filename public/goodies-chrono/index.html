@@ -66,12 +66,19 @@ html, body {
   background: var(--bg);
   color: var(--text);
   font-family: 'Barlow', sans-serif;
-  min-height: 100vh;
-  min-height: 100dvh;
   overscroll-behavior: none;
   -webkit-user-select: none;
   user-select: none;
   transition: background .3s ease, color .3s ease;
+}
+/* Body : flex column pleine hauteur, pas de scroll global ;
+   chaque .page aura son propre scroll interne → plus de blanc en bas */
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
 }
 button { font-family: inherit; cursor: pointer; }
 
@@ -83,7 +90,8 @@ button { font-family: inherit; cursor: pointer; }
   padding: 12px 14px;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
-  position: sticky; top: 0; z-index: 20;
+  flex: 0 0 auto;                /* prend sa hauteur naturelle dans le body flex column */
+  z-index: 20;
 }
 /* ═══════════════════════════════════════════════════════════════════════
    NAVIGATION PAGES — swipe horizontal + boutons flèche
@@ -91,22 +99,29 @@ button { font-family: inherit; cursor: pointer; }
 html, body { overflow-x: hidden; }
 .pages {
   display: flex;
+  flex: 1 1 auto;             /* prend toute la hauteur restante du body flex column */
+  min-height: 0;              /* nécessaire pour que le scroll interne des .page fonctionne */
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
-  width: 100vw;
+  width: 100%;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
 .pages::-webkit-scrollbar { display: none; }
 .page {
   flex: 0 0 100vw;
-  min-height: calc(100vh - 66px);
+  height: 100%;               /* prend la hauteur de .pages */
+  overflow-y: auto;           /* scroll INTERNE à la page si le contenu déborde */
   scroll-snap-align: start;
   scroll-snap-stop: always;
-  padding-bottom: 44px;      /* laisse la place aux dots pagination fixed bottom */
+  padding-bottom: 44px;       /* laisse la place aux dots pagination fixed bottom */
+  -webkit-overflow-scrolling: touch;
+  display: flex;              /* le footer .footer-lsei se colle au bas via margin-top: auto */
+  flex-direction: column;
 }
+.page > .footer-lsei { margin-top: auto; }
 /* Bouton flèche navigation dans la topbar */
 .nav-arrow {
   font-family: 'Barlow Condensed', sans-serif;
