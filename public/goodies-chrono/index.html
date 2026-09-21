@@ -1193,6 +1193,21 @@ html, body { overflow-x: hidden; }
   font-weight: 700;
 }
 
+/* Mode TV SLAVE (fenêtre TV séparée, ouverte avec ?tv=1) : cache toute la UI de contrôle,
+   ne laisse visible que l'overlay TV plein écran. Aucun bouton interactif. */
+body.is-tv-slave {
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+}
+body.is-tv-slave > .topbar,
+body.is-tv-slave > .pages,
+body.is-tv-slave > .page-dots,
+body.is-tv-slave > .nav-side,
+body.is-tv-slave > .qr-modal { display: none !important; }
+body.is-tv-slave .tv-overlay { display: flex !important; }
+body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en slave — l'user ferme la fenêtre */
+
 /* Orientation portrait : layout vertical (chrono en haut, teams en bas) sur téléphone/tablette */
 @media (orientation: portrait) {
   .tv-overlay { justify-content: space-around; }
@@ -1281,7 +1296,8 @@ html, body { overflow-x: hidden; }
   <img class="topbar-logo" src="logo-lsei.png" alt="LSEI TV">
   <div class="topbar-brand" id="topBrand">🎱 Chrono Billard</div>
   <button class="nav-arrow" id="navArrow" title="Voir l'historique des parties" aria-label="Voir l'historique">🏅</button>
-  <button class="icon-btn" id="tvToggle" title="Mode TV plein écran" aria-label="Mode TV plein écran">📺</button>
+  <button class="icon-btn" id="tvToggle" title="Mode TV plein écran (cet écran)" aria-label="Mode TV plein écran">📺</button>
+  <button class="icon-btn" id="tvPopup" title="Ouvrir Mode TV dans une fenêtre séparée (pour 2ᵉ écran)" aria-label="Ouvrir Mode TV sur 2ᵉ écran">↗</button>
   <button class="icon-btn" id="themeToggle" title="Thème clair / sombre" aria-label="Basculer le thème">☾</button>
 </div>
 
@@ -1590,6 +1606,7 @@ function load() {
 }
 function save() {
   try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {}
+  broadcastTvState();     // sync la fenêtre TV séparée si ouverte
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1604,6 +1621,7 @@ let hasWarned = false;        // true dès qu'on a vibré au passage sous 15 s (
 function renderChrono() {
   const el = document.getElementById('chronoVal');
   const startBtn = document.getElementById('startBtn');
+  if (!el || !startBtn) { if (tvOn) updateTvDisplay(); return; }   // mode slave : pas de contrôles
   el.textContent = Math.max(0, remaining);
   el.classList.remove('running', 'warn', 'over');
   if (remaining <= 0) {
@@ -1616,6 +1634,7 @@ function renderChrono() {
   startBtn.textContent = running ? '⏸ Pause' : (remaining < S.duration && remaining > 0 ? '▶ Reprendre' : '▶ Démarrer');
   startBtn.classList.toggle('paused', !running && remaining < S.duration && remaining > 0);
   if (tvOn) updateTvDisplay();
+  broadcastTvState();        // propage l'état du chrono à la fenêtre TV séparée
 }
 
 function startPause() {
@@ -2385,9 +2404,48 @@ function toggleSound() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   MODE TV — plein écran pour projection écran de club
+   MODE TV — plein écran pour projection écran de club (même écran OU 2ᵉ écran)
    ═══════════════════════════════════════════════════════════════════════ */
 let tvOn = false;
+
+// Détection du mode "slave" (fenêtre TV séparée, ouverte via ?tv=1 dans l'URL)
+const isTvSlave = new URLSearchParams(location.search).has('tv');
+
+// BroadcastChannel : sync temps réel entre la fenêtre maître (arbitre) et la fenêtre TV séparée
+let bcTv = null;
+try { if ('BroadcastChannel' in window) bcTv = new BroadcastChannel('chrono-billard-tv'); } catch (e) {}
+
+function broadcastTvState() {
+  if (!bcTv || isTvSlave) return;         // le slave ne broadcast pas, il écoute uniquement
+  try {
+    bcTv.postMessage({
+      name1: S.name1, name2: S.name2,
+      score1: S.score1, score2: S.score2,
+      remaining, running, duration: S.duration,
+      theme: S.theme,
+      match: {
+        teamA: S.match.teamA, teamB: S.match.teamB,
+        activeCell: S.match.activeCell,
+        playersA: S.match.playersA, playersB: S.match.playersB,
+        scoreCible: S.match.scoreCible,
+        scoreA: (typeof computeTeamScore === 'function') ? computeTeamScore('A') : 0,
+        scoreB: (typeof computeTeamScore === 'function') ? computeTeamScore('B') : 0,
+      },
+    });
+  } catch (e) {}
+}
+
+function openTvOnSecondScreen() {
+  const url = location.pathname + '?tv=1';
+  const win = window.open(url, 'ChronoBillardTV', 'popup,width=1280,height=720,noopener=no');
+  if (!win) {
+    alert('Le popup a été bloqué par le navigateur.\n\nAutorise les popups pour ce site puis retente.');
+    return;
+  }
+  // Push un premier snapshot dès que la fenêtre TV est prête (petit délai le temps qu'elle initialise)
+  setTimeout(broadcastTvState, 500);
+  setTimeout(broadcastTvState, 1500);
+}
 function enterTvMode() {
   const ov = document.getElementById('tvOverlay');
   ov.classList.add('show');
@@ -2432,7 +2490,9 @@ function updateTvDisplay() {
   if (ctx) {
     const m = S.match;
     if (m && m.activeCell) {
-      const scoreA = computeTeamScore('A'), scoreB = computeTeamScore('B');
+      // En mode slave, on utilise les scores pré-calculés reçus via broadcast (sheet n'est pas synchronisée)
+      const scoreA = (m._scoreA !== undefined) ? m._scoreA : (typeof computeTeamScore === 'function' ? computeTeamScore('A') : 0);
+      const scoreB = (m._scoreB !== undefined) ? m._scoreB : (typeof computeTeamScore === 'function' ? computeTeamScore('B') : 0);
       ctx.textContent = (m.teamA || 'Équipe A') + '  ' + scoreA + ' — ' + scoreB + '  ' + (m.teamB || 'Équipe B')
         + '  ·  Série ' + (m.activeCell.s + 1) + ' · Match ' + (m.activeCell.m + 1) + '/5';
     } else {
@@ -2450,6 +2510,44 @@ function init() {
     S.theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
   }
   applyTheme();
+
+  // MODE TV SLAVE : la fenêtre a été ouverte via ?tv=1 → uniquement affichage TV, aucun contrôle
+  // Elle écoute les updates de la fenêtre maître via BroadcastChannel et redessine.
+  if (isTvSlave) {
+    document.body.classList.add('is-tv-slave');
+    tvOn = true;
+    document.getElementById('tvOverlay').classList.add('show');
+    updateTvDisplay();
+    if (bcTv) {
+      bcTv.onmessage = (ev) => {
+        const d = ev.data || {};
+        if (d.name1 !== undefined) S.name1 = d.name1;
+        if (d.name2 !== undefined) S.name2 = d.name2;
+        if (d.score1 !== undefined) S.score1 = d.score1;
+        if (d.score2 !== undefined) S.score2 = d.score2;
+        if (d.remaining !== undefined) remaining = d.remaining;
+        if (d.running !== undefined) running = d.running;
+        if (d.duration !== undefined) S.duration = d.duration;
+        if (d.theme !== undefined && d.theme !== S.theme) { S.theme = d.theme; applyTheme(); }
+        if (d.match) {
+          S.match.teamA = d.match.teamA;
+          S.match.teamB = d.match.teamB;
+          S.match.activeCell = d.match.activeCell;
+          S.match.playersA = d.match.playersA;
+          S.match.playersB = d.match.playersB;
+          S.match.scoreCible = d.match.scoreCible;
+          S.match._scoreA = d.match.scoreA;
+          S.match._scoreB = d.match.scoreB;
+        }
+        updateTvDisplay();
+      };
+    }
+    // Empêche la mise en veille pendant la projection TV
+    if ('wakeLock' in navigator) {
+      navigator.wakeLock.request('screen').then(l => { window._wakeLock = l; }).catch(() => {});
+    }
+    return;   // stop init — pas de wire-up des contrôles arbitre
+  }
 
   // Preset actif
   document.getElementById('customSec').value = S.customSec;
@@ -2497,6 +2595,7 @@ function init() {
   // Mode TV
   document.getElementById('tvToggle').addEventListener('click', enterTvMode);
   document.getElementById('tvExit').addEventListener('click', exitTvMode);
+  document.getElementById('tvPopup').addEventListener('click', openTvOnSecondScreen);
   // Échap pour quitter le mode TV
   document.addEventListener('keydown', (ev) => {
     if (ev.key === 'Escape' && tvOn) exitTvMode();

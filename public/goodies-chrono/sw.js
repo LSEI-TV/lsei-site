@@ -1,6 +1,6 @@
 /* Service worker minimal — cache-first pour un fonctionnement hors ligne complet.
    Change CACHE_NAME pour forcer un refresh du cache après une release. */
-const CACHE_NAME = 'goodies-chrono-v1';
+const CACHE_NAME = 'goodies-chrono-v2';
 const CORE_ASSETS = [
   '/goodies-chrono/',
   '/goodies-chrono/index.html',
