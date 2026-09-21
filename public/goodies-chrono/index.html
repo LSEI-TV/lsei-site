@@ -632,15 +632,47 @@ html, body { overflow-x: hidden; }
   .history-row .h-dur { font-size: 16px; }
 }
 
-/* Tablette portrait / phablet (481-899 px) : centre le contenu à 500 px de large, tailles compactes */
+/* Tablette portrait / phablet (481-899 px) — layout 2 colonnes :
+   chrono à GAUCHE (presets + grand cadre + boutons), scores à DROITE.
+   Utilise tout l'espace horizontal → tout tient sur 1 écran sans scroll vertical. */
 @media (min-width: 481px) and (max-width: 899px) {
-  .topbar, .section, .footer-lsei, .context-bar { max-width: 500px; margin-left: auto; margin-right: auto; }
-  .chrono-val { font-size: 110px; padding: 14px 12px; margin-bottom: 14px; }
-  .chrono-btn { font-size: 18px; padding: 16px 10px; }
-  .player-score { font-size: 68px; padding: 4px 8px 14px; }
+  .topbar, .footer-lsei { max-width: 720px; margin-left: auto; margin-right: auto; }
+
+  /* Pages 📋 Feuille de match et 🏅 Historique : gardent le layout centré 1 colonne */
+  #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei { max-width: 500px; margin-left: auto; margin-right: auto; }
+
+  /* Page 🎱 Chrono principal : grid 2 colonnes horizontales */
+  #pageMain {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "context context"
+      "presets scores"
+      "chrono  scores";
+    gap: 10px;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 6px 10px 44px;
+    align-items: start;
+  }
+  #pageMain > .context-bar { grid-area: context; margin: 0; }
+  #pageMain > .section { margin: 0; max-width: none; }
+  #pageMain > *:nth-child(2) { grid-area: presets; }  /* Section Durée du chrono */
+  #pageMain > *:nth-child(3) { grid-area: chrono;  }  /* Section Grand cadre 40s */
+  #pageMain > *:nth-child(4) { grid-area: scores;  align-self: stretch; }  /* Section Scores 2 joueurs */
+  #pageMain > .footer-lsei { display: none; }         /* économise l'espace en tablette */
+
+  /* Compaction pour tenir dans les 2 colonnes (~430 px chacune sur écran 900) */
+  .chrono-val { font-size: clamp(90px, 12vw, 110px); padding: 14px 12px; margin-bottom: 12px; }
+  .chrono-btn { font-size: 17px; padding: 14px 8px; letter-spacing: 1.5px; }
+
+  /* Colonne droite Scores : les 2 joueurs empilés verticalement (chacun full-width de sa colonne) */
+  #pageMain .scores { grid-template-columns: 1fr; gap: 8px; }
+  .player-score { font-size: clamp(56px, 10vw, 76px); padding: 4px 8px 14px; }
   .score-btn { font-size: 20px; padding: 14px 6px; }
-  .preset-btn { padding: 10px 6px; }
-  .preset-btn .preset-dur { font-size: 20px; }
+
+  .preset-btn { padding: 8px 4px; }
+  .preset-btn .preset-dur { font-size: 18px; }
 }
 
 /* Desktop / tablette large (≥ 900 px) : centre le contenu à 640 px de large */
