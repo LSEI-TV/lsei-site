@@ -670,11 +670,82 @@ html, body { overflow-x: hidden; }
   .scores-reset { padding: 8px; font-size: 11px; }
 }
 
-/* Desktop / tablette large (≥ 900 px) : centre le contenu à 640 px de large */
+/* Desktop / tablette large (≥ 900 px) : contenu centré à 640 px, topbar pleine largeur avec contenu aligné sur 1100 px */
 @media (min-width: 900px) {
-  .topbar, .section, .footer-lsei, .context-bar { max-width: 640px; margin-left: auto; margin-right: auto; }
+  .section, .footer-lsei, .context-bar { max-width: 640px; margin-left: auto; margin-right: auto; }
+  .topbar {
+    padding-left: max(14px, calc((100% - 1100px) / 2 + 14px));
+    padding-right: max(14px, calc((100% - 1100px) / 2 + 14px));
+  }
   .chrono-val { font-size: 140px; }
   .player-score { font-size: 80px; }
+}
+
+/* Dashboard PC (≥ 1400 px de large, paysage) : 3 panneaux côte à côte.
+   Chaque page est visible en même temps → arbitre / commentateur voit tout d'un coup.
+   Idéal en régie LSEI ou projeté sur 2ᵉ écran. */
+@media (min-width: 1400px) and (orientation: landscape) {
+  .topbar {
+    padding-left: 20px;
+    padding-right: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  #navArrow { display: none; }
+  .page-dots { display: none; }
+
+  .pages {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 14px;
+    padding: 14px;
+    overflow: hidden;
+    scroll-snap-type: none;
+    width: 100%;
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+
+  /* Chaque .page devient un panneau — plus de scroll horizontal, chacun scroll interne */
+  .page {
+    flex: none;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    padding: 12px;
+    scroll-snap-align: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  }
+  .page > .footer-lsei { display: none; }
+
+  /* Désactive le grid 2-col paysage tablette qui interfère sur pageMain */
+  #pageMain { display: block; padding: 0; max-width: none; }
+  #pageMain > .section, #pageMain > .context-bar {
+    margin: 6px 0 !important;
+    max-width: none;
+    grid-area: auto !important;
+    align-self: auto !important;
+  }
+
+  /* Sections plein largeur du panneau */
+  .section, .context-bar { max-width: none !important; margin: 6px 0; }
+
+  /* Chrono compact pour tenir dans son panneau (~380 px) */
+  .chrono-val { font-size: 96px; padding: 12px 10px; margin-bottom: 10px; }
+  .chrono-btn { font-size: 18px; padding: 14px 8px; }
+  .player-score { font-size: 62px; padding: 4px 8px 12px; }
+  .score-btn { font-size: 20px; padding: 12px 6px; }
+  #pageMain .scores { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  /* Feuille de match : bien lisible dans le panneau central */
+  .team-score-summary .side-score { font-size: 42px; }
+  .match-side select { font-size: 12px; }
+  .match-play-btn { padding: 10px 4px; font-size: 14px; }
+
+  /* Historique : liste bien étalée */
+  .history-list { max-height: none; }
 }
 
 /* Tablette PAYSAGE (≥ 900 px de large, orientation landscape) : layout 2 colonnes.
