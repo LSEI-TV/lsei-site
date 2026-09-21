@@ -1441,6 +1441,23 @@ function escapeHtml(s) {
   return String(s || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 }
 
+/**
+ * Vide un input au focus (pour éviter à l'user d'effacer le pré-rempli à la main)
+ * et restaure sa valeur d'origine au blur si rien n'a été tapé.
+ */
+function autoClearOnFocus(input) {
+  input.addEventListener('focus', () => {
+    input.dataset.prev = input.value;
+    input.value = '';
+  });
+  input.addEventListener('blur', () => {
+    if (input.value.trim() === '') {
+      input.value = input.dataset.prev || '';
+    }
+    delete input.dataset.prev;
+  });
+}
+
 function newMatch() {
   if (!confirm('Tout effacer et recommencer ?\n\nHistorique des parties, scores : tout sera perdu.\n\n(Fais un screenshot avant si tu veux garder les résultats.)')) return;
   S.games = [];
@@ -1556,6 +1573,7 @@ function renderMatchSheet() {
     inA.value = m.playersA[i] || ('A' + (i + 1));
     inA.dataset.team = 'A'; inA.dataset.idx = String(i);
     inA.addEventListener('change', onRosterChange);
+    autoClearOnFocus(inA);
     rosterA.appendChild(inA);
 
     const inB = document.createElement('input');
@@ -1563,6 +1581,7 @@ function renderMatchSheet() {
     inB.value = m.playersB[i] || ('B' + (i + 1));
     inB.dataset.team = 'B'; inB.dataset.idx = String(i);
     inB.addEventListener('change', onRosterChange);
+    autoClearOnFocus(inB);
     rosterB.appendChild(inB);
   }
 
@@ -1951,6 +1970,7 @@ function init() {
       el.value = S[id];
       save();
     });
+    autoClearOnFocus(el);
   });
 
   // Navigation entre pages (cycle 0 → 1 → 2 → 0)
@@ -1976,16 +1996,20 @@ function init() {
   document.getElementById('btnNewMatch').addEventListener('click', newMatch);
 
   // Wire-ups feuille de match équipes
-  document.getElementById('cfgTeamA').addEventListener('change', ev => {
+  const teamAInput = document.getElementById('cfgTeamA');
+  const teamBInput = document.getElementById('cfgTeamB');
+  teamAInput.addEventListener('change', ev => {
     S.match.teamA = ((ev.target.value || '').trim() || 'Équipe A').toUpperCase();
     ev.target.value = S.match.teamA;
     save(); renderMatchSheet();
   });
-  document.getElementById('cfgTeamB').addEventListener('change', ev => {
+  teamBInput.addEventListener('change', ev => {
     S.match.teamB = ((ev.target.value || '').trim() || 'Équipe B').toUpperCase();
     ev.target.value = S.match.teamB;
     save(); renderMatchSheet();
   });
+  autoClearOnFocus(teamAInput);
+  autoClearOnFocus(teamBInput);
   document.getElementById('cfgSeries').addEventListener('change', ev => {
     const v = Math.max(1, Math.min(5, parseInt(ev.target.value, 10) || 1));
     ev.target.value = v;
