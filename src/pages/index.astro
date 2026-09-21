@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import Ticker from '../components/Ticker.astro';
 import Thumb from '../components/Thumb.astro';
 import VideoPlayer from '../components/VideoPlayer.astro';
-import { disciplines, getDiscipline, partners, stats, cta, site } from '../data/site';
+import { disciplines, getDiscipline, partners, stats, cta, goodies, site } from '../data/site';
 import SportIcon from '../components/SportIcon.astro';
 import { getLiveFeature, getBroadcasts, getReplays, getChannelStats, tagStyle } from '../lib/youtube';
 import { parseProgTitle } from '../lib/programmeTitle';
@@ -454,6 +454,33 @@ const slides = programme
           {partners.map((p) => (
             <a href={p.url} class="ptile-link" target="_blank" rel="noopener" title={p.name}>
               <span class="ptile"><img src={p.logo} alt={p.name} loading="lazy" /></span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GOODIES — les outils LSEI en libre accès.
+       Cadre clair volontairement : le CTA qui suit est sur fond encre, et deux
+       blocs sombres d'affilée casseraient le rythme de la page. -->
+  <section class="section goodies-sec">
+    <div class="wrap">
+      <div class="goodies">
+        <div class="goodies-head">
+          <div class="eyebrow">{goodies.eyebrow}</div>
+          <h2>{goodies.title}</h2>
+          <p>{goodies.text}</p>
+        </div>
+        <div class="goodies-list">
+          {goodies.liste.map((g) => (
+            <a href={g.lien} class="goodie">
+              <span class="goodie-ico" aria-hidden="true">{g.icone}</span>
+              <span class="goodie-txt">
+                <span class="goodie-nom">{g.nom}</span>
+                <span class="goodie-desc">{g.texte}</span>
+              </span>
+              <span class="goodie-btn">{g.bouton}</span>
             </a>
           ))}
         </div>

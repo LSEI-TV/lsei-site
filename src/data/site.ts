@@ -216,6 +216,25 @@ export const legal = {
   updated: '15 juillet 2026',
 };
 
+// Les outils que LSEI met à disposition, en libre accès. Pensé au pluriel dès
+// le départ : ajouter un goodie, c'est ajouter une entrée à `liste`, pas
+// retoucher la page. Chaque entrée : titre, une phrase, le lien, et un emoji
+// qui tient lieu d'illustration.
+export const goodies = {
+  eyebrow: 'Goodies',
+  title: 'Nos outils, à votre disposition',
+  text: 'Développés pour nos directs, offerts à tous les joueurs. Rien à installer : ça marche dans le navigateur, sur téléphone comme sur ordinateur.',
+  liste: [
+    {
+      icone: '⏱',
+      nom: 'Chrono Billard',
+      texte: 'Le chrono de vos parties de blackball : 40 secondes, ou la durée de votre choix. Avec le score des deux joueurs.',
+      lien: '/goodies-chrono/',
+      bouton: 'Ouvrir le chrono',
+    },
+  ],
+};
+
 export const cta = {
   eyebrow: 'Votre club, à l’antenne',
   title: 'Portez haut et fort les valeurs de votre sport',

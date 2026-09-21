@@ -733,6 +733,71 @@ a.evbanner:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 
   .prog-what { order: 5; flex: 1 1 100%; }
 }
 
+/* ---------- GOODIES ----------
+   Les outils LSEI en libre accès, entre les partenaires et le CTA.
+   Volontairement clair : le CTA qui suit est sur fond encre.
+   La grille est pensée pour accueillir d'autres goodies sans retouche. */
+.goodies-sec { padding-top: 0; }
+.goodies {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 38px 36px;
+}
+.goodies-head { max-width: 62ch; }
+.goodies-head h2 {
+  margin: 6px 0 0; font-size: 27px; font-weight: 800; letter-spacing: -.02em; color: var(--ink);
+}
+.goodies-head p {
+  margin: 10px 0 0; color: var(--ink-soft); font-family: var(--serif); font-size: 15.5px;
+}
+.goodies-list {
+  margin-top: 26px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+}
+.goodie {
+  display: flex; align-items: center; gap: 18px;
+  padding: 20px 22px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  text-decoration: none;
+  transition: border-color .16s, transform .16s, box-shadow .16s;
+}
+.goodie:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .10);
+}
+.goodie-ico {
+  flex: none; width: 52px; height: 52px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; line-height: 1;
+  background: var(--accent); color: var(--on-accent);
+}
+.goodie-txt { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.goodie-nom { font-size: 16.5px; font-weight: 800; color: var(--ink); letter-spacing: -.01em; }
+.goodie-desc { font-size: 13.5px; color: var(--ink-soft); line-height: 1.45; }
+.goodie-btn {
+  flex: none; margin-left: auto;
+  font-size: 13px; font-weight: 700; color: var(--accent);
+  border: 1px solid var(--line-strong); border-radius: 100px;
+  padding: 9px 18px; white-space: nowrap;
+  transition: background .16s, color .16s, border-color .16s;
+}
+.goodie:hover .goodie-btn { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+
+/* Sur téléphone, le goodie s'utilise au bord de la table : la carte passe en
+   pleine largeur et le bouton devient une vraie cible, pas une pastille. */
+@media (max-width: 620px) {
+  .goodies { padding: 28px 20px; }
+  .goodies-list { grid-template-columns: 1fr; }
+  .goodie { flex-wrap: wrap; gap: 14px; }
+  .goodie-btn { margin-left: 0; width: 100%; text-align: center; padding: 12px 18px; }
+}
+
 /* ---------- CTA ---------- */
 .cta {
   position: relative; overflow: hidden; border-radius: 8px; background: var(--ink); color: #fff;

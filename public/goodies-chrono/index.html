@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Chrono Billard">
+<meta name="theme-color" content="#0a0c10">
+<meta name="description" content="Chrono billard gratuit : shot clock 40 s (blackball), 60 s (snooker), 30 s ou perso, scores 2 joueurs, thème clair/sombre, offline. Un goodies de lsei.tv.">
+<meta property="og:title" content="Chrono Billard — Shot clock gratuit">
+<meta property="og:description" content="Shot clock 40 s / 60 s / 30 s + scores 2 joueurs. Gratuit, sans compte, marche hors-ligne.">
+<meta property="og:type" content="website">
+<title>Chrono Billard — un goodies LSEI TV</title>
+
+<link rel="icon" href="/favicon.svg">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   THÈMES — pilotés par [data-theme] sur <html>. Défaut = sombre.
+   Bascule via bouton ☾/☀. Persistance en localStorage.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  --bg:        #0a0c10;
+  --surface:   #141820;
+  --card:      #1a1f2e;
+  --border:    rgba(255,255,255,0.10);
+  --text:      #ffffff;
+  --dim:       rgba(255,255,255,0.55);
+  --orange:    #ff7800;
+  --orange-d:  #cc5f00;
+  --cyan:      #00d9ff;
+  --green:     #00cc66;
+  --red:       #ff3333;
+  --yellow:    #ffd633;
+  --p1:        #7dd3fc;   /* bleu ciel joueur 1 */
+  --p2:        #c4b5fd;   /* violet pâle joueur 2 */
+}
+html[data-theme="light"] {
+  --bg:        #f4f5f7;
+  --surface:   #ffffff;
+  --card:      #ffffff;
+  --border:    rgba(0,0,0,0.10);
+  --text:      #111318;
+  --dim:       rgba(0,0,0,0.55);
+  --p1:        #0284c7;
+  --p2:        #7c3aed;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   RESET + BASE
+   ═══════════════════════════════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: background .3s ease, color .3s ease;
+}
+button { font-family: inherit; cursor: pointer; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TOP BAR
+   ═══════════════════════════════════════════════════════════════════════ */
+.topbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky; top: 0; z-index: 20;
+}
+/* ═══════════════════════════════════════════════════════════════════════
+   NAVIGATION PAGES — swipe horizontal + boutons flèche
+   ═══════════════════════════════════════════════════════════════════════ */
+html, body { overflow-x: hidden; }
+.pages {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  width: 100vw;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.pages::-webkit-scrollbar { display: none; }
+.page {
+  flex: 0 0 100vw;
+  min-height: calc(100vh - 66px);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+.page-history,
+.page-match {
+  padding-bottom: 40px;
+}
+/* Bouton flèche navigation dans la topbar */
+.nav-arrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 20px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, transform .08s;
+}
+.nav-arrow:active { transform: scale(0.94); }
+.nav-arrow.active { background: var(--orange); color: #000; border-color: var(--orange); }
+/* Dots pagination en bas */
+.page-dots {
+  position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px;
+  z-index: 15;
+  padding: 6px 10px;
+  background: rgba(0,0,0,0.35);
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+}
+.page-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.30);
+  transition: background .2s, transform .2s;
+}
+.page-dot.active { background: var(--orange); transform: scale(1.2); }
+.topbar-logo {
+  height: 40px;
+  width: auto;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+}
+.topbar-brand {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 18px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--orange);
+  flex: 1;
+  min-width: 0;
+}
+.topbar-brand small {
+  display: block;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 500; font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--dim);
+  margin-top: 2px;
+}
+.icon-btn {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, transform .08s;
+}
+.icon-btn:active { transform: scale(0.94); background: var(--card); }
+.icon-btn.on { background: var(--orange); color: #000; border-color: var(--orange); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SECTIONS
+   ═══════════════════════════════════════════════════════════════════════ */
+.section {
+  margin: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+}
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 12px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PRESETS (Blackball 40 s / Snooker 60 s / Rapide 30 s / Perso)
+   ═══════════════════════════════════════════════════════════════════════ */
+.presets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.preset-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 6px;
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 13px;
+  letter-spacing: 1px; text-transform: uppercase;
+  transition: background .15s, border-color .15s, transform .08s;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.preset-btn:active { transform: scale(0.96); }
+.preset-btn.active {
+  background: rgba(255,120,0,0.18);
+  border-color: var(--orange);
+  color: var(--orange);
+}
+.preset-btn .preset-dur {
+  font-size: 20px; font-weight: 900;
+  color: inherit;
+}
+.custom-row {
+  display: none;
+  margin-top: 8px;
+  gap: 8px;
+  align-items: center;
+}
+.custom-row.show { display: flex; }
+.custom-row label {
+  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--dim); font-weight: 700;
+}
+.custom-row input {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 18px;
+  text-align: center;
+}
+.custom-row input:focus { border-color: var(--orange); outline: none; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CHRONO — l'écran principal
+   ═══════════════════════════════════════════════════════════════════════ */
+.chrono-section {
+  text-align: center;
+  padding: 22px 18px;
+}
+.chrono-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(96px, 22vw, 220px);
+  line-height: 1;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  border: 3px solid var(--border);
+  border-radius: 20px;
+  padding: 20px 16px;
+  background: var(--card);
+  margin-bottom: 18px;
+  transition: color .2s, border-color .2s, background .2s, transform .12s;
+  cursor: pointer;                 /* le grand cadre est tap-safe : tap = reset + relance */
+}
+.chrono-val:active { transform: scale(0.97); }
+.chrono-val.running {
+  border-color: var(--green);
+  color: var(--green);
+  box-shadow: 0 0 28px rgba(0,204,102,0.35), inset 0 0 16px rgba(0,204,102,0.12);
+}
+.chrono-val.warn {
+  border-color: var(--yellow);
+  color: var(--yellow);
+  box-shadow: 0 0 28px rgba(255,214,51,0.45), inset 0 0 16px rgba(255,214,51,0.16);
+  animation: warnPulse 0.6s ease-in-out infinite;
+}
+.chrono-val.over {
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(255,51,51,0.10);
+  box-shadow: 0 0 34px rgba(255,51,51,0.55), inset 0 0 18px rgba(255,51,51,0.20);
+  animation: overFlash 0.5s ease-in-out infinite;
+}
+@keyframes warnPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+@keyframes overFlash { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+.chrono-btns {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 10px;
+}
+.chrono-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 20px;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 20px 12px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  transition: background .15s, transform .08s;
+  color: var(--text);
+}
+.chrono-btn:active { transform: scale(0.96); }
+.chrono-btn.primary {
+  background: var(--green);
+  color: #062a15;
+}
+.chrono-btn.primary.paused { background: var(--orange); color: #2a1503; }
+.chrono-btn.secondary {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--dim);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SCORES 2 JOUEURS
+   ═══════════════════════════════════════════════════════════════════════ */
+.scores {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.player-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+  transition: background .2s, box-shadow .2s, transform .12s;
+}
+.player-card.p1 { border-left: 4px solid var(--p1); }
+.player-card.p2 { border-right: 4px solid var(--p2); }
+/* État actif : joueur sélectionné = fond teinté + halo + léger scale */
+.player-card.p1.active {
+  background: rgba(125,211,252,0.14);
+  box-shadow: 0 0 24px rgba(125,211,252,0.35), inset 0 0 12px rgba(125,211,252,0.10);
+  transform: scale(1.015);
+}
+.player-card.p2.active {
+  background: rgba(196,181,253,0.14);
+  box-shadow: 0 0 24px rgba(196,181,253,0.35), inset 0 0 12px rgba(196,181,253,0.10);
+  transform: scale(1.015);
+}
+.player-name-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.player-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 14px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  text-align: center;
+  width: auto;
+  max-width: calc(100% - 22px);
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: background .15s;
+}
+.player-name:focus { background: rgba(255,120,0,0.10); outline: none; }
+.player-name-edit {
+  color: var(--dim);
+  font-size: 12px;
+  opacity: 0.7;
+  transition: color .15s, opacity .15s;
+  pointer-events: none;                    /* le tap passe à l'input derrière */
+}
+.player-name-row:focus-within .player-name-edit { color: var(--orange); opacity: 1; }
+.player-score {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(56px, 16vw, 100px);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  margin: 8px 0;
+  border: 2px solid rgba(255,255,255,0.75);
+  border-radius: 14px;
+  padding: 6px 12px 20px;                  /* la font Barlow Condensed 900 laisse un ascender-space vide au-dessus des chiffres → on inverse : top-6, bottom-20 pour recentrer visuellement le "0" */
+  background: rgba(0,0,0,0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 1.2em;                       /* garantit une hauteur cohérente */
+  cursor: pointer;                         /* tap = sélectionne ce joueur + relance le chrono */
+  transition: transform .12s;
+}
+.player-score:active { transform: scale(0.97); }
+.p1 .player-score { color: var(--p1); }
+.p2 .player-score { color: var(--p2); }
+.score-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.score-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 22px;
+  padding: 14px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  transition: background .15s, transform .08s;
+}
+.score-btn:active { transform: scale(0.94); }
+.score-btn.plus { background: rgba(0,204,102,0.18); color: var(--green); border-color: rgba(0,204,102,0.45); }
+.score-btn.minus { background: rgba(255,51,51,0.14); color: var(--red); border-color: rgba(255,51,51,0.40); }
+
+.scores-reset {
+  margin-top: 8px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--dim);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 12px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%;
+  transition: color .15s, border-color .15s;
+}
+.scores-reset:active { color: var(--red); border-color: var(--red); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PAGE 2 — HISTORIQUE DES PARTIES
+   ═══════════════════════════════════════════════════════════════════════ */
+.history-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.stat-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+}
+.stat-box-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--dim);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.stat-box-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--text);
+}
+.stat-box.p1 { border-left: 3px solid var(--p1); }
+.stat-box.p1 .stat-box-value { color: var(--p1); }
+.stat-box.p2 { border-right: 3px solid var(--p2); }
+.stat-box.p2 .stat-box-value { color: var(--p2); }
+
+.history-list {
+  display: flex; flex-direction: column; gap: 6px;
+  max-height: 55vh;
+  overflow-y: auto;
+  padding: 4px;
+}
+.history-empty {
+  text-align: center;
+  padding: 24px 12px;
+  color: var(--dim);
+  font-size: 13px;
+  font-style: italic;
+}
+.history-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.history-row .h-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.history-row .h-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 12px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--dim);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.history-row .h-winner {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 14px;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.history-row .h-winner.p1 { color: var(--p1); }
+.history-row .h-winner.p2 { color: var(--p2); }
+.history-row .h-dur {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 18px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.history-actions {
+  display: grid; grid-template-columns: 1fr; gap: 8px;
+  margin-top: 12px;
+}
+.history-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 13px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  transition: transform .08s, background .15s;
+}
+.history-btn:active { transform: scale(0.96); }
+.history-btn.reset { background: rgba(255,51,51,0.14); border-color: rgba(255,51,51,0.40); color: var(--red); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FOOTER — branding LSEI discret
+   ═══════════════════════════════════════════════════════════════════════ */
+.footer-lsei {
+  text-align: center;
+  padding: 22px 14px 30px;
+  color: var(--dim);
+  font-size: 12px;
+  letter-spacing: 1.2px;
+}
+.footer-lsei a {
+  color: var(--orange);
+  text-decoration: none;
+  font-weight: 700;
+}
+.footer-lsei a:hover { text-decoration: underline; }
+
+/* Zone tap-safe pour iPhone bas d'écran */
+@supports (padding: max(0px)) {
+  body { padding-bottom: max(0px, env(safe-area-inset-bottom)); }
+}
+
+/* Desktop : centre et limite la largeur */
+@media (min-width: 720px) {
+  .topbar, .section, .footer-lsei, .context-bar { max-width: 640px; margin-left: auto; margin-right: auto; }
+  .chrono-val { font-size: 140px; }
+  .player-score { font-size: 80px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FEUILLE DE MATCH ÉQUIPES 5v5 — page 1 (entre chrono et historique)
+   ═══════════════════════════════════════════════════════════════════════ */
+.match-setup { display: grid; gap: 8px; }
+.match-setup-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.match-setup-item label {
+  display: block;
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--dim); font-weight: 700;
+  margin-bottom: 4px;
+}
+.match-setup-item input {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 14px;
+  letter-spacing: 1px; text-align: center;
+}
+.match-setup-item input.team-name { font-size: 15px; text-transform: uppercase; }
+.match-setup-item input:focus { border-color: var(--orange); outline: none; }
+
+.team-side {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+}
+.team-side.team-a { border-top: 4px solid var(--p1); }
+.team-side.team-b { border-top: 4px solid var(--p2); }
+.team-side-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 8px; text-align: center;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.team-a .team-side-title { color: var(--p1); }
+.team-b .team-side-title { color: var(--p2); }
+.team-players { display: flex; flex-direction: column; gap: 6px; }
+.team-players input {
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 13px;
+  text-align: center; letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.team-players input:focus { border-color: var(--orange); outline: none; }
+
+.team-score-summary {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center; gap: 10px;
+  padding: 4px 4px 6px;
+}
+.team-score-summary .side { text-align: center; min-width: 0; }
+.team-score-summary .side-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 12px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 4px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.team-score-summary .side-score {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 44px; line-height: 1;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.team-score-summary .side.team-a .side-score { color: var(--p1); }
+.team-score-summary .side.team-b .side-score { color: var(--p2); }
+.team-score-summary .vs {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 16px;
+  letter-spacing: 3px; color: var(--dim);
+}
+
+.series-block {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.series-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--orange);
+  text-align: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.match-row {
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 6px;
+  border-bottom: 1px dashed rgba(255,255,255,0.06);
+  border-radius: 8px;
+  transition: background .2s, box-shadow .2s;
+}
+.match-row:last-child { border-bottom: none; }
+.match-row.active {
+  background: rgba(255,120,0,0.14);
+  box-shadow: 0 0 0 2px var(--orange), 0 0 18px rgba(255,120,0,0.35);
+  border-bottom-color: transparent;
+  animation: activePulse 1.3s ease-in-out infinite;
+}
+@keyframes activePulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--orange), 0 0 18px rgba(255,120,0,0.35); }
+  50%      { box-shadow: 0 0 0 2px var(--orange), 0 0 28px rgba(255,120,0,0.55); }
+}
+.match-side { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.match-side select {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 6px;
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 12px;
+  letter-spacing: 0.5px;
+  width: 100%; cursor: pointer;
+  text-transform: uppercase;
+}
+.match-side select option { text-transform: uppercase; }
+.match-side select:focus { border-color: var(--orange); outline: none; }
+.match-row.done .match-side.winner select {
+  background: rgba(0,204,102,0.20);
+  border-color: var(--green);
+  color: var(--green);
+}
+.match-row.done .match-side.loser select {
+  background: rgba(255,51,51,0.14);
+  border-color: var(--red);
+  color: var(--red);
+}
+.match-score {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 1px; text-align: center;
+  min-height: 12px;
+}
+.match-row.done .match-side.winner .match-score { color: var(--green); }
+.match-row.done .match-side.loser .match-score { color: var(--red); }
+
+.match-play-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 16px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 12px 6px;
+  border-radius: 8px;
+  border: 1px solid var(--orange);
+  background: rgba(255,120,0,0.15);
+  color: var(--orange);
+  transition: transform .08s, background .15s;
+}
+.match-play-btn:active { transform: scale(0.94); }
+.match-play-btn.done {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--dim);
+}
+.match-play-btn.active {
+  background: var(--orange);
+  color: #000;
+  animation: playPulse 1.2s ease-in-out infinite;
+}
+@keyframes playPulse {
+  0%,100% { box-shadow: 0 0 0 rgba(255,120,0,0.5); }
+  50% { box-shadow: 0 0 16px rgba(255,120,0,0.6); }
+}
+
+/* Bannière context au-dessus du chrono quand match d'équipe en cours */
+.context-bar {
+  display: none;
+  background: rgba(255,120,0,0.10);
+  border: 1px solid var(--orange);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin: 10px 12px 0;
+  text-align: center;
+}
+.context-bar.show { display: block; }
+.context-bar-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 12px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+.context-bar-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--text);
+}
+.context-bar-quit {
+  margin-top: 8px;
+  background: transparent;
+  border: 1px solid var(--dim);
+  color: var(--dim);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 10px;
+  letter-spacing: 1.5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+/* Info format & badge vainqueur équipe */
+.match-format-info {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(255,120,0,0.08);
+  border: 1px dashed rgba(255,120,0,0.35);
+  border-radius: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text);
+}
+.match-format-info b { color: var(--orange); font-weight: 900; }
+.team-progress {
+  text-align: center;
+  margin-top: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  color: var(--dim);
+  font-weight: 700;
+}
+.team-progress b { color: var(--text); font-weight: 900; }
+.team-winner-badge {
+  display: none;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(0,204,102,0.15);
+  border: 1px solid var(--green);
+  border-radius: 10px;
+  text-align: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1.5;
+  animation: badgeGlow 1.5s ease-in-out infinite;
+}
+.team-winner-badge.show { display: block; }
+.team-winner-badge b { color: var(--green); font-weight: 900; font-size: 16px; }
+.team-winner-badge small {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--dim);
+  font-weight: 500;
+}
+@keyframes badgeGlow {
+  0%,100% { box-shadow: 0 0 0 rgba(0,204,102,0.5); }
+  50% { box-shadow: 0 0 20px rgba(0,204,102,0.5); }
+}
+
+/* Vainqueur / perdant sur les cartes joueur (fin de match d'équipe) */
+.player-card.winner {
+  background: rgba(0,204,102,0.22);
+  box-shadow: 0 0 32px rgba(0,204,102,0.55), inset 0 0 16px rgba(0,204,102,0.15);
+  border-color: var(--green) !important;
+  animation: winnerPulse 0.8s ease-in-out infinite;
+}
+.player-card.loser {
+  background: rgba(255,51,51,0.15);
+  box-shadow: inset 0 0 12px rgba(255,51,51,0.20);
+  border-color: var(--red) !important;
+  opacity: 0.85;
+}
+@keyframes winnerPulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ TOP BAR ═══════════════════════════ -->
+<div class="topbar">
+  <img class="topbar-logo" src="logo-lsei.png" alt="LSEI TV">
+  <div class="topbar-brand" id="topBrand">🎱 Chrono Billard</div>
+  <button class="nav-arrow" id="navArrow" title="Voir l'historique des parties" aria-label="Voir l'historique">🏅</button>
+  <button class="icon-btn" id="themeToggle" title="Thème clair / sombre" aria-label="Basculer le thème">☾</button>
+</div>
+
+<div class="pages" id="pages">
+
+<!-- ═══════════════════════════ PAGE 1 : CHRONO PRINCIPAL ═══════════════════════════ -->
+<div class="page page-main" id="pageMain">
+
+<!-- Bannière context : n'apparaît que quand un match d'équipe est actif -->
+<div class="context-bar" id="contextBar">
+  <div class="context-bar-title" id="contextBarTitle">—</div>
+  <div class="context-bar-sub" id="contextBarSub">—</div>
+  <button class="context-bar-quit" id="contextBarQuit">✕ Quitter ce match</button>
+</div>
+
+<!-- ═══════════════════════════ PRESETS ═══════════════════════════ -->
+<div class="section">
+  <div class="section-title">⏱ Durée du chrono</div>
+  <div class="presets">
+    <button class="preset-btn" data-preset="40"><span class="preset-dur">40s</span><span>Blackball</span></button>
+    <button class="preset-btn" data-preset="custom"><span class="preset-dur">⚙</span><span>Perso</span></button>
+  </div>
+  <div class="custom-row" id="customRow">
+    <label for="customSec">Durée</label>
+    <input type="number" id="customSec" min="5" max="600" step="1" value="45">
+    <label>secondes</label>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CHRONO ═══════════════════════════ -->
+<div class="section chrono-section">
+  <div class="chrono-val" id="chronoVal">40</div>
+  <div class="chrono-btns">
+    <button class="chrono-btn primary" id="startBtn">▶ Démarrer</button>
+    <button class="chrono-btn secondary" id="resetBtn">⟳ Reset</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SCORES ═══════════════════════════ -->
+<div class="section">
+  <div class="section-title">🏆 Scores</div>
+  <div class="scores">
+    <div class="player-card p1">
+      <div class="player-name-row">
+        <input class="player-name" id="name1" value="Joueur 1" maxlength="18" aria-label="Nom joueur 1">
+        <span class="player-name-edit" aria-hidden="true">✎</span>
+      </div>
+      <div class="player-score" id="score1">0</div>
+      <div class="score-btns">
+        <button class="score-btn minus" data-p="1" data-d="-1">−1</button>
+        <button class="score-btn plus"  data-p="1" data-d="1">+1</button>
+      </div>
+    </div>
+    <div class="player-card p2">
+      <div class="player-name-row">
+        <input class="player-name" id="name2" value="Joueur 2" maxlength="18" aria-label="Nom joueur 2">
+        <span class="player-name-edit" aria-hidden="true">✎</span>
+      </div>
+      <div class="player-score" id="score2">0</div>
+      <div class="score-btns">
+        <button class="score-btn minus" data-p="2" data-d="-1">−1</button>
+        <button class="score-btn plus"  data-p="2" data-d="1">+1</button>
+      </div>
+    </div>
+  </div>
+  <button class="scores-reset" id="scoresReset">⟳ Remettre les scores à zéro</button>
+</div>
+
+<div class="footer-lsei">
+  Un goodies gratuit de <a href="https://lsei.tv" target="_blank" rel="noopener">lsei.tv</a> · Le Sport en Image
+</div>
+
+</div><!-- /page-main -->
+
+<!-- ═══════════════════════════ PAGE 2 : FEUILLE DE MATCH ÉQUIPES 5v5 ═══════════════════════════ -->
+<div class="page page-match" id="pageMatch">
+
+  <!-- Score total du match d'équipes -->
+  <div class="section">
+    <div class="section-title">🏆 Score du match</div>
+    <div class="team-score-summary">
+      <div class="side team-a">
+        <div class="side-name" id="scoreTeamAName">Équipe A</div>
+        <div class="side-score" id="scoreTeamA">0</div>
+      </div>
+      <div class="vs">VS</div>
+      <div class="side team-b">
+        <div class="side-name" id="scoreTeamBName">Équipe B</div>
+        <div class="side-score" id="scoreTeamB">0</div>
+      </div>
+    </div>
+    <div id="teamWinnerBadge" class="team-winner-badge">
+      🏆 <b id="teamWinnerName">—</b> a atteint <b id="teamWinnerSeuil">3</b> points — victoire acquise !<br>
+      <small>Les matchs restants se jouent quand même.</small>
+    </div>
+    <div id="teamProgress" class="team-progress">
+      Joués : <b id="tpPlayed">0</b> / <b id="tpTotal">5</b> · Restants : <b id="tpLeft">5</b>
+    </div>
+  </div>
+
+  <!-- Configuration -->
+  <div class="section">
+    <div class="section-title">⚙ Configuration</div>
+    <div class="match-setup">
+      <div class="match-setup-row">
+        <div class="match-setup-item">
+          <label>Équipe A</label>
+          <input type="text" class="team-name" id="cfgTeamA" maxlength="20" value="Équipe A">
+        </div>
+        <div class="match-setup-item">
+          <label>Équipe B</label>
+          <input type="text" class="team-name" id="cfgTeamB" maxlength="20" value="Équipe B">
+        </div>
+      </div>
+      <div class="match-setup-row">
+        <div class="match-setup-item">
+          <label>Nombre de séries (5 matchs/série)</label>
+          <input type="number" id="cfgSeries" min="1" max="5" step="1" value="1">
+        </div>
+        <div class="match-setup-item">
+          <label>Seuil victoire équipe</label>
+          <input type="number" id="cfgSeuilEquipe" min="1" max="25" step="1" value="3">
+        </div>
+      </div>
+      <div id="matchFormatInfo" class="match-format-info">
+        💡 1 rack gagné = 1 point à l'équipe. La rencontre s'arrête après <b id="mfiTotal">5</b> matchs — vainqueur = équipe qui atteint <b id="mfiSeuil">3</b> points (majorité). Tous les matchs prévus sont joués.
+      </div>
+    </div>
+  </div>
+
+  <!-- Joueurs par équipe -->
+  <div class="section">
+    <div class="section-title">👥 Joueurs (5 par équipe)</div>
+    <div class="match-setup-row">
+      <div class="team-side team-a">
+        <div class="team-side-title" id="rosterAName">Équipe A</div>
+        <div class="team-players" id="rosterA"></div>
+      </div>
+      <div class="team-side team-b">
+        <div class="team-side-title" id="rosterBName">Équipe B</div>
+        <div class="team-players" id="rosterB"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau feuille de match -->
+  <div class="section">
+    <div class="section-title">📋 Feuille de match équipe</div>
+    <div id="matchSheet"></div>
+    <p style="text-align:center; font-size:11px; color:var(--dim); margin-top:10px; padding:0 6px;">
+      💡 Chaque capitaine choisit librement l'ordre des joueurs par série. Tape ▶ pour lancer une rencontre — le chrono 40 s s'ouvre et le vainqueur est désigné dès qu'un joueur atteint le score cible.
+    </p>
+  </div>
+
+  <!-- Reset match -->
+  <div class="section">
+    <div class="history-actions">
+      <button class="history-btn reset" id="btnResetMatch" type="button">🗑 Nouveau match d'équipes</button>
+    </div>
+  </div>
+
+  <div class="footer-lsei">
+    ← Chrono &nbsp;·&nbsp; Historique →
+  </div>
+</div><!-- /page-match -->
+
+<!-- ═══════════════════════════ PAGE 3 : HISTORIQUE DES PARTIES ═══════════════════════════ -->
+<div class="page page-history" id="pageHistory">
+  <div class="section">
+    <div class="section-title">🏅 Stats du match en cours</div>
+    <div class="history-stats">
+      <div class="stat-box">
+        <div class="stat-box-label">Parties</div>
+        <div class="stat-box-value" id="histTotal">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-label">Durée moyenne</div>
+        <div class="stat-box-value" id="histAvg">—</div>
+      </div>
+      <div class="stat-box p1">
+        <div class="stat-box-label" id="histWinsJ1Label">Gagnées J1</div>
+        <div class="stat-box-value" id="histWinsJ1">0</div>
+      </div>
+      <div class="stat-box p2">
+        <div class="stat-box-label" id="histWinsJ2Label">Gagnées J2</div>
+        <div class="stat-box-value" id="histWinsJ2">0</div>
+      </div>
+    </div>
+    <div style="text-align:center; font-size:12px; color:var(--dim); margin-bottom:10px;">
+      <span id="histDuTotal">Durée totale : —</span> · <span id="histLongest">La + longue : —</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 Toutes les parties</div>
+    <div class="history-list" id="historyList">
+      <div class="history-empty">Aucune partie enregistrée pour le moment.<br>Lance le chrono puis clique +1 pour clôturer une partie.</div>
+    </div>
+    <div class="history-actions">
+      <button class="history-btn reset" id="btnNewMatch" type="button">🗑 Effacer et recommencer</button>
+    </div>
+    <p style="text-align:center; font-size:11px; color:var(--dim); margin-top:10px; padding:0 10px;">
+      💡 Astuce : fais un screenshot avant si tu veux garder une trace des résultats.
+    </p>
+  </div>
+
+  <div class="footer-lsei">
+    ← Swipe vers la gauche pour revenir au chrono
+  </div>
+</div><!-- /page-history -->
+
+</div><!-- /pages -->
+
+<!-- Dots pagination -->
+<div class="page-dots" id="pageDots">
+  <div class="page-dot active" data-page="0"></div>
+  <div class="page-dot" data-page="1"></div>
+  <div class="page-dot" data-page="2"></div>
+</div>
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════════════════════
+   STATE (100 % local — pas de serveur, pas de compte, pas de tracking)
+   ═══════════════════════════════════════════════════════════════════════ */
+const LS_KEY = 'goodies-chrono-v1';
+const DEFAULT = {
+  duration: 40,          // durée du preset actif (s)
+  presetKey: '40',       // '40' | 'custom'
+  customSec: 45,         // durée du preset perso
+  score1: 0,
+  score2: 0,
+  name1: 'Joueur 1',
+  name2: 'Joueur 2',
+  theme: 'dark',         // 'dark' | 'light'
+  sound: true,
+  games: [],             // historique chrono libre : [{ num, duration, winner, ts }]
+  // Feuille de match équipes 5v5
+  match: {
+    teamA: 'Équipe A', teamB: 'Équipe B',
+    playersA: ['A1', 'A2', 'A3', 'A4', 'A5'],
+    playersB: ['B1', 'B2', 'B3', 'B4', 'B5'],
+    series: 1,                        // nombre de séries
+    scoreCible: 1,                    // rack sec : 1 rack gagné = 1 point pour l'équipe
+    seuilEquipe: 3,                   // points pour être déclaré vainqueur de la rencontre (majorité absolue)
+    sheet: [],                        // tableau [serie][match] = { pA: idx, pB: idx, winner: 'A'|'B'|null, sA: n, sB: n }
+    activeCell: null,                 // { s, m } — rencontre en cours (chrono page 0 lié)
+  },
+};
+
+// gameStartedAt : timestamp Date.now() du premier lancement d'une partie (null = pas de partie en cours)
+let gameStartedAt = null;
+let S = load();
+
+function load() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return { ...DEFAULT };
+    const parsed = JSON.parse(raw);
+    return { ...DEFAULT, ...parsed };
+  } catch (e) { return { ...DEFAULT }; }
+}
+function save() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CHRONO — logique locale, precision seconde (assez pour un shot clock)
+   ═══════════════════════════════════════════════════════════════════════ */
+let remaining = S.duration;   // secondes restantes
+let running = false;
+let tickInterval = null;
+let hasBipped = false;
+let hasWarned = false;        // true dès qu'on a vibré au passage sous 15 s (reset au reset/nouveau tour)
+
+function renderChrono() {
+  const el = document.getElementById('chronoVal');
+  const startBtn = document.getElementById('startBtn');
+  el.textContent = Math.max(0, remaining);
+  el.classList.remove('running', 'warn', 'over');
+  if (remaining <= 0) {
+    el.classList.add('over');
+  } else if (remaining <= 15 && running) {
+    el.classList.add('warn');
+  } else if (running) {
+    el.classList.add('running');
+  }
+  startBtn.textContent = running ? '⏸ Pause' : (remaining < S.duration && remaining > 0 ? '▶ Reprendre' : '▶ Démarrer');
+  startBtn.classList.toggle('paused', !running && remaining < S.duration && remaining > 0);
+}
+
+function startPause() {
+  if (running) {
+    running = false;
+    clearInterval(tickInterval);
+    tickInterval = null;
+  } else {
+    if (remaining <= 0) remaining = S.duration;
+    running = true;
+    hasBipped = false;
+    if (remaining > 15) hasWarned = false;
+    // Enregistre le timestamp de début de partie au tout premier lancement
+    if (gameStartedAt === null) gameStartedAt = Date.now();
+    tickInterval = setInterval(tick, 1000);
+  }
+  renderChrono();
+  vibrate(30);
+}
+
+function tick() {
+  remaining -= 1;
+  if (remaining <= 0) {
+    remaining = 0;
+    running = false;
+    clearInterval(tickInterval);
+    tickInterval = null;
+    if (!hasBipped) { hasBipped = true; vibrate([80, 60, 80, 60, 200]); }
+  } else if (remaining === 15 && !hasWarned) {
+    hasWarned = true;
+    vibrate(80);
+  } else if (remaining > 15) {
+    hasWarned = false;   // safety : ré-armé si un tap rebascule au-dessus de 15 → nouvelle vibration au prochain passage
+  }
+  renderChrono();
+}
+
+function resetChrono() {
+  running = false;
+  if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  remaining = S.duration;
+  hasBipped = false;
+  hasWarned = false;
+  renderChrono();
+  vibrate(25);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PRESETS
+   ═══════════════════════════════════════════════════════════════════════ */
+function setPreset(key) {
+  S.presetKey = key;
+  const customRow = document.getElementById('customRow');
+  if (key === 'custom') {
+    S.duration = clampDur(parseInt(document.getElementById('customSec').value, 10) || 45);
+    S.customSec = S.duration;
+    customRow.classList.add('show');
+  } else {
+    S.duration = parseInt(key, 10);
+    customRow.classList.remove('show');
+  }
+  remaining = S.duration;
+  running = false;
+  if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.preset === key);
+  });
+  renderChrono();
+  save();
+  vibrate(20);
+}
+function clampDur(n) { return Math.max(5, Math.min(600, n | 0)); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SCORES
+   ═══════════════════════════════════════════════════════════════════════ */
+function addScore(p, d) {
+  const key = 'score' + p;
+  S[key] = Math.max(0, (S[key] || 0) + d);
+  document.getElementById(key).textContent = S[key];
+  vibrate(d > 0 ? 40 : 20);
+
+  const m = S.match;
+  const inTeamMatch = m && m.activeCell !== null && m.activeCell !== undefined;
+
+  // Mode match d'équipe : synchronise la cellule active du tableau
+  if (inTeamMatch) {
+    const cell = (m.sheet[m.activeCell.s] || [])[m.activeCell.m];
+    if (cell && cell.winner === null) {
+      cell.sA = S.score1;
+      cell.sB = S.score2;
+      // Détection auto du vainqueur : premier à atteindre le score cible
+      if (S.score1 >= (m.scoreCible || 7)) {
+        cell.winner = 'A';
+        onTeamMatchEnd('A');
+        save();
+        return;
+      }
+      if (S.score2 >= (m.scoreCible || 7)) {
+        cell.winner = 'B';
+        onTeamMatchEnd('B');
+        save();
+        return;
+      }
+    }
+  }
+
+  // +1 : (hors match d'équipe) archive la partie chrono libre, puis stop + réarme chrono
+  if (d > 0) {
+    if (!inTeamMatch && gameStartedAt !== null) {
+      const duration = Math.round((Date.now() - gameStartedAt) / 1000);
+      S.games.push({
+        num: S.games.length + 1,
+        duration: duration,
+        winner: p,
+        ts: Date.now(),
+        winnerName: p === 1 ? S.name1 : S.name2,
+      });
+      gameStartedAt = null;
+      renderHistory();
+    }
+    if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+    running = false;
+    remaining = S.duration;
+    hasBipped = false;
+    renderChrono();
+  }
+  save();
+}
+function resetScores() {
+  if (!confirm('Remettre les 2 scores à zéro ?\n\nCela efface AUSSI tout l\'historique des parties.\n(Fais un screenshot avant si tu veux garder les résultats.)')) return;
+  S.score1 = 0; S.score2 = 0;
+  S.games = [];
+  gameStartedAt = null;
+  document.getElementById('score1').textContent = '0';
+  document.getElementById('score2').textContent = '0';
+  document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active'));
+  renderHistory();
+  save();
+  vibrate([50, 40, 50]);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   HISTORIQUE — rendu de la page 2 (stats + liste)
+   ═══════════════════════════════════════════════════════════════════════ */
+function fmtMSec(sec) {
+  if (typeof sec !== 'number' || sec < 0) return '—';
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return m + ':' + String(s).padStart(2, '0');
+}
+
+function renderHistory() {
+  const games = Array.isArray(S.games) ? S.games : [];
+  const total = games.length;
+  const j1 = games.filter(g => g.winner === 1).length;
+  const j2 = games.filter(g => g.winner === 2).length;
+  const durs = games.map(g => g.duration || 0).filter(d => d > 0);
+  const totalDur = durs.reduce((a, b) => a + b, 0);
+  const avg = durs.length ? Math.round(totalDur / durs.length) : 0;
+  const longest = durs.length ? Math.max(...durs) : 0;
+
+  const set = (id, v) => { const el = document.getElementById(id); if (el && el.textContent !== String(v)) el.textContent = v; };
+  set('histTotal', total);
+  set('histAvg', avg ? fmtMSec(avg) : '—');
+  set('histWinsJ1', j1);
+  set('histWinsJ2', j2);
+  set('histWinsJ1Label', 'Gagnées ' + (S.name1 || 'J1'));
+  set('histWinsJ2Label', 'Gagnées ' + (S.name2 || 'J2'));
+  set('histDuTotal', 'Durée totale : ' + (totalDur ? fmtMSec(totalDur) : '—'));
+  set('histLongest', 'La + longue : ' + (longest ? fmtMSec(longest) : '—'));
+
+  const list = document.getElementById('historyList');
+  if (!list) return;
+  if (games.length === 0) {
+    list.innerHTML = '<div class="history-empty">Aucune partie enregistrée pour le moment.<br>Lance le chrono puis clique +1 pour clôturer une partie.</div>';
+    return;
+  }
+  const rows = [];
+  for (let i = games.length - 1; i >= 0; i--) {
+    const g = games[i];
+    const winnerName = g.winnerName || (g.winner === 1 ? (S.name1 || 'Joueur 1') : (S.name2 || 'Joueur 2'));
+    const label = g.matchLabel || ('Partie ' + g.num);
+    rows.push(
+      '<div class="history-row">' +
+        '<div class="h-info">' +
+          '<span class="h-num">' + escapeHtml(label) + '</span>' +
+          '<span class="h-winner p' + g.winner + '">🏆 ' + escapeHtml(winnerName) + '</span>' +
+        '</div>' +
+        '<span class="h-dur">' + fmtMSec(g.duration) + '</span>' +
+      '</div>'
+    );
+  }
+  list.innerHTML = rows.join('');
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+
+function newMatch() {
+  if (!confirm('Tout effacer et recommencer ?\n\nHistorique des parties, scores : tout sera perdu.\n\n(Fais un screenshot avant si tu veux garder les résultats.)')) return;
+  S.games = [];
+  S.score1 = 0; S.score2 = 0;
+  gameStartedAt = null;
+  document.getElementById('score1').textContent = '0';
+  document.getElementById('score2').textContent = '0';
+  // Retire aussi le halo "joueur actif" éventuellement posé sur les cards
+  document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active'));
+  renderHistory();
+  save();
+  vibrate([60, 50, 60]);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FEUILLE DE MATCH ÉQUIPES 5v5 — page 1
+   Chaque capitaine peut librement composer/modifier sa feuille. Un tap sur
+   le bouton ▶ d'une cellule ouvre le chrono principal avec les 2 joueurs
+   sélectionnés — le vainqueur est désigné automatiquement quand un joueur
+   atteint le score cible (7 par défaut, paramétrable).
+   ═══════════════════════════════════════════════════════════════════════ */
+function ensureSheet() {
+  const m = S.match;
+  if (!m) return;
+  // Sanitize joueurs
+  if (!Array.isArray(m.playersA) || m.playersA.length !== 5) m.playersA = ['A1','A2','A3','A4','A5'];
+  if (!Array.isArray(m.playersB) || m.playersB.length !== 5) m.playersB = ['B1','B2','B3','B4','B5'];
+  m.series = Math.max(1, Math.min(5, parseInt(m.series, 10) || 1));
+  m.scoreCible = 1;                                             // rack sec : chaque match individuel se joue en 1 rack
+  const total = m.series * 5;
+  const majority = Math.floor(total / 2) + 1;
+  m.seuilEquipe = Math.max(1, Math.min(total, parseInt(m.seuilEquipe, 10) || majority));
+  // Recompose la matrice : préserve les cellules existantes cellule à cellule
+  const old = Array.isArray(m.sheet) ? m.sheet : [];
+  const next = [];
+  for (let s = 0; s < m.series; s++) {
+    const row = [];
+    for (let mm = 0; mm < 5; mm++) {
+      const prev = (old[s] && old[s][mm]) ? old[s][mm] : null;
+      row.push(prev || { pA: mm, pB: mm, winner: null, sA: 0, sB: 0 });
+    }
+    next.push(row);
+  }
+  m.sheet = next;
+}
+
+function computeTeamScore(team) {
+  let n = 0;
+  (S.match.sheet || []).forEach(row => row.forEach(c => { if (c && c.winner === team) n++; }));
+  return n;
+}
+
+function optionsFor(players, selectedIdx) {
+  let html = '';
+  for (let i = 0; i < 5; i++) {
+    const name = escapeHtml(players[i] || ('J' + (i + 1)));
+    html += '<option value="' + i + '"' + (i === selectedIdx ? ' selected' : '') + '>' + name + '</option>';
+  }
+  return html;
+}
+
+function renderMatchSheet() {
+  const m = S.match;
+  if (!m) return;
+  ensureSheet();
+
+  // Score total en haut
+  document.getElementById('scoreTeamAName').textContent = m.teamA || 'Équipe A';
+  document.getElementById('scoreTeamBName').textContent = m.teamB || 'Équipe B';
+  document.getElementById('scoreTeamA').textContent = computeTeamScore('A');
+  document.getElementById('scoreTeamB').textContent = computeTeamScore('B');
+
+  // Configuration
+  document.getElementById('cfgTeamA').value = m.teamA || 'Équipe A';
+  document.getElementById('cfgTeamB').value = m.teamB || 'Équipe B';
+  document.getElementById('cfgSeries').value = m.series;
+  document.getElementById('cfgSeuilEquipe').value = m.seuilEquipe;
+
+  // Info format + progression + badge vainqueur équipe
+  const total = m.series * 5;
+  const scoreA = computeTeamScore('A');
+  const scoreB = computeTeamScore('B');
+  const played = scoreA + scoreB;
+  const left = total - played;
+  document.getElementById('mfiTotal').textContent = total;
+  document.getElementById('mfiSeuil').textContent = m.seuilEquipe;
+  document.getElementById('tpPlayed').textContent = played;
+  document.getElementById('tpTotal').textContent = total;
+  document.getElementById('tpLeft').textContent = left;
+  const badge = document.getElementById('teamWinnerBadge');
+  let winnerTeam = null;
+  if (scoreA >= m.seuilEquipe && scoreA > scoreB) winnerTeam = m.teamA || 'Équipe A';
+  else if (scoreB >= m.seuilEquipe && scoreB > scoreA) winnerTeam = m.teamB || 'Équipe B';
+  else if (played === total && scoreA !== scoreB) winnerTeam = scoreA > scoreB ? (m.teamA || 'Équipe A') : (m.teamB || 'Équipe B');
+  if (winnerTeam) {
+    document.getElementById('teamWinnerName').textContent = winnerTeam;
+    document.getElementById('teamWinnerSeuil').textContent = m.seuilEquipe;
+    badge.classList.add('show');
+  } else {
+    badge.classList.remove('show');
+  }
+
+  // Rosters : reconstruit à chaque render pour reprendre les nouveaux noms
+  document.getElementById('rosterAName').textContent = m.teamA || 'Équipe A';
+  document.getElementById('rosterBName').textContent = m.teamB || 'Équipe B';
+  const rosterA = document.getElementById('rosterA');
+  const rosterB = document.getElementById('rosterB');
+  rosterA.innerHTML = '';
+  rosterB.innerHTML = '';
+  for (let i = 0; i < 5; i++) {
+    const inA = document.createElement('input');
+    inA.type = 'text'; inA.maxLength = 16;
+    inA.value = m.playersA[i] || ('A' + (i + 1));
+    inA.dataset.team = 'A'; inA.dataset.idx = String(i);
+    inA.addEventListener('change', onRosterChange);
+    rosterA.appendChild(inA);
+
+    const inB = document.createElement('input');
+    inB.type = 'text'; inB.maxLength = 16;
+    inB.value = m.playersB[i] || ('B' + (i + 1));
+    inB.dataset.team = 'B'; inB.dataset.idx = String(i);
+    inB.addEventListener('change', onRosterChange);
+    rosterB.appendChild(inB);
+  }
+
+  // Séries + rencontres
+  const sheetEl = document.getElementById('matchSheet');
+  sheetEl.innerHTML = '';
+  for (let s = 0; s < m.series; s++) {
+    const block = document.createElement('div');
+    block.className = 'series-block';
+    block.innerHTML = '<div class="series-title">Série ' + (s + 1) + '</div>';
+    for (let mm = 0; mm < 5; mm++) {
+      const cell = m.sheet[s][mm];
+      const isActive = m.activeCell && m.activeCell.s === s && m.activeCell.m === mm;
+      const isDone = cell.winner !== null;
+      const winA = cell.winner === 'A', winB = cell.winner === 'B';
+      const row = document.createElement('div');
+      row.className = 'match-row' + (isDone ? ' done' : '') + (isActive ? ' active' : '');
+      row.innerHTML =
+        '<div class="match-side ' + (winA ? 'winner' : (winB ? 'loser' : '')) + '">' +
+          '<select data-s="' + s + '" data-m="' + mm + '" data-team="A">' + optionsFor(m.playersA, cell.pA) + '</select>' +
+          '<div class="match-score">' + (isDone ? cell.sA : '') + '</div>' +
+        '</div>' +
+        '<button class="match-play-btn ' + (isDone ? 'done' : '') + (isActive ? ' active' : '') + '" data-s="' + s + '" data-m="' + mm + '">' +
+          (isActive ? '⏱' : (isDone ? '↻' : '▶')) +
+        '</button>' +
+        '<div class="match-side ' + (winB ? 'winner' : (winA ? 'loser' : '')) + '">' +
+          '<select data-s="' + s + '" data-m="' + mm + '" data-team="B">' + optionsFor(m.playersB, cell.pB) + '</select>' +
+          '<div class="match-score">' + (isDone ? cell.sB : '') + '</div>' +
+        '</div>';
+      block.appendChild(row);
+    }
+    sheetEl.appendChild(block);
+  }
+
+  // Wire selects (choix des joueurs par cellule)
+  sheetEl.querySelectorAll('select').forEach(sel => {
+    sel.addEventListener('change', () => {
+      const s = parseInt(sel.dataset.s, 10);
+      const mm = parseInt(sel.dataset.m, 10);
+      const team = sel.dataset.team;
+      const cell = S.match.sheet[s][mm];
+      const idx = parseInt(sel.value, 10);
+      if (team === 'A') cell.pA = idx; else cell.pB = idx;
+      save();
+    });
+  });
+  // Wire play buttons (lance une rencontre)
+  sheetEl.querySelectorAll('.match-play-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const s = parseInt(btn.dataset.s, 10);
+      const mm = parseInt(btn.dataset.m, 10);
+      startTeamMatch(s, mm);
+    });
+  });
+
+  updateContextBar();
+}
+
+function onRosterChange(ev) {
+  const team = ev.target.dataset.team;
+  const idx = parseInt(ev.target.dataset.idx, 10);
+  const val = ((ev.target.value || '').trim() || ((team === 'A' ? 'A' : 'B') + (idx + 1))).toUpperCase();
+  ev.target.value = val;
+  if (team === 'A') S.match.playersA[idx] = val;
+  else S.match.playersB[idx] = val;
+  save();
+  renderMatchSheet();
+}
+
+function startTeamMatch(s, mm) {
+  const m = S.match;
+  ensureSheet();
+  const cell = m.sheet[s][mm];
+  // Rejouer une cellule terminée : on remet à zéro
+  if (cell.winner !== null) {
+    if (!confirm('Cette rencontre est déjà terminée. La rejouer effacera son résultat.')) return;
+    cell.winner = null; cell.sA = 0; cell.sB = 0;
+  }
+  m.activeCell = { s, m: mm };
+  // Charge les 2 joueurs comme name1/name2 dans le chrono
+  S.name1 = m.playersA[cell.pA] || ('A' + (cell.pA + 1));
+  S.name2 = m.playersB[cell.pB] || ('B' + (cell.pB + 1));
+  S.score1 = cell.sA || 0;
+  S.score2 = cell.sB || 0;
+  // Update DOM chrono
+  document.getElementById('name1').value = S.name1;
+  document.getElementById('name2').value = S.name2;
+  document.getElementById('score1').textContent = S.score1;
+  document.getElementById('score2').textContent = S.score2;
+  // Nettoie halos / winner-loser d'un match précédent
+  document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active', 'winner', 'loser'));
+  // Reset chrono
+  if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  running = false;
+  remaining = S.duration;
+  hasBipped = false;
+  gameStartedAt = null;
+  renderChrono();
+  save();
+  goToPage(0);
+  updateContextBar();
+  vibrate(30);
+}
+
+function quitTeamMatch() {
+  S.match.activeCell = null;
+  // Reset scores + noms libres
+  S.score1 = 0; S.score2 = 0;
+  S.name1 = 'Joueur 1'; S.name2 = 'Joueur 2';
+  document.getElementById('score1').textContent = '0';
+  document.getElementById('score2').textContent = '0';
+  document.getElementById('name1').value = 'Joueur 1';
+  document.getElementById('name2').value = 'Joueur 2';
+  document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active', 'winner', 'loser'));
+  save();
+  updateContextBar();
+  renderMatchSheet();
+}
+
+function updateContextBar() {
+  const bar = document.getElementById('contextBar');
+  const n1 = document.getElementById('name1');
+  const n2 = document.getElementById('name2');
+  if (!bar) return;
+  const m = S.match;
+  if (!m || !m.activeCell) {
+    bar.classList.remove('show');
+    if (n1) n1.readOnly = false;
+    if (n2) n2.readOnly = false;
+    return;
+  }
+  const cell = (m.sheet[m.activeCell.s] || [])[m.activeCell.m];
+  if (!cell) { bar.classList.remove('show'); return; }
+  const pA = m.playersA[cell.pA] || ('A' + (cell.pA + 1));
+  const pB = m.playersB[cell.pB] || ('B' + (cell.pB + 1));
+  document.getElementById('contextBarTitle').textContent =
+    (m.teamA || 'Équipe A') + ' vs ' + (m.teamB || 'Équipe B') +
+    ' · Série ' + (m.activeCell.s + 1) + ' · Match ' + (m.activeCell.m + 1) + '/5 · Rack sec (1 point)';
+  document.getElementById('contextBarSub').textContent = pA + '  ⚔  ' + pB;
+  bar.classList.add('show');
+  if (n1) n1.readOnly = true;
+  if (n2) n2.readOnly = true;
+}
+
+function onTeamMatchEnd(winner) {
+  // Archive la rencontre dans l'historique (page 2) avec son contexte (série, match, joueurs)
+  if (S.match.activeCell && gameStartedAt !== null) {
+    const { s, m: mm } = S.match.activeCell;
+    const cell = S.match.sheet[s] && S.match.sheet[s][mm];
+    if (cell) {
+      const pA = S.match.playersA[cell.pA] || ('A' + (cell.pA + 1));
+      const pB = S.match.playersB[cell.pB] || ('B' + (cell.pB + 1));
+      const duration = Math.round((Date.now() - gameStartedAt) / 1000);
+      S.games.push({
+        num: S.games.length + 1,
+        duration: duration,
+        winner: winner === 'A' ? 1 : 2,
+        ts: Date.now(),
+        matchLabel: 'S' + (s + 1) + ' M' + (mm + 1) + ' · ' + pA + ' vs ' + pB,
+        winnerName: winner === 'A' ? pA : pB,
+        teamMatch: true,
+      });
+      gameStartedAt = null;
+      renderHistory();
+    }
+  }
+  const c1 = document.querySelector('.player-card.p1');
+  const c2 = document.querySelector('.player-card.p2');
+  if (c1) { c1.classList.remove('active'); c1.classList.toggle('winner', winner === 'A'); c1.classList.toggle('loser', winner === 'B'); }
+  if (c2) { c2.classList.remove('active'); c2.classList.toggle('winner', winner === 'B'); c2.classList.toggle('loser', winner === 'A'); }
+  // Stop chrono
+  if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  running = false;
+  remaining = S.duration;
+  hasBipped = false;
+  hasWarned = false;
+  renderChrono();
+  vibrate([100, 80, 100, 80, 200]);
+  // Retour auto à la feuille dans 2.6 s
+  setTimeout(() => {
+    if (c1) c1.classList.remove('winner', 'loser');
+    if (c2) c2.classList.remove('winner', 'loser');
+    S.match.activeCell = null;
+    S.score1 = 0; S.score2 = 0;
+    S.name1 = 'Joueur 1'; S.name2 = 'Joueur 2';
+    document.getElementById('score1').textContent = '0';
+    document.getElementById('score2').textContent = '0';
+    document.getElementById('name1').value = 'Joueur 1';
+    document.getElementById('name2').value = 'Joueur 2';
+    save();
+    renderMatchSheet();
+    goToPage(1);
+    updateContextBar();
+  }, 2600);
+}
+
+function resetTeamMatch() {
+  if (!confirm('Nouveau match d\'équipes ?\n\nTout sera réinitialisé : noms des équipes, noms des joueurs, séries, seuil, résultats.\n\nCette action est irréversible.')) return;
+  S.match.teamA = 'Équipe A';
+  S.match.teamB = 'Équipe B';
+  S.match.playersA = ['A1', 'A2', 'A3', 'A4', 'A5'];
+  S.match.playersB = ['B1', 'B2', 'B3', 'B4', 'B5'];
+  S.match.series = 1;
+  S.match.scoreCible = 1;
+  S.match.seuilEquipe = 3;
+  S.match.sheet = [];
+  S.match.activeCell = null;
+  ensureSheet();
+  save();
+  renderMatchSheet();
+  updateContextBar();
+  vibrate([60, 40, 60]);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   NAVIGATION PAGES — swipe + boutons
+   ═══════════════════════════════════════════════════════════════════════ */
+let currentPage = 0;
+
+function goToPage(idx) {
+  const pages = document.getElementById('pages');
+  const w = window.innerWidth;
+  pages.scrollTo({ left: idx * w, behavior: 'smooth' });
+  updateNav(idx);
+}
+
+function updateNav(idx) {
+  currentPage = idx;
+  document.querySelectorAll('.page-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+  const arrow = document.getElementById('navArrow');
+  const brand = document.getElementById('topBrand');
+  // 0 : chrono libre · 1 : feuille de match équipes · 2 : historique
+  if (arrow) {
+    if (idx === 0)      { arrow.textContent = '📋'; arrow.title = 'Feuille de match équipes'; arrow.classList.remove('active'); }
+    else if (idx === 1) { arrow.textContent = '🏅'; arrow.title = 'Historique des parties';   arrow.classList.add('active'); }
+    else                { arrow.textContent = '←'; arrow.title = 'Revenir au chrono';          arrow.classList.add('active'); }
+  }
+  if (brand) {
+    brand.textContent = idx === 0 ? '🎱 Chrono Billard' : (idx === 1 ? '📋 Feuille de match équipe' : '🏅 Historique');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SON — WebAudio (aucune dépendance, silence si onglet muté)
+   ═══════════════════════════════════════════════════════════════════════ */
+let audioCtx = null;
+function ensureAudio() {
+  if (audioCtx) return audioCtx;
+  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+  return audioCtx;
+}
+function bip() {
+  if (!S.sound) return;
+  const ctx = ensureAudio(); if (!ctx) return;
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(880, now);
+  gain.gain.setValueAtTime(0.25, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now); osc.stop(now + 0.6);
+}
+function bipShort() {
+  if (!S.sound) return;
+  const ctx = ensureAudio(); if (!ctx) return;
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(1200, now);
+  gain.gain.setValueAtTime(0.10, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.10);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now); osc.stop(now + 0.10);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   VIBRATE (silencieux si non supporté — desktop, iOS Safari, etc.)
+   ═══════════════════════════════════════════════════════════════════════ */
+function vibrate(pattern) {
+  try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (e) {}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   THÈME + SON — toggles
+   ═══════════════════════════════════════════════════════════════════════ */
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', S.theme);
+  document.getElementById('themeToggle').textContent = S.theme === 'light' ? '☀' : '☾';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', S.theme === 'light' ? '#f4f5f7' : '#0a0c10');
+}
+function toggleTheme() {
+  S.theme = S.theme === 'light' ? 'dark' : 'light';
+  applyTheme();
+  save();
+}
+function applySound() {
+  const btn = document.getElementById('soundToggle');
+  btn.textContent = S.sound ? '🔊' : '🔇';
+  btn.classList.toggle('on', S.sound);
+}
+function toggleSound() {
+  S.sound = !S.sound;
+  applySound();
+  save();
+  if (S.sound) bipShort();
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════════════════════ */
+function init() {
+  // Thème (respecte preferences système si jamais défini)
+  if (!localStorage.getItem(LS_KEY)) {
+    S.theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+  applyTheme();
+
+  // Preset actif
+  document.getElementById('customSec').value = S.customSec;
+  setPreset(S.presetKey);
+  remaining = S.duration;
+
+  // Scores + noms
+  document.getElementById('score1').textContent = S.score1;
+  document.getElementById('score2').textContent = S.score2;
+  document.getElementById('name1').value = S.name1;
+  document.getElementById('name2').value = S.name2;
+
+  // Wire-up
+  document.getElementById('startBtn').addEventListener('click', startPause);
+  document.getElementById('resetBtn').addEventListener('click', resetChrono);
+  // Tap sur le grand cadre du chrono = "reset + relance" (comme un shot clock arbitre)
+  document.getElementById('chronoVal').addEventListener('click', () => {
+    if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+    remaining = S.duration;
+    running = true;
+    hasBipped = false;
+    if (gameStartedAt === null) gameStartedAt = Date.now();   // démarre le comptage partie si première fois
+    tickInterval = setInterval(tick, 1000);
+    renderChrono();
+    vibrate(50);
+  });
+  // Tap sur un des 2 cadres score = sélectionne ce joueur (halo coloré) + relance le chrono
+  document.querySelectorAll('.player-score').forEach(el => {
+    el.addEventListener('click', (ev) => {
+      const card = ev.target.closest('.player-card');
+      if (!card) return;
+      document.querySelectorAll('.player-card').forEach(c => c.classList.toggle('active', c === card));
+      // Reset + relance immédiate du chrono
+      if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+      remaining = S.duration;
+      running = true;
+      hasBipped = false;
+      if (gameStartedAt === null) gameStartedAt = Date.now();   // démarre le comptage partie si première fois
+      tickInterval = setInterval(tick, 1000);
+      renderChrono();
+      vibrate(50);
+    });
+  });
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  document.getElementById('scoresReset').addEventListener('click', resetScores);
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => setPreset(btn.dataset.preset));
+  });
+  document.getElementById('customSec').addEventListener('change', (ev) => {
+    const v = clampDur(parseInt(ev.target.value, 10) || 45);
+    ev.target.value = v;
+    if (S.presetKey === 'custom') {
+      S.duration = v; S.customSec = v;
+      remaining = v; renderChrono(); save();
+    }
+  });
+  document.querySelectorAll('.score-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      addScore(parseInt(btn.dataset.p, 10), parseInt(btn.dataset.d, 10));
+    });
+  });
+  ['name1', 'name2'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('change', () => {
+      S[id] = (el.value.trim() || (id === 'name1' ? 'Joueur 1' : 'Joueur 2')).toUpperCase();
+      el.value = S[id];
+      save();
+    });
+  });
+
+  // Navigation entre pages (cycle 0 → 1 → 2 → 0)
+  document.getElementById('navArrow').addEventListener('click', () => {
+    goToPage((currentPage + 1) % 3);
+    vibrate(20);
+  });
+  document.querySelectorAll('.page-dot').forEach(dot => {
+    dot.addEventListener('click', () => goToPage(parseInt(dot.dataset.page, 10)));
+  });
+  // Détection du swipe via scroll natif → met à jour dots + bouton flèche
+  const pagesEl = document.getElementById('pages');
+  let scrollTimeout = null;
+  pagesEl.addEventListener('scroll', () => {
+    if (scrollTimeout) clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      const idx = Math.round(pagesEl.scrollLeft / window.innerWidth);
+      if (idx !== currentPage) updateNav(idx);
+    }, 60);
+  });
+
+  // Actions historique
+  document.getElementById('btnNewMatch').addEventListener('click', newMatch);
+
+  // Wire-ups feuille de match équipes
+  document.getElementById('cfgTeamA').addEventListener('change', ev => {
+    S.match.teamA = ((ev.target.value || '').trim() || 'Équipe A').toUpperCase();
+    ev.target.value = S.match.teamA;
+    save(); renderMatchSheet();
+  });
+  document.getElementById('cfgTeamB').addEventListener('change', ev => {
+    S.match.teamB = ((ev.target.value || '').trim() || 'Équipe B').toUpperCase();
+    ev.target.value = S.match.teamB;
+    save(); renderMatchSheet();
+  });
+  document.getElementById('cfgSeries').addEventListener('change', ev => {
+    const v = Math.max(1, Math.min(5, parseInt(ev.target.value, 10) || 1));
+    ev.target.value = v;
+    S.match.series = v;
+    // Recalcul auto du seuil à la nouvelle majorité (l'utilisateur peut ensuite le modifier)
+    S.match.seuilEquipe = Math.floor((v * 5) / 2) + 1;
+    save(); renderMatchSheet();
+  });
+  document.getElementById('cfgSeuilEquipe').addEventListener('change', ev => {
+    const total = S.match.series * 5;
+    const v = Math.max(1, Math.min(total, parseInt(ev.target.value, 10) || (Math.floor(total / 2) + 1)));
+    ev.target.value = v;
+    S.match.seuilEquipe = v;
+    save(); renderMatchSheet();
+  });
+  document.getElementById('btnResetMatch').addEventListener('click', resetTeamMatch);
+  document.getElementById('contextBarQuit').addEventListener('click', () => {
+    if (confirm('Quitter cette rencontre sans désigner de vainqueur ?')) {
+      quitTeamMatch();
+      vibrate(30);
+    }
+  });
+
+  renderChrono();
+  renderHistory();
+  renderMatchSheet();
+  updateContextBar();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
