@@ -662,10 +662,10 @@ html, body { overflow-x: hidden; }
   .player-score { font-size: 80px; }
 }
 
-/* Tablette PAYSAGE (900-1400 px, orientation landscape) : layout 2 colonnes.
+/* Tablette PAYSAGE (≥ 900 px de large, orientation landscape) : layout 2 colonnes.
    Chrono à gauche (presets + grand cadre + boutons Démarrer/Reset),
    scores à droite (JOUEUR 1 + JOUEUR 2 empilés). Utilise toute la largeur pour éviter le scroll. */
-@media (min-width: 900px) and (max-width: 1400px) and (orientation: landscape) {
+@media (min-width: 900px) and (orientation: landscape) {
   .topbar, .footer-lsei { max-width: 1100px; margin-left: auto; margin-right: auto; }
 
   #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei { max-width: 640px; }
