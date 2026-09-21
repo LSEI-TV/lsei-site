@@ -728,15 +728,18 @@ html, body { overflow-x: hidden; }
   /* Pages 📋 Feuille + 🏅 Historique : 1 col centré à 900 px avec shadow */
   #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei { max-width: 900px; margin-left: auto; margin-right: auto; }
 
-  /* Page 🎱 Chrono : grid 2 colonnes centré, contenu jusqu'à 1400 px.
-     On garde #pageMain à 100vw (obligatoire pour scroll-snap) et on centre via padding calculé. */
+  /* Page 🎱 Chrono : layout PC 3 rows verticales.
+     Row 1 : Durée du chrono (pleine largeur)
+     Row 2 : Grand cadre 40 + boutons Démarrer/Reset (pleine largeur)
+     Row 3 : Joueur 1 (gauche) + Joueur 2 (droite) en 2 col */
   #pageMain {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: 1fr;
     grid-template-areas:
-      "context context"
-      "presets scores"
-      "chrono  scores";
+      "context"
+      "presets"
+      "chrono"
+      "scores";
     gap: 16px;
     max-width: none;
     padding-top: 12px;
@@ -748,13 +751,14 @@ html, body { overflow-x: hidden; }
   #pageMain > .context-bar     { grid-area: context; margin: 0; max-width: none; width: auto; }
   #pageMain > .section-presets { grid-area: presets; margin: 0; max-width: none; width: auto; }
   #pageMain > .chrono-section  { grid-area: chrono;  margin: 0; max-width: none; width: auto; }
-  #pageMain > .section-scores  { grid-area: scores;  margin: 0; max-width: none; width: auto; align-self: stretch; }
+  #pageMain > .section-scores  { grid-area: scores;  margin: 0; max-width: none; width: auto; }
   #pageMain > .footer-lsei     { display: none; }
 
   .chrono-val { font-size: clamp(120px, 11vw, 180px); padding: 20px 16px; margin-bottom: 14px; }
   .chrono-btn { font-size: 22px; padding: 18px 14px; }
 
-  #pageMain .scores { grid-template-columns: 1fr; gap: 14px; }
+  /* Row 3 : les 2 joueurs côte à côte (chacun ~700 px sur écran 1400) */
+  #pageMain .scores { grid-template-columns: 1fr 1fr; gap: 16px; }
   .player-score { font-size: clamp(72px, 7vw, 110px); padding: 6px 10px 16px; }
   .score-btn { font-size: 22px; padding: 16px 8px; }
 }
