@@ -662,6 +662,41 @@ html, body { overflow-x: hidden; }
   .player-score { font-size: 80px; }
 }
 
+/* Tablette PAYSAGE (900-1400 px, orientation landscape) : layout 2 colonnes.
+   Chrono à gauche (presets + grand cadre + boutons Démarrer/Reset),
+   scores à droite (JOUEUR 1 + JOUEUR 2 empilés). Utilise toute la largeur pour éviter le scroll. */
+@media (min-width: 900px) and (max-width: 1400px) and (orientation: landscape) {
+  .topbar, .footer-lsei { max-width: 1100px; margin-left: auto; margin-right: auto; }
+
+  #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei { max-width: 640px; }
+
+  #pageMain {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "context context"
+      "presets scores"
+      "chrono  scores";
+    gap: 12px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 10px 14px 44px;
+    align-content: start;
+  }
+  #pageMain > .context-bar     { grid-area: context; margin: 0; max-width: none; }
+  #pageMain > .section-presets { grid-area: presets; margin: 0; max-width: none; }
+  #pageMain > .chrono-section  { grid-area: chrono;  margin: 0; max-width: none; }
+  #pageMain > .section-scores  { grid-area: scores;  margin: 0; max-width: none; align-self: stretch; }
+  #pageMain > .footer-lsei     { display: none; }
+
+  .chrono-val { font-size: 130px; padding: 18px 14px; margin-bottom: 14px; }
+  .chrono-btn { font-size: 20px; padding: 16px 12px; }
+
+  #pageMain .scores { grid-template-columns: 1fr; gap: 12px; }
+  .player-score { font-size: 82px; padding: 6px 10px 16px; }
+  .score-btn { font-size: 22px; padding: 14px 8px; }
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
    FEUILLE DE MATCH ÉQUIPES 5v5 — page 1 (entre chrono et historique)
    ═══════════════════════════════════════════════════════════════════════ */
@@ -990,7 +1025,7 @@ html, body { overflow-x: hidden; }
 </div>
 
 <!-- ═══════════════════════════ PRESETS ═══════════════════════════ -->
-<div class="section">
+<div class="section section-presets">
   <div class="section-title">⏱ Durée du chrono</div>
   <div class="presets">
     <button class="preset-btn" data-preset="40"><span class="preset-dur">40s</span><span>Blackball</span></button>
@@ -1013,7 +1048,7 @@ html, body { overflow-x: hidden; }
 </div>
 
 <!-- ═══════════════════════════ SCORES ═══════════════════════════ -->
-<div class="section">
+<div class="section section-scores">
   <div class="section-title">🏆 Scores</div>
   <div class="scores">
     <div class="player-card p1">
