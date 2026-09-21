@@ -1,0 +1,20 @@
+{
+  "name": "Chrono Billard",
+  "short_name": "Chrono Billard",
+  "description": "Shot clock 40 s (blackball) / 60 s (snooker) / perso, scores 2 joueurs, feuille de match équipes 5v5. Un goodies gratuit de lsei.tv, sans compte, sans pub, hors ligne.",
+  "start_url": "/goodies-chrono/index.html",
+  "scope": "/goodies-chrono/",
+  "id": "/goodies-chrono/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "any",
+  "background_color": "#0a0c10",
+  "theme_color": "#0a0c10",
+  "categories": ["sports", "utilities"],
+  "lang": "fr",
+  "icons": [
+    { "src": "logo-lsei.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "logo-lsei.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "logo-lsei.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" }
+  ]
+}

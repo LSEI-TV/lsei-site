@@ -16,6 +16,7 @@
 
 <link rel="icon" href="/favicon.svg">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
@@ -111,7 +112,8 @@ html, body { overflow-x: hidden; }
 }
 .pages::-webkit-scrollbar { display: none; }
 .page {
-  flex: 0 0 100vw;
+  flex: 0 0 100%;             /* 100 % de la largeur de .pages (PAS 100vw qui inclut la scrollbar → bug de fuite) */
+  width: 100%;
   height: 100%;               /* prend la hauteur de .pages */
   overflow-y: auto;           /* scroll INTERNE à la page si le contenu déborde */
   scroll-snap-align: start;
@@ -231,7 +233,11 @@ html, body { overflow-x: hidden; }
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 14px;
+  box-sizing: border-box;
+  width: calc(100% - 24px);         /* 100% du parent moins les margins horizontales → largeur uniforme */
 }
+.section:first-of-type { margin-top: 10px; }
+
 .section-title {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 900; font-size: 12px;
@@ -701,26 +707,29 @@ html, body { overflow-x: hidden; }
   .scores-reset { padding: 8px; font-size: 11px; }
 }
 
-/* Desktop / tablette large (≥ 900 px) : contenu centré à 640 px, topbar pleine largeur avec contenu aligné sur 1100 px */
+/* Desktop / tablette large (≥ 900 px) : contenu centré à 900 px, topbar avec contenu aligné sur 1400 px.
+   Le contenu utilise plus d'espace pour éviter le vide sur écran large. */
 @media (min-width: 900px) {
-  .section, .footer-lsei, .context-bar { max-width: 640px; margin-left: auto; margin-right: auto; }
+  .section, .footer-lsei, .context-bar { max-width: 900px; margin-left: auto; margin-right: auto; }
   .topbar {
-    padding-left: max(14px, calc((100% - 1100px) / 2 + 14px));
-    padding-right: max(14px, calc((100% - 1100px) / 2 + 14px));
+    padding-left: max(14px, calc((100% - 1400px) / 2 + 14px));
+    padding-right: max(14px, calc((100% - 1400px) / 2 + 14px));
   }
+  .section { box-shadow: 0 2px 10px rgba(0,0,0,0.18); }
   .chrono-val { font-size: 140px; }
   .player-score { font-size: 80px; }
 }
 
-
-/* Tablette PAYSAGE (≥ 900 px de large, orientation landscape) : layout 2 colonnes.
-   Chrono à gauche (presets + grand cadre + boutons Démarrer/Reset),
-   scores à droite (JOUEUR 1 + JOUEUR 2 empilés). Utilise toute la largeur pour éviter le scroll. */
+/* Tablette / PC PAYSAGE (≥ 900 px de large, orientation landscape) : layout 2 colonnes.
+   Chrono à gauche, scores à droite. Contenu centré et étalé jusqu'à 1400 px sur écran large. */
 @media (min-width: 900px) and (orientation: landscape) {
-  .topbar, .footer-lsei { max-width: 1100px; margin-left: auto; margin-right: auto; }
+  .topbar, .footer-lsei { max-width: 1400px; margin-left: auto; margin-right: auto; }
 
-  #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei { max-width: 640px; }
+  /* Pages 📋 Feuille + 🏅 Historique : 1 col centré à 900 px avec shadow */
+  #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei { max-width: 900px; margin-left: auto; margin-right: auto; }
 
+  /* Page 🎱 Chrono : grid 2 colonnes centré, contenu jusqu'à 1400 px.
+     On garde #pageMain à 100vw (obligatoire pour scroll-snap) et on centre via padding calculé. */
   #pageMain {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -728,24 +737,39 @@ html, body { overflow-x: hidden; }
       "context context"
       "presets scores"
       "chrono  scores";
-    gap: 12px;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 10px 14px 44px;
+    gap: 16px;
+    max-width: none;
+    padding-top: 12px;
+    padding-bottom: 44px;
+    padding-left: max(20px, calc((100% - 1400px) / 2 + 20px));
+    padding-right: max(20px, calc((100% - 1400px) / 2 + 20px));
     align-content: start;
   }
-  #pageMain > .context-bar     { grid-area: context; margin: 0; max-width: none; }
-  #pageMain > .section-presets { grid-area: presets; margin: 0; max-width: none; }
-  #pageMain > .chrono-section  { grid-area: chrono;  margin: 0; max-width: none; }
-  #pageMain > .section-scores  { grid-area: scores;  margin: 0; max-width: none; align-self: stretch; }
+  #pageMain > .context-bar     { grid-area: context; margin: 0; max-width: none; width: auto; }
+  #pageMain > .section-presets { grid-area: presets; margin: 0; max-width: none; width: auto; }
+  #pageMain > .chrono-section  { grid-area: chrono;  margin: 0; max-width: none; width: auto; }
+  #pageMain > .section-scores  { grid-area: scores;  margin: 0; max-width: none; width: auto; align-self: stretch; }
   #pageMain > .footer-lsei     { display: none; }
 
-  .chrono-val { font-size: 130px; padding: 18px 14px; margin-bottom: 14px; }
-  .chrono-btn { font-size: 20px; padding: 16px 12px; }
+  .chrono-val { font-size: clamp(120px, 11vw, 180px); padding: 20px 16px; margin-bottom: 14px; }
+  .chrono-btn { font-size: 22px; padding: 18px 14px; }
 
-  #pageMain .scores { grid-template-columns: 1fr; gap: 12px; }
-  .player-score { font-size: 82px; padding: 6px 10px 16px; }
-  .score-btn { font-size: 22px; padding: 14px 8px; }
+  #pageMain .scores { grid-template-columns: 1fr; gap: 14px; }
+  .player-score { font-size: clamp(72px, 7vw, 110px); padding: 6px 10px 16px; }
+  .score-btn { font-size: 22px; padding: 16px 8px; }
+}
+
+/* Très grand écran / ultrawide (≥ 1700 px) : élargit encore le contenu pour combler le vide */
+@media (min-width: 1700px) and (orientation: landscape) {
+  .topbar, .footer-lsei { max-width: 1700px; }
+  #pageMain {
+    padding-left: max(40px, calc((100% - 1600px) / 2 + 40px));
+    padding-right: max(40px, calc((100% - 1600px) / 2 + 40px));
+    gap: 24px;
+  }
+  #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei { max-width: 1100px; }
+  .chrono-val { font-size: clamp(160px, 10vw, 220px); }
+  .player-score { font-size: clamp(90px, 6vw, 140px); }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -981,6 +1005,203 @@ html, body { overflow-x: hidden; }
   border-radius: 6px;
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   MODAL QR — pour partager la feuille de match avec un 2ᵉ arbitre
+   ═══════════════════════════════════════════════════════════════════════ */
+.qr-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(0,0,0,0.78);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+}
+.qr-modal.show { display: flex; }
+.qr-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.qr-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 16px;
+}
+.qr-frame {
+  position: relative;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 14px;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qr-img { width: 100%; max-width: 280px; height: auto; display: block; }
+.qr-img.loading { opacity: 0.3; }
+.qr-err { display: none; color: var(--red); font-weight: 700; padding: 20px; text-align: center; }
+.qr-err.show { display: block; }
+.qr-img.show + .qr-err, .qr-err.show + .qr-img { display: none; }
+.qr-hint {
+  font-size: 12px;
+  color: var(--dim);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.qr-hint b { color: var(--orange); font-weight: 700; }
+.qr-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.qr-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .15s, transform .08s;
+}
+.qr-btn:active { transform: scale(0.96); }
+.qr-btn.copied { background: var(--green); color: #000; }
+.qr-close { background: rgba(255,120,0,0.15); border-color: var(--orange); color: var(--orange); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MODE TV — overlay plein écran pour projection sur télé de club (HDMI/Chromecast)
+   ═══════════════════════════════════════════════════════════════════════ */
+.tv-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: #000;
+  color: #fff;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(20px, 4vh, 60px);
+  padding: clamp(20px, 4vw, 60px);
+  overflow: hidden;
+}
+.tv-overlay.show { display: flex; }
+.tv-exit {
+  position: absolute;
+  top: 20px; right: 20px;
+  background: rgba(255,255,255,0.06);
+  border: 2px solid rgba(255,255,255,0.25);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+.tv-exit:hover { background: rgba(255,255,255,0.15); }
+.tv-exit:active { transform: scale(0.94); }
+
+.tv-teams {
+  display: flex;
+  align-items: center;
+  gap: clamp(30px, 6vw, 100px);
+  width: 100%;
+  max-width: 1600px;
+  justify-content: space-around;
+}
+.tv-team { flex: 1; text-align: center; min-width: 0; }
+.tv-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: clamp(28px, 4.5vw, 72px);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: clamp(10px, 1.5vh, 24px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tv-team-1 .tv-name { color: #7dd3fc; }
+.tv-team-2 .tv-name { color: #c4b5fd; }
+.tv-score {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(120px, 18vw, 320px);
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+.tv-team-1 .tv-score { color: #7dd3fc; }
+.tv-team-2 .tv-score { color: #c4b5fd; }
+.tv-vs {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(24px, 3vw, 56px);
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 8px;
+}
+
+.tv-chrono {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(150px, 22vw, 400px);
+  line-height: 1;
+  color: #f5f5f5;
+  border: 6px solid rgba(255,255,255,0.15);
+  border-radius: 30px;
+  padding: clamp(10px, 2vh, 30px) clamp(30px, 5vw, 80px);
+  min-width: clamp(280px, 40vw, 560px);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  transition: color .2s, border-color .2s, background .2s;
+}
+.tv-chrono.running { color: #00ff88; border-color: #00ff88; box-shadow: 0 0 60px rgba(0,255,136,0.35); }
+.tv-chrono.warn    { color: #ffd633; border-color: #ffd633; box-shadow: 0 0 60px rgba(255,214,51,0.45); animation: warnPulse 0.6s ease-in-out infinite; }
+.tv-chrono.over    { color: #ff3333; border-color: #ff3333; background: rgba(255,51,51,0.10); box-shadow: 0 0 80px rgba(255,51,51,0.55); animation: overFlash 0.5s ease-in-out infinite; }
+
+.tv-context {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: clamp(16px, 1.8vw, 28px);
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+}
+.tv-context:empty { display: none; }
+.tv-branding {
+  position: absolute;
+  bottom: 20px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,0.30);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Orientation portrait : layout vertical (chrono en haut, teams en bas) sur téléphone/tablette */
+@media (orientation: portrait) {
+  .tv-overlay { justify-content: space-around; }
+  .tv-teams { gap: 20px; }
+  .tv-name { font-size: clamp(20px, 5vw, 40px); }
+  .tv-score { font-size: clamp(80px, 22vw, 180px); }
+  .tv-chrono { font-size: clamp(140px, 40vw, 280px); min-width: 60vw; }
+}
+
 /* Info format & badge vainqueur équipe */
 .match-format-info {
   margin-top: 8px;
@@ -1060,6 +1281,7 @@ html, body { overflow-x: hidden; }
   <img class="topbar-logo" src="logo-lsei.png" alt="LSEI TV">
   <div class="topbar-brand" id="topBrand">🎱 Chrono Billard</div>
   <button class="nav-arrow" id="navArrow" title="Voir l'historique des parties" aria-label="Voir l'historique">🏅</button>
+  <button class="icon-btn" id="tvToggle" title="Mode TV plein écran" aria-label="Mode TV plein écran">📺</button>
   <button class="icon-btn" id="themeToggle" title="Thème clair / sombre" aria-label="Basculer le thème">☾</button>
 </div>
 
@@ -1214,11 +1436,15 @@ html, body { overflow-x: hidden; }
     </p>
   </div>
 
-  <!-- Reset match -->
+  <!-- Partage + reset match -->
   <div class="section">
     <div class="history-actions">
+      <button class="history-btn" id="btnShareMatch" type="button">📱 Partager par QR</button>
       <button class="history-btn reset" id="btnResetMatch" type="button">🗑 Nouveau match d'équipes</button>
     </div>
+    <p style="text-align:center; font-size:11px; color:var(--dim); margin-top:8px; padding:0 6px;">
+      💡 Le partage QR permet à un 2ᵉ arbitre (2ᵉ table) d'avoir la même feuille sur son téléphone en scannant le QR avec son appareil photo.
+    </p>
   </div>
 
   <div class="footer-lsei">
@@ -1283,6 +1509,41 @@ html, body { overflow-x: hidden; }
 <!-- Flèches navigation latérales (PC uniquement) -->
 <button class="nav-side nav-left" id="navLeft" type="button" aria-label="Page précédente" title="Page précédente (←)">‹</button>
 <button class="nav-side nav-right" id="navRight" type="button" aria-label="Page suivante" title="Page suivante (→)">›</button>
+
+<!-- ═══════════════════════════ MODE TV — overlay plein écran ═══════════════════════════ -->
+<div class="tv-overlay" id="tvOverlay" aria-hidden="true">
+  <button class="tv-exit" id="tvExit" title="Quitter le mode TV (Échap)">✕</button>
+  <div class="tv-teams">
+    <div class="tv-team tv-team-1">
+      <div class="tv-name" id="tvName1">JOUEUR 1</div>
+      <div class="tv-score" id="tvScore1">0</div>
+    </div>
+    <div class="tv-vs">VS</div>
+    <div class="tv-team tv-team-2">
+      <div class="tv-name" id="tvName2">JOUEUR 2</div>
+      <div class="tv-score" id="tvScore2">0</div>
+    </div>
+  </div>
+  <div class="tv-chrono" id="tvChrono">40</div>
+  <div class="tv-context" id="tvContext"></div>
+  <div class="tv-branding">CHRONO BILLARD · LSEI TV</div>
+</div>
+
+<!-- ═══════════════════════════ MODAL QR DE PARTAGE ═══════════════════════════ -->
+<div class="qr-modal" id="qrModal" aria-hidden="true">
+  <div class="qr-box">
+    <div class="qr-title">📱 Partager la feuille de match</div>
+    <div class="qr-frame">
+      <img class="qr-img" id="qrImg" alt="QR code de la feuille de match">
+      <div class="qr-err" id="qrErr">⚠ QR indisponible. Vérifie ta connexion.</div>
+    </div>
+    <p class="qr-hint">L'autre arbitre pointe l'<b>appareil photo natif</b> de son téléphone sur ce QR → une notification lui propose d'ouvrir la feuille automatiquement.</p>
+    <div class="qr-actions">
+      <button class="qr-btn" id="qrCopy">🔗 Copier le lien</button>
+      <button class="qr-btn qr-close" id="qrClose">Fermer</button>
+    </div>
+  </div>
+</div>
 
 <script>
 'use strict';
@@ -1354,6 +1615,7 @@ function renderChrono() {
   }
   startBtn.textContent = running ? '⏸ Pause' : (remaining < S.duration && remaining > 0 ? '▶ Reprendre' : '▶ Démarrer');
   startBtn.classList.toggle('paused', !running && remaining < S.duration && remaining > 0);
+  if (tvOn) updateTvDisplay();
 }
 
 function startPause() {
@@ -1435,6 +1697,7 @@ function addScore(p, d) {
   S[key] = Math.max(0, (S[key] || 0) + d);
   document.getElementById(key).textContent = S[key];
   vibrate(d > 0 ? 40 : 20);
+  if (tvOn) updateTvDisplay();
 
   const m = S.match;
   const inTeamMatch = m && m.activeCell !== null && m.activeCell !== undefined;
@@ -1904,6 +2167,104 @@ function onTeamMatchEnd(winner) {
   }, 2600);
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   PARTAGE QR — encode le state.match en base64 URL-safe dans le fragment,
+   l'autre arbitre scanne le QR avec l'app photo native → sync sans backend.
+   ═══════════════════════════════════════════════════════════════════════ */
+function b64UrlEncode(str) {
+  const b64 = btoa(unescape(encodeURIComponent(str)));
+  return b64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+}
+function b64UrlDecode(str) {
+  const b64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = b64 + '='.repeat((4 - b64.length % 4) % 4);
+  return decodeURIComponent(escape(atob(padded)));
+}
+function encodeMatchToFragment() {
+  const m = S.match;
+  const compact = {
+    a: m.teamA, b: m.teamB,
+    s: m.series, e: m.seuilEquipe,
+    pa: m.playersA, pb: m.playersB,
+    // winners uniquement (pas les scores individuels) : 0 = null, 1 = A, 2 = B
+    sh: (m.sheet || []).map(row => row.map(c => (c.winner === 'A' ? 1 : c.winner === 'B' ? 2 : 0))),
+  };
+  return b64UrlEncode(JSON.stringify(compact));
+}
+function decodeFragmentToMatch(str) {
+  try { return JSON.parse(b64UrlDecode(str)); } catch (e) { return null; }
+}
+function showShareQr() {
+  const modal = document.getElementById('qrModal');
+  const img = document.getElementById('qrImg');
+  const err = document.getElementById('qrErr');
+  const url = new URL(location.href);
+  url.hash = '#m=' + encodeMatchToFragment();
+  const shareUrl = url.toString();
+  img.classList.add('loading');
+  err.classList.remove('show');
+  img.style.display = 'block';
+  img.onload = () => { img.classList.remove('loading'); };
+  img.onerror = () => { img.style.display = 'none'; err.classList.add('show'); };
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=500x500&margin=8&data=' + encodeURIComponent(shareUrl);
+  // Stocke l'URL pour le bouton Copier
+  document.getElementById('qrCopy').dataset.url = shareUrl;
+  modal.classList.add('show');
+}
+function hideShareQr() {
+  document.getElementById('qrModal').classList.remove('show');
+}
+function copyShareLink() {
+  const btn = document.getElementById('qrCopy');
+  const url = btn.dataset.url || '';
+  if (!url) return;
+  const done = () => {
+    const original = btn.textContent;
+    btn.textContent = '✓ Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(url).then(done).catch(() => done());
+  else { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done(); }
+}
+function checkImportedMatchFromUrl() {
+  const hash = location.hash || '';
+  if (!hash.startsWith('#m=')) return;
+  const encoded = hash.slice(3);
+  const imported = decodeFragmentToMatch(encoded);
+  if (!imported) return;
+  // Nettoie l'URL pour éviter re-import au refresh
+  history.replaceState(null, '', location.pathname + location.search);
+  const msg = 'Une feuille de match a été partagée avec toi.\n\n'
+    + '  Équipes : ' + (imported.a || 'A') + ' vs ' + (imported.b || 'B') + '\n'
+    + '  Séries : ' + (imported.s || 1) + '\n'
+    + '  Seuil victoire : ' + (imported.e || '?') + '\n\n'
+    + 'Charger cette feuille ?\n(Les données locales seront remplacées.)';
+  if (!confirm(msg)) return;
+  const m = S.match;
+  if (imported.a) m.teamA = imported.a;
+  if (imported.b) m.teamB = imported.b;
+  if (imported.s) m.series = imported.s;
+  if (imported.e) m.seuilEquipe = imported.e;
+  if (Array.isArray(imported.pa) && imported.pa.length === 5) m.playersA = imported.pa;
+  if (Array.isArray(imported.pb) && imported.pb.length === 5) m.playersB = imported.pb;
+  m.sheet = [];
+  m.activeCell = null;
+  ensureSheet();
+  if (Array.isArray(imported.sh)) {
+    for (let s = 0; s < Math.min(imported.sh.length, m.sheet.length); s++) {
+      for (let mm = 0; mm < Math.min(imported.sh[s].length, m.sheet[s].length); mm++) {
+        const w = imported.sh[s][mm];
+        if (w === 1) m.sheet[s][mm].winner = 'A';
+        else if (w === 2) m.sheet[s][mm].winner = 'B';
+      }
+    }
+  }
+  save();
+  renderMatchSheet();
+  goToPage(1);
+}
+
 function resetTeamMatch() {
   if (!confirm('Nouveau match d\'équipes ?\n\nTout sera réinitialisé : noms des équipes, noms des joueurs, séries, seuil, résultats.\n\nCette action est irréversible.')) return;
   S.match.teamA = 'Équipe A';
@@ -1929,7 +2290,7 @@ let currentPage = 0;
 
 function goToPage(idx) {
   const pages = document.getElementById('pages');
-  const w = window.innerWidth;
+  const w = pages.clientWidth;     /* vraie largeur du container, sans scrollbar */
   pages.scrollTo({ left: idx * w, behavior: 'smooth' });
   updateNav(idx);
 }
@@ -2024,6 +2385,63 @@ function toggleSound() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
+   MODE TV — plein écran pour projection écran de club
+   ═══════════════════════════════════════════════════════════════════════ */
+let tvOn = false;
+function enterTvMode() {
+  const ov = document.getElementById('tvOverlay');
+  ov.classList.add('show');
+  ov.setAttribute('aria-hidden', 'false');
+  tvOn = true;
+  updateTvDisplay();
+  // Fullscreen API (marche sur PC, tablette, Android récent — pas iOS Safari)
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+  if (req) req.call(el).catch(() => {});
+  // Empêche l'écran de se mettre en veille pendant un match (Wake Lock API)
+  if ('wakeLock' in navigator) {
+    navigator.wakeLock.request('screen').then(lock => { window._wakeLock = lock; }).catch(() => {});
+  }
+}
+function exitTvMode() {
+  const ov = document.getElementById('tvOverlay');
+  ov.classList.remove('show');
+  ov.setAttribute('aria-hidden', 'true');
+  tvOn = false;
+  const ex = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+  if (ex && (document.fullscreenElement || document.webkitFullscreenElement)) ex.call(document).catch(() => {});
+  if (window._wakeLock && window._wakeLock.release) { window._wakeLock.release().catch(() => {}); window._wakeLock = null; }
+}
+function updateTvDisplay() {
+  if (!tvOn) return;
+  const set = (id, v) => { const el = document.getElementById(id); if (el && el.textContent !== String(v)) el.textContent = v; };
+  set('tvName1', (S.name1 || 'Joueur 1').toUpperCase());
+  set('tvName2', (S.name2 || 'Joueur 2').toUpperCase());
+  set('tvScore1', S.score1);
+  set('tvScore2', S.score2);
+  const chrono = document.getElementById('tvChrono');
+  if (chrono) {
+    chrono.textContent = Math.max(0, remaining);
+    chrono.classList.remove('running', 'warn', 'over');
+    if (remaining <= 0)                        chrono.classList.add('over');
+    else if (remaining <= 15 && running)       chrono.classList.add('warn');
+    else if (running)                          chrono.classList.add('running');
+  }
+  // Contexte match d'équipe si actif
+  const ctx = document.getElementById('tvContext');
+  if (ctx) {
+    const m = S.match;
+    if (m && m.activeCell) {
+      const scoreA = computeTeamScore('A'), scoreB = computeTeamScore('B');
+      ctx.textContent = (m.teamA || 'Équipe A') + '  ' + scoreA + ' — ' + scoreB + '  ' + (m.teamB || 'Équipe B')
+        + '  ·  Série ' + (m.activeCell.s + 1) + ' · Match ' + (m.activeCell.m + 1) + '/5';
+    } else {
+      ctx.textContent = '';
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
    INIT
    ═══════════════════════════════════════════════════════════════════════ */
 function init() {
@@ -2076,6 +2494,17 @@ function init() {
     });
   });
   document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  // Mode TV
+  document.getElementById('tvToggle').addEventListener('click', enterTvMode);
+  document.getElementById('tvExit').addEventListener('click', exitTvMode);
+  // Échap pour quitter le mode TV
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape' && tvOn) exitTvMode();
+  });
+  // Si l'utilisateur quitte le fullscreen (F11 ou Échap système), sortir aussi du mode TV
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && tvOn) exitTvMode();
+  });
   document.getElementById('scoresReset').addEventListener('click', resetScores);
   document.querySelectorAll('.preset-btn').forEach(btn => {
     btn.addEventListener('click', () => setPreset(btn.dataset.preset));
@@ -2124,7 +2553,8 @@ function init() {
   pagesEl.addEventListener('scroll', () => {
     if (scrollTimeout) clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(() => {
-      const idx = Math.round(pagesEl.scrollLeft / window.innerWidth);
+      const w = pagesEl.clientWidth || 1;
+      const idx = Math.round(pagesEl.scrollLeft / w);
       if (idx !== currentPage) updateNav(idx);
     }, 60);
   });
@@ -2163,6 +2593,12 @@ function init() {
     save(); renderMatchSheet();
   });
   document.getElementById('btnResetMatch').addEventListener('click', resetTeamMatch);
+  document.getElementById('btnShareMatch').addEventListener('click', showShareQr);
+  document.getElementById('qrClose').addEventListener('click', hideShareQr);
+  document.getElementById('qrCopy').addEventListener('click', copyShareLink);
+  document.getElementById('qrModal').addEventListener('click', (ev) => {
+    if (ev.target.id === 'qrModal') hideShareQr();
+  });
   document.getElementById('contextBarQuit').addEventListener('click', () => {
     if (confirm('Quitter cette rencontre sans désigner de vainqueur ?')) {
       quitTeamMatch();
@@ -2174,9 +2610,18 @@ function init() {
   renderHistory();
   renderMatchSheet();
   updateContextBar();
+  // Import auto d'une feuille partagée via QR / lien (#m=xxx dans l'URL)
+  checkImportedMatchFromUrl();
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+/* PWA — register le service worker (marche hors ligne + installable sur home screen) */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
 </script>
 </body>
 </html>
