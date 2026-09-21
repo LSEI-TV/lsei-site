@@ -49,6 +49,14 @@ html[data-theme="light"] {
   --p1:        #0284c7;
   --p2:        #7c3aed;
 }
+/* Ajustements thème clair : les backgrounds semi-transparents noir sont illisibles → gris doux */
+html[data-theme="light"] .player-score {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.25);
+}
+html[data-theme="light"] .chrono-val {
+  background: #ffffff;
+}
 
 /* ═══════════════════════════════════════════════════════════════════════
    RESET + BASE
@@ -97,10 +105,7 @@ html, body { overflow-x: hidden; }
   min-height: calc(100vh - 66px);
   scroll-snap-align: start;
   scroll-snap-stop: always;
-}
-.page-history,
-.page-match {
-  padding-bottom: 40px;
+  padding-bottom: 44px;      /* laisse la place aux dots pagination fixed bottom */
 }
 /* Bouton flèche navigation dans la topbar */
 .nav-arrow {
@@ -146,6 +151,9 @@ html, body { overflow-x: hidden; }
   color: var(--orange);
   flex: 1;
   min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .topbar-brand small {
   display: block;
@@ -287,9 +295,10 @@ html, body { overflow-x: hidden; }
 
 .chrono-btns {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1.6fr 1fr;
   gap: 10px;
 }
+.chrono-btn { min-width: 0; }
 .chrono-btn {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 900; font-size: 20px;
@@ -327,6 +336,8 @@ html, body { overflow-x: hidden; }
   padding: 14px 12px;
   text-align: center;
   transition: background .2s, box-shadow .2s, transform .12s;
+  min-width: 0;
+  overflow: hidden;
 }
 .player-card.p1 { border-left: 4px solid var(--p1); }
 .player-card.p2 { border-right: 4px solid var(--p2); }
@@ -552,6 +563,75 @@ html, body { overflow-x: hidden; }
   body { padding-bottom: max(0px, env(safe-area-inset-bottom)); }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════
+   RESPONSIVE — téléphone étroit (< 480 px : iPhone SE, Android 5")
+   Compacte les paddings, réduit les tailles, cache le sous-titre topbar.
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .topbar { padding: 8px 8px; gap: 6px; }
+  .topbar-logo { height: 28px; }
+  .topbar-brand { font-size: 13px; letter-spacing: 1px; }
+  .topbar-brand small { display: none; }
+  .icon-btn, .nav-arrow { width: 32px; height: 32px; font-size: 14px; }
+
+  /* Bouton RESET : plus compact pour tenir dans sa colonne */
+  .chrono-btns { grid-template-columns: 1.7fr 1fr; gap: 8px; }
+  .chrono-btn { padding: 14px 6px; font-size: 16px; letter-spacing: 1px; }
+
+  /* Labels de config longs (« NOMBRE DE SÉRIES ... ») : wrap propre */
+  .match-setup-item label { font-size: 9px; letter-spacing: 1px; line-height: 1.3; }
+  .match-setup-item input.team-name { font-size: 14px; }
+
+  .page { min-height: calc(100vh - 52px); }
+
+  .section { margin: 6px 8px; padding: 10px; border-radius: 12px; }
+  .section-title { font-size: 11px; letter-spacing: 2px; margin-bottom: 8px; }
+
+  .chrono-section { padding: 12px 10px; }
+  .chrono-val {
+    font-size: clamp(72px, 22vw, 160px);
+    padding: 10px 8px;
+    margin-bottom: 12px;
+    border-width: 2px;
+    border-radius: 14px;
+  }
+  .chrono-btn { padding: 14px 8px; font-size: 17px; letter-spacing: 1.5px; }
+
+  .preset-btn { padding: 8px 4px; }
+  .preset-btn .preset-dur { font-size: 18px; }
+
+  .scores { gap: 6px; }
+  .player-card { padding: 8px 6px; }
+  .player-name { font-size: 12px; letter-spacing: 1px; padding: 3px 4px; max-width: calc(100% - 20px); }
+  .player-name-edit { font-size: 11px; }
+  .player-score {
+    font-size: clamp(48px, 14vw, 80px);
+    padding: 4px 6px 14px;
+    margin: 6px 0;
+    border-width: 2px;
+    border-radius: 10px;
+  }
+  .score-btn { padding: 12px 4px; font-size: 19px; }
+  .scores-reset { padding: 8px; font-size: 11px; }
+
+  .page-dots { bottom: 8px; padding: 4px 8px; }
+  .page-dot { width: 6px; height: 6px; }
+
+  /* Feuille de match : compacter aussi */
+  .team-score-summary .side-score { font-size: 34px; }
+  .team-score-summary .vs { font-size: 13px; letter-spacing: 2px; }
+  .team-players input { font-size: 12px; padding: 6px 8px; }
+  .match-side select { font-size: 11px; padding: 5px 4px; }
+  .match-play-btn { padding: 10px 4px; font-size: 14px; }
+  .match-row { grid-template-columns: 1fr 48px 1fr; gap: 4px; padding: 5px 4px; }
+
+  /* Historique : compacter les rows */
+  .history-row { padding: 8px 10px; }
+  .history-row .h-num { font-size: 11px; }
+  .history-row .h-winner { font-size: 13px; }
+  .history-row .h-dur { font-size: 16px; }
+}
+
 /* Desktop : centre et limite la largeur */
 @media (min-width: 720px) {
   .topbar, .section, .footer-lsei, .context-bar { max-width: 640px; margin-left: auto; margin-right: auto; }
@@ -572,8 +652,10 @@ html, body { overflow-x: hidden; }
   color: var(--dim); font-weight: 700;
   margin-bottom: 4px;
 }
+.match-setup-item { min-width: 0; overflow: hidden; }
 .match-setup-item input {
   width: 100%;
+  max-width: 100%;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -591,6 +673,8 @@ html, body { overflow-x: hidden; }
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 10px;
+  min-width: 0;
+  overflow: hidden;
 }
 .team-side.team-a { border-top: 4px solid var(--p1); }
 .team-side.team-b { border-top: 4px solid var(--p2); }
