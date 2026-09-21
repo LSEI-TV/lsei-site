@@ -1146,6 +1146,19 @@ html, body { overflow-x: hidden; }
 }
 .tv-team-1 .tv-score { color: #7dd3fc; }
 .tv-team-2 .tv-score { color: #c4b5fd; }
+
+/* Joueur en train de jouer (activePlayer) : halo lumineux + pulsation, autre joueur dimmé */
+.tv-team { transition: opacity .35s, transform .35s; }
+.tv-teams.has-active .tv-team:not(.playing) { opacity: 0.28; }
+.tv-teams.has-active .tv-team.playing { opacity: 1; transform: scale(1.03); }
+.tv-team.playing .tv-name,
+.tv-team.playing .tv-score {
+  animation: tvGlow 1.4s ease-in-out infinite;
+}
+@keyframes tvGlow {
+  0%, 100% { text-shadow: 0 0 30px currentColor, 0 0 60px currentColor; }
+  50%      { text-shadow: 0 0 60px currentColor, 0 0 110px currentColor; }
+}
 .tv-vs {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 900;
@@ -1576,6 +1589,7 @@ const DEFAULT = {
   score2: 0,
   name1: 'Joueur 1',
   name2: 'Joueur 2',
+  activePlayer: null,    // 1 ou 2 : joueur en train de jouer (chrono en cours pour lui) — mis à jour au tap
   theme: 'dark',         // 'dark' | 'light'
   sound: true,
   games: [],             // historique chrono libre : [{ num, duration, winner, ts }]
@@ -2421,6 +2435,7 @@ function broadcastTvState() {
     bcTv.postMessage({
       name1: S.name1, name2: S.name2,
       score1: S.score1, score2: S.score2,
+      activePlayer: S.activePlayer,
       remaining, running, duration: S.duration,
       theme: S.theme,
       match: {
@@ -2477,6 +2492,13 @@ function updateTvDisplay() {
   set('tvName2', (S.name2 || 'Joueur 2').toUpperCase());
   set('tvScore1', S.score1);
   set('tvScore2', S.score2);
+  // Indique visuellement quel joueur joue (halo + opacité de l'autre baissée)
+  const teams = document.querySelector('.tv-teams');
+  const t1 = document.querySelector('.tv-team-1');
+  const t2 = document.querySelector('.tv-team-2');
+  if (teams) teams.classList.toggle('has-active', S.activePlayer === 1 || S.activePlayer === 2);
+  if (t1) t1.classList.toggle('playing', S.activePlayer === 1);
+  if (t2) t2.classList.toggle('playing', S.activePlayer === 2);
   const chrono = document.getElementById('tvChrono');
   if (chrono) {
     chrono.textContent = Math.max(0, remaining);
@@ -2525,6 +2547,7 @@ function init() {
         if (d.name2 !== undefined) S.name2 = d.name2;
         if (d.score1 !== undefined) S.score1 = d.score1;
         if (d.score2 !== undefined) S.score2 = d.score2;
+        if (d.activePlayer !== undefined) S.activePlayer = d.activePlayer;
         if (d.remaining !== undefined) remaining = d.remaining;
         if (d.running !== undefined) running = d.running;
         if (d.duration !== undefined) S.duration = d.duration;
@@ -2580,6 +2603,9 @@ function init() {
       const card = ev.target.closest('.player-card');
       if (!card) return;
       document.querySelectorAll('.player-card').forEach(c => c.classList.toggle('active', c === card));
+      // Mémorise le joueur actif (1 ou 2) → utilisé pour l'affichage sur la fenêtre TV séparée
+      S.activePlayer = card.classList.contains('p1') ? 1 : 2;
+      save();
       // Reset + relance immédiate du chrono
       if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
       remaining = S.duration;
