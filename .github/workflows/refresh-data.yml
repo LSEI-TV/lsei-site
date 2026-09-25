@@ -40,6 +40,9 @@ jobs:
           echo "YOUTUBE_CHANNEL_ID=UCYUOdKr28cOjLzHWv6pTpjQ" >> .env
           echo "REFRESH_YOUTUBE=1" >> .env
 
+      - name: Récupérer le classement basket (NM1 Poule B, source nm1.ffbb.com)
+        run: node scripts/fetch-basket-standings.mjs || echo "Classement basket non mis à jour (source indisponible) — cache précédent conservé."
+
       - name: Construire (récupère YouTube + met à jour le cache)
         run: npm run build
 

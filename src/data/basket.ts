@@ -5,6 +5,10 @@
 //  Ajouter un club = une entrée dans `nmClubs` + (option) un roster dans `rosters`.
 // ============================================================
 
+// Classement OFFICIEL récupéré depuis nm1.ffbb.com par scripts/fetch-basket-standings.mjs
+// (rafraîchi en CI, commité). S'il existe, il prime sur le calcul par calendrier.
+import standingsCache from './cache/basket-standings.json';
+
 /** false = données réelles (plus de bandeau « exemple »). */
 export const SAMPLE = false;
 
@@ -118,10 +122,27 @@ export const rosters: Record<string, Player[]> = {
 
 export const rosterOf = (slug: string): Player[] => rosters[slug] ?? [];
 
-// Classement dérivé des matchs joués (V=2 pts, D=1 pt).
-// NB : seuls les matchs de Fougères sont saisis pour l'instant → le classement
-// se remplira vraiment quand on ajoutera les rencontres des autres clubs.
+// Classement OFFICIEL (FFBB) issu du cache, s'il est présent et non vide.
+// Même forme que le classement calculé + un `rank` officiel (gère les départages FFBB).
+interface StandRow { slug: string; w: number; l: number; pf: number; pa: number; played: number; pts: number; diff: number; rank: number }
+function officialStandings(): StandRow[] {
+  const rows = ((standingsCache as any)?.rows ?? []) as Array<Record<string, number & string>>;
+  return rows
+    .filter((r: any) => nmClubBy(r.slug))
+    .map((r: any) => ({ slug: r.slug, w: r.w, l: r.l, pf: r.pf, pa: r.pa, played: r.played, pts: r.pts, diff: r.diff, rank: r.rank }))
+    .sort((a, b) => a.rank - b.rank);
+}
+
+/** Horodatage ISO du dernier rafraîchissement du classement officiel (ou null). */
+export const standingsUpdated: string | null = (standingsCache as any)?.updated ?? null;
+/** true si le classement affiché provient de la source officielle FFBB. */
+export const standingsIsOfficial: boolean = officialStandings().length > 0;
+
+// Classement : OFFICIEL (FFBB) en priorité, sinon dérivé des matchs saisis au
+// calendrier (V=2 pts, D=1 pt) en repli.
 export function nm1Standings() {
+  const official = officialStandings();
+  if (official.length) return official;
   const t: Record<string, { slug: string; w: number; l: number; pf: number; pa: number; played: number }> = {};
   for (const c of nmClubs) t[c.slug] = { slug: c.slug, w: 0, l: 0, pf: 0, pa: 0, played: 0 };
   for (const m of nm1Calendar) {
@@ -136,8 +157,10 @@ export function nm1Standings() {
     .sort((a, b) => b.pts - a.pts || b.diff - a.diff || b.pf - a.pf);
 }
 
-/** true dès qu'au moins un match a été joué (pour n'afficher scores/classement qu'après). */
-export const seasonStarted = () => nm1Calendar.some((m) => m.homeScore != null && m.awayScore != null);
+/** true dès qu'au moins un match a été joué (classement officiel OU score saisi au calendrier). */
+export const seasonStarted = () =>
+  officialStandings().some((r) => r.played > 0) ||
+  nm1Calendar.some((m) => m.homeScore != null && m.awayScore != null);
 
 // ------------------------------------------------------------
 //  LIEN CALENDRIER ↔ REPLAYS LSEI  (le différenciateur « web TV »)
