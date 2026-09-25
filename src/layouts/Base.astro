@@ -16,8 +16,10 @@ interface Props {
   ogType?: string;
   /** image LCP à précharger (ex. bandeau hero de fond CSS) pour accélérer l'affichage. */
   preloadImage?: string;
+  /** 'bare' = sans le masthead/footer LSEI (pour un « site dans le site » qui pose son propre chrome). */
+  chrome?: 'full' | 'bare';
 }
-const { title, description = site.description, active, image, ogType = 'website', preloadImage } = Astro.props;
+const { title, description = site.description, active, image, ogType = 'website', preloadImage, chrome = 'full' } = Astro.props;
 const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
 // URLs absolues (nécessaires pour le partage réseaux sociaux + le référencement).
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
@@ -89,9 +91,9 @@ const websiteLd = {
     <script type="application/ld+json" set:html={JSON.stringify(websiteLd)} />
   </head>
   <body>
-    <Header active={active} />
+    {chrome !== 'bare' && <Header active={active} />}
     <slot />
-    <Footer />
+    {chrome !== 'bare' && <Footer />}
     <CookieBanner />
     <VideoModal />
 

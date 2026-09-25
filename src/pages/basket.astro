@@ -3,7 +3,7 @@
 // Clic sur un club (avec mini-site) → /clubs/<slug>. « Site dans le site » façon NBA.
 import Base from '../layouts/Base.astro';
 import { getDiscipline } from '../data/site';
-import { NM1_LABEL, NM1_POOL, SEASON, SEASON_START, nmClubs, nmClubBy, nm1Calendar, nm1Standings, seasonStarted, standingsUpdated, standingsIsOfficial } from '../data/basket';
+import { NM1_LABEL, NM1_POOL, SEASON, SEASON_START, nmClubs, nmClubBy, nm1Calendar, nm1Standings, seasonStarted, standingsUpdated, standingsIsOfficial, clubHasSite } from '../data/basket';
 import { assetExists, assetUrl } from '../lib/publicAssets';
 
 const d = getDiscipline('basket');
@@ -14,7 +14,7 @@ const standingsMaj = standingsUpdated
   : null;
 const fmtDay = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Paris' });
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-const clubHref = (slug: string) => { const c = nmClubBy(slug); return c?.hasSite ? `/clubs/${slug}` : null; };
+const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null);
 ---
 <Base title={`Basketball ${NM1_LABEL} (NM1) — ${NM1_POOL}`} description={`${NM1_LABEL} (NM1) ${NM1_POOL} ${SEASON} sur LSEI : les clubs, le calendrier, le classement et les vidéos — du Pays de Fougères Basket à toute la poule.`} active="disciplines">
   <section class="nb-hero" style={`--dc:${d.colorVar}`}>
@@ -57,13 +57,14 @@ const clubHref = (slug: string) => { const c = nmClubBy(slug); return c?.hasSite
         <!-- CALENDRIER -->
         <div class="nb-col">
           <div class="sec-head"><div><div class="eyebrow" style={`color:${d.colorVar}`}>Calendrier</div><h2>Pays de Fougères · {SEASON}</h2></div></div>
-          <div class="nb-cal">
+          <div class="nb-cal" id="nb-cal">
             {nm1Calendar.map((m) => {
               const h = nmClubBy(m.homeSlug), a = nmClubBy(m.awaySlug);
               const played = m.homeScore != null && m.awayScore != null;
+              const won = played && ((m.homeSlug === 'fougeres' && m.homeScore! > m.awayScore!) || (m.awaySlug === 'fougeres' && m.awayScore! > m.homeScore!));
               const dt = new Date(m.date);
               return (
-                <div class="nb-match">
+                <div class:list={['nb-match', played && 'is-done', played && (won ? 'is-win' : 'is-loss')]} data-date={m.date}>
                   <span class="nb-match-date">{cap(fmtDay.format(dt)).replace(/\.$/, '')}{m.round && <i>J{m.round}</i>}</span>
                   <span class="nb-team nb-team-h"><span class="nb-team-n">{h?.short}</span><span class="nb-dot" style={`background:${h?.color}`}></span></span>
                   <span class="nb-score">{played ? `${m.homeScore} – ${m.awayScore}` : 'vs'}</span>
@@ -99,6 +100,20 @@ const clubHref = (slug: string) => { const c = nmClubBy(slug); return c?.hasSite
       </div>
     </div>
   </section>
+
+  <script is:inline>
+    // Grise automatiquement les matchs passés (date < aujourd'hui, heure locale du visiteur).
+    (function () {
+      try {
+        var d = new Date();
+        var today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        document.querySelectorAll('#nb-cal .nb-match').forEach(function (el) {
+          var dt = el.getAttribute('data-date');
+          if (dt && dt < today) el.classList.add('is-past');
+        });
+      } catch (e) {}
+    })();
+  </script>
 </Base>
 
 <style>
@@ -134,6 +149,11 @@ const clubHref = (slug: string) => { const c = nmClubBy(slug); return c?.hasSite
   .nb-team-n { font-weight: 700; font-size: 13px; }
   .nb-dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
   .nb-score { font-family: var(--mono); font-weight: 800; font-size: 14px; color: var(--ink); white-space: nowrap; }
+  /* Match passé : case grisée. Match joué : score coloré selon victoire/défaite de Fougères. */
+  .nb-match.is-past { opacity: .5; }
+  .nb-match.is-done { opacity: 1; background: var(--surface-2); }
+  .nb-match.is-win .nb-score { color: #2e9e52; }
+  .nb-match.is-loss .nb-score { color: #d0433a; }
   .nb-rank { width: 100%; border-collapse: collapse; font-size: 13px; }
   .nb-rank th { text-align: center; font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-faint); padding: 6px 4px; border-bottom: 1px solid var(--line); }
   .nb-rank td { text-align: center; padding: 8px 4px; border-bottom: 1px solid var(--line); color: var(--ink-soft); }

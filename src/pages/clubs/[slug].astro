@@ -1,195 +1,391 @@
 ---
-// MINI-SITE CLUB (« site dans le site ») — Présentation + Effectif + Stats.
-// Généré pour chaque club NM1 ayant `hasSite: true`. Gabarit réutilisable.
+// MINI-SITE CLUB — Direction « Club Pro immersif » (site dans le site).
+// Chrome propre au club (en-tête + footer), hero plein écran, effectif en cutouts,
+// classement officiel, vidéos LSEI, récit du club. Gabarit partagé par les 14 clubs :
+// Fougères a la photo hero + le récit ; les autres retombent sur un dégradé + logo.
 import Base from '../../layouts/Base.astro';
-import { NM1_LABEL, NM1_POOL, SEASON, SEASON_START, nmClubs, nmClubBy, rosterOf, nm1Standings, seasonStarted } from '../../data/basket';
+import { NM1_LABEL, NM1_POOL, SEASON, SEASON_START, nmClubs, nmClubBy, rosterOf, staffOf, nm1Standings, seasonStarted, clubHasSite, nm1Calendar, standingsUpdated, standingsIsOfficial } from '../../data/basket';
 import { clubs as clubFiches } from '../../data/clubs';
+import { getReplays } from '../../lib/youtube';
 import { assetExists, assetUrl } from '../../lib/publicAssets';
 
 export function getStaticPaths() {
-  return nmClubs.filter((c) => c.hasSite).map((c) => ({ params: { slug: c.slug }, props: { slug: c.slug } }));
+  return nmClubs.filter((c) => clubHasSite(c.slug)).map((c) => ({ params: { slug: c.slug }, props: { slug: c.slug } }));
 }
 const { slug } = Astro.props as { slug: string };
 const club = nmClubBy(slug)!;
 const fiche = clubFiches.find((f) => f.slug === slug) || null;
 const roster = rosterOf(slug);
+const staff = staffOf(slug);
 const standings = nm1Standings();
 const rank = standings.findIndex((r) => r.slug === slug);
 const myRow = rank >= 0 ? standings[rank] : null;
 const started = seasonStarted();
-
-// Stats d'équipe (moyennes) + leaders, calculés depuis l'effectif.
-const withStats = roster.filter((p) => p.stats);
-const teamPts = withStats.reduce((s, p) => s + (p.stats!.pts), 0);
-const leader = (key: 'pts' | 'reb' | 'ast') =>
-  withStats.length ? withStats.reduce((b, p) => (p.stats![key] > b.stats![key] ? p : b)) : null;
-const leaders = [
-  { lab: 'Points', key: 'pts' as const, unit: 'pts', p: leader('pts') },
-  { lab: 'Rebonds', key: 'reb' as const, unit: 'reb', p: leader('reb') },
-  { lab: 'Passes', key: 'ast' as const, unit: 'pd', p: leader('ast') },
-];
-const initials = (n: string) => n.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 const cc = club.color;
-const hasLogo = assetExists(club.logo);
-const logoSrc = hasLogo ? assetUrl(club.logo!) : null;
+const logoSrc = assetExists(club.logo) ? assetUrl(club.logo!) : null;
+const heroImg = fiche?.hero && assetExists(fiche.hero) ? assetUrl(fiche.hero) : null;
+const initials = (n: string) => n.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const _n = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+// Prochain match (calendrier LSEI, à partir d'aujourd'hui).
+const todayISO = new Date().toISOString().slice(0, 10);
+const myMatches = nm1Calendar.filter((m) => m.homeSlug === slug || m.awaySlug === slug);
+const nextMatch = myMatches.filter((m) => m.date >= todayISO).sort((a, b) => (a.date < b.date ? -1 : 1))[0] ?? null;
+const nextOpp = nextMatch ? nmClubBy(nextMatch.homeSlug === slug ? nextMatch.awaySlug : nextMatch.homeSlug) : null;
+const nextHome = nextMatch ? nextMatch.homeSlug === slug : false;
+// Calendrier du club exposé au navigateur → le « prochain match » se recalcule
+// côté client avec la vraie date du jour (donc il avance tout seul, sans rebuild).
+const fixtures = myMatches
+  .slice()
+  .sort((a, b) => (a.date < b.date ? -1 : 1))
+  .map((m) => ({ d: m.date, o: (nmClubBy(m.homeSlug === slug ? m.awaySlug : m.homeSlug)?.name ?? ''), h: m.homeSlug === slug }));
+const fmtMatch = (iso: string) => new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date(iso));
+const majFmt = standingsUpdated ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date(standingsUpdated)) : null;
+
+// Vidéos LSEI du club (replays basket dont le titre mentionne la ville).
+const cityKey = _n(club.city);
+const clubVideos = (await getReplays({ discipline: 'basket' })).filter((v) => _n(v.title || '').includes(cityKey)).slice(0, 6);
+
+const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
 ---
-<Base title={`${club.name} — Basket ${NM1_LABEL} (NM1)`} description={fiche?.blurb ?? `${club.name} (${club.city}) — ${NM1_LABEL} ${NM1_POOL} ${SEASON} : calendrier, effectif, résultats et vidéos du club, filmés par LSEI.`} active="disciplines">
-  <!-- Nav club -->
-  <div class="cl-nav" style={`--cc:${cc}`}>
-    <div class="wrap">
-      <a href="/basket" class="cl-back">← {NM1_LABEL}</a>
-      <span class="cl-nav-club">
-        <span class="cl-nav-logo">{logoSrc ? <img src={logoSrc} alt="" /> : <b>{club.short}</b>}</span>
-        {club.name}
-      </span>
-      <nav class="cl-links">
-        <a href="#presentation">Présentation</a>
+<Base chrome="bare" title={`${club.name} — Basket ${NM1_LABEL} (NM1)`} description={fiche?.blurb ?? `${club.name} (${club.city}) — ${NM1_LABEL} ${NM1_POOL} ${SEASON} : effectif, classement et vidéos du club, filmés par LSEI.`} active="disciplines" preloadImage={heroImg ?? undefined}>
+  <div class="cs" style={`--cc:${cc}`} id="top">
+
+    <!-- EN-TÊTE CLUB (chrome propre) -->
+    <header class="ch" id="chead">
+      <a class="ch-brand" href="#top">
+        <span class="ch-logo">{logoSrc ? <img src={logoSrc} alt="" /> : <b>{club.short}</b>}</span>
+        <span class="ch-name">{club.name}</span>
+      </a>
+      <nav class="ch-nav">
         <a href="#effectif">Effectif</a>
-        <a href="#stats">Stats</a>
-        <a href="/disciplines/basket">Vidéos</a>
+        <a href="#classement">Classement</a>
+        {clubVideos.length > 0 && <a href="#videos">Vidéos</a>}
+        {hasClub && <a href="#club">Le club</a>}
       </nav>
-    </div>
-  </div>
+      <a class="ch-lsei" href="/basket" title="Retour au championnat NM1 sur LSEI">NM1 ↗</a>
+    </header>
 
-  <!-- HERO club -->
-  <section class="cl-hero" style={`--cc:${cc}${fiche?.hero ? `;--hero:url('${fiche.hero}')` : ''}`}>
-    <div class="wrap cl-hero-in">
-      <span class="cl-logo-big">{logoSrc ? <img src={logoSrc} alt={club.name} /> : <b>{club.short}</b>}</span>
-      <div class="cl-hero-txt">
-        <div class="cl-kick">{fiche?.kicker ?? `Basket · ${NM1_LABEL}`}</div>
-        <h1 class="cl-h">{club.name}</h1>
-        {fiche?.blurb && <p class="cl-blurb">{fiche.blurb}</p>}
-        <div class="cl-hero-stats">
-          {started && myRow && <div><b>{rank + 1}<sup>e</sup></b><span>Classement</span></div>}
-          {started && myRow && <div><b>{myRow.w}-{myRow.l}</b><span>Bilan</span></div>}
-          <div><b>{NM1_POOL}</b><span>NM1 · {SEASON}</span></div>
-          <div><b>{roster.length}</b><span>Joueurs</span></div>
+    <!-- HERO plein écran -->
+    <section class:list={['hero', heroImg ? 'hero--photo' : 'hero--grad']} style={heroImg ? `--hero:url('${heroImg}')` : ''}>
+      <div class="hero-in">
+        <span class="hero-logo">{logoSrc ? <img src={logoSrc} alt={club.name} /> : <b>{club.short}</b>}</span>
+        <div class="hero-kick">{fiche?.kicker ?? `${NM1_LABEL} · ${NM1_POOL}`}</div>
+        <h1 class="hero-h">{club.name}</h1>
+        {fiche?.blurb && <p class="hero-blurb">{fiche.blurb}</p>}
+        <div class="hero-badges">
+          <span class="hb">NM1 · {NM1_POOL}</span>
+          {started && myRow && <span class="hb hb--on">{rank + 1}<sup>e</sup> · {myRow.w}-{myRow.l}</span>}
+          <span class="hb">{roster.length} joueurs</span>
         </div>
+        <div class="hero-cta-row">
+          {fixtures.length > 0 && (
+            <div class="hero-next" id="hero-next" hidden={!nextMatch}>
+              <span class="hn-lab">Prochain match</span>
+              <span class="hn-main">{nextMatch && nextOpp ? `${nextHome ? 'vs' : '@'} ${nextOpp.name}` : ''}</span>
+              <span class="hn-when">{nextMatch ? cap(fmtMatch(nextMatch.date)) : ''}</span>
+            </div>
+          )}
+          <a class="hero-cta" href="#effectif">Découvrir l'équipe ↓</a>
+        </div>
+        {fixtures.length > 0 && <script type="application/json" id="cl-fixtures" set:html={JSON.stringify(fixtures)}></script>}
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section">
-    <div class="wrap">
-      {!started && <div class="cl-sample">🗓️ <b>Saison {SEASON}</b> — le championnat débute le {SEASON_START}. Les statistiques des joueurs s'afficheront dès la 1ʳᵉ journée.</div>}
+    {!started && <div class="cs-wrap cs-note">🗓️ <b>Saison {SEASON}</b> — le championnat débute le {SEASON_START}. Les stats des joueurs s'afficheront dès la 1ʳᵉ journée.</div>}
 
-      <!-- PRÉSENTATION -->
-      {fiche?.intro?.length ? (
-        <div id="presentation" class="cl-block">
-          <div class="sec-head"><div><div class="eyebrow" style={`color:${cc}`}>Le club</div><h2>Présentation</h2></div></div>
-          <div class="cl-intro">{fiche.intro.map((p) => <p set:html={p}></p>)}</div>
-        </div>
-      ) : null}
-
-      <!-- EFFECTIF -->
-      <div id="effectif" class="cl-block">
-        <div class="sec-head"><div><div class="eyebrow" style={`color:${cc}`}>L'équipe</div><h2>Effectif</h2></div></div>
-        <div class="cl-roster">
+    <!-- EFFECTIF -->
+    <section class="sec" id="effectif">
+      <div class="cs-wrap">
+        <div class="sec-h"><span class="sec-eye">L'équipe</span><h2>Effectif · {SEASON}</h2></div>
+        <div class="squad">
           {roster.map((p) => (
-            <div class="cl-player" style={`--cc:${cc}`}>
-              {p.number != null && <span class="cl-num">{p.number}</span>}
-              <span class="cl-av">{p.photo ? <img src={p.photo} alt={p.name} onerror="this.remove()" /> : <span class="cl-av-i">{initials(p.name)}</span>}</span>
-              <span class="cl-pname">{p.name}</span>
-              <span class="cl-pmeta">{p.pos}{p.height ? ` · ${p.height}` : ''}</span>
+            <div class="pcard">
+              <div class="pcard-img">
+                {p.number != null && <span class="pcard-num">{p.number}</span>}
+                {p.photo
+                  ? <img src={p.photo} alt={p.name} loading="lazy" onerror="this.closest('.pcard-img').classList.add('is-noimg')" />
+                  : <span class="pcard-i">{initials(p.name)}</span>}
+              </div>
+              <div class="pcard-txt">
+                <span class="pcard-n">{p.name}</span>
+                <span class="pcard-p">{p.pos}{p.height ? ` · ${p.height}` : ''}</span>
+              </div>
             </div>
           ))}
         </div>
-      </div>
 
-      <!-- STATS -->
-      {withStats.length > 0 && (
-        <div id="stats" class="cl-block">
-          <div class="sec-head"><div><div class="eyebrow" style={`color:${cc}`}>Saison</div><h2>Statistiques</h2></div></div>
-          <div class="cl-leaders">
-            {leaders.map((L) => L.p && (
-              <div class="cl-leader" style={`--cc:${cc}`}>
-                <div class="cl-leader-lab">Meilleur · {L.lab}</div>
-                <div class="cl-leader-val">{L.p.stats![L.key].toFixed(1).replace('.', ',')}<small> {L.unit}/match</small></div>
-                <div class="cl-leader-name">#{L.p.number} {L.p.name}</div>
-              </div>
-            ))}
-          </div>
-          <table class="cl-stats">
-            <thead><tr><th>#</th><th>Joueur</th><th>Poste</th><th>J</th><th>Pts</th><th>Reb</th><th>Pd</th></tr></thead>
-            <tbody>
-              {[...roster].filter((p) => p.stats).sort((a, b) => b.stats!.pts - a.stats!.pts).map((p) => (
-                <tr>
-                  <td class="cl-st-n">{p.number}</td>
-                  <td class="cl-st-name">{p.name}</td>
-                  <td class="cl-st-pos">{p.pos}</td>
-                  <td>{p.stats!.g}</td>
-                  <td class="cl-st-pts">{p.stats!.pts.toFixed(1).replace('.', ',')}</td>
-                  <td>{p.stats!.reb.toFixed(1).replace('.', ',')}</td>
-                  <td>{p.stats!.ast.toFixed(1).replace('.', ',')}</td>
-                </tr>
+        {staff.length > 0 && (
+          <div class="staff-block">
+            <h3 class="staff-h">Le staff</h3>
+            <div class="staff">
+              {staff.map((s) => (
+                <div class="scard">
+                  <span class="scard-av">{s.photo ? <img src={s.photo} alt={s.name} loading="lazy" onerror="this.remove()" /> : <span class="scard-i">{initials(s.name)}</span>}</span>
+                  <span class="scard-n">{s.name}</span>
+                  <span class="scard-r">{s.role}</span>
+                </div>
               ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+
+    <!-- CLASSEMENT -->
+    <section class="sec sec--alt" id="classement">
+      <div class="cs-wrap">
+        <div class="sec-h"><span class="sec-eye">La poule</span><h2>Classement · {NM1_POOL}</h2></div>
+        <div class="rank-wrap">
+          <table class="rank">
+            <thead><tr><th>#</th><th>Club</th><th>J</th><th>V</th><th>D</th><th>Pts</th></tr></thead>
+            <tbody>
+              {standings.map((r, i) => {
+                const c = nmClubBy(r.slug);
+                return (
+                  <tr class={r.slug === slug ? 'is-me' : ''}>
+                    <td class="rk">{i + 1}</td>
+                    <td class="rc"><span class="rdot" style={`background:${c?.color}`}></span>{c?.name ?? r.slug}</td>
+                    <td>{r.played}</td><td>{r.w}</td><td>{r.l}</td><td class="rpts">{r.pts}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
-      )}
+        {standingsIsOfficial && majFmt && (
+          <p class="rank-src">Classement officiel FFBB · mis à jour le {majFmt}.</p>
+        )}
+      </div>
+    </section>
 
-      {fiche?.url && <a href={fiche.url} target="_blank" rel="noopener" class="cl-official" style={`--cc:${cc}`}>Site officiel du club ↗</a>}
-    </div>
-  </section>
+    <!-- VIDÉOS LSEI -->
+    {clubVideos.length > 0 && (
+      <section class="sec" id="videos">
+        <div class="cs-wrap">
+          <div class="sec-h"><span class="sec-eye">La web TV</span><h2>Les matchs filmés par LSEI</h2></div>
+          <div class="vids">
+            {clubVideos.map((v) => (
+              <a class="vid" href={`/replay/${v.id}`}>
+                <span class="vid-th">{v.thumb && <img src={v.thumb} alt="" loading="lazy" onerror="this.remove()" />}<span class="vid-play">▶</span></span>
+                <span class="vid-t">{v.title}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- LE CLUB / PALMARÈS -->
+    {hasClub && (
+      <section class="sec sec--alt" id="club">
+        <div class="cs-wrap cl-grid">
+          <div>
+            <div class="sec-h"><span class="sec-eye">Le club</span><h2>{club.name}</h2></div>
+            {fiche?.intro?.length ? <div class="cl-intro">{fiche.intro.map((p) => <p set:html={p}></p>)}</div> : null}
+            {fiche?.url && <a href={fiche.url} target="_blank" rel="noopener" class="cl-official">Site officiel du club ↗</a>}
+          </div>
+          {fiche?.highlight && (
+            <aside class="cl-hl">
+              <span class="cl-hl-num">{fiche.highlight.num}</span>
+              <span class="cl-hl-lab">{fiche.highlight.label}</span>
+            </aside>
+          )}
+        </div>
+      </section>
+    )}
+
+    <!-- FOOTER CLUB -->
+    <footer class="cf">
+      <div class="cs-wrap cf-in">
+        <span class="cf-club"><span class="cf-logo">{logoSrc ? <img src={logoSrc} alt="" /> : <b>{club.short}</b>}</span>{club.name} · {NM1_LABEL}</span>
+        <span class="cf-lsei">Un site <a href="/">LSEI · Le Sport en Image</a> · <a href="/basket">Retour au championnat</a></span>
+      </div>
+    </footer>
+  </div>
+
+  <script is:inline>
+    (function () {
+      try {
+        var h = document.getElementById('chead');
+        var onScroll = function () { if (h) h.classList.toggle('is-solid', window.scrollY > 40); };
+        onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+      } catch (e) {}
+
+      // « Prochain match » recalculé avec la VRAIE date du jour (local) → avance
+      // tout seul dès qu'un match est passé, sans reconstruire le site.
+      try {
+        var box = document.getElementById('hero-next');
+        var raw = document.getElementById('cl-fixtures');
+        if (box && raw) {
+          var fx = JSON.parse(raw.textContent || '[]');
+          var d = new Date();
+          var today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+          var next = null;
+          for (var i = 0; i < fx.length; i++) { if (fx[i].d >= today) { next = fx[i]; break; } }
+          if (!next) {
+            box.hidden = true; // saison terminée
+          } else {
+            var dt = new Date(next.d + 'T00:00:00');
+            var when = dt.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+            box.querySelector('.hn-main').textContent = (next.h ? 'vs ' : '@ ') + next.o;
+            box.querySelector('.hn-when').textContent = when.charAt(0).toUpperCase() + when.slice(1);
+            box.hidden = false;
+          }
+        }
+      } catch (e) {}
+    })();
+  </script>
 </Base>
 
 <style>
-  .cl-nav { position: sticky; top: 0; z-index: 30; background: var(--surface); border-bottom: 1px solid var(--line); }
-  .cl-nav .wrap { display: flex; align-items: center; gap: 18px; min-height: 52px; flex-wrap: wrap; }
-  .cl-back { font-size: 13px; font-weight: 700; color: var(--cc); text-decoration: none; }
-  .cl-nav-club { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 14px; color: var(--ink); }
-  .cl-nav-logo { width: 26px; height: 26px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: color-mix(in srgb, var(--cc) 16%, var(--surface-2)); font-size: 10px; font-weight: 800; color: var(--cc); }
-  .cl-nav-logo img { width: 100%; height: 100%; object-fit: contain; }
-  .cl-links { margin-left: auto; display: flex; gap: 18px; }
-  .cl-links a { font-size: 13px; font-weight: 600; color: var(--ink-soft); text-decoration: none; }
-  .cl-links a:hover { color: var(--cc); }
+  /* ============ SITE DANS LE SITE — club pro immersif (sombre) ============ */
+  .cs { background: #0b0d12; color: #fff; min-height: 100vh; --ink2: rgba(255,255,255,.62); }
+  .cs-wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
 
-  .cl-hero { position: relative; overflow: hidden; background: #0a0c11; background: linear-gradient(135deg, color-mix(in srgb, var(--cc) 22%, #0a0c11), #0a0c11); border-bottom: 1px solid var(--line); }
-  .cl-hero-in { position: relative; display: flex; align-items: center; gap: 26px; padding: 40px 0; flex-wrap: wrap; }
-  .cl-logo-big { width: 108px; height: 108px; border-radius: 20px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); display: grid; place-items: center; overflow: hidden; flex: none; }
-  .cl-logo-big img { width: 82%; height: 82%; object-fit: contain; }
-  .cl-logo-big b { font-family: var(--display); font-weight: 800; font-size: 34px; color: #fff; }
-  .cl-kick { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: color-mix(in srgb, var(--cc) 60%, #fff); }
-  .cl-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(26px, 4vw, 44px); line-height: 1.02; margin: 8px 0 0; color: #fff; }
-  .cl-blurb { color: rgba(255,255,255,.82); font-size: 15px; margin: 10px 0 0; max-width: 560px; }
-  .cl-hero-stats { display: flex; gap: 26px; margin-top: 18px; }
-  .cl-hero-stats b { font-family: var(--display); font-weight: 800; font-size: 24px; color: #fff; display: block; line-height: 1; }
-  .cl-hero-stats sup { font-size: .5em; }
-  .cl-hero-stats span { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: rgba(255,255,255,.6); }
+  /* En-tête club : transparent sur le hero, solide au défilement */
+  .ch { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; gap: 20px;
+    padding: 12px 24px; transition: background .25s, border-color .25s, backdrop-filter .25s; border-bottom: 1px solid transparent; }
+  .ch.is-solid { background: rgba(11,13,18,.82); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom-color: rgba(255,255,255,.10); }
+  .ch-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #fff; }
+  .ch-logo { width: 34px; height: 34px; border-radius: 9px; overflow: hidden; display: grid; place-items: center; background: rgba(255,255,255,.10); flex: none; }
+  .ch-logo img { width: 84%; height: 84%; object-fit: contain; }
+  .ch-logo b { font-family: var(--display); font-weight: 800; font-size: 13px; color: #fff; }
+  .ch-name { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 15px; letter-spacing: .01em; }
+  .ch-nav { margin-left: auto; display: flex; gap: 22px; }
+  .ch-nav a { font-size: 13.5px; font-weight: 600; color: rgba(255,255,255,.8); text-decoration: none; transition: color .15s; }
+  .ch-nav a:hover { color: var(--cc); }
+  .ch-lsei { font-size: 11.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.55);
+    border: 1px solid rgba(255,255,255,.2); border-radius: 100px; padding: 6px 12px; text-decoration: none; transition: .15s; }
+  .ch-lsei:hover { color: #fff; border-color: rgba(255,255,255,.5); }
 
-  .cl-sample { background: color-mix(in srgb, #E0A020 14%, var(--surface)); border: 1px solid color-mix(in srgb, #E0A020 45%, var(--line)); border-radius: 10px; padding: 11px 15px; font-size: 13.5px; margin-bottom: 26px; }
-  .cl-block { margin-bottom: 36px; }
-  .cl-intro p { color: var(--ink-soft); font-size: 15px; line-height: 1.6; margin: 0 0 12px; }
-  .cl-intro :global(b) { color: var(--ink); }
+  /* HERO plein écran */
+  .hero { position: relative; min-height: 92vh; display: flex; align-items: flex-end; overflow: hidden;
+    background: #0b0d12; }
+  .hero--grad { background: radial-gradient(120% 120% at 80% 0%, color-mix(in srgb, var(--cc) 55%, #0b0d12), #0b0d12 70%); }
+  .hero--photo::before { content: ''; position: absolute; inset: 0; background-image: var(--hero); background-size: cover; background-position: center; }
+  .hero::after { content: ''; position: absolute; inset: 0; background:
+    linear-gradient(180deg, rgba(11,13,18,.55) 0%, rgba(11,13,18,.15) 30%, rgba(11,13,18,.75) 78%, #0b0d12 100%),
+    linear-gradient(90deg, rgba(11,13,18,.65), transparent 60%); }
+  .hero-in { position: relative; z-index: 2; width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 24px 60px; }
+  .hero-logo { display: inline-grid; place-items: center; width: 92px; height: 92px; border-radius: 18px; overflow: hidden;
+    background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.18); margin-bottom: 18px; }
+  .hero-logo img { width: 82%; height: 82%; object-fit: contain; }
+  .hero-logo b { font-family: var(--display); font-weight: 800; font-size: 30px; color: #fff; }
+  .hero-kick { font-size: 12.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--cc) 62%, #fff); }
+  .hero-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(40px, 8vw, 86px);
+    line-height: .96; letter-spacing: -.01em; margin: 10px 0 0; text-shadow: 0 4px 30px rgba(0,0,0,.4); }
+  .hero-blurb { color: rgba(255,255,255,.86); font-size: 16px; line-height: 1.5; margin: 16px 0 0; max-width: 620px; }
+  .hero-badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .hb { font-size: 12.5px; font-weight: 700; color: #fff; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18);
+    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); border-radius: 100px; padding: 7px 14px; }
+  .hb--on { background: var(--cc); border-color: var(--cc); }
+  .hb sup { font-size: .7em; }
+  .hero-cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 26px; }
+  .hero-next { display: flex; flex-direction: column; gap: 1px; padding: 10px 18px; border-radius: 12px;
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); }
+  .hn-lab { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink2); }
+  .hn-main { font-size: 15px; font-weight: 800; }
+  .hn-when { font-size: 12px; color: var(--ink2); }
+  .hero-cta { font-size: 14px; font-weight: 800; color: #0b0d12; background: #fff; border-radius: 100px; padding: 13px 22px; text-decoration: none; transition: transform .15s; }
+  .hero-cta:hover { transform: translateY(-2px); }
 
-  .cl-roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
-  .cl-player { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; padding: 18px 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
-  .cl-num { position: absolute; top: 8px; left: 10px; font-family: var(--display); font-weight: 800; font-size: 15px; color: var(--cc); }
-  .cl-av { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: color-mix(in srgb, var(--cc) 14%, var(--surface-2)); }
-  .cl-av img { width: 100%; height: 100%; object-fit: cover; }
-  .cl-av-i { font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--cc); }
-  .cl-pname { font-weight: 700; font-size: 13.5px; color: var(--ink); margin-top: 4px; }
-  .cl-pmeta { font-size: 11.5px; color: var(--ink-faint); }
+  /* Sections */
+  .sec { padding: 64px 0; }
+  .sec--alt { background: #0e1119; }
+  .sec-h { margin-bottom: 28px; }
+  .sec-eye { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--cc); }
+  .sec-h h2 { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(24px, 4vw, 36px); margin: 6px 0 0; color: #fff; }
+  .cs-note { max-width: 1120px; margin: 0 auto; margin-top: 22px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 12px; padding: 12px 18px; font-size: 13.5px; color: rgba(255,255,255,.86); }
 
-  .cl-leaders { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 18px; }
-  .cl-leader { border: 1px solid var(--line); border-top: 3px solid var(--cc); border-radius: 12px; background: var(--surface); padding: 14px 16px; }
-  .cl-leader-lab { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-faint); font-weight: 700; }
-  .cl-leader-val { font-family: var(--display); font-weight: 800; font-size: 30px; color: var(--ink); line-height: 1.1; margin: 4px 0 2px; }
-  .cl-leader-val small { font-size: .4em; color: var(--ink-soft); font-weight: 600; }
-  .cl-leader-name { font-size: 13px; color: var(--ink-soft); font-weight: 600; }
+  /* Effectif — cartes cutouts sur dégradé club */
+  .squad { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+  .pcard { border-radius: 16px; overflow: hidden; background: #12151d; border: 1px solid rgba(255,255,255,.08);
+    transition: transform .2s, border-color .2s, box-shadow .2s; }
+  .pcard:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--cc) 60%, transparent); box-shadow: 0 16px 40px -18px rgba(0,0,0,.7); }
+  .pcard-img { position: relative; aspect-ratio: 1 / 1; display: grid; place-items: center; overflow: hidden;
+    background: radial-gradient(120% 120% at 50% 10%, color-mix(in srgb, var(--cc) 55%, #12151d), #12151d 72%); }
+  .pcard-img img { width: 100%; height: 100%; object-fit: contain; object-position: bottom center; transition: transform .3s; filter: drop-shadow(0 8px 16px rgba(0,0,0,.35)); }
+  .pcard:hover .pcard-img img { transform: scale(1.06); }
+  .pcard-i { font-family: var(--display); font-weight: 800; font-size: 40px; color: rgba(255,255,255,.8); }
+  .pcard-num { position: absolute; top: 10px; left: 12px; z-index: 2; font-family: var(--display); font-weight: 800; font-size: 30px;
+    line-height: 1; color: #fff; opacity: .9; text-shadow: 0 2px 10px rgba(0,0,0,.5); }
+  .pcard-txt { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px 14px; border-top: 2px solid var(--cc); }
+  .pcard-n { font-weight: 800; font-size: 15px; }
+  .pcard-p { font-size: 12.5px; color: var(--ink2); }
 
-  .cl-stats { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .cl-stats th { text-align: center; font-size: 10.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-faint); padding: 7px 6px; border-bottom: 1px solid var(--line); }
-  .cl-stats td { text-align: center; padding: 8px 6px; border-bottom: 1px solid var(--line); color: var(--ink-soft); }
-  .cl-stats .cl-st-n { font-weight: 800; color: var(--cc); }
-  .cl-stats .cl-st-name { text-align: left; font-weight: 700; color: var(--ink); }
-  .cl-stats .cl-st-pos { text-align: left; color: var(--ink-faint); }
-  .cl-stats .cl-st-pts { font-weight: 800; color: var(--ink); }
+  /* Staff */
+  .staff-block { margin-top: 40px; }
+  .staff-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 18px; letter-spacing: .04em; color: #fff; margin: 0 0 16px; }
+  .staff { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+  .scard { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px;
+    background: #12151d; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 18px 12px; }
+  .scard-av { width: 82px; height: 82px; border-radius: 50%; overflow: hidden; display: grid; place-items: center;
+    background: color-mix(in srgb, var(--cc) 30%, #12151d); border: 2px solid color-mix(in srgb, var(--cc) 55%, transparent); margin-bottom: 6px; }
+  .scard-av img { width: 100%; height: 100%; object-fit: cover; }
+  .scard-i { font-family: var(--display); font-weight: 800; font-size: 26px; color: #fff; }
+  .scard-n { font-weight: 800; font-size: 14px; }
+  .scard-r { font-size: 12px; color: var(--cc); font-weight: 700; }
 
-  .cl-official { display: inline-block; margin-top: 6px; font-weight: 700; font-size: 14px; color: var(--cc); text-decoration: none; border: 1px solid var(--cc); border-radius: 8px; padding: 9px 16px; }
+  /* Classement */
+  .rank-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(255,255,255,.10); }
+  .rank { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 460px; }
+  .rank th { text-align: center; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink2);
+    padding: 12px 8px; border-bottom: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03); }
+  .rank td { text-align: center; padding: 11px 8px; border-bottom: 1px solid rgba(255,255,255,.06); color: rgba(255,255,255,.82); }
+  .rank .rk { font-weight: 800; color: #fff; width: 40px; }
+  .rank .rc { text-align: left; display: flex; align-items: center; gap: 10px; font-weight: 700; color: #fff; }
+  .rdot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .rank .rpts { font-weight: 800; color: #fff; }
+  .rank tr.is-me td { background: color-mix(in srgb, var(--cc) 20%, transparent); }
+  .rank tr.is-me .rc { color: #fff; }
+  .rank-src { margin: 12px 2px 0; font-size: 11.5px; color: var(--ink2); }
 
-  @media (max-width: 620px) {
-    .cl-links { width: 100%; margin-left: 0; }
-    .cl-hero-in { gap: 18px; }
+  /* Vidéos */
+  .vids { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .vid { text-decoration: none; color: #fff; }
+  .vid-th { position: relative; display: block; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,.1); }
+  .vid-th img { width: 100%; height: 100%; object-fit: cover; }
+  .vid-play { position: absolute; inset: 0; margin: auto; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.6); color: #fff; font-size: 15px; }
+  .vid-t { display: block; margin-top: 10px; font-size: 14px; font-weight: 700; line-height: 1.35; }
+
+  /* Le club */
+  .cl-grid { display: grid; grid-template-columns: 1fr; gap: 26px; }
+  .cl-intro p { color: rgba(255,255,255,.8); font-size: 15.5px; line-height: 1.65; margin: 0 0 12px; }
+  .cl-intro :global(b) { color: #fff; }
+  .cl-official { display: inline-block; margin-top: 8px; font-size: 14px; font-weight: 800; color: var(--cc); text-decoration: none; }
+  .cl-official:hover { text-decoration: underline; }
+  .cl-hl { align-self: start; display: flex; flex-direction: column; gap: 4px; padding: 26px 28px; border-radius: 16px;
+    background: radial-gradient(120% 120% at 50% 0%, color-mix(in srgb, var(--cc) 40%, #12151d), #12151d 75%); border: 1px solid rgba(255,255,255,.1); }
+  .cl-hl-num { font-family: var(--display); font-weight: 800; font-size: 64px; line-height: 1; color: #fff; }
+  .cl-hl-lab { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.82); text-transform: uppercase; letter-spacing: .05em; }
+
+  /* Footer club */
+  .cf { background: #070810; border-top: 1px solid rgba(255,255,255,.08); padding: 30px 0; }
+  .cf-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .cf-club { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 14px; }
+  .cf-logo { width: 30px; height: 30px; border-radius: 8px; overflow: hidden; display: grid; place-items: center; background: rgba(255,255,255,.08); flex: none; }
+  .cf-logo img { width: 84%; height: 84%; object-fit: contain; }
+  .cf-logo b { font-size: 11px; font-weight: 800; }
+  .cf-lsei { font-size: 12.5px; color: var(--ink2); }
+  .cf-lsei a { color: rgba(255,255,255,.85); text-decoration: none; font-weight: 700; }
+  .cf-lsei a:hover { color: var(--cc); }
+
+  @media (min-width: 860px) {
+    .cl-grid { grid-template-columns: 1fr 300px; }
+  }
+  @media (max-width: 560px) {
+    .ch-nav { display: none; }
+    .hero-in { padding-bottom: 42px; }
+    .sec { padding: 48px 0; }
+    .squad { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+  }
+  /* Secours Safari < 15 (aspect-ratio absent) */
+  @supports not (aspect-ratio: 1 / 1) {
+    .pcard-img { min-height: 180px; }
+    .vid-th { min-height: 150px; }
   }
 </style>

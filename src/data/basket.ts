@@ -8,6 +8,7 @@
 // Classement OFFICIEL récupéré depuis nm1.ffbb.com par scripts/fetch-basket-standings.mjs
 // (rafraîchi en CI, commité). S'il existe, il prime sur le calcul par calendrier.
 import standingsCache from './cache/basket-standings.json';
+import { readdirSync } from 'node:fs';
 
 /** false = données réelles (plus de bandeau « exemple »). */
 export const SAMPLE = false;
@@ -64,7 +65,7 @@ export interface NmMatch {
 // @ = extérieur, vs = domicile. Scores à compléter au fil de la saison.
 export const nm1Calendar: NmMatch[] = [
   { date: '2026-09-18', round: 1,  homeSlug: 'challans',    awaySlug: 'fougeres' },
-  { date: '2026-09-25', round: 2,  homeSlug: 'fougeres',    awaySlug: 'sables' },
+  { date: '2026-09-25', round: 2,  homeSlug: 'fougeres',    awaySlug: 'sables', homeScore: 66, awayScore: 61 },
   { date: '2026-09-29', round: 3,  homeSlug: 'angers',      awaySlug: 'fougeres' },
   { date: '2026-10-02', round: 4,  homeSlug: 'fougeres',    awaySlug: 'tarbes' },
   { date: '2026-10-09', round: 5,  homeSlug: 'lorient',     awaySlug: 'fougeres' },
@@ -120,7 +121,94 @@ export const rosters: Record<string, Player[]> = {
   ],
 };
 
-export const rosterOf = (slug: string): Player[] => rosters[slug] ?? [];
+// ------------------------------------------------------------
+//  PHOTOS JOUEURS — rangées dans public/basket/<slug>/, nommées d'après la FFBB :
+//    « <dossard>-<Prenom_Nom>-<poste>.png »  (poste : 1 Meneur · 2 Arrière ·
+//    3 Ailier · 4 Ailier fort · 5 Pivot ; « 1_2 » = double poste).
+//    « staff-<Prenom_Nom>-<role>.jpg » pour le staff, « logo.* » pour le club.
+//  On lit le dossier AU BUILD : le dossard/nom/poste vient du nom de fichier.
+//  → Fougères : photos fusionnées dans le roster manuel (par nom).
+//  → Autres clubs : roster construit automatiquement depuis les fichiers.
+// ------------------------------------------------------------
+const POS_LABEL: Record<string, string> = { '1': 'Meneur', '2': 'Arrière', '3': 'Ailier', '4': 'Ailier fort', '5': 'Pivot' };
+const _nn = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+interface TeamPhoto { number?: number; name: string; posCode?: string; file: string }
+function teamPhotos(slug: string): TeamPhoto[] {
+  let files: string[] = [];
+  try { files = readdirSync(`public/basket/${slug}`); } catch { return []; }
+  const out: TeamPhoto[] = [];
+  for (const f of files) {
+    if (!/\.(png|jpe?g|webp)$/i.test(f)) continue;
+    if (/^logo/i.test(f) || /^staff-/i.test(f)) continue;
+    const base = f.replace(/\.[^.]+$/, '');
+    const m = base.match(/^(\d+)-(.+?)(?:-(\d(?:_\d)*))?$/);
+    if (!m) continue;
+    out.push({ number: Number(m[1]), name: m[2].replace(/_/g, ' ').trim(), posCode: m[3], file: `/basket/${slug}/${f}` });
+  }
+  return out;
+}
+const posFromCode = (code?: string) =>
+  code ? code.split('_').map((c) => POS_LABEL[c] || '').filter(Boolean).join(' / ') : '';
+
+export const rosterOf = (slug: string): Player[] => {
+  const photos = teamPhotos(slug);
+  const manual = rosters[slug];
+  if (manual) {
+    // Roster manuel (postes/tailles saisis) enrichi de la photo par correspondance de nom.
+    const byName = new Map(photos.map((p) => [_nn(p.name), p]));
+    return manual.map((p) => {
+      const ph = byName.get(_nn(p.name));
+      return ph ? { ...p, number: p.number ?? ph.number, photo: ph.file } : p;
+    });
+  }
+  if (photos.length) {
+    // Pas de roster manuel → on le construit depuis les fichiers (dossard, nom, poste, photo).
+    return photos
+      .sort((a, b) => (a.number ?? 99) - (b.number ?? 99))
+      .map((p) => ({ number: p.number, name: p.name, pos: posFromCode(p.posCode), photo: p.file }));
+  }
+  return [];
+};
+
+// Un club a un mini-site (/clubs/<slug>) s'il est marqué hasSite OU s'il a un
+// effectif (photos dans public/basket/<slug>/). → auto pour toute équipe importée.
+export const clubHasSite = (slug: string): boolean => {
+  const c = nmClubBy(slug);
+  return !!c && (c.hasSite === true || rosterOf(slug).length > 0);
+};
+
+// STAFF — photos « staff-<Prenom_Nom>-<role>.jpg » dans public/basket/<slug>/.
+export interface StaffMember { name: string; role: string; photo: string }
+const ROLE_LABEL: Record<string, string> = {
+  entraineur: 'Entraîneur',
+  entraineur_assistant: 'Entraîneur assistant',
+  entraineur_adjoint: 'Entraîneur adjoint',
+  assistant: 'Assistant',
+  manager: 'Manager',
+  manager_general: 'Manager général',
+  president: 'Président',
+  preparateur_physique: 'Préparateur physique',
+  kine: 'Kiné',
+  medecin: 'Médecin',
+};
+export const staffOf = (slug: string): StaffMember[] => {
+  let files: string[] = [];
+  try { files = readdirSync(`public/basket/${slug}`); } catch { return []; }
+  const out: StaffMember[] = [];
+  for (const f of files) {
+    if (!/^staff-/i.test(f) || !/\.(png|jpe?g|webp)$/i.test(f)) continue;
+    const base = f.replace(/\.[^.]+$/, '').replace(/^staff-/i, '');
+    const m = base.match(/^(.+?)-(.+)$/);
+    if (!m) continue;
+    const name = m[1].replace(/_/g, ' ').trim();
+    const key = m[2].toLowerCase();
+    const role = ROLE_LABEL[key] || m[2].replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
+    out.push({ name, role, photo: `/basket/${slug}/${f}` });
+  }
+  // Entraîneur principal d'abord, puis les autres par nom.
+  return out.sort((a, b) => (a.role === 'Entraîneur' ? 0 : 1) - (b.role === 'Entraîneur' ? 0 : 1) || a.name.localeCompare(b.name, 'fr'));
+};
 
 // Classement OFFICIEL (FFBB) issu du cache, s'il est présent et non vide.
 // Même forme que le classement calculé + un `rank` officiel (gère les départages FFBB).
