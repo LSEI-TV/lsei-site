@@ -66,9 +66,9 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
               return (
                 <div class:list={['nb-match', played && 'is-done', played && (won ? 'is-win' : 'is-loss')]} data-date={m.date}>
                   <span class="nb-match-date">{cap(fmtDay.format(dt)).replace(/\.$/, '')}{m.round && <i>J{m.round}</i>}</span>
-                  <span class="nb-team nb-team-h"><span class="nb-team-n">{h?.short}</span><span class="nb-dot" style={`background:${h?.color}`}></span></span>
+                  <span class="nb-team nb-team-h"><span class="nb-team-n">{h?.name}</span><span class="nb-dot" style={`background:${h?.color}`}></span></span>
                   <span class="nb-score">{played ? `${m.homeScore} – ${m.awayScore}` : 'vs'}</span>
-                  <span class="nb-team nb-team-a"><span class="nb-dot" style={`background:${a?.color}`}></span><span class="nb-team-n">{a?.short}</span></span>
+                  <span class="nb-team nb-team-a"><span class="nb-dot" style={`background:${a?.color}`}></span><span class="nb-team-n">{a?.name}</span></span>
                 </div>
               );
             })}
@@ -86,7 +86,7 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
                 return (
                   <tr class={r.slug === 'fougeres' ? 'is-me' : ''}>
                     <td class="nb-rk">{i + 1}</td>
-                    <td class="nb-rc"><span class="nb-dot" style={`background:${c?.color}`}></span>{c?.short}</td>
+                    <td class="nb-rc"><span class="nb-dot" style={`background:${c?.color}`}></span>{c?.name ?? r.slug}</td>
                     <td>{r.played}</td><td>{r.w}</td><td>{r.l}</td><td class="nb-pts">{r.pts}</td>
                   </tr>
                 );
@@ -146,7 +146,9 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
   .nb-match-date i { font-style: normal; color: var(--ink-faint); font-weight: 600; }
   .nb-team { display: flex; align-items: center; gap: 8px; min-width: 0; }
   .nb-team-h { justify-content: flex-end; }
-  .nb-team-n { font-weight: 700; font-size: 13px; }
+  .nb-team-n { font-weight: 700; font-size: 12.5px; line-height: 1.2; }
+  .nb-team-h .nb-team-n { text-align: right; }
+  .nb-team-a .nb-team-n { text-align: left; }
   .nb-dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
   .nb-score { font-family: var(--mono); font-weight: 800; font-size: 14px; color: var(--ink); white-space: nowrap; }
   /* Match passé : case grisée. Match joué : score coloré selon victoire/défaite de Fougères. */
@@ -158,7 +160,7 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
   .nb-rank th { text-align: center; font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-faint); padding: 6px 4px; border-bottom: 1px solid var(--line); }
   .nb-rank td { text-align: center; padding: 8px 4px; border-bottom: 1px solid var(--line); color: var(--ink-soft); }
   .nb-rank .nb-rk { font-weight: 800; color: var(--ink); }
-  .nb-rank .nb-rc { text-align: left; display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--ink); }
+  .nb-rank .nb-rc { text-align: left; display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--ink); font-size: 12.5px; line-height: 1.2; }
   .nb-rank .nb-pts { font-weight: 800; color: var(--ink); }
   .nb-rank tr.is-me td { background: color-mix(in srgb, var(--dc) 8%, transparent); }
   .nb-rank-src { margin: 10px 2px 0; font-size: 11.5px; color: var(--ink-faint); }
