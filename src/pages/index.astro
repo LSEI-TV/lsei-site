@@ -62,12 +62,9 @@ const bilPlayers = (bilSeason.results?.players ?? []) as any[];
 const bilRanked = [...bilPlayers].sort((a, b) => a.rank - b.rank);
 const bilTop = bilRanked.slice(0, 3);          // podium (3 cadres)
 
-// Aperçu Basketball (NM1 Poule B) : top 5 du classement officiel + Fougères épinglé.
-const nbStand = nm1Standings();
-const nbTop5 = nbStand.slice(0, 5);
-const nbFouIdx = nbStand.findIndex((r: any) => r.slug === 'fougeres');
-const nbFou = nbFouIdx >= 0 ? { ...nbStand[nbFouIdx], rank: nbFouIdx + 1 } : null;
-const nbFouInTop5 = nbFouIdx >= 0 && nbFouIdx < 5;
+// Aperçu Basketball (NM1 Poule B) : uniquement le top 5 du classement officiel
+// (pas de club mis en avant → neutralité ; le détail est sur la page /basket).
+const nbTop5 = nm1Standings().slice(0, 5);
 const nbClub = getDiscipline('basket');
 const nbLogo = (slug: string) => { const c = nmClubBy(slug); return c && assetExists(c.logo) ? assetUrl(c.logo!) : null; };
 const nbHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null);
@@ -426,19 +423,10 @@ const slides = programme
                 </Fragment>
               );
               return href
-                ? <a href={href} class:list={['nbh-row', r.slug === 'fougeres' && 'is-fou']}>{inner}</a>
-                : <div class:list={['nbh-row', r.slug === 'fougeres' && 'is-fou']}>{inner}</div>;
+                ? <a href={href} class="nbh-row">{inner}</a>
+                : <div class="nbh-row">{inner}</div>;
             })}
           </div>
-          {nbFou && !nbFouInTop5 && (
-            <a href={nbHref('fougeres') ?? '/basket'} class="nbh-row is-fou nbh-pin">
-              <span class="nbh-rk">{nbFou.rank}</span>
-              <span class="nbh-logo">{nbLogo('fougeres') ? <img src={nbLogo('fougeres')} alt="" loading="lazy" /> : <span class="nbh-dot" style={`background:${nmClubBy('fougeres')?.color}`}></span>}</span>
-              <span class="nbh-name">{nmClubBy('fougeres')?.name}<em>Le club filmé par LSEI</em></span>
-              <span class="nbh-rec">{nbFou.w}<i>V</i>·{nbFou.l}<i>D</i></span>
-              <span class="nbh-pts">{nbFou.pts}<small>pts</small></span>
-            </a>
-          )}
         </div>
       </div>
     </section>
