@@ -173,6 +173,21 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
           monthsWrap.querySelectorAll('.fc-mn').forEach(function (x) { x.classList.toggle('is-on', x === b); });
           apply();
         });
+
+        // Par défaut : le MOIS EN COURS (vraie date). Sinon le prochain mois dispo,
+        // sinon le dernier. Suit donc tout seul le calendrier réel au fil des mois.
+        if (monthsWrap) {
+          var curYM = today.slice(0, 7);
+          var btns = [].slice.call(monthsWrap.querySelectorAll('.fc-mn')).filter(function (b) { return b.getAttribute('data-month') !== 'all'; });
+          var target = null;
+          for (var i = 0; i < btns.length; i++) if (btns[i].getAttribute('data-month') === curYM) { target = btns[i]; break; }
+          if (!target) for (var j = 0; j < btns.length; j++) if (btns[j].getAttribute('data-month') >= curYM) { target = btns[j]; break; }
+          if (!target && btns.length) target = btns[btns.length - 1];
+          if (target) {
+            month = target.getAttribute('data-month');
+            monthsWrap.querySelectorAll('.fc-mn').forEach(function (x) { x.classList.toggle('is-on', x === target); });
+          }
+        }
         apply();
       } catch (e) {}
     })();
