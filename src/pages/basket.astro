@@ -21,6 +21,11 @@ const byDate: Record<string, typeof poolCal> = {};
 for (const m of poolCal) (byDate[m.date] ??= []).push(m);
 const calDates = Object.keys(byDate).sort();
 const fmtCalDate = (iso: string) => cap(new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date(iso + 'T00:00:00')));
+// Filtres du calendrier : équipes (triées) + mois présents.
+const clubsSorted = [...nmClubs].sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+const MONTHS: Record<string, string> = { '09': 'Sept.', '10': 'Oct.', '11': 'Nov.', '12': 'Déc.', '01': 'Janv.', '02': 'Févr.', '03': 'Mars', '04': 'Avr.', '05': 'Mai', '06': 'Juin' };
+const monthsPresent = [...new Set(calDates.map((d) => d.slice(0, 7)))].sort();
+const monthLabel = (ym: string) => MONTHS[ym.slice(5, 7)] ?? ym;
 const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null);
 ---
 <Base title={`Basketball ${NM1_LABEL} (NM1) — ${NM1_POOL}`} description={`${NM1_LABEL} (NM1) ${NM1_POOL} ${SEASON} sur LSEI : les clubs, le calendrier, le classement et les vidéos — du Pays de Fougères Basket à toute la poule.`} active="disciplines">
@@ -88,9 +93,21 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
       {calDates.length > 0 && (
         <div class="nb-fullcal" id="nb-fullcal">
           <div class="sec-head" style="margin-top:40px"><div><div class="eyebrow" style={`color:${d.colorVar}`}>Calendrier</div><h2>Saison {SEASON} · {NM1_POOL}</h2></div></div>
-          <div class="fc-list">
+
+          <div class="fc-filters">
+            <select class="fc-select" id="fc-team" aria-label="Filtrer par équipe">
+              <option value="all">Toutes les équipes</option>
+              {clubsSorted.map((c) => <option value={c.slug}>{c.name}</option>)}
+            </select>
+            <div class="fc-months" id="fc-months">
+              <button class="fc-mn is-on" data-month="all" type="button">Tous</button>
+              {monthsPresent.map((ym) => <button class="fc-mn" data-month={ym} type="button">{monthLabel(ym)}</button>)}
+            </div>
+          </div>
+
+          <div class="fc-list" id="fc-list">
             {calDates.map((date) => (
-              <div class="fc-day" data-date={date}>
+              <div class="fc-day" data-date={date} data-month={date.slice(0, 7)}>
                 <div class="fc-date">{fmtCalDate(date)}</div>
                 <div class="fc-games">
                   {byDate[date].map((m) => {
@@ -98,7 +115,7 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
                     const hh = clubHref(m.homeSlug), ah = clubHref(m.awaySlug);
                     const played = m.homeScore != null && m.awayScore != null;
                     return (
-                      <div class="fc-game">
+                      <div class="fc-game" data-h={m.homeSlug} data-a={m.awaySlug}>
                         <span class="fc-team th">{hh ? <a class="fc-tn" href={hh}>{h?.name}</a> : <span class="fc-tn">{h?.name}</span>}<span class="fc-dot" style={`background:${h?.color}`}></span></span>
                         <span class="fc-sc">{played ? `${m.homeScore} – ${m.awayScore}` : 'vs'}</span>
                         <span class="fc-team ta"><span class="fc-dot" style={`background:${a?.color}`}></span>{ah ? <a class="fc-tn" href={ah}>{a?.name}</a> : <span class="fc-tn">{a?.name}</span>}</span>
@@ -109,23 +126,54 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
               </div>
             ))}
           </div>
+          <p class="fc-empty" id="fc-empty" hidden>Aucun match pour ce filtre.</p>
         </div>
       )}
     </div>
   </section>
 
   <script is:inline>
-    // Grise les jours de match passés (date < aujourd'hui, heure locale du visiteur).
+    // Calendrier : filtre par équipe + par mois, grisage des passés et mise en
+    // avant de la prochaine journée (recalculés sur les jours visibles).
     (function () {
       try {
         var d = new Date();
         var today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-        var nextDone = false;
-        document.querySelectorAll('#nb-fullcal .fc-day').forEach(function (el) {
-          var dt = el.getAttribute('data-date');
-          if (dt && dt < today) { el.classList.add('is-past'); }
-          else if (dt && !nextDone) { el.classList.add('is-next'); nextDone = true; }
+        var teamSel = document.getElementById('fc-team');
+        var monthsWrap = document.getElementById('fc-months');
+        var empty = document.getElementById('fc-empty');
+        var days = [].slice.call(document.querySelectorAll('#fc-list .fc-day'));
+        var team = 'all', month = 'all';
+
+        function apply() {
+          var visible = 0, nextDone = false;
+          days.forEach(function (day) {
+            var monthOk = (month === 'all' || day.getAttribute('data-month') === month);
+            var anyGame = false;
+            [].slice.call(day.querySelectorAll('.fc-game')).forEach(function (g) {
+              var ok = monthOk && (team === 'all' || g.getAttribute('data-h') === team || g.getAttribute('data-a') === team);
+              g.hidden = !ok;
+              if (ok) anyGame = true;
+            });
+            day.classList.remove('is-past', 'is-next');
+            if (!anyGame) { day.hidden = true; return; }
+            day.hidden = false; visible++;
+            var dt = day.getAttribute('data-date');
+            if (dt && dt < today) day.classList.add('is-past');
+            else if (dt && !nextDone) { day.classList.add('is-next'); nextDone = true; }
+          });
+          if (empty) empty.hidden = visible > 0;
+        }
+
+        if (teamSel) teamSel.addEventListener('change', function () { team = teamSel.value; apply(); });
+        if (monthsWrap) monthsWrap.addEventListener('click', function (e) {
+          var b = e.target.closest ? e.target.closest('.fc-mn') : null;
+          if (!b) return;
+          month = b.getAttribute('data-month');
+          monthsWrap.querySelectorAll('.fc-mn').forEach(function (x) { x.classList.toggle('is-on', x === b); });
+          apply();
         });
+        apply();
       } catch (e) {}
     })();
   </script>
@@ -208,4 +256,13 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
   .fc-team.th .fc-tn { text-align: right; }
   .fc-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
   .fc-sc { font-family: var(--mono, monospace); font-weight: 800; font-size: 13px; color: var(--ink); white-space: nowrap; }
+  /* Filtres du calendrier */
+  .fc-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 2px 0 18px; }
+  .fc-select { font: inherit; font-size: 14px; font-weight: 700; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 100px; padding: 9px 16px; cursor: pointer; }
+  .fc-months { display: flex; flex-wrap: wrap; gap: 6px; }
+  .fc-mn { font: inherit; font-size: 13px; font-weight: 700; color: var(--ink-soft); background: var(--surface); border: 1px solid var(--line); border-radius: 100px; padding: 7px 13px; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+  .fc-mn:hover { color: var(--ink); }
+  .fc-mn.is-on { color: #fff; background: var(--c-basket, var(--accent)); border-color: var(--c-basket, var(--accent)); }
+  .fc-game[hidden], .fc-day[hidden] { display: none !important; }
+  .fc-empty { text-align: center; color: var(--ink-faint); font-size: 14px; padding: 20px; }
 </style>
