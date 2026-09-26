@@ -53,67 +53,32 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
         })}
       </div>
 
-      <div class="nb-grid">
-        <!-- CALENDRIER -->
-        <div class="nb-col">
-          <div class="sec-head"><div><div class="eyebrow" style={`color:${d.colorVar}`}>Calendrier</div><h2>Pays de Fougères · {SEASON}</h2></div></div>
-          <div class="nb-cal" id="nb-cal">
-            {nm1Calendar.map((m) => {
-              const h = nmClubBy(m.homeSlug), a = nmClubBy(m.awaySlug);
-              const played = m.homeScore != null && m.awayScore != null;
-              const won = played && ((m.homeSlug === 'fougeres' && m.homeScore! > m.awayScore!) || (m.awaySlug === 'fougeres' && m.awayScore! > m.homeScore!));
-              const dt = new Date(m.date);
+      <!-- CLASSEMENT (Poule B) -->
+      <div class="nb-standings">
+        <div class="sec-head"><div><div class="eyebrow" style={`color:${d.colorVar}`}>Classement</div><h2>{NM1_POOL}</h2></div></div>
+        <table class="nb-rank">
+          <thead><tr><th>#</th><th>Club</th><th>J</th><th>V</th><th>D</th><th>Pts</th></tr></thead>
+          <tbody>
+            {standings.map((r, i) => {
+              const c = nmClubBy(r.slug);
+              const href = clubHref(r.slug);
               return (
-                <div class:list={['nb-match', played && 'is-done', played && (won ? 'is-win' : 'is-loss')]} data-date={m.date}>
-                  <span class="nb-match-date">{cap(fmtDay.format(dt)).replace(/\.$/, '')}{m.round && <i>J{m.round}</i>}</span>
-                  <span class="nb-team nb-team-h"><span class="nb-team-n">{h?.name}</span><span class="nb-dot" style={`background:${h?.color}`}></span></span>
-                  <span class="nb-score">{played ? `${m.homeScore} – ${m.awayScore}` : 'vs'}</span>
-                  <span class="nb-team nb-team-a"><span class="nb-dot" style={`background:${a?.color}`}></span><span class="nb-team-n">{a?.name}</span></span>
-                </div>
+                <tr class={r.slug === 'fougeres' ? 'is-me' : ''}>
+                  <td class="nb-rk">{i + 1}</td>
+                  <td class="nb-rc"><span class="nb-dot" style={`background:${c?.color}`}></span>{href ? <a class="nb-rc-link" href={href}>{c?.name ?? r.slug}</a> : <span>{c?.name ?? r.slug}</span>}</td>
+                  <td>{r.played}</td><td>{r.w}</td><td>{r.l}</td><td class="nb-pts">{r.pts}</td>
+                </tr>
               );
             })}
-          </div>
-        </div>
-
-        <!-- CLASSEMENT -->
-        <div class="nb-col">
-          <div class="sec-head"><div><div class="eyebrow" style={`color:${d.colorVar}`}>Classement</div><h2>{NM1_POOL}</h2></div></div>
-          <table class="nb-rank">
-            <thead><tr><th>#</th><th>Club</th><th>J</th><th>V</th><th>D</th><th>Pts</th></tr></thead>
-            <tbody>
-              {standings.map((r, i) => {
-                const c = nmClubBy(r.slug);
-                return (
-                  <tr class={r.slug === 'fougeres' ? 'is-me' : ''}>
-                    <td class="nb-rk">{i + 1}</td>
-                    <td class="nb-rc"><span class="nb-dot" style={`background:${c?.color}`}></span>{c?.name ?? r.slug}</td>
-                    <td>{r.played}</td><td>{r.w}</td><td>{r.l}</td><td class="nb-pts">{r.pts}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          {standingsIsOfficial && standingsMaj && (
-            <p class="nb-rank-src">Classement officiel FFBB (<a href="https://nm1.ffbb.com/saison-reguliere/classement" target="_blank" rel="noopener">nm1.ffbb.com</a>) · mis à jour le {standingsMaj}.</p>
-          )}
-        </div>
+          </tbody>
+        </table>
+        {standingsIsOfficial && standingsMaj && (
+          <p class="nb-rank-src">Classement officiel FFBB (<a href="https://nm1.ffbb.com/saison-reguliere/classement" target="_blank" rel="noopener">nm1.ffbb.com</a>) · mis à jour le {standingsMaj}.</p>
+        )}
       </div>
     </div>
   </section>
 
-  <script is:inline>
-    // Grise automatiquement les matchs passés (date < aujourd'hui, heure locale du visiteur).
-    (function () {
-      try {
-        var d = new Date();
-        var today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-        document.querySelectorAll('#nb-cal .nb-match').forEach(function (el) {
-          var dt = el.getAttribute('data-date');
-          if (dt && dt < today) el.classList.add('is-past');
-        });
-      } catch (e) {}
-    })();
-  </script>
 </Base>
 
 <style>
@@ -161,6 +126,9 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
   .nb-rank td { text-align: center; padding: 8px 4px; border-bottom: 1px solid var(--line); color: var(--ink-soft); }
   .nb-rank .nb-rk { font-weight: 800; color: var(--ink); }
   .nb-rank .nb-rc { text-align: left; display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--ink); font-size: 12.5px; line-height: 1.2; }
+  .nb-rank .nb-rc-link { color: inherit; text-decoration: none; }
+  .nb-rank .nb-rc-link:hover { color: var(--c-basket, var(--accent)); text-decoration: underline; }
+  .nb-standings { max-width: 720px; }
   .nb-rank .nb-pts { font-weight: 800; color: var(--ink); }
   .nb-rank tr.is-me td { background: color-mix(in srgb, var(--dc) 8%, transparent); }
   .nb-rank-src { margin: 10px 2px 0; font-size: 11.5px; color: var(--ink-faint); }

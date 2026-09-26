@@ -40,6 +40,10 @@ const fixtures = myMatches
   .slice()
   .sort((a, b) => (a.date < b.date ? -1 : 1))
   .map((m) => ({ d: m.date, o: (nmClubBy(m.homeSlug === slug ? m.awaySlug : m.homeSlug)?.name ?? ''), h: m.homeSlug === slug }));
+// Calendrier complet du club (dates + scores) pour la section « Calendrier ».
+const calMatches = myMatches.slice().sort((a, b) => (a.date < b.date ? -1 : 1));
+const fmtShort = (iso: string) => new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Paris' }).format(new Date(iso));
+const clubHref = (s: string) => (clubHasSite(s) ? `/clubs/${s}` : null);
 const fmtMatch = (iso: string) => new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date(iso));
 const majFmt = standingsUpdated ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date(standingsUpdated)) : null;
 
@@ -60,6 +64,7 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
       </a>
       <nav class="ch-nav">
         <a href="#effectif">Effectif</a>
+        {calMatches.length > 0 && <a href="#calendrier">Calendrier</a>}
         <a href="#classement">Classement</a>
         {clubVideos.length > 0 && <a href="#videos">Vidéos</a>}
         {hasClub && <a href="#club">Le club</a>}
@@ -133,6 +138,36 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
       </div>
     </section>
 
+    <!-- CALENDRIER du club -->
+    {calMatches.length > 0 && (
+      <section class="sec" id="calendrier">
+        <div class="cs-wrap">
+          <div class="sec-h"><span class="sec-eye">La saison</span><h2>Calendrier · {SEASON}</h2></div>
+          <div class="cal" id="cal">
+            {calMatches.map((m) => {
+              const h = nmClubBy(m.homeSlug), a = nmClubBy(m.awaySlug);
+              const played = m.homeScore != null && m.awayScore != null;
+              const won = played && ((m.homeSlug === slug && m.homeScore! > m.awayScore!) || (m.awaySlug === slug && m.awayScore! > m.homeScore!));
+              return (
+                <div class:list={['cal-row', played && 'is-done', played && (won ? 'is-win' : 'is-loss')]} data-date={m.date}>
+                  <span class="cal-when">{cap(fmtShort(m.date)).replace(/\.$/, '')}{m.round && <i>J{m.round}</i>}</span>
+                  <span class:list={['cal-team', 'th', m.homeSlug === slug && 'me']}>
+                    {clubHref(m.homeSlug) ? <a class="cal-tn" href={clubHref(m.homeSlug)}>{h?.name}</a> : <span class="cal-tn">{h?.name}</span>}
+                    <span class="cal-dot" style={`background:${h?.color}`}></span>
+                  </span>
+                  <span class="cal-sc">{played ? `${m.homeScore} – ${m.awayScore}` : 'vs'}</span>
+                  <span class:list={['cal-team', 'ta', m.awaySlug === slug && 'me']}>
+                    <span class="cal-dot" style={`background:${a?.color}`}></span>
+                    {clubHref(m.awaySlug) ? <a class="cal-tn" href={clubHref(m.awaySlug)}>{a?.name}</a> : <span class="cal-tn">{a?.name}</span>}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    )}
+
     <!-- CLASSEMENT -->
     <section class="sec sec--alt" id="classement">
       <div class="cs-wrap">
@@ -153,7 +188,7 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
                 return (
                   <tr class={r.slug === slug ? 'is-me' : ''}>
                     <td class="rk">{i + 1}</td>
-                    <td class="rc"><span class="rdot" style={`background:${c?.color}`}></span>{c?.name ?? r.slug}</td>
+                    <td class="rc"><span class="rdot" style={`background:${c?.color}`}></span>{clubHref(r.slug) ? <a class="rc-link" href={clubHref(r.slug)}>{c?.name ?? r.slug}</a> : <span>{c?.name ?? r.slug}</span>}</td>
                     <td>{r.played}</td><td>{r.w}</td><td>{r.l}</td><td class="rpts">{r.pts}</td>
                   </tr>
                 );
@@ -241,6 +276,16 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
             box.hidden = false;
           }
         }
+      } catch (e) {}
+
+      // Grise les matchs passés du calendrier (date < aujourd'hui, local).
+      try {
+        var d2 = new Date();
+        var today2 = d2.getFullYear() + '-' + String(d2.getMonth() + 1).padStart(2, '0') + '-' + String(d2.getDate()).padStart(2, '0');
+        document.querySelectorAll('#cal .cal-row').forEach(function (el) {
+          var dt = el.getAttribute('data-date');
+          if (dt && dt < today2) el.classList.add('is-past');
+        });
       } catch (e) {}
     })();
   </script>
@@ -346,6 +391,8 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
   .rank .rc { text-align: left; display: flex; align-items: center; gap: 10px; font-weight: 700; color: #fff; }
   .rdot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
   .rank .rpts { font-weight: 800; color: #fff; }
+  .rank .rc-link { color: inherit; text-decoration: none; }
+  .rank .rc-link:hover { color: var(--cc); text-decoration: underline; }
   .rank tr.is-me td { background: color-mix(in srgb, var(--cc) 20%, transparent); }
   .rank tr.is-me .rc { color: #fff; }
   .rank-src { margin: 12px 2px 0; font-size: 11.5px; color: var(--ink2); }
@@ -353,6 +400,25 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
   .nm1-badge { display: inline-flex; align-items: center; background: #fff; border-radius: 10px; padding: 8px 14px; transition: transform .15s, box-shadow .15s; }
   .nm1-badge:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -12px rgba(0,0,0,.6); }
   .nm1-badge img { height: 30px; width: auto; display: block; }
+
+  /* Calendrier du club */
+  .cal { display: flex; flex-direction: column; gap: 8px; }
+  .cal-row { display: grid; grid-template-columns: 104px 1fr auto 1fr; align-items: center; gap: 10px;
+    background: #12151d; border: 1px solid rgba(255,255,255,.08); border-radius: 10px; padding: 11px 14px; }
+  .cal-row.is-past { opacity: .5; }
+  .cal-row.is-done { opacity: 1; background: #161a24; }
+  .cal-when { display: flex; flex-direction: column; font-size: 11.5px; font-weight: 700; color: var(--ink2); line-height: 1.3; }
+  .cal-when i { font-style: normal; color: rgba(255,255,255,.4); font-weight: 600; }
+  .cal-team { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .cal-team.th { justify-content: flex-end; }
+  .cal-tn { font-weight: 700; font-size: 12.5px; line-height: 1.2; color: #fff; text-decoration: none; }
+  a.cal-tn:hover { color: var(--cc); text-decoration: underline; }
+  .cal-team.th .cal-tn { text-align: right; }
+  .cal-team.me .cal-tn { color: var(--cc); }
+  .cal-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+  .cal-sc { font-family: var(--mono, monospace); font-weight: 800; font-size: 14px; color: #fff; white-space: nowrap; }
+  .cal-row.is-win .cal-sc { color: #3fae6b; }
+  .cal-row.is-loss .cal-sc { color: #e5645b; }
 
   /* Vidéos */
   .vids { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
