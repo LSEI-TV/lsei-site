@@ -120,9 +120,11 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
       try {
         var d = new Date();
         var today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        var nextDone = false;
         document.querySelectorAll('#nb-fullcal .fc-day').forEach(function (el) {
           var dt = el.getAttribute('data-date');
-          if (dt && dt < today) el.classList.add('is-past');
+          if (dt && dt < today) { el.classList.add('is-past'); }
+          else if (dt && !nextDone) { el.classList.add('is-next'); nextDone = true; }
         });
       } catch (e) {}
     })();
@@ -191,6 +193,9 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
   .fc-list { display: flex; flex-direction: column; gap: 14px; }
   .fc-day { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; }
   .fc-day.is-past { opacity: .5; }
+  .fc-day.is-next { border-color: var(--c-basket, var(--accent)); box-shadow: 0 0 0 1px var(--c-basket, var(--accent)); }
+  .fc-day.is-next .fc-date { color: var(--c-basket, var(--accent)); background: color-mix(in srgb, var(--c-basket, var(--accent)) 12%, var(--surface-2)); }
+  .fc-day.is-next .fc-date::before { content: '● À venir · '; font-size: 10px; }
   .fc-date { font-size: 12px; font-weight: 800; letter-spacing: .02em; color: var(--ink-soft); background: var(--surface-2);
     padding: 8px 14px; border-bottom: 1px solid var(--line); }
   .fc-games { display: flex; flex-direction: column; }
