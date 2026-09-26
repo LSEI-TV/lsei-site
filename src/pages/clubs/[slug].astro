@@ -4,7 +4,7 @@
 // classement officiel, vidéos LSEI, récit du club. Gabarit partagé par les 14 clubs :
 // Fougères a la photo hero + le récit ; les autres retombent sur un dégradé + logo.
 import Base from '../../layouts/Base.astro';
-import { NM1_LABEL, NM1_POOL, SEASON, SEASON_START, nmClubs, nmClubBy, rosterOf, staffOf, nm1Standings, seasonStarted, clubHasSite, nm1Calendar, standingsUpdated, standingsIsOfficial } from '../../data/basket';
+import { NM1_LABEL, NM1_POOL, SEASON, SEASON_START, nmClubs, nmClubBy, rosterOf, staffOf, nm1Standings, seasonStarted, clubHasSite, clubCalendar, standingsUpdated, standingsIsOfficial } from '../../data/basket';
 import { clubs as clubFiches } from '../../data/clubs';
 import { getReplays } from '../../lib/youtube';
 import { assetExists, assetUrl } from '../../lib/publicAssets';
@@ -30,7 +30,7 @@ const _n = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toL
 
 // Prochain match (calendrier LSEI, à partir d'aujourd'hui).
 const todayISO = new Date().toISOString().slice(0, 10);
-const myMatches = nm1Calendar.filter((m) => m.homeSlug === slug || m.awaySlug === slug);
+const myMatches = clubCalendar(slug);
 const nextMatch = myMatches.filter((m) => m.date >= todayISO).sort((a, b) => (a.date < b.date ? -1 : 1))[0] ?? null;
 const nextOpp = nextMatch ? nmClubBy(nextMatch.homeSlug === slug ? nextMatch.awaySlug : nextMatch.homeSlug) : null;
 const nextHome = nextMatch ? nextMatch.homeSlug === slug : false;

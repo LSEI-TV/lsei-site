@@ -43,6 +43,9 @@ jobs:
       - name: Récupérer le classement basket (NM1 Poule B, source nm1.ffbb.com)
         run: node scripts/fetch-basket-standings.mjs || echo "Classement basket non mis à jour (source indisponible) — cache précédent conservé."
 
+      - name: Récupérer le calendrier basket (NM1 Poule B, source nm1.ffbb.com)
+        run: node scripts/fetch-basket-calendar.mjs || echo "Calendrier basket non mis à jour (source indisponible) — cache précédent conservé."
+
       - name: Construire (récupère YouTube + met à jour le cache)
         run: npm run build
 

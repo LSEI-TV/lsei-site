@@ -3,7 +3,7 @@
 // Clic sur un club (avec mini-site) → /clubs/<slug>. « Site dans le site » façon NBA.
 import Base from '../layouts/Base.astro';
 import { getDiscipline } from '../data/site';
-import { NM1_LABEL, NM1_POOL, SEASON, SEASON_START, nmClubs, nmClubBy, nm1Calendar, nm1Standings, seasonStarted, standingsUpdated, standingsIsOfficial, clubHasSite } from '../data/basket';
+import { NM1_LABEL, NM1_POOL, SEASON, SEASON_START, nmClubs, nmClubBy, nm1Standings, seasonStarted, standingsUpdated, standingsIsOfficial, clubHasSite, poolCalendar } from '../data/basket';
 import { assetExists, assetUrl } from '../lib/publicAssets';
 
 const d = getDiscipline('basket');
@@ -14,6 +14,13 @@ const standingsMaj = standingsUpdated
   : null;
 const fmtDay = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Paris' });
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+// Calendrier complet de la Poule B, groupé par date.
+const poolCal = poolCalendar();
+const byDate: Record<string, typeof poolCal> = {};
+for (const m of poolCal) (byDate[m.date] ??= []).push(m);
+const calDates = Object.keys(byDate).sort();
+const fmtCalDate = (iso: string) => cap(new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date(iso + 'T00:00:00')));
 const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null);
 ---
 <Base title={`Basketball ${NM1_LABEL} (NM1) — ${NM1_POOL}`} description={`${NM1_LABEL} (NM1) ${NM1_POOL} ${SEASON} sur LSEI : les clubs, le calendrier, le classement et les vidéos — du Pays de Fougères Basket à toute la poule.`} active="disciplines">
@@ -76,9 +83,50 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
           <p class="nb-rank-src">Classement officiel FFBB (<a href="https://nm1.ffbb.com/saison-reguliere/classement" target="_blank" rel="noopener">nm1.ffbb.com</a>) · mis à jour le {standingsMaj}.</p>
         )}
       </div>
+
+      <!-- CALENDRIER complet de la Poule B -->
+      {calDates.length > 0 && (
+        <div class="nb-fullcal" id="nb-fullcal">
+          <div class="sec-head" style="margin-top:40px"><div><div class="eyebrow" style={`color:${d.colorVar}`}>Calendrier</div><h2>Saison {SEASON} · {NM1_POOL}</h2></div></div>
+          <div class="fc-list">
+            {calDates.map((date) => (
+              <div class="fc-day" data-date={date}>
+                <div class="fc-date">{fmtCalDate(date)}</div>
+                <div class="fc-games">
+                  {byDate[date].map((m) => {
+                    const h = nmClubBy(m.homeSlug), a = nmClubBy(m.awaySlug);
+                    const hh = clubHref(m.homeSlug), ah = clubHref(m.awaySlug);
+                    const played = m.homeScore != null && m.awayScore != null;
+                    return (
+                      <div class="fc-game">
+                        <span class="fc-team th">{hh ? <a class="fc-tn" href={hh}>{h?.name}</a> : <span class="fc-tn">{h?.name}</span>}<span class="fc-dot" style={`background:${h?.color}`}></span></span>
+                        <span class="fc-sc">{played ? `${m.homeScore} – ${m.awayScore}` : 'vs'}</span>
+                        <span class="fc-team ta"><span class="fc-dot" style={`background:${a?.color}`}></span>{ah ? <a class="fc-tn" href={ah}>{a?.name}</a> : <span class="fc-tn">{a?.name}</span>}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   </section>
 
+  <script is:inline>
+    // Grise les jours de match passés (date < aujourd'hui, heure locale du visiteur).
+    (function () {
+      try {
+        var d = new Date();
+        var today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        document.querySelectorAll('#nb-fullcal .fc-day').forEach(function (el) {
+          var dt = el.getAttribute('data-date');
+          if (dt && dt < today) el.classList.add('is-past');
+        });
+      } catch (e) {}
+    })();
+  </script>
 </Base>
 
 <style>
@@ -137,4 +185,22 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
   @media (max-width: 760px) {
     .nb-grid { grid-template-columns: 1fr; }
   }
+
+  /* Calendrier complet Poule B (groupé par date) */
+  .nb-fullcal { margin-top: 6px; }
+  .fc-list { display: flex; flex-direction: column; gap: 14px; }
+  .fc-day { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; }
+  .fc-day.is-past { opacity: .5; }
+  .fc-date { font-size: 12px; font-weight: 800; letter-spacing: .02em; color: var(--ink-soft); background: var(--surface-2);
+    padding: 8px 14px; border-bottom: 1px solid var(--line); }
+  .fc-games { display: flex; flex-direction: column; }
+  .fc-game { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 9px 14px; }
+  .fc-game + .fc-game { border-top: 1px solid var(--line); }
+  .fc-team { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .fc-team.th { justify-content: flex-end; }
+  .fc-tn { font-weight: 700; font-size: 13px; line-height: 1.2; color: var(--ink); text-decoration: none; }
+  a.fc-tn:hover { color: var(--c-basket, var(--accent)); text-decoration: underline; }
+  .fc-team.th .fc-tn { text-align: right; }
+  .fc-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+  .fc-sc { font-family: var(--mono, monospace); font-weight: 800; font-size: 13px; color: var(--ink); white-space: nowrap; }
 </style>

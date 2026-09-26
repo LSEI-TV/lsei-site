@@ -8,6 +8,7 @@
 // Classement OFFICIEL récupéré depuis nm1.ffbb.com par scripts/fetch-basket-standings.mjs
 // (rafraîchi en CI, commité). S'il existe, il prime sur le calcul par calendrier.
 import standingsCache from './cache/basket-standings.json';
+import calendarCache from './cache/basket-calendar.json';
 import { readdirSync } from 'node:fs';
 
 /** false = données réelles (plus de bandeau « exemple »). */
@@ -249,6 +250,42 @@ export function nm1Standings() {
 export const seasonStarted = () =>
   officialStandings().some((r) => r.played > 0) ||
   nm1Calendar.some((m) => m.homeScore != null && m.awayScore != null);
+
+// ------------------------------------------------------------
+//  CALENDRIER OFFICIEL de la Poule B (fixtures récupérées de nm1.ffbb.com par
+//  scripts/fetch-basket-calendar.mjs, rafraîchi en CI). La FFBB fait foi.
+//  Les scores ne sont pas récupérables (JS) → overlay MANUEL par affiche,
+//  clé « home_away » (survit aux changements de dates FFBB).
+// ------------------------------------------------------------
+export interface PoolMatch { date: string; homeSlug: string; awaySlug: string; homeScore?: number; awayScore?: number; round?: number }
+
+// Pour saisir un score : ajouter 'homeSlug_awaySlug': [scoreDom, scoreExt].
+// La clé suit le sens de l'affiche FFBB (équipe à domicile en 1er).
+const MANUAL_SCORES: Record<string, [number, number]> = {};
+
+/** Horodatage ISO du dernier rafraîchissement du calendrier (ou null). */
+export const calendarUpdated: string | null = (calendarCache as any)?.updated ?? null;
+
+/** Tout le calendrier de la Poule B (matchs entre 2 clubs du site), trié par date. */
+export function poolCalendar(): PoolMatch[] {
+  const raw = ((calendarCache as any)?.matches ?? []) as { date: string; homeSlug: string; awaySlug: string }[];
+  return raw
+    .filter((m) => nmClubBy(m.homeSlug) && nmClubBy(m.awaySlug))
+    .map((m) => {
+      const sc = MANUAL_SCORES[`${m.homeSlug}_${m.awaySlug}`];
+      return sc
+        ? { date: m.date, homeSlug: m.homeSlug, awaySlug: m.awaySlug, homeScore: sc[0], awayScore: sc[1] }
+        : { date: m.date, homeSlug: m.homeSlug, awaySlug: m.awaySlug };
+    })
+    .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+}
+
+/** Calendrier d'un club (ses matchs), avec un n° de journée séquentiel par date. */
+export function clubCalendar(slug: string): PoolMatch[] {
+  return poolCalendar()
+    .filter((m) => m.homeSlug === slug || m.awaySlug === slug)
+    .map((m, i) => ({ ...m, round: i + 1 }));
+}
 
 // ------------------------------------------------------------
 //  LIEN CALENDRIER ↔ REPLAYS LSEI  (le différenciateur « web TV »)

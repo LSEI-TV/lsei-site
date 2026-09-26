@@ -1,0 +1,737 @@
+{
+  "updated": "2026-09-26T00:26:54.738Z",
+  "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
+  "pool": "Poule B",
+  "matches": [
+    {
+      "date": "2026-09-29",
+      "homeSlug": "tarbes",
+      "awaySlug": "toulouse"
+    },
+    {
+      "date": "2026-09-29",
+      "homeSlug": "rennes",
+      "awaySlug": "laval"
+    },
+    {
+      "date": "2026-09-29",
+      "homeSlug": "angers",
+      "awaySlug": "fougeres"
+    },
+    {
+      "date": "2026-09-29",
+      "homeSlug": "tours",
+      "awaySlug": "bordeaux"
+    },
+    {
+      "date": "2026-09-29",
+      "homeSlug": "lorient",
+      "awaySlug": "vitre"
+    },
+    {
+      "date": "2026-09-29",
+      "homeSlug": "challans",
+      "awaySlug": "sables"
+    },
+    {
+      "date": "2026-10-02",
+      "homeSlug": "bordeaux",
+      "awaySlug": "lorient"
+    },
+    {
+      "date": "2026-10-02",
+      "homeSlug": "toulouse",
+      "awaySlug": "tours"
+    },
+    {
+      "date": "2026-10-02",
+      "homeSlug": "fougeres",
+      "awaySlug": "tarbes"
+    },
+    {
+      "date": "2026-10-02",
+      "homeSlug": "chartres",
+      "awaySlug": "rennes"
+    },
+    {
+      "date": "2026-10-02",
+      "homeSlug": "vitre",
+      "awaySlug": "angers"
+    },
+    {
+      "date": "2026-10-03",
+      "homeSlug": "laval",
+      "awaySlug": "challans"
+    },
+    {
+      "date": "2026-10-09",
+      "homeSlug": "tours",
+      "awaySlug": "vitre"
+    },
+    {
+      "date": "2026-10-09",
+      "homeSlug": "angers",
+      "awaySlug": "toulouse"
+    },
+    {
+      "date": "2026-10-09",
+      "homeSlug": "rennes",
+      "awaySlug": "sables"
+    },
+    {
+      "date": "2026-10-09",
+      "homeSlug": "bordeaux",
+      "awaySlug": "laval"
+    },
+    {
+      "date": "2026-10-09",
+      "homeSlug": "tarbes",
+      "awaySlug": "chartres"
+    },
+    {
+      "date": "2026-10-09",
+      "homeSlug": "lorient",
+      "awaySlug": "fougeres"
+    },
+    {
+      "date": "2026-10-13",
+      "homeSlug": "challans",
+      "awaySlug": "fougeres"
+    },
+    {
+      "date": "2026-10-16",
+      "homeSlug": "sables",
+      "awaySlug": "tours"
+    },
+    {
+      "date": "2026-10-16",
+      "homeSlug": "laval",
+      "awaySlug": "tarbes"
+    },
+    {
+      "date": "2026-10-16",
+      "homeSlug": "challans",
+      "awaySlug": "rennes"
+    },
+    {
+      "date": "2026-10-16",
+      "homeSlug": "toulouse",
+      "awaySlug": "lorient"
+    },
+    {
+      "date": "2026-10-16",
+      "homeSlug": "vitre",
+      "awaySlug": "bordeaux"
+    },
+    {
+      "date": "2026-10-16",
+      "homeSlug": "chartres",
+      "awaySlug": "angers"
+    },
+    {
+      "date": "2026-10-20",
+      "homeSlug": "bordeaux",
+      "awaySlug": "toulouse"
+    },
+    {
+      "date": "2026-10-20",
+      "homeSlug": "angers",
+      "awaySlug": "laval"
+    },
+    {
+      "date": "2026-10-20",
+      "homeSlug": "tours",
+      "awaySlug": "chartres"
+    },
+    {
+      "date": "2026-10-20",
+      "homeSlug": "tarbes",
+      "awaySlug": "challans"
+    },
+    {
+      "date": "2026-10-20",
+      "homeSlug": "lorient",
+      "awaySlug": "sables"
+    },
+    {
+      "date": "2026-10-20",
+      "homeSlug": "vitre",
+      "awaySlug": "fougeres"
+    },
+    {
+      "date": "2026-10-23",
+      "homeSlug": "laval",
+      "awaySlug": "tours"
+    },
+    {
+      "date": "2026-10-23",
+      "homeSlug": "sables",
+      "awaySlug": "bordeaux"
+    },
+    {
+      "date": "2026-10-23",
+      "homeSlug": "toulouse",
+      "awaySlug": "vitre"
+    },
+    {
+      "date": "2026-10-23",
+      "homeSlug": "fougeres",
+      "awaySlug": "rennes"
+    },
+    {
+      "date": "2026-10-23",
+      "homeSlug": "chartres",
+      "awaySlug": "lorient"
+    },
+    {
+      "date": "2026-10-23",
+      "homeSlug": "challans",
+      "awaySlug": "angers"
+    },
+    {
+      "date": "2026-10-27",
+      "homeSlug": "rennes",
+      "awaySlug": "vitre"
+    },
+    {
+      "date": "2026-10-28",
+      "homeSlug": "bordeaux",
+      "awaySlug": "chartres"
+    },
+    {
+      "date": "2026-10-30",
+      "homeSlug": "tarbes",
+      "awaySlug": "rennes"
+    },
+    {
+      "date": "2026-10-30",
+      "homeSlug": "angers",
+      "awaySlug": "sables"
+    },
+    {
+      "date": "2026-10-30",
+      "homeSlug": "tours",
+      "awaySlug": "challans"
+    },
+    {
+      "date": "2026-10-30",
+      "homeSlug": "vitre",
+      "awaySlug": "laval"
+    },
+    {
+      "date": "2026-10-30",
+      "homeSlug": "toulouse",
+      "awaySlug": "fougeres"
+    },
+    {
+      "date": "2026-11-04",
+      "homeSlug": "laval",
+      "awaySlug": "toulouse"
+    },
+    {
+      "date": "2026-11-06",
+      "homeSlug": "rennes",
+      "awaySlug": "tours"
+    },
+    {
+      "date": "2026-11-06",
+      "homeSlug": "sables",
+      "awaySlug": "tarbes"
+    },
+    {
+      "date": "2026-11-06",
+      "homeSlug": "chartres",
+      "awaySlug": "vitre"
+    },
+    {
+      "date": "2026-11-06",
+      "homeSlug": "challans",
+      "awaySlug": "lorient"
+    },
+    {
+      "date": "2026-11-06",
+      "homeSlug": "fougeres",
+      "awaySlug": "bordeaux"
+    },
+    {
+      "date": "2026-11-11",
+      "homeSlug": "laval",
+      "awaySlug": "fougeres"
+    },
+    {
+      "date": "2026-11-13",
+      "homeSlug": "angers",
+      "awaySlug": "rennes"
+    },
+    {
+      "date": "2026-11-13",
+      "homeSlug": "bordeaux",
+      "awaySlug": "challans"
+    },
+    {
+      "date": "2026-11-13",
+      "homeSlug": "lorient",
+      "awaySlug": "tarbes"
+    },
+    {
+      "date": "2026-11-13",
+      "homeSlug": "vitre",
+      "awaySlug": "sables"
+    },
+    {
+      "date": "2026-11-13",
+      "homeSlug": "toulouse",
+      "awaySlug": "chartres"
+    },
+    {
+      "date": "2026-11-17",
+      "homeSlug": "fougeres",
+      "awaySlug": "tours"
+    },
+    {
+      "date": "2026-11-17",
+      "homeSlug": "sables",
+      "awaySlug": "toulouse"
+    },
+    {
+      "date": "2026-11-17",
+      "homeSlug": "rennes",
+      "awaySlug": "lorient"
+    },
+    {
+      "date": "2026-11-17",
+      "homeSlug": "tarbes",
+      "awaySlug": "angers"
+    },
+    {
+      "date": "2026-11-17",
+      "homeSlug": "challans",
+      "awaySlug": "vitre"
+    },
+    {
+      "date": "2026-11-17",
+      "homeSlug": "chartres",
+      "awaySlug": "laval"
+    },
+    {
+      "date": "2026-11-20",
+      "homeSlug": "bordeaux",
+      "awaySlug": "rennes"
+    },
+    {
+      "date": "2026-11-20",
+      "homeSlug": "angers",
+      "awaySlug": "lorient"
+    },
+    {
+      "date": "2026-11-20",
+      "homeSlug": "laval",
+      "awaySlug": "sables"
+    },
+    {
+      "date": "2026-11-20",
+      "homeSlug": "fougeres",
+      "awaySlug": "chartres"
+    },
+    {
+      "date": "2026-11-20",
+      "homeSlug": "toulouse",
+      "awaySlug": "challans"
+    },
+    {
+      "date": "2026-11-21",
+      "homeSlug": "tours",
+      "awaySlug": "tarbes"
+    },
+    {
+      "date": "2026-12-04",
+      "homeSlug": "bordeaux",
+      "awaySlug": "tarbes"
+    },
+    {
+      "date": "2026-12-04",
+      "homeSlug": "tours",
+      "awaySlug": "angers"
+    },
+    {
+      "date": "2026-12-04",
+      "homeSlug": "vitre",
+      "awaySlug": "rennes"
+    },
+    {
+      "date": "2026-12-04",
+      "homeSlug": "chartres",
+      "awaySlug": "sables"
+    },
+    {
+      "date": "2026-12-04",
+      "homeSlug": "fougeres",
+      "awaySlug": "challans"
+    },
+    {
+      "date": "2026-12-06",
+      "homeSlug": "laval",
+      "awaySlug": "lorient"
+    },
+    {
+      "date": "2026-12-11",
+      "homeSlug": "tarbes",
+      "awaySlug": "vitre"
+    },
+    {
+      "date": "2026-12-11",
+      "homeSlug": "rennes",
+      "awaySlug": "toulouse"
+    },
+    {
+      "date": "2026-12-11",
+      "homeSlug": "sables",
+      "awaySlug": "fougeres"
+    },
+    {
+      "date": "2026-12-11",
+      "homeSlug": "angers",
+      "awaySlug": "bordeaux"
+    },
+    {
+      "date": "2026-12-11",
+      "homeSlug": "lorient",
+      "awaySlug": "tours"
+    },
+    {
+      "date": "2026-12-11",
+      "homeSlug": "challans",
+      "awaySlug": "chartres"
+    },
+    {
+      "date": "2026-12-15",
+      "homeSlug": "bordeaux",
+      "awaySlug": "tours"
+    },
+    {
+      "date": "2026-12-15",
+      "homeSlug": "sables",
+      "awaySlug": "challans"
+    },
+    {
+      "date": "2026-12-15",
+      "homeSlug": "fougeres",
+      "awaySlug": "angers"
+    },
+    {
+      "date": "2026-12-15",
+      "homeSlug": "toulouse",
+      "awaySlug": "tarbes"
+    },
+    {
+      "date": "2026-12-15",
+      "homeSlug": "laval",
+      "awaySlug": "rennes"
+    },
+    {
+      "date": "2026-12-15",
+      "homeSlug": "vitre",
+      "awaySlug": "lorient"
+    },
+    {
+      "date": "2026-12-18",
+      "homeSlug": "angers",
+      "awaySlug": "vitre"
+    },
+    {
+      "date": "2026-12-18",
+      "homeSlug": "tours",
+      "awaySlug": "toulouse"
+    },
+    {
+      "date": "2026-12-18",
+      "homeSlug": "challans",
+      "awaySlug": "laval"
+    },
+    {
+      "date": "2026-12-18",
+      "homeSlug": "tarbes",
+      "awaySlug": "fougeres"
+    },
+    {
+      "date": "2026-12-18",
+      "homeSlug": "rennes",
+      "awaySlug": "chartres"
+    },
+    {
+      "date": "2026-12-18",
+      "homeSlug": "lorient",
+      "awaySlug": "bordeaux"
+    },
+    {
+      "date": "2027-01-08",
+      "homeSlug": "sables",
+      "awaySlug": "rennes"
+    },
+    {
+      "date": "2027-01-08",
+      "homeSlug": "toulouse",
+      "awaySlug": "angers"
+    },
+    {
+      "date": "2027-01-08",
+      "homeSlug": "vitre",
+      "awaySlug": "tours"
+    },
+    {
+      "date": "2027-01-08",
+      "homeSlug": "chartres",
+      "awaySlug": "tarbes"
+    },
+    {
+      "date": "2027-01-08",
+      "homeSlug": "fougeres",
+      "awaySlug": "lorient"
+    },
+    {
+      "date": "2027-01-08",
+      "homeSlug": "laval",
+      "awaySlug": "bordeaux"
+    },
+    {
+      "date": "2027-01-15",
+      "homeSlug": "bordeaux",
+      "awaySlug": "vitre"
+    },
+    {
+      "date": "2027-01-15",
+      "homeSlug": "tours",
+      "awaySlug": "sables"
+    },
+    {
+      "date": "2027-01-15",
+      "homeSlug": "tarbes",
+      "awaySlug": "laval"
+    },
+    {
+      "date": "2027-01-15",
+      "homeSlug": "angers",
+      "awaySlug": "chartres"
+    },
+    {
+      "date": "2027-01-15",
+      "homeSlug": "rennes",
+      "awaySlug": "challans"
+    },
+    {
+      "date": "2027-01-15",
+      "homeSlug": "lorient",
+      "awaySlug": "toulouse"
+    },
+    {
+      "date": "2027-01-19",
+      "homeSlug": "sables",
+      "awaySlug": "lorient"
+    },
+    {
+      "date": "2027-01-19",
+      "homeSlug": "fougeres",
+      "awaySlug": "vitre"
+    },
+    {
+      "date": "2027-01-19",
+      "homeSlug": "chartres",
+      "awaySlug": "tours"
+    },
+    {
+      "date": "2027-01-19",
+      "homeSlug": "challans",
+      "awaySlug": "tarbes"
+    },
+    {
+      "date": "2027-01-19",
+      "homeSlug": "toulouse",
+      "awaySlug": "bordeaux"
+    },
+    {
+      "date": "2027-01-19",
+      "homeSlug": "laval",
+      "awaySlug": "angers"
+    },
+    {
+      "date": "2027-01-22",
+      "homeSlug": "rennes",
+      "awaySlug": "fougeres"
+    },
+    {
+      "date": "2027-01-22",
+      "homeSlug": "angers",
+      "awaySlug": "challans"
+    },
+    {
+      "date": "2027-01-22",
+      "homeSlug": "vitre",
+      "awaySlug": "toulouse"
+    },
+    {
+      "date": "2027-01-22",
+      "homeSlug": "lorient",
+      "awaySlug": "chartres"
+    },
+    {
+      "date": "2027-01-23",
+      "homeSlug": "tours",
+      "awaySlug": "laval"
+    },
+    {
+      "date": "2027-01-26",
+      "homeSlug": "bordeaux",
+      "awaySlug": "sables"
+    },
+    {
+      "date": "2027-01-29",
+      "homeSlug": "rennes",
+      "awaySlug": "tarbes"
+    },
+    {
+      "date": "2027-01-29",
+      "homeSlug": "sables",
+      "awaySlug": "angers"
+    },
+    {
+      "date": "2027-01-29",
+      "homeSlug": "laval",
+      "awaySlug": "vitre"
+    },
+    {
+      "date": "2027-01-29",
+      "homeSlug": "challans",
+      "awaySlug": "tours"
+    },
+    {
+      "date": "2027-01-29",
+      "homeSlug": "fougeres",
+      "awaySlug": "toulouse"
+    },
+    {
+      "date": "2027-01-29",
+      "homeSlug": "chartres",
+      "awaySlug": "bordeaux"
+    },
+    {
+      "date": "2027-02-05",
+      "homeSlug": "tours",
+      "awaySlug": "rennes"
+    },
+    {
+      "date": "2027-02-05",
+      "homeSlug": "tarbes",
+      "awaySlug": "sables"
+    },
+    {
+      "date": "2027-02-05",
+      "homeSlug": "bordeaux",
+      "awaySlug": "fougeres"
+    },
+    {
+      "date": "2027-02-05",
+      "homeSlug": "toulouse",
+      "awaySlug": "laval"
+    },
+    {
+      "date": "2027-02-05",
+      "homeSlug": "vitre",
+      "awaySlug": "chartres"
+    },
+    {
+      "date": "2027-02-05",
+      "homeSlug": "lorient",
+      "awaySlug": "challans"
+    },
+    {
+      "date": "2027-02-12",
+      "homeSlug": "sables",
+      "awaySlug": "vitre"
+    },
+    {
+      "date": "2027-02-12",
+      "homeSlug": "tarbes",
+      "awaySlug": "lorient"
+    },
+    {
+      "date": "2027-02-12",
+      "homeSlug": "rennes",
+      "awaySlug": "angers"
+    },
+    {
+      "date": "2027-02-12",
+      "homeSlug": "chartres",
+      "awaySlug": "toulouse"
+    },
+    {
+      "date": "2027-02-12",
+      "homeSlug": "fougeres",
+      "awaySlug": "laval"
+    },
+    {
+      "date": "2027-02-12",
+      "homeSlug": "challans",
+      "awaySlug": "bordeaux"
+    },
+    {
+      "date": "2027-02-16",
+      "homeSlug": "angers",
+      "awaySlug": "tarbes"
+    },
+    {
+      "date": "2027-02-16",
+      "homeSlug": "lorient",
+      "awaySlug": "rennes"
+    },
+    {
+      "date": "2027-02-16",
+      "homeSlug": "toulouse",
+      "awaySlug": "sables"
+    },
+    {
+      "date": "2027-02-16",
+      "homeSlug": "tours",
+      "awaySlug": "fougeres"
+    },
+    {
+      "date": "2027-02-16",
+      "homeSlug": "laval",
+      "awaySlug": "chartres"
+    },
+    {
+      "date": "2027-02-16",
+      "homeSlug": "vitre",
+      "awaySlug": "challans"
+    },
+    {
+      "date": "2027-02-19",
+      "homeSlug": "tarbes",
+      "awaySlug": "tours"
+    },
+    {
+      "date": "2027-02-19",
+      "homeSlug": "challans",
+      "awaySlug": "toulouse"
+    },
+    {
+      "date": "2027-02-19",
+      "homeSlug": "sables",
+      "awaySlug": "laval"
+    },
+    {
+      "date": "2027-02-19",
+      "homeSlug": "chartres",
+      "awaySlug": "fougeres"
+    },
+    {
+      "date": "2027-02-19",
+      "homeSlug": "rennes",
+      "awaySlug": "bordeaux"
+    },
+    {
+      "date": "2027-02-19",
+      "homeSlug": "lorient",
+      "awaySlug": "angers"
+    }
+  ]
+}
