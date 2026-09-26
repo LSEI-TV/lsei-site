@@ -116,10 +116,16 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
                     const played = m.homeScore != null && m.awayScore != null;
                     return (
                       <div class="fc-game" data-h={m.homeSlug} data-a={m.awaySlug}>
-                        <span class="fc-loc" hidden></span>
-                        <span class="fc-team th">{hh ? <a class="fc-tn" href={hh}>{h?.name}</a> : <span class="fc-tn">{h?.name}</span>}<span class="fc-dot" style={`background:${h?.color}`}></span></span>
+                        <span class="fc-team th">
+                          {hh ? <a class="fc-tn" href={hh}>{h?.name}</a> : <span class="fc-tn">{h?.name}</span>}
+                          <span class="fc-badge">{h && assetExists(h.logo) ? <img src={assetUrl(h.logo!)} alt="" loading="lazy" /> : <span class="fc-dot" style={`background:${h?.color}`}></span>}</span>
+                        </span>
                         <span class="fc-sc">{played ? `${m.homeScore} – ${m.awayScore}` : 'vs'}</span>
-                        <span class="fc-team ta"><span class="fc-dot" style={`background:${a?.color}`}></span>{ah ? <a class="fc-tn" href={ah}>{a?.name}</a> : <span class="fc-tn">{a?.name}</span>}</span>
+                        <span class="fc-team ta">
+                          <span class="fc-badge">{a && assetExists(a.logo) ? <img src={assetUrl(a.logo!)} alt="" loading="lazy" /> : <span class="fc-dot" style={`background:${a?.color}`}></span>}</span>
+                          {ah ? <a class="fc-tn" href={ah}>{a?.name}</a> : <span class="fc-tn">{a?.name}</span>}
+                        </span>
+                        <span class="fc-loc" hidden></span>
                       </div>
                     );
                   })}
@@ -272,19 +278,22 @@ const clubHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null)
   .fc-date { font-size: 12px; font-weight: 800; letter-spacing: .02em; color: var(--ink-soft); background: var(--surface-2);
     padding: 8px 14px; border-bottom: 1px solid var(--line); }
   .fc-games { display: flex; flex-direction: column; }
-  .fc-game { display: grid; grid-template-columns: auto 1fr auto 1fr; align-items: center; gap: 10px; padding: 9px 14px; }
+  .fc-game { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 11px 16px; position: relative; }
   .fc-game + .fc-game { border-top: 1px solid var(--line); }
-  .fc-loc { font-size: 9.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: 3px 8px; border-radius: 100px; border: 1px solid transparent; white-space: nowrap; }
+  .fc-team { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .fc-team.th { justify-content: flex-end; }
+  .fc-badge { flex: none; width: 28px; height: 28px; display: grid; place-items: center; }
+  .fc-badge img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .fc-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .fc-tn { font-weight: 700; font-size: 13.5px; line-height: 1.2; color: var(--ink); text-decoration: none; text-transform: uppercase; }
+  a.fc-tn:hover { color: var(--c-basket, var(--accent)); }
+  .fc-team.th .fc-tn { text-align: right; }
+  .fc-sc { font-family: var(--mono, monospace); font-weight: 800; font-size: 12px; color: var(--ink-soft); background: var(--surface-2); border: 1px solid var(--line); border-radius: 100px; padding: 4px 11px; white-space: nowrap; }
+  .fc-loc { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 9.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: 3px 8px; border-radius: 100px; border: 1px solid transparent; white-space: nowrap; }
   .fc-loc[hidden] { display: none; }
   .fc-loc.dom { color: #1c8a4e; background: rgba(46,158,82,.12); border-color: rgba(46,158,82,.35); }
   .fc-loc.ext { color: #b9791a; background: rgba(224,165,60,.14); border-color: rgba(224,165,60,.4); }
-  .fc-team { display: flex; align-items: center; gap: 8px; min-width: 0; }
-  .fc-team.th { justify-content: flex-end; }
-  .fc-tn { font-weight: 700; font-size: 13px; line-height: 1.2; color: var(--ink); text-decoration: none; text-transform: uppercase; }
-  a.fc-tn:hover { color: var(--c-basket, var(--accent)); text-decoration: underline; }
-  .fc-team.th .fc-tn { text-align: right; }
-  .fc-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
-  .fc-sc { font-family: var(--mono, monospace); font-weight: 800; font-size: 13px; color: var(--ink); white-space: nowrap; }
+  @media (max-width: 620px) { .fc-loc { display: none; } .fc-badge { width: 22px; height: 22px; } .fc-tn { font-size: 12px; } }
   /* Filtres du calendrier */
   .fc-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 2px 0 18px; }
   .fc-select { font: inherit; font-size: 14px; font-weight: 700; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 100px; padding: 9px 16px; cursor: pointer; }
