@@ -1868,3 +1868,30 @@ th, td, figcaption, .chip, .badge {
   .modal-player     { min-height: 220px; }
   .article-video    { min-height: 200px; }
 }
+
+/* ==========================================================================
+   ACCUEIL — Aperçu classement Basketball (NM1 Poule B) — top 5 + logos
+   ========================================================================== */
+.nbh-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px 26px; }
+.nbh-list { display: flex; flex-direction: column; margin-top: 8px; }
+.nbh-row { display: grid; grid-template-columns: 30px 34px 1fr auto auto; align-items: center; gap: 12px; padding: 10px 8px; border-radius: 10px; text-decoration: none; color: var(--ink); transition: background .15s; }
+a.nbh-row:hover { background: var(--surface-2); }
+.nbh-row + .nbh-row { border-top: 1px solid var(--line); }
+.nbh-rk { font-family: var(--display); font-weight: 800; font-size: 18px; color: var(--ink-soft); text-align: center; }
+.nbh-logo { width: 34px; height: 34px; display: grid; place-items: center; }
+.nbh-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.nbh-dot { width: 14px; height: 14px; border-radius: 50%; }
+.nbh-name { font-weight: 800; font-size: 15px; text-transform: uppercase; letter-spacing: -.01em; min-width: 0; line-height: 1.15; }
+.nbh-name em { display: block; font-style: normal; text-transform: none; letter-spacing: 0; font-size: 11px; font-weight: 700; color: var(--dc, var(--accent)); margin-top: 1px; }
+.nbh-rec { font-family: var(--mono); font-size: 12.5px; color: var(--ink-soft); white-space: nowrap; }
+.nbh-rec i { font-style: normal; color: var(--ink-faint); font-size: .82em; }
+.nbh-pts { font-family: var(--mono); font-weight: 800; font-size: 15px; color: var(--ink); white-space: nowrap; }
+.nbh-pts small { font-weight: 600; font-size: .68em; color: var(--ink-faint); margin-left: 1px; }
+.nbh-row.is-fou { background: color-mix(in srgb, var(--dc, var(--accent)) 9%, transparent); }
+.nbh-row.is-fou .nbh-rk { color: var(--dc, var(--accent)); }
+.nbh-pin { margin-top: 10px; border: 1px solid color-mix(in srgb, var(--dc, var(--accent)) 40%, var(--line)); }
+@media (max-width: 520px) {
+  .nbh-row { grid-template-columns: 24px 28px 1fr auto; gap: 8px; }
+  .nbh-rec { display: none; }
+  .nbh-card { padding: 20px 16px; }
+}

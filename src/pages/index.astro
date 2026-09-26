@@ -12,6 +12,7 @@ import { articleCover } from '../lib/articles';
 import { assetExists, assetUrl } from '../lib/publicAssets';
 import { defaultSeason, getPalmares, getSeasons, DEFAULT_SEASON } from '../data/billard/seasons';
 import { photoOf, playerSlugs } from '../lib/billardStats';
+import { nm1Standings, nmClubBy, NM1_POOL, clubHasSite } from '../data/basket';
 
 // Chiffres-clés : tirés en direct de l'API YouTube (abonnés, vues, vidéos) + nb de
 // disciplines. Toujours à jour, aucun chiffre saisi à la main. Repli sur les chiffres
@@ -60,6 +61,16 @@ const bilChampIsCdf = !!bilPalm?.cdf;
 const bilPlayers = (bilSeason.results?.players ?? []) as any[];
 const bilRanked = [...bilPlayers].sort((a, b) => a.rank - b.rank);
 const bilTop = bilRanked.slice(0, 3);          // podium (3 cadres)
+
+// Aperçu Basketball (NM1 Poule B) : top 5 du classement officiel + Fougères épinglé.
+const nbStand = nm1Standings();
+const nbTop5 = nbStand.slice(0, 5);
+const nbFouIdx = nbStand.findIndex((r: any) => r.slug === 'fougeres');
+const nbFou = nbFouIdx >= 0 ? { ...nbStand[nbFouIdx], rank: nbFouIdx + 1 } : null;
+const nbFouInTop5 = nbFouIdx >= 0 && nbFouIdx < 5;
+const nbClub = getDiscipline('basket');
+const nbLogo = (slug: string) => { const c = nmClubBy(slug); return c && assetExists(c.logo) ? assetUrl(c.logo!) : null; };
+const nbHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null);
 const bilTable = bilRanked.slice(3, 8);        // suite du classement (4ᵉ → 8ᵉ), à droite des cadres
 const bilChampP = bilChamp ? bilPlayers.find((p) => p.id === bilChamp!.id) : null;
 const bilChampPhoto = bilChampP ? photoOf(bilChampP, DEFAULT_SEASON) : null;
@@ -389,6 +400,49 @@ const slides = programme
       });
     })();
   </script>
+
+  <!-- BASKETBALL — aperçu du classement NM1 (auto, source FFBB) -->
+  {nbTop5.length > 0 && (
+    <section class="section" style={`--dc:${nbClub.colorVar}`}>
+      <div class="wrap">
+        <div class="nbh-card">
+          <div class="sec-head">
+            <div>
+              <div class="eyebrow" style={`color:${nbClub.colorVar}`}>Basketball · Nationale 1</div>
+              <h2>Classement · {NM1_POOL}</h2>
+            </div>
+            <a href="/basket" class="link">Classement complet →</a>
+          </div>
+          <div class="nbh-list">
+            {nbTop5.map((r, i) => {
+              const c = nmClubBy(r.slug); const logo = nbLogo(r.slug); const href = nbHref(r.slug);
+              const inner = (
+                <Fragment>
+                  <span class="nbh-rk">{i + 1}</span>
+                  <span class="nbh-logo">{logo ? <img src={logo} alt="" loading="lazy" /> : <span class="nbh-dot" style={`background:${c?.color}`}></span>}</span>
+                  <span class="nbh-name">{c?.name ?? r.slug}</span>
+                  <span class="nbh-rec">{r.w}<i>V</i>·{r.l}<i>D</i></span>
+                  <span class="nbh-pts">{r.pts}<small>pts</small></span>
+                </Fragment>
+              );
+              return href
+                ? <a href={href} class:list={['nbh-row', r.slug === 'fougeres' && 'is-fou']}>{inner}</a>
+                : <div class:list={['nbh-row', r.slug === 'fougeres' && 'is-fou']}>{inner}</div>;
+            })}
+          </div>
+          {nbFou && !nbFouInTop5 && (
+            <a href={nbHref('fougeres') ?? '/basket'} class="nbh-row is-fou nbh-pin">
+              <span class="nbh-rk">{nbFou.rank}</span>
+              <span class="nbh-logo">{nbLogo('fougeres') ? <img src={nbLogo('fougeres')} alt="" loading="lazy" /> : <span class="nbh-dot" style={`background:${nmClubBy('fougeres')?.color}`}></span>}</span>
+              <span class="nbh-name">{nmClubBy('fougeres')?.name}<em>Le club filmé par LSEI</em></span>
+              <span class="nbh-rec">{nbFou.w}<i>V</i>·{nbFou.l}<i>D</i></span>
+              <span class="nbh-pts">{nbFou.pts}<small>pts</small></span>
+            </a>
+          )}
+        </div>
+      </div>
+    </section>
+  )}
 
   <!-- ACTUALITÉS (pleine largeur) -->
   {latestArticles.length > 0 && (
