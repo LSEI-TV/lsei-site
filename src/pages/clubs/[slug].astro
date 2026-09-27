@@ -156,11 +156,11 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
                   </span>
                   <span class:list={['cal-team', 'th', m.homeSlug === slug && 'me']}>
                     {clubHref(m.homeSlug) ? <a class="cal-tn" href={clubHref(m.homeSlug)}>{h?.name}</a> : <span class="cal-tn">{h?.name}</span>}
-                    <span class="cal-dot" style={`background:${h?.color}`}></span>
+                    <span class="cal-badge">{h && assetExists(h.logo) ? <img src={assetUrl(h.logo!)} alt="" loading="lazy" /> : <span class="cal-dot" style={`background:${h?.color}`}></span>}</span>
                   </span>
                   <span class="cal-sc">{played ? `${m.homeScore} – ${m.awayScore}` : 'vs'}</span>
                   <span class:list={['cal-team', 'ta', m.awaySlug === slug && 'me']}>
-                    <span class="cal-dot" style={`background:${a?.color}`}></span>
+                    <span class="cal-badge">{a && assetExists(a.logo) ? <img src={assetUrl(a.logo!)} alt="" loading="lazy" /> : <span class="cal-dot" style={`background:${a?.color}`}></span>}</span>
                     {clubHref(m.awaySlug) ? <a class="cal-tn" href={clubHref(m.awaySlug)}>{a?.name}</a> : <span class="cal-tn">{a?.name}</span>}
                   </span>
                 </div>
@@ -427,9 +427,22 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
   .cal-team.th .cal-tn { text-align: right; }
   .cal-team.me .cal-tn { color: var(--cc); }
   .cal-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+  .cal-badge { flex: none; width: 26px; height: 26px; display: grid; place-items: center; }
+  .cal-badge img { max-width: 100%; max-height: 100%; object-fit: contain; }
   .cal-sc { font-family: var(--mono, monospace); font-weight: 800; font-size: 14px; color: #fff; white-space: nowrap; }
   .cal-row.is-win .cal-sc { color: #3fae6b; }
   .cal-row.is-loss .cal-sc { color: #e5645b; }
+  /* Téléphone : date + badge en haut, l'affiche (home vs away) en dessous */
+  @media (max-width: 560px) {
+    .cal-row { grid-template-columns: 1fr auto 1fr; grid-template-areas: "when when when" "home score away"; gap: 10px; row-gap: 12px; padding: 12px 14px; }
+    .cal-when { grid-area: when; flex-direction: row; align-items: center; gap: 10px; }
+    .cal-date i { display: inline; margin-left: 6px; }
+    .cal-team.th { grid-area: home; }
+    .cal-sc { grid-area: score; }
+    .cal-team.ta { grid-area: away; }
+    .cal-tn { font-size: 12px; }
+    .cal-badge { width: 22px; height: 22px; }
+  }
 
   /* Vidéos */
   .vids { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
