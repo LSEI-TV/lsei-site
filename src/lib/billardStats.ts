@@ -33,23 +33,24 @@ function _listPhotos(): { url: string; key: string; season: string | null }[] {
   const out: { url: string; key: string; season: string | null }[] = [];
   const isImg = (f: string) => /\.(jpe?g|png|webp)$/i.test(f);
   const key = (f: string) => _norm(f.replace(/\.[^.]+$/, ''));
-  const root = 'public/joueurs';
-  // Photos « à plat » dans public/joueurs/ = photo par défaut du joueur (sans saison).
+  // Photos des joueurs blackball, rangées sous public/billard/blackball/ (par
+  // compétition puis par saison), avec en plus des photos « à plat » = photo par
+  // défaut du joueur (sans saison). DIR = chemin disque ; URL = préfixe web.
+  const DIR = 'public/billard/blackball';
+  const URL = '/billard/blackball';
   try {
-    for (const f of readdirSync(root)) if (isImg(f)) out.push({ url: '/joueurs/' + f, key: key(f), season: null });
+    for (const f of readdirSync(DIR)) if (isImg(f)) out.push({ url: URL + '/' + f, key: key(f), season: null });
   } catch { /* dossier absent */ }
-  // Photos rangées par COMPÉTITION puis par SAISON :
-  //   public/joueurs/{MASTERS,FEMMES,PARA-BILLARD}/AAAA-AAAA/
-  //   (+ ancien « archives joueurs » conservé pour compatibilité).
+  // public/billard/blackball/{MASTERS,FEMMES,PARA-BILLARD,…}/AAAA-AAAA/
   // On indexe par nom + saison : la photo de la bonne saison est privilégiée (maillots).
   const groups = ['MASTERS', 'FEMMES', 'PARA-BILLARD', 'PARA-BILLARD-MALVOYANTS', 'archives joueurs'];
   for (const g of groups) {
-    const base = root + '/' + g;
+    const base = DIR + '/' + g;
     try {
       for (const d of readdirSync(base, { withFileTypes: true })) {
         if (!d.isDirectory()) continue;
         try {
-          for (const f of readdirSync(base + '/' + d.name)) if (isImg(f)) out.push({ url: '/joueurs/' + g + '/' + d.name + '/' + f, key: key(f), season: d.name });
+          for (const f of readdirSync(base + '/' + d.name)) if (isImg(f)) out.push({ url: URL + '/' + g + '/' + d.name + '/' + f, key: key(f), season: d.name });
         } catch { /* ignore */ }
       }
     } catch { /* groupe absent */ }
@@ -115,7 +116,7 @@ const _titleCase = (s: string) =>
 // Saisons « photo seule » : sous-dossiers de public/joueurs/archives joueurs/ qui ne
 // correspondent à AUCUNE saison avec données. Renvoie, par saison, la liste des photos.
 export function photoOnlySeasons(dataSeasonSlugs: Set<string>) {
-  const arch = 'public/joueurs/MASTERS';
+  const arch = 'public/billard/blackball/MASTERS';
   const out: { slug: string; label: string; players: { name: string; url: string; key: string }[] }[] = [];
   let dirs: string[] = [];
   try {
@@ -127,7 +128,7 @@ export function photoOnlySeasons(dataSeasonSlugs: Set<string>) {
     try { files = readdirSync(`${arch}/${d}`).filter((f) => /\.(jpe?g|png|webp)$/i.test(f)); } catch { /* ignore */ }
     if (!files.length) continue;
     const players = files
-      .map((f) => { const base = f.replace(/\.[^.]+$/, ''); return { name: _titleCase(base), url: `/joueurs/MASTERS/${d}/${f}`, key: _norm(base) }; })
+      .map((f) => { const base = f.replace(/\.[^.]+$/, ''); return { name: _titleCase(base), url: `/billard/blackball/MASTERS/${d}/${f}`, key: _norm(base) }; })
       .sort((a, b) => a.name.localeCompare(b.name, 'fr'));
     out.push({ slug: d, label: d.replace('-', ' / '), players });
   }

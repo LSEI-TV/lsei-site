@@ -10,7 +10,7 @@ import { join } from 'node:path';
 
 const DRY = process.argv.includes('--dry');
 const QUALITY = 82;
-const ROOT = 'public/joueurs';
+const ROOT = 'public/billard/blackball';
 const isSrc = (f) => /\.(png|jpe?g)$/i.test(f);
 
 function collect(dir) {
