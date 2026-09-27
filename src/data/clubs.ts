@@ -1,6 +1,6 @@
 // Fiches CLUB — pour les pages « vitrine club » (ex. /disciplines/basket = Pays de
 // Fougères Basket). Ajouter un club filmé = ajouter une fiche ici + déposer sa photo
-// dans public/clubs/<slug>/hero-<slug>.webp. La page éditoriale se génère toute seule.
+// dans public/basket/<slug>/hero-<slug>.webp. La page éditoriale se génère toute seule.
 import type { DisciplineSlug } from './site';
 
 export interface Club {
@@ -11,7 +11,7 @@ export interface Club {
   competition: string;          // libellé compétition (« Nationale 1 · NM1 »)
   url: string;                  // site officiel du club
   logo: string;                 // /partenaires/xxx.webp
-  hero: string;                 // /clubs/<slug>/hero-<slug>.webp
+  hero: string;                 // /basket/<slug>/hero-<slug>.webp
   blurb: string;                // phrase courte sous le hero
   intro: string[];              // paragraphes de présentation (balises <b> autorisées)
   highlight: { num: string; label: string }; // 3ᵉ chiffre (fait marquant du club)
@@ -26,7 +26,7 @@ export const clubs: Club[] = [
     competition: 'Nationale 1 · NM1',
     url: 'https://www.paysdefougeresbasket.fr',
     logo: '/partenaires/fougeres-basket.webp',
-    hero: '/clubs/fougeres/hero-fougeres.webp',
+    hero: '/basket/fougeres/hero-fougeres.webp',
     blurb: 'Les Blues Brothers, en NM1 — filmés et diffusés par LSEI depuis plusieurs saisons.',
     intro: [
       "Né en 2009 de la fusion de trois clubs fougerais, le <b>Pays de Fougères Basket</b> s'est imposé comme l'un des piliers du basket d'Ille-et-Vilaine et de Bretagne. Son équipe fanion, les <b>Blues Brothers</b>, évolue au 3ᵉ échelon national, en <b>Nationale 1</b>, et brille aussi sur les tournois (triplé au Felger en 2022, 2023 et 2024).",
