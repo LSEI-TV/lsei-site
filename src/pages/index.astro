@@ -146,28 +146,8 @@ if (!programme.length) {
 
 const liveDisc = live ? getDiscipline(live.discipline) : null;
 
-// Image du hero selon le SPORT en direct (fichiers public/home-hero-<sport>.webp),
-// avec repli sur home-hero.webp. Sélection au build ; le script client la met à
-// jour en temps réel via live.json (discipline du direct).
-const HOME_HERO: Record<string, string> = {
-  basket: '/home-hero-basketball.webp',
-  billard: '/home-hero-blackball.webp',
-  beach: '/home-hero-beach_volley.webp',
-  bowling: '/home-hero-bowling.webp',
-  football: '/home-hero-football.webp',
-  palets: '/home-hero-palet.webp',
-  subbuteo: '/home-hero-subbueto.webp',
-};
-const heroDefault = assetExists('/home-hero.webp') ? assetUrl('/home-hero.webp') : '/home-hero.webp';
-const heroFor = (slug?: string | null) => {
-  const p = slug ? HOME_HERO[slug] : null;
-  return p && assetExists(p) ? assetUrl(p) : heroDefault;
-};
-const heroImg = heroFor(live?.discipline);
-// Table discipline → URL versionnée, pour le swap temps réel côté client.
-const heroMap = Object.fromEntries(
-  Object.entries(HOME_HERO).filter(([, p]) => assetExists(p)).map(([k, p]) => [k, assetUrl(p)]),
-);
+// Image du hero de l'accueil : fichier unique home-hero.webp, géré manuellement.
+const heroImg = assetExists('/home-hero.webp') ? assetUrl('/home-hero.webp') : '/home-hero.webp';
 const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t as any).label);
 // Catégorie de la vidéo à la une (déduite du titre, ex. « Femmes »), sinon la discipline.
 const fmtCat = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '');
@@ -229,7 +209,6 @@ const slides = programme
   {live && liveDisc && (
     <section class="mhero" style={`--hero-accent:${liveDisc.colorVar}`}>
       <div class="mhero-media" style={`background-image:url('${heroImg}')`} aria-hidden="true"></div>
-      <script type="application/json" id="hero-map" set:html={JSON.stringify({ map: heroMap, def: heroDefault })}></script>
       <div class="wrap mhero-in">
         <span class={`hero-pill${live.isLive ? ' is-live' : ' is-soon'}`}>{live.isLive ? '● En direct' : (live.status === 'upcoming' ? 'En direct bientôt' : 'À revoir')}{heroCat ? ` · ${heroCat}` : ''}</span>
         <h1 class="mhero-h">{heroTitle}</h1>
@@ -285,8 +264,6 @@ const slides = programme
       var count = hero.querySelector('.hero-count');
       var when = hero.querySelector('.mhero-when');
       var sub = hero.querySelector('.mhero-sub');
-      var media = hero.querySelector('.mhero-media');
-      var HM = (function () { try { return JSON.parse(document.getElementById('hero-map').textContent); } catch (e) { return { map: {}, def: null }; } })();
       function clean(t) { var p = (t || '').split('|').map(function (s) { return s.trim(); }).filter(Boolean); return p.length ? p[p.length - 1] : (t || ''); }
       function sync() {
         fetch('/live.json', { cache: 'no-store' })
@@ -296,7 +273,6 @@ const slides = programme
             if (!lives.length) return; // pas de direct : on garde la une construite (à venir / à revoir)
             var l = lives[0];
             if (pill) { pill.textContent = '● En direct'; pill.classList.add('is-live'); pill.classList.remove('is-soon'); }
-            if (media && l.discipline && HM.map && HM.map[l.discipline]) media.style.backgroundImage = "url('" + HM.map[l.discipline] + "')";
             if (h1) h1.textContent = clean(l.title);
             if (playBtn) { playBtn.setAttribute('href', 'https://www.youtube.com/watch?v=' + l.id); playBtn.setAttribute('target', '_blank'); playBtn.textContent = '▸ Regarder le direct'; }
             if (count) count.style.display = 'none';
