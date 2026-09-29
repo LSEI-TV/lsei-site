@@ -2,7 +2,7 @@
    reçoit tout de suite la dernière version ; la copie en cache ne sert qu'hors ligne.
    Les autres fichiers (logo, manifest, polices) restent en cache d'abord.
    Change CACHE_NAME à chaque release (et APP_VERSION dans index.html). */
-const CACHE_NAME = 'goodies-chrono-v35';
+const CACHE_NAME = 'goodies-chrono-v36';
 const CORE_ASSETS = [
   '/goodies-chrono/',
   '/goodies-chrono/index.html',
