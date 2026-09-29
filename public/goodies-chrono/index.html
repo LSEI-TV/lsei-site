@@ -577,7 +577,7 @@ html, body { overflow-x: hidden; }
 
 /* Bandeau partenaires en bas de la page 1 : 1 logo à la fois, fondu toutes les 8 s, cliquable */
 .partner-banner {
-  padding: 18px 12px 6px;           /* sous « Remettre tout à zéro », toujours visible */
+  padding: 28px 12px 6px;           /* sous « Remettre tout à zéro », toujours visible */
   display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px;
 }
 .pb-label {
@@ -1898,7 +1898,7 @@ function startPartnerRotation() {
   pbTimer = setInterval(() => { if (!document.hidden) showPartner(pbIndex + 1, true); }, 8000);
 }
 
-const APP_VERSION = 'v37';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
+const APP_VERSION = 'v38';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
 const DEFAULT = {
   duration: 45,          // durée du preset actif (s)
   presetKey: 'custom',   // '40' | 'custom'
