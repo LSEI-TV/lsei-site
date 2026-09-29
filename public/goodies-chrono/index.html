@@ -500,6 +500,35 @@ html, body { overflow-x: hidden; }
 }
 .alert-test:active { border-color: var(--orange); color: var(--orange); }
 .alert-btn:disabled { opacity: 0.35; }
+/* Page 5 : partenaires LSEI TV — logos sur cartes blanches (logos prévus pour fond clair) */
+.partners-intro { font-size: 13px; color: var(--dim); text-align: center; margin: 0 0 12px; line-height: 1.4; }
+.partners-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.partner-card {
+  display: flex; flex-direction: column; gap: 6px;
+  text-decoration: none; color: var(--text);
+  transition: transform .1s;
+}
+.partner-card:active { transform: scale(0.97); }
+.partner-logo {
+  background: #fff; border-radius: 12px;
+  aspect-ratio: 16 / 10;
+  display: flex; align-items: center; justify-content: center;
+  padding: 10px;
+  min-height: 0; overflow: hidden;   /* toutes les cartes à la même hauteur, quel que soit le logo */
+}
+.partner-logo img { width: 100%; height: 100%; object-fit: contain; }
+.partner-name {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
+  text-align: center; color: var(--dim); line-height: 1.2;
+}
+.partners-cta {
+  display: block; text-align: center; margin-top: 14px;
+  color: var(--orange); font-weight: 700; font-size: 13px; text-decoration: none;
+}
+@media (min-width: 481px) { .partners-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 900px) { .partners-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; } }
+
 .club-row { display: flex; align-items: center; gap: 8px; }
 .club-row label {
   font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
@@ -783,7 +812,8 @@ html, body { overflow-x: hidden; }
 
   /* Pages 📋 Feuille + 🏅 Historique : 1 col centré à 900 px avec shadow */
   #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei,
-  #pageConfig > .section, #pageConfig > .footer-lsei { max-width: 900px; margin-left: auto; margin-right: auto; }
+  #pageConfig > .section, #pageConfig > .footer-lsei,
+  #pagePartners > .section, #pagePartners > .footer-lsei { max-width: 900px; margin-left: auto; margin-right: auto; }
 
   /* Page 🎱 Chrono : layout PC 2 rows verticales (la durée se règle en page 4 Configuration).
      Row 1 : Grand cadre chrono + boutons Démarrer/Reset (pleine largeur)
@@ -828,7 +858,8 @@ html, body { overflow-x: hidden; }
     gap: 24px;
   }
   #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei,
-  #pageConfig > .section, #pageConfig > .footer-lsei { max-width: 1100px; }
+  #pageConfig > .section, #pageConfig > .footer-lsei,
+  #pagePartners > .section, #pagePartners > .footer-lsei { max-width: 1100px; }
   .chrono-val { font-size: clamp(160px, 10vw, 220px); }
   .player-score { font-size: clamp(90px, 6vw, 140px); }
 }
@@ -1701,6 +1732,20 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
   </div>
 </div><!-- /page-config -->
 
+<!-- ═══════════════════════════ PAGE 5 : PARTENAIRES LSEI TV ═══════════════════════════ -->
+<div class="page page-partners" id="pagePartners">
+  <div class="section">
+    <div class="section-title">🤝 Les partenaires de LSEI TV</div>
+    <p class="partners-intro">Ils font confiance à LSEI TV — Le Sport en Image.<br>Touche un logo pour découvrir le partenaire.</p>
+    <div class="partners-grid" id="partnersGrid"></div>
+    <a class="partners-cta" href="https://lsei.tv" target="_blank" rel="noopener">Découvrir LSEI TV → lsei.tv</a>
+  </div>
+
+  <div class="footer-lsei">
+    Un goodies gratuit de <a href="https://lsei.tv" target="_blank" rel="noopener">lsei.tv</a> · Le Sport en Image
+  </div>
+</div><!-- /page-partners -->
+
 </div><!-- /pages -->
 
 <!-- Dots pagination -->
@@ -1709,6 +1754,7 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
   <div class="page-dot" data-page="1"></div>
   <div class="page-dot" data-page="2"></div>
   <div class="page-dot" data-page="3"></div>
+  <div class="page-dot" data-page="4"></div>
 </div>
 
 <!-- Flèches navigation latérales (PC uniquement) -->
@@ -1761,7 +1807,30 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
    STATE (100 % local — pas de serveur, pas de compte, pas de tracking)
    ═══════════════════════════════════════════════════════════════════════ */
 const LS_KEY = 'goodies-chrono-v1';
-const APP_VERSION = 'v33';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
+// Partenaires LSEI TV — même liste et mêmes logos que la page d'accueil du site (src/data/site.ts)
+const PARTNERS = [
+  { name: 'Fédération Française de Billard', logo: '/partenaires/ffbillard.webp', url: 'https://www.ffbillard.com' },
+  { name: 'Pays de Fougères Basket', logo: '/partenaires/fougeres-basket.webp', url: 'https://www.paysdefougeresbasket.fr' },
+  { name: 'Ligue de Bretagne de Football', logo: '/partenaires/ligue-bretagne-foot.webp', url: 'https://footbretagne.fff.fr' },
+  { name: 'Bambis Palets', logo: '/partenaires/bambis-palets.webp', url: 'https://www.facebook.com/cfipalet.35' },
+  { name: 'Palet Club Lanrelas', logo: '/partenaires/palet-club-lanrelas.webp', url: 'https://paletclublanrelas.fr' },
+  { name: 'Bowling Promotion', logo: '/partenaires/bowling-promotion.webp', url: 'https://www.bowlingpromotiontour.com' },
+  { name: 'Sport en France', logo: '/partenaires/sport-en-france.webp', url: 'https://sportenfrance.com' },
+  { name: 'Christophe Lambert', logo: '/partenaires/logo-cl-noir.webp', url: 'https://christophelambert8pool.com' },
+  { name: 'FISTF', logo: '/partenaires/fistf.webp', url: 'https://fistf.com' },
+  { name: '3FTS', logo: '/partenaires/3fts.webp', url: 'https://3fts.fr' },
+];
+function renderPartners() {
+  const grid = document.getElementById('partnersGrid');
+  if (!grid) return;
+  grid.innerHTML = PARTNERS.map(pt => `
+    <a class="partner-card" href="${pt.url}" target="_blank" rel="noopener" title="${escapeHtml(pt.name)}">
+      <span class="partner-logo"><img src="${pt.logo}" alt="${escapeHtml(pt.name)}" loading="lazy"></span>
+      <span class="partner-name">${escapeHtml(pt.name)}</span>
+    </a>`).join('');
+}
+
+const APP_VERSION = 'v34';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
 const DEFAULT = {
   duration: 45,          // durée du preset actif (s)
   presetKey: 'custom',   // '40' | 'custom'
@@ -2644,15 +2713,16 @@ function updateNav(idx) {
     if (idx === 0)      { arrow.textContent = '📋'; arrow.title = 'Feuille de match équipes'; arrow.classList.remove('active'); }
     else if (idx === 1) { arrow.textContent = '🏅'; arrow.title = 'Historique des parties';   arrow.classList.add('active'); }
     else if (idx === 2) { arrow.textContent = '⚙'; arrow.title = 'Configuration';            arrow.classList.add('active'); }
+    else if (idx === 3) { arrow.textContent = '🤝'; arrow.title = 'Partenaires';               arrow.classList.add('active'); }
     else                { arrow.textContent = '←'; arrow.title = 'Revenir au chrono';          arrow.classList.add('active'); }
   }
   if (brand) {
-    brand.textContent = ['🎱 Chrono Billard', '📋 Feuille de match équipe', '🏅 Historique', '⚙ Configuration'][idx] || '🎱 Chrono Billard';
+    brand.textContent = ['🎱 Chrono Billard', '📋 Feuille de match équipe', '🏅 Historique', '⚙ Configuration', '🤝 Partenaires'][idx] || '🎱 Chrono Billard';
   }
   const navL = document.getElementById('navLeft');
   const navR = document.getElementById('navRight');
   if (navL) navL.disabled = idx === 0;
-  if (navR) navR.disabled = idx === 3;
+  if (navR) navR.disabled = idx === 4;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -3178,6 +3248,7 @@ function init() {
   });
   document.getElementById('tvPreviewBtn').addEventListener('click', enterTvMode);
   renderClubConfig();
+  renderPartners();
 
   // Alertes sonores : bip ou voix
   document.querySelectorAll('.alert-btn').forEach(b => b.addEventListener('click', () => setAlertMode(b.dataset.alert)));
@@ -3210,9 +3281,9 @@ function init() {
     autoClearOnFocus(el);
   });
 
-  // Navigation entre pages (cycle 0 → 1 → 2 → 3 → 0)
+  // Navigation entre pages (cycle 0 → 1 → 2 → 3 → 4 → 0)
   document.getElementById('navArrow').addEventListener('click', () => {
-    goToPage((currentPage + 1) % 4);
+    goToPage((currentPage + 1) % 5);
     vibrate(20);
   });
   // Flèches latérales PC : gauche = page précédente, droite = page suivante
@@ -3220,7 +3291,7 @@ function init() {
     if (currentPage > 0) { goToPage(currentPage - 1); vibrate(15); }
   });
   document.getElementById('navRight').addEventListener('click', () => {
-    if (currentPage < 3) { goToPage(currentPage + 1); vibrate(15); }
+    if (currentPage < 4) { goToPage(currentPage + 1); vibrate(15); }
   });
   document.querySelectorAll('.page-dot').forEach(dot => {
     dot.addEventListener('click', () => goToPage(parseInt(dot.dataset.page, 10)));
