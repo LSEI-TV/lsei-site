@@ -1362,6 +1362,27 @@ html, body { overflow-x: hidden; }
   text-align: center;
 }
 .tv-context:empty { display: none; }
+/* Mode TV : partenaire LSEI TV en bas à droite (rotation toutes les 8 s, comme un habillage télé) */
+.tv-partner {
+  position: absolute;
+  right: clamp(12px, 2vw, 32px);
+  bottom: clamp(12px, 2.2vh, 28px);
+  width: clamp(110px, 13vw, 240px);
+  height: clamp(42px, 7.5vh, 96px);
+  background: #fff;
+  border-radius: clamp(8px, 1vw, 14px);
+  padding: clamp(4px, 0.8vh, 10px) clamp(8px, 1vw, 16px);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .5s ease;
+}
+.tv-partner.fading { opacity: 0; }
+.tv-partner.empty { display: none; }
+.tv-partner img { width: 100%; height: 100%; object-fit: contain; }
+/* Écran vertical (téléphone) : en haut à gauche, pour ne pas toucher le chrono en bas (la croix ✕ est à droite) */
+@media (orientation: portrait) {
+  .tv-partner { top: 16px; left: 16px; right: auto; bottom: auto; width: 100px; height: 40px; }
+}
+
 .tv-branding {
   position: absolute;
   bottom: 20px;
@@ -1811,6 +1832,7 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
   <div class="tv-chrono" id="tvChrono">45</div>
   <div class="tv-context" id="tvContext"></div>
   <div class="tv-branding">CHRONO BILLARD · LSEI TV</div>
+  <div class="tv-partner" id="tvPartner" aria-label="Partenaire LSEI TV"><img id="tvPartnerLogo" alt=""></div>
 </div>
 
 <!-- ═══════════════════════════ MODAL QR DE PARTAGE ═══════════════════════════ -->
@@ -1895,7 +1917,33 @@ function startPartnerRotation() {
   pbTimer = setInterval(() => { if (!document.hidden) showPartner(pbIndex + 1, true); }, 8000);
 }
 
-const APP_VERSION = 'v40';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
+/* Mode TV : rotation des partenaires en bas à droite (8 s, fondu, départ au hasard).
+   Tourne uniquement quand l'écran TV est affiché (plein écran local ou fenêtre 2e écran). */
+let tvPbIndex = Math.floor(Math.random() * PARTNERS.length);
+function showTvPartner(idx, withFade) {
+  const box = document.getElementById('tvPartner');
+  const img = document.getElementById('tvPartnerLogo');
+  if (!box || !img || !PARTNERS.length) return;
+  tvPbIndex = (idx + PARTNERS.length) % PARTNERS.length;
+  const pt = PARTNERS[tvPbIndex];
+  const apply = () => { img.src = pt.logo; img.alt = pt.name; box.title = pt.name; box.classList.remove('fading'); };
+  if (withFade) { box.classList.add('fading'); setTimeout(apply, 500); } else apply();
+  new Image().src = PARTNERS[(tvPbIndex + 1) % PARTNERS.length].logo;
+}
+function startTvPartnerRotation() {
+  const img = document.getElementById('tvPartnerLogo');
+  if (!img) return;
+  let failures = 0;
+  img.addEventListener('load', () => { failures = 0; });
+  img.addEventListener('error', () => {
+    if (++failures >= PARTNERS.length) { document.getElementById('tvPartner').classList.add('empty'); return; }
+    showTvPartner(tvPbIndex + 1, false);
+  });
+  showTvPartner(tvPbIndex, false);
+  setInterval(() => { if (tvOn && !document.hidden) showTvPartner(tvPbIndex + 1, true); }, 8000);
+}
+
+const APP_VERSION = 'v41';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
 const DEFAULT = {
   duration: 45,          // durée du preset actif (s)
   presetKey: 'custom',   // '40' | 'custom'
@@ -3170,6 +3218,9 @@ function updateTvDisplay() {
    INIT
    ═══════════════════════════════════════════════════════════════════════ */
 function init() {
+  // Partenaires en mode TV (utile aussi pour la fenêtre 2e écran → lancé avant le return du mode slave)
+  startTvPartnerRotation();
+
   // MODE TV SLAVE : la fenêtre a été ouverte via ?tv=1 → uniquement affichage TV, aucun contrôle
   // Elle écoute les updates de la fenêtre maître via BroadcastChannel et redessine.
   if (isTvSlave) {
