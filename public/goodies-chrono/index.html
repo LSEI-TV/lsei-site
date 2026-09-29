@@ -1942,7 +1942,7 @@ function clearActivePlayer() {
   if (tvOn) updateTvDisplay();
 }
 function resetScores() {
-  if (!confirm('Tout remettre à zéro ?\n\nScores, historique des parties, joueur actif, fautes et extensions seront réinitialisés.\n(Fais un screenshot avant si tu veux garder les résultats.)')) return;
+  if (!confirm('Tout remettre à zéro ?\n\nChrono, scores, historique des parties, joueur actif, fautes et extensions seront réinitialisés.\n(Fais un screenshot avant si tu veux garder les résultats.)')) return;
   S.score1 = 0; S.score2 = 0;
   S.games = [];
   gameStartedAt = null;
@@ -1951,6 +1951,14 @@ function resetScores() {
   document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active'));
   clearActivePlayer();
   resetExtensions();
+  // Chrono : arrêté et remis à la durée configurée
+  if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  running = false;
+  remaining = S.duration;
+  hasBipped = false;
+  hasWarned = false;
+  stopFoulBip();
+  renderChrono();
   renderHistory();
   save();
   vibrate([50, 40, 50]);
