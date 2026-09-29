@@ -1827,10 +1827,8 @@ function useExtension(p) {
   // Seul le joueur en train de jouer (cadre rouge) peut demander son extension
   if (S.activePlayer !== p) { vibrate([20, 40, 20]); return; }
   if (extPlayer === p && running) return;   // déjà en cours pour ce joueur
-  if (S['extUsed' + p]) {
-    const name = (p === 1 ? S.name1 : S.name2) || ('Joueur ' + p);
-    if (!confirm('L\'extension de ' + name + ' a déjà été utilisée dans cette partie.\n\nLa relancer quand même ?')) return;
-  }
+  // 1 seule extension par joueur et par partie (réarmée au prochain +1, quel que soit le joueur)
+  if (S['extUsed' + p]) { vibrate([20, 40, 20]); return; }
   S['extUsed' + p] = true;
   extPlayer = p;
   clearFoulIfOther(p);
