@@ -173,12 +173,16 @@ html, body { overflow-x: hidden; }
 @media (min-width: 900px) {
   .nav-side { display: flex; }
 }
+/* Logo NOVΛ (SVG vectoriel, net à toutes les tailles) : hauteur --tl-h, largeur = hauteur × 3,63 */
 .topbar-logo {
-  height: 40px;
-  width: auto;
+  --tl-h: 34px;
+  height: var(--tl-h);
+  width: calc(var(--tl-h) * 3.63);
   flex-shrink: 0;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+  display: block;
+  cursor: pointer;                 /* touche le logo → retour à l'accueil */
 }
+@media (min-width: 900px) { .topbar-logo { --tl-h: 40px; } }
 .topbar-brand {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 900; font-size: 18px;
@@ -786,7 +790,7 @@ html, body { overflow-x: hidden; }
 @media (max-width: 480px) {
   .chrono-btns { grid-template-columns: 1.7fr 1fr; gap: 8px; }
   .topbar { padding: 8px 8px; gap: 6px; }
-  .topbar-logo { height: 28px; }
+  .topbar-logo { --tl-h: 27px; }
   .topbar-brand { font-size: 13px; letter-spacing: 1px; }
   .topbar-brand small { display: none; }
   .icon-btn, .nav-arrow { width: 32px; height: 32px; font-size: 14px; }
@@ -1563,7 +1567,15 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
 
 <!-- ═══════════════════════════ TOP BAR ═══════════════════════════ -->
 <div class="topbar">
-  <img class="topbar-logo" src="logo-lsei.png" alt="LSEI TV">
+  <svg class="topbar-logo" id="topLogo" viewBox="12 12 566 156" role="img" aria-label="NOVΛ — retour à l'accueil">
+    <circle cx="90" cy="90" r="70" fill="none" stroke="#ff7800" stroke-width="12"/>
+    <polygon fill="#ffffff" points="55,42 125,42 90,90"/>
+    <polygon fill="#ff7800" points="90,90 55,138 125,138"/>
+    <path fill="#ffffff" transform="translate(200,40)" d="M0,100 V0 H22 L48,62 V0 H70 V100 H48 L22,38 V100 Z"/>
+    <circle cx="336" cy="90" r="39" fill="none" stroke="#ffffff" stroke-width="22"/>
+    <polygon fill="#ffffff" transform="translate(402,40)" points="0,0 24,0 40,62 56,0 80,0 52,100 28,100"/>
+    <polygon fill="#ff7800" transform="translate(494,40)" points="28,0 52,0 80,100 56,100 40,38 24,100 0,100"/>
+  </svg>
   <div class="topbar-brand" id="topBrand">🎱 Chrono Billard</div>
   <button class="nav-arrow" id="navArrow" title="Voir l'historique des parties" aria-label="Voir l'historique">🏅</button>
   <button class="icon-btn" id="tvToggle" title="Mode TV plein écran (cet écran)" aria-label="Mode TV plein écran">📺</button>
@@ -2037,7 +2049,7 @@ function startTvPartnerRotation() {
   setInterval(() => { if (tvOn && !document.hidden) showTvPartner(tvPbIndex + 1, true); }, 8000);
 }
 
-const APP_VERSION = 'v44';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
+const APP_VERSION = 'v45';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
 const DEFAULT = {
   duration: 45,          // durée du preset actif (s)
   presetKey: 'custom',   // '40' | 'custom'
@@ -3469,6 +3481,7 @@ function init() {
     goToPage(parseInt(t.dataset.go, 10)); vibrate(15);
   }));
   document.getElementById('homeTv').addEventListener('click', () => { enterTvMode(); vibrate(20); });
+  document.getElementById('topLogo').addEventListener('click', () => { goToPage(0); vibrate(15); });
 
   // Hauteur réelle du header → réservée en haut de chaque page (sauf l'accueil)
   const setTopbarH = () => {
