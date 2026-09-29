@@ -229,7 +229,8 @@ export const goodies = {
   liste: [
     {
       icone: '⏱',
-      nom: 'Chrono Billard',
+      logo: '/goodies-chrono/icons/nova-512.png',
+      nom: 'NOVA',
       texte: 'Le chrono de vos parties de blackball : 40 secondes, ou la durée de votre choix. Avec le score des deux joueurs.',
       lien: '/goodies-chrono/',
       bouton: 'Ouvrir le chrono',

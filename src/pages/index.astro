@@ -520,7 +520,7 @@ const slides = programme
         <div class="goodies-list">
           {goodies.liste.map((g) => (
             <a href={g.lien} class="goodie" target="_blank" rel="noopener">
-              <span class="goodie-ico" aria-hidden="true">{g.icone}</span>
+              <span class:list={["goodie-ico", { "goodie-ico--logo": g.logo }]} aria-hidden="true">{g.logo ? <img src={assetUrl(g.logo)} alt="" width="52" height="52" loading="lazy" /> : g.icone}</span>
               <span class="goodie-txt">
                 <span class="goodie-nom">{g.nom}</span>
                 <span class="goodie-desc">{g.texte}</span>
