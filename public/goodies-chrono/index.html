@@ -512,24 +512,13 @@ html, body { overflow-x: hidden; }
 .alert-test:active { border-color: var(--orange); color: var(--orange); }
 .alert-btn:disabled { opacity: 0.35; }
 /* Page 0 : accueil NOVΛ (logo animé + bouton Lancer le chrono + raccourcis) */
-/* Accueil = espace haut + bloc principal (logo, bouton, tuiles) + zone partenaire qui prend
-   l'espace restant jusqu'aux points : le logo partenaire y est centré automatiquement, sur tout écran */
+/* Accueil : bloc principal (logo, bouton, tuiles) centré verticalement — pas de partenaire sur cette page */
 .home {
   flex: 1 0 auto;
-  display: flex; flex-direction: column; align-items: center;
-  padding: 16px 16px 0; text-align: center;
-  --hp-w: 200px; --hp-h: 64px;     /* taille de la carte partenaire de l'accueil */
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 16px 16px 8px; text-align: center;
 }
-.home::before { content: ''; flex: 0.7 1 0; min-height: 8px; }
 .home-main { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
-.home-partner {
-  flex: 1 1 0; width: 100%;
-  min-height: calc(var(--hp-h) + 24px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 12px 0;
-  margin-bottom: -22px;            /* la zone descend jusqu'aux points de pagination → logo centré entre tuiles et points */
-}
-.home-partner .pb-card { width: var(--hp-w); height: var(--hp-h); padding: 6px 12px; border-radius: 12px; }
 .home-logo svg { width: min(74vw, 340px); height: auto; display: block; }
 .home-tag {
   font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
@@ -558,10 +547,8 @@ html, body { overflow-x: hidden; }
 .home-tile.ht-wide { grid-column: 1 / -1; flex-direction: row; justify-content: center; gap: 8px; padding: 11px 6px; border-color: rgba(255,120,0,0.45); }
 .home-tile:active { transform: scale(0.96); border-color: var(--orange); }
 /* Carte partenaire de l'accueil : plus petite quand l'écran est moins haut */
-@media (max-height: 780px) { .home { --hp-w: 180px; --hp-h: 58px; } }
-@media (max-height: 740px) { .home { --hp-w: 160px; --hp-h: 50px; } }
 /* Écrans peu hauts : logo plus petit */
-@media (max-height: 700px) { .home-logo svg { width: min(58vw, 250px); } .home-main { gap: 9px; } .home { --hp-w: 132px; --hp-h: 42px; } }
+@media (max-height: 700px) { .home-logo svg { width: min(58vw, 250px); } .home-main { gap: 9px; } }
 /* Tablette / PC : tout l'accueil grandit avec l'écran (logo proportionnel à la hauteur, colonne 480 px) */
 @media (min-width: 700px) {
   .home-logo svg { width: clamp(240px, 44vh, 560px); }
@@ -573,10 +560,8 @@ html, body { overflow-x: hidden; }
   .home-tile .ht-ic { font-size: 24px; }
   .home-tile.ht-wide { padding: 13px 8px; }
 }
-@media (min-width: 700px) and (min-height: 700px) { .home { --hp-w: 220px; --hp-h: 68px; } }
-@media (min-width: 700px) and (min-height: 820px) { .home { --hp-w: 260px; --hp-h: 80px; } }
 /* PC peu haut (portable 768 px) : logo NOVΛ un peu plus petit pour laisser respirer le partenaire */
-@media (min-width: 700px) and (max-height: 820px) { .home-logo svg { width: clamp(240px, 39vh, 560px); } .home::before { flex-grow: 0.25; } }
+@media (min-width: 700px) and (max-height: 820px) { .home-logo svg { width: clamp(240px, 39vh, 560px); } }
 /* Animation d'ouverture : le sable s'écoule, puis les lettres apparaissent */
 @keyframes sandTop  { from { transform: scaleY(1); }   to { transform: scaleY(0.42); } }
 @keyframes sandBot  { from { transform: scaleY(0); }   to { transform: scaleY(1); } }
@@ -1640,9 +1625,6 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
       <button class="home-tile ht-wide" type="button" id="homeTv"><span class="ht-ic">📺</span>Mode TV (écran public)</button>
     </div>
     </div><!-- /home-main -->
-    <div class="home-partner" aria-label="Partenaires LSEI TV">
-      <a class="pb-card" id="pbLinkHome" href="https://lsei.tv" target="_blank" rel="noopener"><img id="pbLogoHome" alt=""></a>
-    </div>
   </div>
 </div><!-- /page-home -->
 
@@ -2025,8 +2007,8 @@ function showPartner(idx, withFade) {
   if (!PARTNERS.length) return;
   pbIndex = (idx + PARTNERS.length) % PARTNERS.length;
   const pt = PARTNERS[pbIndex];
-  // Même partenaire sur la page chrono et sur l'accueil
-  [['pbLink', 'pbLogo'], ['pbLinkHome', 'pbLogoHome']].forEach(([cid, iid]) => {
+  // Bandeau partenaire de la page chrono
+  [['pbLink', 'pbLogo']].forEach(([cid, iid]) => {
     const card = document.getElementById(cid);
     const img = document.getElementById(iid);
     if (!card || !img) return;
@@ -2081,7 +2063,7 @@ function startTvPartnerRotation() {
   setInterval(() => { if (tvOn && !document.hidden) showTvPartner(tvPbIndex + 1, true); }, 8000);
 }
 
-const APP_VERSION = 'v48';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
+const APP_VERSION = 'v49';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
 const DEFAULT = {
   duration: 45,          // durée du preset actif (s)
   presetKey: 'custom',   // '40' | 'custom'
