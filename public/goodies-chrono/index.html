@@ -409,6 +409,10 @@ html, body { overflow-x: hidden; }
   pointer-events: none;                    /* le tap passe à l'input derrière */
 }
 .player-name-row:focus-within .player-name-edit { color: var(--orange); opacity: 1; }
+/* Le champ nom rétrécit pour laisser la place au F et au crayon (noms longs sur petit écran) */
+.player-name-row { min-width: 0; }
+.player-name-row .player-name { flex: 0 1 auto; min-width: 0; text-overflow: ellipsis; }
+.player-name-edit { flex: 0 0 auto; }
 /* Pastille F (faute) : le chrono est arrivé à 0 pendant le tour de ce joueur */
 .foul-badge {
   display: none;
@@ -669,6 +673,8 @@ html, body { overflow-x: hidden; }
   .player-card { padding: 8px 6px; }
   .player-name { font-size: 12px; letter-spacing: 1px; padding: 3px 4px; max-width: calc(100% - 20px); }
   .player-name-edit { font-size: 11px; }
+  .player-name-row { gap: 4px; }
+  .foul-badge { font-size: 14px; padding: 2px 5px; }
   .player-score {
     font-size: clamp(48px, 14vw, 80px);
     padding: 4px 6px 14px;
@@ -786,6 +792,21 @@ html, body { overflow-x: hidden; }
   #pageConfig > .section, #pageConfig > .footer-lsei { max-width: 1100px; }
   .chrono-val { font-size: clamp(160px, 10vw, 220px); }
   .player-score { font-size: clamp(90px, 6vw, 140px); }
+}
+
+/* Écran large mais peu haut (tablette paysage, portable 768 px) : tout le chrono tient sans scroll */
+@media (min-width: 900px) and (orientation: landscape) and (max-height: 860px) {
+  #pageMain { gap: 10px; padding-top: 8px; padding-bottom: 36px; }
+  .chrono-section { padding: 10px 12px; }
+  .chrono-val { font-size: clamp(80px, 17vh, 150px); padding: 4px 16px 10px; margin-bottom: 10px; }
+  .chrono-btn { font-size: 18px; padding: 12px 10px; }
+  .section-scores .section-title { margin-bottom: 6px; }
+  .player-card { padding: 8px 10px; }
+  .player-score { font-size: clamp(52px, 10vh, 100px); padding: 2px 10px 10px; margin: 6px 0; }
+  .score-btn { font-size: 19px; padding: 10px 6px; }
+  .scores { gap: 10px; }
+  .ext-btn { padding: 7px 6px; font-size: 16px; }
+  .scores-reset { margin-top: 6px; padding: 8px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1390,8 +1411,8 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
       </div>
     </div>
     <!-- Extensions : 1 par joueur et par partie, réarmée à chaque +1 -->
-    <button class="ext-btn p1" id="ext1" type="button"><span class="ext-label">⏱ Extension</span><span class="ext-sub" id="ext1Sub">45 s</span></button>
-    <button class="ext-btn p2" id="ext2" type="button"><span class="ext-label">⏱ Extension</span><span class="ext-sub" id="ext2Sub">45 s</span></button>
+    <button class="ext-btn p1" id="ext1" type="button"><span class="ext-label">⏱ Extension</span><span class="ext-sub" id="ext1Sub">+45 s</span></button>
+    <button class="ext-btn p2" id="ext2" type="button"><span class="ext-label">⏱ Extension</span><span class="ext-sub" id="ext2Sub">+45 s</span></button>
   </div>
   <button class="scores-reset" id="scoresReset">⟳ Remettre tout à zéro</button>
 </div>
@@ -1566,7 +1587,7 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
       <input type="number" id="extSec" min="5" max="600" step="1" value="45">
       <label>secondes</label>
     </div>
-    <p class="config-hint">1 extension par joueur et par partie. Elle se réarme automatiquement à chaque point marqué (+1).</p>
+    <p class="config-hint">1 extension par joueur et par partie : elle s'ajoute au temps restant du chrono. Elle se réarme automatiquement à chaque point marqué (+1).</p>
   </div>
 
   <div class="footer-lsei">
@@ -1779,13 +1800,13 @@ function useExtension(p) {
   // Le joueur qui demande l'extension devient le joueur actif (halo)
   S.activePlayer = p;
   document.querySelectorAll('.player-card').forEach(c => c.classList.toggle('active', c.classList.contains('p' + p)));
-  if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
-  remaining = S.extensionSec;
+  // L'extension s'AJOUTE au temps restant (ex. 12 s restantes + 45 s = 57 s)
+  remaining = Math.max(0, remaining) + S.extensionSec;
   running = true;
   hasBipped = false;
-  hasWarned = false;
+  if (remaining > 20) hasWarned = false;   // ré-arme l'alerte des 20 s
   if (gameStartedAt === null) gameStartedAt = Date.now();
-  tickInterval = setInterval(tick, 1000);
+  if (!tickInterval) tickInterval = setInterval(tick, 1000);   // chrono déjà lancé : on garde son rythme
   save();
   renderChrono();
   vibrate([40, 40, 40]);
@@ -1814,7 +1835,7 @@ function renderExtensions() {
     const isRunning = extPlayer === p && running;
     btn.classList.toggle('running', isRunning);
     btn.classList.toggle('used', !!S['extUsed' + p] && !isRunning);
-    sub.textContent = isRunning ? 'En cours' : (S['extUsed' + p] ? 'Utilisée' : S.extensionSec + ' s');
+    sub.textContent = isRunning ? 'En cours' : (S['extUsed' + p] ? 'Utilisée' : '+' + S.extensionSec + ' s');
   });
 }
 
