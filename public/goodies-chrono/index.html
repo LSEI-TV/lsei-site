@@ -6,16 +6,16 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Chrono Billard">
+<meta name="apple-mobile-web-app-title" content="NOVΛ">
 <meta name="theme-color" content="#0a0c10">
 <meta name="description" content="Chrono billard gratuit : shot clock 40 s (blackball), 60 s (snooker), 30 s ou perso, scores 2 joueurs, thème clair/sombre, offline. Un goodies de lsei.tv.">
-<meta property="og:title" content="Chrono Billard — Shot clock gratuit">
+<meta property="og:title" content="NOVΛ — le chrono billard gratuit de LSEI TV">
 <meta property="og:description" content="Shot clock 40 s / 60 s / 30 s + scores 2 joueurs. Gratuit, sans compte, marche hors-ligne.">
 <meta property="og:type" content="website">
-<title>Chrono Billard — un goodies LSEI TV</title>
+<title>NOVΛ — Chrono billard · LSEI TV</title>
 
-<link rel="icon" href="/favicon.svg">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" href="icons/nova-favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/nova-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@500;700&display=swap" rel="stylesheet">
 
@@ -500,6 +500,55 @@ html, body { overflow-x: hidden; }
 }
 .alert-test:active { border-color: var(--orange); color: var(--orange); }
 .alert-btn:disabled { opacity: 0.35; }
+/* Page 0 : accueil NOVΛ (logo animé + bouton Lancer le chrono + raccourcis) */
+.home {
+  flex: 1 0 auto;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 20px 16px 8px; text-align: center;
+}
+.home-logo svg { width: min(74vw, 340px); height: auto; display: block; }
+.home-tag {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: 14px; letter-spacing: 6px; text-transform: uppercase; color: var(--dim);
+  margin-top: -4px;
+}
+.home-sub { font-size: 13px; color: var(--dim); max-width: 320px; line-height: 1.4; }
+.home-start {
+  width: min(100%, 360px);
+  background: var(--orange); color: #1a0d00; border: none; border-radius: 14px;
+  padding: 16px 20px 14px;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 24px;
+  letter-spacing: 2px; text-transform: uppercase;
+  transition: transform .08s;
+}
+.home-start:active { transform: scale(0.97); }
+.home-tiles { width: min(100%, 360px); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.home-tile {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  color: var(--text); padding: 10px 6px 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px;
+  letter-spacing: 1px; text-transform: uppercase;
+  transition: transform .08s, border-color .15s;
+}
+.home-tile .ht-ic { font-size: 20px; line-height: 1; }
+.home-tile:active { transform: scale(0.96); border-color: var(--orange); }
+.page-home .partner-banner { padding-top: 10px; }
+/* Écrans peu hauts : logo plus petit */
+@media (max-height: 700px) { .home-logo svg { width: min(58vw, 250px); } .home { gap: 9px; } }
+/* Animation d'ouverture : le sable s'écoule, puis les lettres apparaissent */
+@keyframes sandTop  { from { transform: scaleY(1); }   to { transform: scaleY(0.42); } }
+@keyframes sandBot  { from { transform: scaleY(0); }   to { transform: scaleY(1); } }
+@keyframes ringIn   { from { opacity: 0; transform: rotate(-90deg); } to { opacity: 1; transform: rotate(0); } }
+@keyframes letterIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.home-logo .hl-ring { transform-box: fill-box; transform-origin: center; animation: ringIn .6s ease-out both; }
+.home-logo .hl-top  { transform-box: fill-box; transform-origin: 50% 100%; animation: sandTop 1.1s .3s ease-in-out both; }
+.home-logo .hl-bot  { transform-box: fill-box; transform-origin: 50% 100%; animation: sandBot 1.1s .3s ease-in-out both; }
+.home-logo .hl-l    { animation: letterIn .45s ease-out both; animation-delay: calc(1.1s + var(--i) * .12s); }
+@media (prefers-reduced-motion: reduce) {
+  .home-logo .hl-ring, .home-logo .hl-top, .home-logo .hl-bot, .home-logo .hl-l { animation: none; }
+}
+
 /* Page 5 : partenaires LSEI TV — logos sur cartes blanches (logos prévus pour fond clair) */
 .partners-intro { font-size: 12px; color: var(--dim); text-align: center; margin: 0 0 10px; line-height: 1.35; }
 /* 3 colonnes dès le téléphone : les 10 logos tiennent sur un seul écran */
@@ -1513,6 +1562,36 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
 
 <div class="pages" id="pages">
 
+<!-- ═══════════════════════════ PAGE 0 : ACCUEIL NOVΛ ═══════════════════════════ -->
+<div class="page page-home" id="pageHome">
+  <div class="home">
+    <div class="home-logo" aria-label="NOVΛ by LSEI TV" role="img">
+      <svg viewBox="0 0 440 350" xmlns="http://www.w3.org/2000/svg">
+        <circle class="hl-ring" cx="220" cy="110" r="90" fill="none" stroke="#ff7800" stroke-width="15.4"/>
+        <polygon class="hl-top" fill="#ffffff" points="175,48.3 265,48.3 220,110"/>
+        <polygon class="hl-bot" fill="#ff7800" points="220,110 175,171.7 265,171.7"/>
+        <!-- chaque lettre dans un groupe animé : l'animation CSS ne doit pas écraser le translate() de la forme -->
+        <g class="hl-l" style="--i:0"><path fill="#ffffff" transform="translate(33,240)" d="M0,100 V0 H22 L48,62 V0 H70 V100 H48 L22,38 V100 Z"/></g>
+        <g class="hl-l" style="--i:1"><circle cx="169" cy="290" r="39" fill="none" stroke="#ffffff" stroke-width="22"/></g>
+        <g class="hl-l" style="--i:2"><polygon fill="#ffffff" transform="translate(235,240)" points="0,0 24,0 40,62 56,0 80,0 52,100 28,100"/></g>
+        <g class="hl-l" style="--i:3"><polygon fill="#ff7800" transform="translate(327,240)" points="28,0 52,0 80,100 56,100 40,38 24,100 0,100"/></g>
+      </svg>
+    </div>
+    <div class="home-tag">by LSEI TV</div>
+    <p class="home-sub">Le chrono billard gratuit : shot clock, extensions, fautes, voix et mode TV.</p>
+    <button class="home-start" id="homeStart" type="button">▶ Lancer le chrono</button>
+    <div class="home-tiles">
+      <button class="home-tile" type="button" data-go="2"><span class="ht-ic">📋</span>Match d'équipes</button>
+      <button class="home-tile" type="button" data-go="3"><span class="ht-ic">🏅</span>Historique</button>
+      <button class="home-tile" type="button" data-go="4"><span class="ht-ic">⚙</span>Configuration</button>
+      <button class="home-tile" type="button" data-go="5"><span class="ht-ic">🤝</span>Partenaires</button>
+    </div>
+    <div class="partner-banner" aria-label="Partenaires LSEI TV">
+      <a class="pb-card" id="pbLinkHome" href="https://lsei.tv" target="_blank" rel="noopener"><img id="pbLogoHome" alt=""></a>
+    </div>
+  </div>
+</div><!-- /page-home -->
+
 <!-- ═══════════════════════════ PAGE 1 : CHRONO PRINCIPAL ═══════════════════════════ -->
 <div class="page page-main" id="pageMain">
 
@@ -1805,6 +1884,7 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
   <div class="page-dot" data-page="2"></div>
   <div class="page-dot" data-page="3"></div>
   <div class="page-dot" data-page="4"></div>
+  <div class="page-dot" data-page="5"></div>
 </div>
 
 <!-- Flèches navigation latérales (PC uniquement) -->
@@ -1831,7 +1911,7 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
   </div>
   <div class="tv-chrono" id="tvChrono">45</div>
   <div class="tv-context" id="tvContext"></div>
-  <div class="tv-branding">CHRONO BILLARD · LSEI TV</div>
+  <div class="tv-branding">NOVΛ · LSEI TV</div>
   <div class="tv-partner" id="tvPartner" aria-label="Partenaire LSEI TV"><img id="tvPartnerLogo" alt=""></div>
 </div>
 
@@ -1888,19 +1968,23 @@ function renderPartners() {
 let pbIndex = Math.floor(Math.random() * PARTNERS.length);
 let pbTimer = null;
 function showPartner(idx, withFade) {
-  const card = document.getElementById('pbLink');
-  const img = document.getElementById('pbLogo');
-  if (!card || !img || !PARTNERS.length) return;
+  if (!PARTNERS.length) return;
   pbIndex = (idx + PARTNERS.length) % PARTNERS.length;
   const pt = PARTNERS[pbIndex];
-  const apply = () => {
-    img.src = pt.logo;
-    img.alt = pt.name;
-    card.href = pt.url;
-    card.title = pt.name + ' — partenaire LSEI TV';
-    card.classList.remove('fading');
-  };
-  if (withFade) { card.classList.add('fading'); setTimeout(apply, 350); } else apply();
+  // Même partenaire sur la page chrono et sur l'accueil
+  [['pbLink', 'pbLogo'], ['pbLinkHome', 'pbLogoHome']].forEach(([cid, iid]) => {
+    const card = document.getElementById(cid);
+    const img = document.getElementById(iid);
+    if (!card || !img) return;
+    const apply = () => {
+      img.src = pt.logo;
+      img.alt = pt.name;
+      card.href = pt.url;
+      card.title = pt.name + ' — partenaire LSEI TV';
+      card.classList.remove('fading');
+    };
+    if (withFade) { card.classList.add('fading'); setTimeout(apply, 350); } else apply();
+  });
   // Précharge le logo suivant pour un fondu sans trou
   new Image().src = PARTNERS[(pbIndex + 1) % PARTNERS.length].logo;
 }
@@ -1943,7 +2027,7 @@ function startTvPartnerRotation() {
   setInterval(() => { if (tvOn && !document.hidden) showTvPartner(tvPbIndex + 1, true); }, 8000);
 }
 
-const APP_VERSION = 'v41';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
+const APP_VERSION = 'v42';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
 const DEFAULT = {
   duration: 45,          // durée du preset actif (s)
   presetKey: 'custom',   // '40' | 'custom'
@@ -2588,7 +2672,7 @@ function startTeamMatch(s, mm) {
   resetExtensions();
   renderChrono();
   save();
-  goToPage(0);
+  goToPage(1);
   updateContextBar();
   vibrate(30);
 }
@@ -2683,7 +2767,7 @@ function onTeamMatchEnd(winner) {
     document.getElementById('name2').value = 'Joueur 2';
     save();
     renderMatchSheet();
-    goToPage(1);
+    goToPage(2);
     updateContextBar();
   }, 2600);
 }
@@ -2783,7 +2867,7 @@ function checkImportedMatchFromUrl() {
   }
   save();
   renderMatchSheet();
-  goToPage(1);
+  goToPage(2);
 }
 
 function resetTeamMatch() {
@@ -2823,19 +2907,20 @@ function updateNav(idx) {
   const brand = document.getElementById('topBrand');
   // 0 : chrono libre · 1 : feuille de match équipes · 2 : historique · 3 : configuration
   if (arrow) {
-    if (idx === 0)      { arrow.textContent = '📋'; arrow.title = 'Feuille de match équipes'; arrow.classList.remove('active'); }
-    else if (idx === 1) { arrow.textContent = '🏅'; arrow.title = 'Historique des parties';   arrow.classList.add('active'); }
-    else if (idx === 2) { arrow.textContent = '⚙'; arrow.title = 'Configuration';            arrow.classList.add('active'); }
-    else if (idx === 3) { arrow.textContent = '🤝'; arrow.title = 'Partenaires';               arrow.classList.add('active'); }
+    if (idx === 0)      { arrow.textContent = '🎱'; arrow.title = 'Chrono';                   arrow.classList.remove('active'); }
+    else if (idx === 1) { arrow.textContent = '📋'; arrow.title = 'Feuille de match équipes'; arrow.classList.remove('active'); }
+    else if (idx === 2) { arrow.textContent = '🏅'; arrow.title = 'Historique des parties';   arrow.classList.add('active'); }
+    else if (idx === 3) { arrow.textContent = '⚙'; arrow.title = 'Configuration';            arrow.classList.add('active'); }
+    else if (idx === 4) { arrow.textContent = '🤝'; arrow.title = 'Partenaires';               arrow.classList.add('active'); }
     else                { arrow.textContent = '←'; arrow.title = 'Revenir au chrono';          arrow.classList.add('active'); }
   }
   if (brand) {
-    brand.textContent = ['🎱 Chrono Billard', '📋 Feuille de match équipe', '🏅 Historique', '⚙ Configuration', '🤝 Partenaires'][idx] || '🎱 Chrono Billard';
+    brand.textContent = ['NOVΛ', '🎱 Chrono Billard', '📋 Feuille de match équipe', '🏅 Historique', '⚙ Configuration', '🤝 Partenaires'][idx] || 'NOVΛ';
   }
   const navL = document.getElementById('navLeft');
   const navR = document.getElementById('navRight');
   if (navL) navL.disabled = idx === 0;
-  if (navR) navR.disabled = idx === 4;
+  if (navR) navR.disabled = idx === 5;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -3367,6 +3452,24 @@ function init() {
   renderPartners();
   startPartnerRotation();
 
+  // Accueil : bouton « Lancer le chrono » + tuiles de raccourci
+  document.getElementById('homeStart').addEventListener('click', () => { goToPage(1); vibrate(20); });
+  document.querySelectorAll('.home-tile').forEach(t => t.addEventListener('click', () => {
+    goToPage(parseInt(t.dataset.go, 10)); vibrate(15);
+  }));
+
+  // Ouverture intelligente : match en cours (score ≠ 0-0 ou rencontre d'équipe lancée) → directement le chrono,
+  // sinon l'accueil NOVΛ
+  const matchInProgress = (S.score1 || 0) + (S.score2 || 0) > 0 || !!(S.match && S.match.activeCell);
+  const startPage = matchInProgress ? 1 : 0;
+  setTimeout(() => {
+    const pg = document.getElementById('pages');
+    pg.style.scrollBehavior = 'auto';
+    pg.scrollLeft = startPage * pg.clientWidth;
+    pg.style.scrollBehavior = '';
+    updateNav(startPage);
+  }, 0);
+
   // Alertes sonores : bip ou voix
   document.querySelectorAll('.alert-btn').forEach(b => b.addEventListener('click', () => setAlertMode(b.dataset.alert)));
   document.getElementById('alertTest').addEventListener('click', testAlert);
@@ -3398,9 +3501,9 @@ function init() {
     autoClearOnFocus(el);
   });
 
-  // Navigation entre pages (cycle 0 → 1 → 2 → 3 → 4 → 0)
+  // Navigation entre pages (cycle 0 accueil → 1 chrono → 2 → 3 → 4 → 5 → 0)
   document.getElementById('navArrow').addEventListener('click', () => {
-    goToPage((currentPage + 1) % 5);
+    goToPage((currentPage + 1) % 6);
     vibrate(20);
   });
   // Flèches latérales PC : gauche = page précédente, droite = page suivante
@@ -3408,7 +3511,7 @@ function init() {
     if (currentPage > 0) { goToPage(currentPage - 1); vibrate(15); }
   });
   document.getElementById('navRight').addEventListener('click', () => {
-    if (currentPage < 4) { goToPage(currentPage + 1); vibrate(15); }
+    if (currentPage < 5) { goToPage(currentPage + 1); vibrate(15); }
   });
   document.querySelectorAll('.page-dot').forEach(dot => {
     dot.addEventListener('click', () => goToPage(parseInt(dot.dataset.page, 10)));
