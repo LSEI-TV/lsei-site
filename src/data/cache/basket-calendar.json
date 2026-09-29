@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-28T20:59:30.388Z",
+  "updated": "2026-09-29T14:57:00.969Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
   "pool": "Poule B",
   "matches": [
@@ -64,6 +64,11 @@
       "awaySlug": "challans"
     },
     {
+      "date": "2026-10-07",
+      "homeSlug": "bordeaux",
+      "awaySlug": "laval"
+    },
+    {
       "date": "2026-10-09",
       "homeSlug": "tours",
       "awaySlug": "vitre"
@@ -77,11 +82,6 @@
       "date": "2026-10-09",
       "homeSlug": "rennes",
       "awaySlug": "sables"
-    },
-    {
-      "date": "2026-10-09",
-      "homeSlug": "bordeaux",
-      "awaySlug": "laval"
     },
     {
       "date": "2026-10-09",
