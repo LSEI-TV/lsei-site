@@ -235,7 +235,7 @@ html, body { overflow-x: hidden; }
   grid-template-columns: 1fr 1fr;
   gap: 6px;
 }
-.preset-btn {
+.preset-btn, .alert-btn {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -247,13 +247,13 @@ html, body { overflow-x: hidden; }
   transition: background .15s, border-color .15s, transform .08s;
   display: flex; flex-direction: column; align-items: center; gap: 2px;
 }
-.preset-btn:active { transform: scale(0.96); }
-.preset-btn.active {
+.preset-btn:active, .alert-btn:active { transform: scale(0.96); }
+.preset-btn.active, .alert-btn.active {
   background: rgba(255,120,0,0.18);
   border-color: var(--orange);
   color: var(--orange);
 }
-.preset-btn .preset-dur {
+.preset-btn .preset-dur, .alert-btn .preset-dur {
   font-size: 20px; font-weight: 900;
   color: inherit;
 }
@@ -488,6 +488,15 @@ html, body { overflow-x: hidden; }
 .ext-btn.p1.running { box-shadow: 0 0 18px rgba(125,211,252,0.55); }
 .ext-btn.p2.running { box-shadow: 0 0 18px rgba(196,181,253,0.55); }
 @keyframes extPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+.alert-test {
+  display: block; width: 100%; margin-top: 8px;
+  background: transparent; border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); padding: 10px;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+.alert-test:active { border-color: var(--orange); color: var(--orange); }
+.alert-btn:disabled { opacity: 0.35; }
 .config-hint { font-size: 12px; color: var(--dim); text-align: center; margin: 10px 4px 0; line-height: 1.4; }
 
 .scores-reset {
@@ -670,8 +679,8 @@ html, body { overflow-x: hidden; }
   }
   .chrono-btn { padding: 14px 8px; font-size: 17px; letter-spacing: 1.5px; }
 
-  .preset-btn { padding: 8px 4px; }
-  .preset-btn .preset-dur { font-size: 18px; }
+  .preset-btn, .alert-btn { padding: 8px 4px; }
+  .preset-btn .preset-dur, .alert-btn .preset-dur { font-size: 18px; }
 
   .scores { gap: 6px; }
   .player-card { padding: 8px 6px; }
@@ -719,8 +728,8 @@ html, body { overflow-x: hidden; }
   .chrono-val { font-size: 88px; padding: 10px 10px; margin-bottom: 10px; border-width: 2px; }
   .chrono-btn { font-size: 16px; padding: 12px 6px; letter-spacing: 1.2px; }
 
-  .preset-btn { padding: 6px 4px; }
-  .preset-btn .preset-dur { font-size: 17px; }
+  .preset-btn, .alert-btn { padding: 6px 4px; }
+  .preset-btn .preset-dur, .alert-btn .preset-dur { font-size: 17px; }
 
   .scores { gap: 8px; }
   .player-card { padding: 8px 8px; }
@@ -1600,6 +1609,16 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
     <p class="config-hint">1 extension par joueur et par partie : elle s'ajoute au temps restant du chrono. Elle se réarme automatiquement à chaque point marqué (+1).</p>
   </div>
 
+  <div class="section section-alerts">
+    <div class="section-title">🔊 Alertes sonores</div>
+    <div class="presets">
+      <button class="alert-btn" type="button" data-alert="bip"><span class="preset-dur">🔔</span><span>Bip</span></button>
+      <button class="alert-btn" type="button" data-alert="voice" id="alertVoiceBtn"><span class="preset-dur">🗣</span><span>Voix</span></button>
+    </div>
+    <button class="alert-test" id="alertTest" type="button">▶ Tester</button>
+    <p class="config-hint" id="alertHint">Voix : « Vingt secondes », « Cinq… quatre… trois… deux… un », « Temps écoulé, faute » + nom du joueur. Les vibrations restent actives dans les 2 modes.</p>
+  </div>
+
   <div class="footer-lsei">
     Un goodies gratuit de <a href="https://lsei.tv" target="_blank" rel="noopener">lsei.tv</a> · Le Sport en Image
   </div>
@@ -1667,6 +1686,7 @@ const DEFAULT = {
   customSec: 45,         // durée du preset perso
   configTouched: false,  // true dès que la durée a été réglée en page Configuration (sinon 45 s à l'ouverture)
   extensionSec: 45,      // durée d'une extension (s)
+  alertMode: 'bip',      // 'bip' | 'voice' : alertes du chrono en bips ou annoncées par la voix du téléphone
   extUsed1: false,       // extension déjà utilisée dans la partie en cours (réarmée à chaque +1)
   extUsed2: false,
   score1: 0,
@@ -1767,16 +1787,16 @@ function tick() {
     clearInterval(tickInterval);
     tickInterval = null;
     // 0 s = FAUTE : bip continu de 3 s + vibration de 3 s
-    if (!hasBipped) { hasBipped = true; bipFoul(); vibrate(3000); }
+    if (!hasBipped) { hasBipped = true; alertFoul(); vibrate(3000); }
     if (S.activePlayer === 1 || S.activePlayer === 2) { S.foulPlayer = S.activePlayer; save(); }
   } else if (remaining === 20 && !hasWarned) {
     // 20 s restantes : avertissement
     hasWarned = true;
-    bip();
+    alert20();
     vibrate(400);
   } else if (remaining <= 5) {
     // 5 dernières secondes : bip + vibration à chaque seconde
-    bipCount();
+    alertCount(remaining);
     vibrate(150);
   } else if (remaining > 20) {
     hasWarned = false;   // safety : ré-armé si un tap rebascule au-dessus de 20 → nouvelle alerte au prochain passage
@@ -1820,6 +1840,7 @@ function useExtension(p) {
   save();
   renderChrono();
   vibrate([40, 40, 40]);
+  if (voiceActive()) speak('Extension, ' + spokenName(p));
 }
 /* F rouge : disparaît quand l'AUTRE joueur prend la main (tap sur son cadre ou son extension) */
 function renderFouls() {
@@ -2585,16 +2606,116 @@ function bipFoul() {
   foulOsc = osc;
 }
 function stopFoulBip() {
+  if (foulSpeaking) {
+    foulSpeaking = false;
+    try { speechSynthesis.cancel(); } catch (e) {}
+  }
   if (!foulOsc) return;
   try { foulOsc.stop(); } catch (e) {}
   foulOsc = null;
   vibrate(0);
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   VOIX — synthèse vocale du téléphone (Web Speech API, sans réseau ni fichier)
+   ═══════════════════════════════════════════════════════════════════════ */
+const hasSpeech = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+let frVoice = null;
+let foulSpeaking = false;
+function pickFrenchVoice() {
+  if (!hasSpeech) return;
+  const voices = speechSynthesis.getVoices() || [];
+  const fr = voices.filter(v => (v.lang || '').toLowerCase().startsWith('fr'));
+  frVoice = fr.find(v => v.lang === 'fr-FR' && v.localService)
+         || fr.find(v => v.lang === 'fr-FR')
+         || fr[0] || null;
+}
+if (hasSpeech) {
+  pickFrenchVoice();
+  speechSynthesis.onvoiceschanged = pickFrenchVoice;   // Chrome/Android chargent les voix en différé
+}
+function voiceActive() { return S.alertMode === 'voice' && hasSpeech; }
+function speak(text, opts) {
+  if (!hasSpeech) return;
+  try {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'fr-FR';
+    if (frVoice) u.voice = frVoice;
+    u.rate = (opts && opts.rate) || 1.15;
+    u.volume = 1;
+    if (opts && opts.onend) u.onend = opts.onend;
+    // Pas de file d'attente : l'annonce la plus récente coupe la précédente.
+    // Safari iPhone ignore parfois un speak() lancé juste après cancel() → petit délai dans ce cas.
+    if (speechSynthesis.speaking || speechSynthesis.pending) {
+      speechSynthesis.cancel();
+      setTimeout(() => { try { speechSynthesis.speak(u); } catch (e) {} }, 60);
+    } else {
+      speechSynthesis.speak(u);
+    }
+  } catch (e) {}
+}
+// Noms saisis en MAJUSCULES : certaines voix les épellent → on les passe en « Jean-Christophe »
+function spokenName(p) {
+  const raw = (p === 1 ? S.name1 : S.name2) || ('Joueur ' + p);
+  return raw.toLowerCase().replace(/(^|[\s'-])(\S)/g, (m, sep, c) => sep + c.toUpperCase());
+}
+const COUNT_WORDS = { 5: 'Cinq', 4: 'Quatre', 3: 'Trois', 2: 'Deux', 1: 'Un' };
+function alert20() {
+  if (voiceActive()) speak('Vingt secondes');
+  else bip();
+}
+function alertCount(n) {
+  if (voiceActive()) speak(COUNT_WORDS[n] || String(n), { rate: 1.3 });
+  else bipCount();
+}
+function alertFoul() {
+  if (voiceActive()) {
+    const who = (S.activePlayer === 1 || S.activePlayer === 2) ? ', ' + spokenName(S.activePlayer) : '';
+    foulSpeaking = true;
+    speak('Temps écoulé. Faute' + who + ' !', { rate: 1.05, onend: () => { foulSpeaking = false; } });
+  } else {
+    bipFoul();
+  }
+}
+function setAlertMode(mode) {
+  S.alertMode = (mode === 'voice' && hasSpeech) ? 'voice' : 'bip';
+  renderAlertMode();
+  save();
+  testAlert();
+}
+function renderAlertMode() {
+  document.querySelectorAll('.alert-btn').forEach(b => b.classList.toggle('active', b.dataset.alert === (voiceActive() ? 'voice' : 'bip')));
+  const vb = document.getElementById('alertVoiceBtn');
+  if (vb && !hasSpeech) {
+    vb.disabled = true;
+    const hint = document.getElementById('alertHint');
+    if (hint) hint.textContent = 'La voix n\'est pas disponible sur ce navigateur : les alertes restent en bips.';
+  }
+}
+function testAlert() {
+  unlockAudio();
+  if (voiceActive()) speak('Vingt secondes. Cinq, quatre, trois, deux, un. Temps écoulé, faute !', { rate: 1.1 });
+  else bip();
+}
+// Écran toujours allumé pendant l'utilisation : sinon la mise en veille auto (souvent 30 s)
+// coupe le chrono et ses alertes en plein tour. Relâché par le navigateur si l'app passe en arrière-plan.
+function keepScreenOn() {
+  if (!('wakeLock' in navigator) || (window._wakeLock && !window._wakeLock.released)) return;
+  navigator.wakeLock.request('screen').then(l => { window._wakeLock = l; }).catch(() => {});
+}
 // Les navigateurs mobiles bloquent le son tant que l'utilisateur n'a pas touché l'écran :
 // on « déverrouille » l'audio au premier contact pour que les bips du chrono sortent ensuite
+let speechUnlocked = false;
 function unlockAudio() {
+  // iPhone (Safari 17+) : les bips sortent même si l'interrupteur silencieux est activé
+  try { if (navigator.audioSession && navigator.audioSession.type !== 'playback') navigator.audioSession.type = 'playback'; } catch (e) {}
+  keepScreenOn();
   const ctx = ensureAudio();
   if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
+  if (!speechUnlocked && hasSpeech) {
+    speechUnlocked = true;
+    try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch (e) {}
+  }
 }
 function bipShort() {
   if (!S.sound) return;
@@ -2865,6 +2986,11 @@ function init() {
   });
   // Audio : déverrouillé au premier contact (obligatoire sur mobile)
   document.addEventListener('pointerdown', unlockAudio, { passive: true });
+
+  // Alertes sonores : bip ou voix
+  document.querySelectorAll('.alert-btn').forEach(b => b.addEventListener('click', () => setAlertMode(b.dataset.alert)));
+  document.getElementById('alertTest').addEventListener('click', testAlert);
+  renderAlertMode();
 
   // Extensions
   document.getElementById('ext1').addEventListener('click', () => useExtension(1));
