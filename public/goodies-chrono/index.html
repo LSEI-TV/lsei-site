@@ -504,10 +504,10 @@ html, body { overflow-x: hidden; }
   transition: color .15s, border-color .15s;
 }
 .scores-reset:active { color: var(--red); border-color: var(--red); }
-/* Zone du bouton « Remettre tout à zéro » : poussée en bas de la page, loin des boutons de jeu */
-.reset-zone { margin-top: auto; padding: 32px 12px 0; }
+/* Zone du bouton « Remettre tout à zéro » : espacée des boutons de jeu (évite une fausse manip),
+   mais à distance fixe pour rester au-dessus des points de pagination sur tous les téléphones */
+.reset-zone { padding: 40px 12px 0; }
 .reset-zone .scores-reset { display: block; max-width: 420px; margin: 0 auto; }
-#pageMain > .footer-lsei { margin-top: 0; padding-top: 14px; }
 
 /* ═══════════════════════════════════════════════════════════════════════
    PAGE 2 — HISTORIQUE DES PARTIES
