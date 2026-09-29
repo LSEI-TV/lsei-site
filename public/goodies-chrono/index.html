@@ -21,8 +21,7 @@
 
 <style>
 /* ═══════════════════════════════════════════════════════════════════════
-   THÈMES — pilotés par [data-theme] sur <html>. Défaut = sombre.
-   Bascule via bouton ☾/☀. Persistance en localStorage.
+   COULEURS — thème sombre unique
    ═══════════════════════════════════════════════════════════════════════ */
 :root {
   --bg:        #0a0c10;
@@ -40,25 +39,6 @@
   --p1:        #7dd3fc;   /* bleu ciel joueur 1 */
   --p2:        #c4b5fd;   /* violet pâle joueur 2 */
 }
-html[data-theme="light"] {
-  --bg:        #f4f5f7;
-  --surface:   #ffffff;
-  --card:      #ffffff;
-  --border:    rgba(0,0,0,0.10);
-  --text:      #111318;
-  --dim:       rgba(0,0,0,0.55);
-  --p1:        #0284c7;
-  --p2:        #7c3aed;
-}
-/* Ajustements thème clair : les backgrounds semi-transparents noir sont illisibles → gris doux */
-html[data-theme="light"] .player-score {
-  background: rgba(0,0,0,0.04);
-  border-color: rgba(0,0,0,0.25);
-}
-html[data-theme="light"] .chrono-val {
-  background: #ffffff;
-}
-
 /* ═══════════════════════════════════════════════════════════════════════
    RESET + BASE
    ═══════════════════════════════════════════════════════════════════════ */
@@ -393,17 +373,14 @@ html, body { overflow-x: hidden; }
 }
 .player-card.p1 { border-left: 4px solid var(--p1); }
 .player-card.p2 { border-right: 4px solid var(--p2); }
-/* État actif : joueur sélectionné = fond teinté + halo + léger scale */
-.player-card.p1.active {
-  background: rgba(125,211,252,0.14);
-  box-shadow: 0 0 24px rgba(125,211,252,0.35), inset 0 0 12px rgba(125,211,252,0.10);
+/* État actif : joueur en train de jouer = fond rouge plein */
+.player-card.active {
+  background: #c8141e;
+  border-color: #ff4d4d;
   transform: scale(1.015);
 }
-.player-card.p2.active {
-  background: rgba(196,181,253,0.14);
-  box-shadow: 0 0 24px rgba(196,181,253,0.35), inset 0 0 12px rgba(196,181,253,0.10);
-  transform: scale(1.015);
-}
+.player-card.active .player-score { background: rgba(0,0,0,0.45); }
+.player-card.active .score-btn { background: rgba(0,0,0,0.45); border-color: rgba(255,255,255,0.25); }
 .player-name-row {
   display: flex; align-items: center; justify-content: center;
   gap: 6px;
@@ -432,6 +409,18 @@ html, body { overflow-x: hidden; }
   pointer-events: none;                    /* le tap passe à l'input derrière */
 }
 .player-name-row:focus-within .player-name-edit { color: var(--orange); opacity: 1; }
+/* Pastille F (faute) : le chrono est arrivé à 0 pendant le tour de ce joueur */
+.foul-badge {
+  display: none;
+  flex: 0 0 auto;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 16px; line-height: 1;
+  color: var(--red);
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 3px 7px;
+}
+.foul-badge.show { display: inline-block; }
 .player-score {
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 900;
@@ -472,6 +461,30 @@ html, body { overflow-x: hidden; }
 .score-btn:active { transform: scale(0.94); }
 .score-btn.plus { background: rgba(0,204,102,0.18); color: var(--green); border-color: rgba(0,204,102,0.45); }
 .score-btn.minus { background: rgba(255,51,51,0.14); color: var(--red); border-color: rgba(255,51,51,0.40); }
+
+/* Bouton EXTENSION sous chaque cadre joueur */
+.ext-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 18px;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 10px 6px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--card);
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  min-width: 0;
+  transition: opacity .15s, transform .08s, box-shadow .2s;
+}
+.ext-btn:active { transform: scale(0.96); }
+.ext-btn.p1 { color: var(--p1); border-color: rgba(125,211,252,0.55); background: rgba(125,211,252,0.10); }
+.ext-btn.p2 { color: var(--p2); border-color: rgba(196,181,253,0.55); background: rgba(196,181,253,0.10); }
+.ext-btn .ext-sub { font-size: 11px; letter-spacing: 1.5px; font-weight: 700; opacity: 0.85; }
+.ext-btn.used { opacity: 0.38; border-style: dashed; }
+.ext-btn.running { opacity: 1; border-style: solid; animation: extPulse 1s ease-in-out infinite; }
+.ext-btn.p1.running { box-shadow: 0 0 18px rgba(125,211,252,0.55); }
+.ext-btn.p2.running { box-shadow: 0 0 18px rgba(196,181,253,0.55); }
+@keyframes extPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+.config-hint { font-size: 12px; color: var(--dim); text-align: center; margin: 10px 4px 0; line-height: 1.4; }
 
 .scores-reset {
   margin-top: 8px;
@@ -726,18 +739,17 @@ html, body { overflow-x: hidden; }
   .topbar, .footer-lsei { max-width: 1400px; margin-left: auto; margin-right: auto; }
 
   /* Pages 📋 Feuille + 🏅 Historique : 1 col centré à 900 px avec shadow */
-  #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei { max-width: 900px; margin-left: auto; margin-right: auto; }
+  #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei,
+  #pageConfig > .section, #pageConfig > .footer-lsei { max-width: 900px; margin-left: auto; margin-right: auto; }
 
-  /* Page 🎱 Chrono : layout PC 3 rows verticales.
-     Row 1 : Durée du chrono (pleine largeur)
-     Row 2 : Grand cadre 40 + boutons Démarrer/Reset (pleine largeur)
-     Row 3 : Joueur 1 (gauche) + Joueur 2 (droite) en 2 col */
+  /* Page 🎱 Chrono : layout PC 2 rows verticales (la durée se règle en page 4 Configuration).
+     Row 1 : Grand cadre chrono + boutons Démarrer/Reset (pleine largeur)
+     Row 2 : Joueur 1 (gauche) + Joueur 2 (droite) en 2 col, extensions dessous */
   #pageMain {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-areas:
       "context"
-      "presets"
       "chrono"
       "scores";
     gap: 16px;
@@ -749,7 +761,6 @@ html, body { overflow-x: hidden; }
     align-content: start;
   }
   #pageMain > .context-bar     { grid-area: context; margin: 0; max-width: none; width: auto; }
-  #pageMain > .section-presets { grid-area: presets; margin: 0; max-width: none; width: auto; }
   #pageMain > .chrono-section  { grid-area: chrono;  margin: 0; max-width: none; width: auto; }
   #pageMain > .section-scores  { grid-area: scores;  margin: 0; max-width: none; width: auto; }
   #pageMain > .footer-lsei     { display: none; }
@@ -771,7 +782,8 @@ html, body { overflow-x: hidden; }
     padding-right: max(40px, calc((100% - 1600px) / 2 + 40px));
     gap: 24px;
   }
-  #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei { max-width: 1100px; }
+  #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei,
+  #pageConfig > .section, #pageConfig > .footer-lsei { max-width: 1100px; }
   .chrono-val { font-size: clamp(160px, 10vw, 220px); }
   .player-score { font-size: clamp(90px, 6vw, 140px); }
 }
@@ -1139,6 +1151,17 @@ html, body { overflow-x: hidden; }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.tv-foul {
+  display: none;
+  color: #ff3333;
+  background: #ffffff;
+  border-radius: 0.15em;
+  padding: 0 0.25em;
+  margin-right: 0.35em;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+.tv-foul.show { display: inline-block; }
 .tv-team-1 .tv-name { color: #7dd3fc; }
 .tv-team-2 .tv-name { color: #c4b5fd; }
 .tv-score {
@@ -1151,17 +1174,17 @@ html, body { overflow-x: hidden; }
 .tv-team-1 .tv-score { color: #7dd3fc; }
 .tv-team-2 .tv-score { color: #c4b5fd; }
 
-/* Joueur en train de jouer (activePlayer) : halo lumineux + pulsation, autre joueur dimmé */
-.tv-team { transition: opacity .35s, transform .35s; }
-.tv-teams.has-active .tv-team:not(.playing) { opacity: 0.28; }
-.tv-teams.has-active .tv-team.playing { opacity: 1; transform: scale(1.03); }
-.tv-team.playing .tv-name,
-.tv-team.playing .tv-score {
-  animation: tvGlow 1.4s ease-in-out infinite;
+/* Joueur en train de jouer (activePlayer) : cadre rouge plein, comme sur la page chrono */
+.tv-team {
+  padding: clamp(10px, 2vh, 28px) clamp(12px, 2vw, 32px);
+  border: 4px solid transparent;
+  border-radius: clamp(16px, 2vw, 32px);
+  transition: background .25s, border-color .25s, transform .25s;
 }
-@keyframes tvGlow {
-  0%, 100% { text-shadow: 0 0 30px currentColor, 0 0 60px currentColor; }
-  50%      { text-shadow: 0 0 60px currentColor, 0 0 110px currentColor; }
+.tv-team.playing {
+  background: #c8141e;
+  border-color: #ff4d4d;
+  transform: scale(1.03);
 }
 .tv-vs {
   font-family: 'Barlow Condensed', sans-serif;
@@ -1315,7 +1338,6 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
   <button class="nav-arrow" id="navArrow" title="Voir l'historique des parties" aria-label="Voir l'historique">🏅</button>
   <button class="icon-btn" id="tvToggle" title="Mode TV plein écran (cet écran)" aria-label="Mode TV plein écran">📺</button>
   <button class="icon-btn" id="tvPopup" title="Ouvrir Mode TV dans une fenêtre séparée (pour 2ᵉ écran)" aria-label="Ouvrir Mode TV sur 2ᵉ écran">↗</button>
-  <button class="icon-btn" id="themeToggle" title="Thème clair / sombre" aria-label="Basculer le thème">☾</button>
 </div>
 
 <div class="pages" id="pages">
@@ -1330,23 +1352,9 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
   <button class="context-bar-quit" id="contextBarQuit">✕ Quitter ce match</button>
 </div>
 
-<!-- ═══════════════════════════ PRESETS ═══════════════════════════ -->
-<div class="section section-presets">
-  <div class="section-title">⏱ Durée du chrono</div>
-  <div class="presets">
-    <button class="preset-btn" data-preset="40"><span class="preset-dur">40s</span><span>Blackball</span></button>
-    <button class="preset-btn" data-preset="custom"><span class="preset-dur">⚙</span><span>Perso</span></button>
-  </div>
-  <div class="custom-row" id="customRow">
-    <label for="customSec">Durée</label>
-    <input type="number" id="customSec" min="5" max="600" step="1" value="45">
-    <label>secondes</label>
-  </div>
-</div>
-
 <!-- ═══════════════════════════ CHRONO ═══════════════════════════ -->
 <div class="section chrono-section">
-  <div class="chrono-val" id="chronoVal">40</div>
+  <div class="chrono-val" id="chronoVal">45</div>
   <div class="chrono-btns">
     <button class="chrono-btn primary" id="startBtn">▶ Démarrer</button>
     <button class="chrono-btn secondary" id="resetBtn">⟳ Reset</button>
@@ -1359,6 +1367,7 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
   <div class="scores">
     <div class="player-card p1">
       <div class="player-name-row">
+        <span class="foul-badge" id="foul1" title="Faute : temps écoulé">F</span>
         <input class="player-name" id="name1" value="Joueur 1" maxlength="18" aria-label="Nom joueur 1">
         <span class="player-name-edit" aria-hidden="true">✎</span>
       </div>
@@ -1370,6 +1379,7 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
     </div>
     <div class="player-card p2">
       <div class="player-name-row">
+        <span class="foul-badge" id="foul2" title="Faute : temps écoulé">F</span>
         <input class="player-name" id="name2" value="Joueur 2" maxlength="18" aria-label="Nom joueur 2">
         <span class="player-name-edit" aria-hidden="true">✎</span>
       </div>
@@ -1379,8 +1389,11 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
         <button class="score-btn plus"  data-p="2" data-d="1">+1</button>
       </div>
     </div>
+    <!-- Extensions : 1 par joueur et par partie, réarmée à chaque +1 -->
+    <button class="ext-btn p1" id="ext1" type="button"><span class="ext-label">⏱ Extension</span><span class="ext-sub" id="ext1Sub">45 s</span></button>
+    <button class="ext-btn p2" id="ext2" type="button"><span class="ext-label">⏱ Extension</span><span class="ext-sub" id="ext2Sub">45 s</span></button>
   </div>
-  <button class="scores-reset" id="scoresReset">⟳ Remettre les scores à zéro</button>
+  <button class="scores-reset" id="scoresReset">⟳ Remettre tout à zéro</button>
 </div>
 
 <div class="footer-lsei">
@@ -1530,6 +1543,37 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
   </div>
 </div><!-- /page-history -->
 
+<!-- ═══════════════════════════ PAGE 4 : CONFIGURATION ═══════════════════════════ -->
+<div class="page page-config" id="pageConfig">
+  <!-- ═══════════════════════════ PRESETS ═══════════════════════════ -->
+  <div class="section section-presets">
+    <div class="section-title">⏱ Durée du chrono</div>
+    <div class="presets">
+      <button class="preset-btn" data-preset="40"><span class="preset-dur">40s</span><span>Blackball</span></button>
+      <button class="preset-btn" data-preset="custom"><span class="preset-dur">⚙</span><span>Perso</span></button>
+    </div>
+    <div class="custom-row" id="customRow">
+      <label for="customSec">Durée</label>
+      <input type="number" id="customSec" min="5" max="600" step="1" value="45">
+      <label>secondes</label>
+    </div>
+  </div>
+
+  <div class="section section-ext">
+    <div class="section-title">⏱ Durée de l'extension</div>
+    <div class="custom-row show">
+      <label for="extSec">Durée</label>
+      <input type="number" id="extSec" min="5" max="600" step="1" value="45">
+      <label>secondes</label>
+    </div>
+    <p class="config-hint">1 extension par joueur et par partie. Elle se réarme automatiquement à chaque point marqué (+1).</p>
+  </div>
+
+  <div class="footer-lsei">
+    Un goodies gratuit de <a href="https://lsei.tv" target="_blank" rel="noopener">lsei.tv</a> · Le Sport en Image
+  </div>
+</div><!-- /page-config -->
+
 </div><!-- /pages -->
 
 <!-- Dots pagination -->
@@ -1537,6 +1581,7 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
   <div class="page-dot active" data-page="0"></div>
   <div class="page-dot" data-page="1"></div>
   <div class="page-dot" data-page="2"></div>
+  <div class="page-dot" data-page="3"></div>
 </div>
 
 <!-- Flèches navigation latérales (PC uniquement) -->
@@ -1548,16 +1593,16 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
   <button class="tv-exit" id="tvExit" title="Quitter le mode TV (Échap)">✕</button>
   <div class="tv-teams">
     <div class="tv-team tv-team-1">
-      <div class="tv-name" id="tvName1">JOUEUR 1</div>
+      <div class="tv-name"><span class="tv-foul" id="tvFoul1">F</span><span id="tvName1">JOUEUR 1</span></div>
       <div class="tv-score" id="tvScore1">0</div>
     </div>
     <div class="tv-vs">VS</div>
     <div class="tv-team tv-team-2">
-      <div class="tv-name" id="tvName2">JOUEUR 2</div>
+      <div class="tv-name"><span class="tv-foul" id="tvFoul2">F</span><span id="tvName2">JOUEUR 2</span></div>
       <div class="tv-score" id="tvScore2">0</div>
     </div>
   </div>
-  <div class="tv-chrono" id="tvChrono">40</div>
+  <div class="tv-chrono" id="tvChrono">45</div>
   <div class="tv-context" id="tvContext"></div>
   <div class="tv-branding">CHRONO BILLARD · LSEI TV</div>
 </div>
@@ -1586,15 +1631,19 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
    ═══════════════════════════════════════════════════════════════════════ */
 const LS_KEY = 'goodies-chrono-v1';
 const DEFAULT = {
-  duration: 40,          // durée du preset actif (s)
-  presetKey: '40',       // '40' | 'custom'
+  duration: 45,          // durée du preset actif (s)
+  presetKey: 'custom',   // '40' | 'custom'
   customSec: 45,         // durée du preset perso
+  configTouched: false,  // true dès que la durée a été réglée en page Configuration (sinon 45 s à l'ouverture)
+  extensionSec: 45,      // durée d'une extension (s)
+  extUsed1: false,       // extension déjà utilisée dans la partie en cours (réarmée à chaque +1)
+  extUsed2: false,
   score1: 0,
   score2: 0,
   name1: 'Joueur 1',
   name2: 'Joueur 2',
   activePlayer: null,    // 1 ou 2 : joueur en train de jouer (chrono en cours pour lui) — mis à jour au tap
-  theme: 'dark',         // 'dark' | 'light'
+  foulPlayer: null,      // 1 ou 2 : joueur en faute (chrono arrivé à 0 pendant son tour) — F rouge devant son nom
   sound: true,
   games: [],             // historique chrono libre : [{ num, duration, winner, ts }]
   // Feuille de match équipes 5v5
@@ -1619,6 +1668,8 @@ function load() {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return { ...DEFAULT };
     const parsed = JSON.parse(raw);
+    delete parsed.theme;   // ancien réglage clair/sombre : l'app est désormais en sombre uniquement
+    delete parsed.sound;   // pas de bouton son dans l'interface → bips toujours actifs
     return { ...DEFAULT, ...parsed };
   } catch (e) { return { ...DEFAULT }; }
 }
@@ -1634,7 +1685,8 @@ let remaining = S.duration;   // secondes restantes
 let running = false;
 let tickInterval = null;
 let hasBipped = false;
-let hasWarned = false;        // true dès qu'on a vibré au passage sous 15 s (reset au reset/nouveau tour)
+let hasWarned = false;        // true dès qu'on a alerté au passage à 20 s (reset au reset/nouveau tour)
+let extPlayer = null;         // 1 ou 2 : joueur dont l'extension est en cours de décompte (null = chrono normal)
 
 function renderChrono() {
   const el = document.getElementById('chronoVal');
@@ -1644,13 +1696,16 @@ function renderChrono() {
   el.classList.remove('running', 'warn', 'over');
   if (remaining <= 0) {
     el.classList.add('over');
-  } else if (remaining <= 15 && running) {
+  } else if (remaining <= 20 && running) {
     el.classList.add('warn');
   } else if (running) {
     el.classList.add('running');
   }
   startBtn.textContent = running ? '⏸ Pause' : (remaining < S.duration && remaining > 0 ? '▶ Reprendre' : '▶ Démarrer');
   startBtn.classList.toggle('paused', !running && remaining < S.duration && remaining > 0);
+  renderExtensions();
+  renderFouls();
+  if (running) stopFoulBip();
   if (tvOn) updateTvDisplay();
   broadcastTvState();        // propage l'état du chrono à la fenêtre TV séparée
 }
@@ -1661,10 +1716,10 @@ function startPause() {
     clearInterval(tickInterval);
     tickInterval = null;
   } else {
-    if (remaining <= 0) remaining = S.duration;
+    if (remaining <= 0) { remaining = S.duration; extPlayer = null; }
     running = true;
     hasBipped = false;
-    if (remaining > 15) hasWarned = false;
+    if (remaining > 20) hasWarned = false;
     // Enregistre le timestamp de début de partie au tout premier lancement
     if (gameStartedAt === null) gameStartedAt = Date.now();
     tickInterval = setInterval(tick, 1000);
@@ -1680,12 +1735,20 @@ function tick() {
     running = false;
     clearInterval(tickInterval);
     tickInterval = null;
-    if (!hasBipped) { hasBipped = true; vibrate([80, 60, 80, 60, 200]); }
-  } else if (remaining === 15 && !hasWarned) {
+    // 0 s = FAUTE : bip continu de 3 s + vibration de 3 s
+    if (!hasBipped) { hasBipped = true; bipFoul(); vibrate(3000); }
+    if (S.activePlayer === 1 || S.activePlayer === 2) { S.foulPlayer = S.activePlayer; save(); }
+  } else if (remaining === 20 && !hasWarned) {
+    // 20 s restantes : avertissement
     hasWarned = true;
-    vibrate(80);
-  } else if (remaining > 15) {
-    hasWarned = false;   // safety : ré-armé si un tap rebascule au-dessus de 15 → nouvelle vibration au prochain passage
+    bip();
+    vibrate(400);
+  } else if (remaining <= 5) {
+    // 5 dernières secondes : bip + vibration à chaque seconde
+    bipCount();
+    vibrate(150);
+  } else if (remaining > 20) {
+    hasWarned = false;   // safety : ré-armé si un tap rebascule au-dessus de 20 → nouvelle alerte au prochain passage
   }
   renderChrono();
 }
@@ -1696,8 +1759,63 @@ function resetChrono() {
   remaining = S.duration;
   hasBipped = false;
   hasWarned = false;
+  extPlayer = null;
   renderChrono();
   vibrate(25);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   EXTENSIONS — 1 par joueur et par partie (durée réglable en page 4)
+   ═══════════════════════════════════════════════════════════════════════ */
+function useExtension(p) {
+  if (extPlayer === p && running) return;   // déjà en cours pour ce joueur
+  if (S['extUsed' + p]) {
+    const name = (p === 1 ? S.name1 : S.name2) || ('Joueur ' + p);
+    if (!confirm('L\'extension de ' + name + ' a déjà été utilisée dans cette partie.\n\nLa relancer quand même ?')) return;
+  }
+  S['extUsed' + p] = true;
+  extPlayer = p;
+  clearFoulIfOther(p);
+  // Le joueur qui demande l'extension devient le joueur actif (halo)
+  S.activePlayer = p;
+  document.querySelectorAll('.player-card').forEach(c => c.classList.toggle('active', c.classList.contains('p' + p)));
+  if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  remaining = S.extensionSec;
+  running = true;
+  hasBipped = false;
+  hasWarned = false;
+  if (gameStartedAt === null) gameStartedAt = Date.now();
+  tickInterval = setInterval(tick, 1000);
+  save();
+  renderChrono();
+  vibrate([40, 40, 40]);
+}
+/* F rouge : disparaît quand l'AUTRE joueur prend la main (tap sur son cadre ou son extension) */
+function renderFouls() {
+  [1, 2].forEach(p => {
+    const el = document.getElementById('foul' + p);
+    if (el) el.classList.toggle('show', S.foulPlayer === p);
+  });
+}
+function clearFoulIfOther(p) {
+  if (S.foulPlayer && S.foulPlayer !== p) S.foulPlayer = null;
+}
+function resetExtensions() {
+  S.extUsed1 = false;
+  S.extUsed2 = false;
+  extPlayer = null;
+  renderExtensions();
+}
+function renderExtensions() {
+  [1, 2].forEach(p => {
+    const btn = document.getElementById('ext' + p);
+    const sub = document.getElementById('ext' + p + 'Sub');
+    if (!btn || !sub) return;
+    const isRunning = extPlayer === p && running;
+    btn.classList.toggle('running', isRunning);
+    btn.classList.toggle('used', !!S['extUsed' + p] && !isRunning);
+    sub.textContent = isRunning ? 'En cours' : (S['extUsed' + p] ? 'Utilisée' : S.extensionSec + ' s');
+  });
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1733,6 +1851,7 @@ function addScore(p, d) {
   const key = 'score' + p;
   S[key] = Math.max(0, (S[key] || 0) + d);
   document.getElementById(key).textContent = S[key];
+  if (d > 0) resetExtensions();   // partie terminée → chaque joueur récupère son extension
   vibrate(d > 0 ? 40 : 20);
   if (tvOn) updateTvDisplay();
 
@@ -1779,18 +1898,28 @@ function addScore(p, d) {
     running = false;
     remaining = S.duration;
     hasBipped = false;
+    extPlayer = null;
     renderChrono();
   }
   save();
 }
+// Plus aucun joueur actif ni faute : retire aussi le halo et le F sur le mode TV (local et 2e écran)
+function clearActivePlayer() {
+  S.activePlayer = null;
+  S.foulPlayer = null;
+  renderFouls();
+  if (tvOn) updateTvDisplay();
+}
 function resetScores() {
-  if (!confirm('Remettre les 2 scores à zéro ?\n\nCela efface AUSSI tout l\'historique des parties.\n(Fais un screenshot avant si tu veux garder les résultats.)')) return;
+  if (!confirm('Tout remettre à zéro ?\n\nScores, historique des parties, joueur actif, fautes et extensions seront réinitialisés.\n(Fais un screenshot avant si tu veux garder les résultats.)')) return;
   S.score1 = 0; S.score2 = 0;
   S.games = [];
   gameStartedAt = null;
   document.getElementById('score1').textContent = '0';
   document.getElementById('score2').textContent = '0';
   document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active'));
+  clearActivePlayer();
+  resetExtensions();
   renderHistory();
   save();
   vibrate([50, 40, 50]);
@@ -1880,6 +2009,8 @@ function newMatch() {
   document.getElementById('score2').textContent = '0';
   // Retire aussi le halo "joueur actif" éventuellement posé sur les cards
   document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active'));
+  clearActivePlayer();
+  resetExtensions();
   renderHistory();
   save();
   vibrate([60, 50, 60]);
@@ -2099,12 +2230,14 @@ function startTeamMatch(s, mm) {
   document.getElementById('score2').textContent = S.score2;
   // Nettoie halos / winner-loser d'un match précédent
   document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active', 'winner', 'loser'));
+  clearActivePlayer();
   // Reset chrono
   if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
   running = false;
   remaining = S.duration;
   hasBipped = false;
   gameStartedAt = null;
+  resetExtensions();
   renderChrono();
   save();
   goToPage(0);
@@ -2122,6 +2255,8 @@ function quitTeamMatch() {
   document.getElementById('name1').value = 'Joueur 1';
   document.getElementById('name2').value = 'Joueur 2';
   document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active', 'winner', 'loser'));
+  clearActivePlayer();
+  resetExtensions();
   save();
   updateContextBar();
   renderMatchSheet();
@@ -2178,6 +2313,7 @@ function onTeamMatchEnd(winner) {
   const c2 = document.querySelector('.player-card.p2');
   if (c1) { c1.classList.remove('active'); c1.classList.toggle('winner', winner === 'A'); c1.classList.toggle('loser', winner === 'B'); }
   if (c2) { c2.classList.remove('active'); c2.classList.toggle('winner', winner === 'B'); c2.classList.toggle('loser', winner === 'A'); }
+  clearActivePlayer();
   // Stop chrono
   if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
   running = false;
@@ -2337,19 +2473,20 @@ function updateNav(idx) {
   document.querySelectorAll('.page-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
   const arrow = document.getElementById('navArrow');
   const brand = document.getElementById('topBrand');
-  // 0 : chrono libre · 1 : feuille de match équipes · 2 : historique
+  // 0 : chrono libre · 1 : feuille de match équipes · 2 : historique · 3 : configuration
   if (arrow) {
     if (idx === 0)      { arrow.textContent = '📋'; arrow.title = 'Feuille de match équipes'; arrow.classList.remove('active'); }
     else if (idx === 1) { arrow.textContent = '🏅'; arrow.title = 'Historique des parties';   arrow.classList.add('active'); }
+    else if (idx === 2) { arrow.textContent = '⚙'; arrow.title = 'Configuration';            arrow.classList.add('active'); }
     else                { arrow.textContent = '←'; arrow.title = 'Revenir au chrono';          arrow.classList.add('active'); }
   }
   if (brand) {
-    brand.textContent = idx === 0 ? '🎱 Chrono Billard' : (idx === 1 ? '📋 Feuille de match équipe' : '🏅 Historique');
+    brand.textContent = ['🎱 Chrono Billard', '📋 Feuille de match équipe', '🏅 Historique', '⚙ Configuration'][idx] || '🎱 Chrono Billard';
   }
   const navL = document.getElementById('navLeft');
   const navR = document.getElementById('navRight');
   if (navL) navL.disabled = idx === 0;
-  if (navR) navR.disabled = idx === 2;
+  if (navR) navR.disabled = idx === 3;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -2374,6 +2511,52 @@ function bip() {
   osc.connect(gain).connect(ctx.destination);
   osc.start(now); osc.stop(now + 0.6);
 }
+// Bip du décompte (5 dernières secondes) : court et aigu
+function bipCount() {
+  if (!S.sound) return;
+  const ctx = ensureAudio(); if (!ctx) return;
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(1000, now);
+  gain.gain.setValueAtTime(0.25, now);
+  gain.gain.setValueAtTime(0.25, now + 0.15);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now); osc.stop(now + 0.2);
+}
+// Bip de FAUTE (0 s) : son continu de 3 s — coupé si le chrono est relancé avant la fin
+let foulOsc = null;
+function bipFoul() {
+  if (!S.sound) return;
+  const ctx = ensureAudio(); if (!ctx) return;
+  stopFoulBip();
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(700, now);
+  gain.gain.setValueAtTime(0.3, now);
+  gain.gain.setValueAtTime(0.3, now + 2.9);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 3);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now); osc.stop(now + 3);
+  osc.onended = () => { if (foulOsc === osc) foulOsc = null; };
+  foulOsc = osc;
+}
+function stopFoulBip() {
+  if (!foulOsc) return;
+  try { foulOsc.stop(); } catch (e) {}
+  foulOsc = null;
+  vibrate(0);
+}
+// Les navigateurs mobiles bloquent le son tant que l'utilisateur n'a pas touché l'écran :
+// on « déverrouille » l'audio au premier contact pour que les bips du chrono sortent ensuite
+function unlockAudio() {
+  const ctx = ensureAudio();
+  if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
+}
 function bipShort() {
   if (!S.sound) return;
   const ctx = ensureAudio(); if (!ctx) return;
@@ -2396,19 +2579,8 @@ function vibrate(pattern) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   THÈME + SON — toggles
+   SON — toggle
    ═══════════════════════════════════════════════════════════════════════ */
-function applyTheme() {
-  document.documentElement.setAttribute('data-theme', S.theme);
-  document.getElementById('themeToggle').textContent = S.theme === 'light' ? '☀' : '☾';
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', S.theme === 'light' ? '#f4f5f7' : '#0a0c10');
-}
-function toggleTheme() {
-  S.theme = S.theme === 'light' ? 'dark' : 'light';
-  applyTheme();
-  save();
-}
 function applySound() {
   const btn = document.getElementById('soundToggle');
   btn.textContent = S.sound ? '🔊' : '🔇';
@@ -2440,8 +2612,8 @@ function broadcastTvState() {
       name1: S.name1, name2: S.name2,
       score1: S.score1, score2: S.score2,
       activePlayer: S.activePlayer,
+      foulPlayer: S.foulPlayer,
       remaining, running, duration: S.duration,
-      theme: S.theme,
       match: {
         teamA: S.match.teamA, teamB: S.match.teamB,
         activeCell: S.match.activeCell,
@@ -2503,12 +2675,16 @@ function updateTvDisplay() {
   if (teams) teams.classList.toggle('has-active', S.activePlayer === 1 || S.activePlayer === 2);
   if (t1) t1.classList.toggle('playing', S.activePlayer === 1);
   if (t2) t2.classList.toggle('playing', S.activePlayer === 2);
+  [1, 2].forEach(p => {
+    const f = document.getElementById('tvFoul' + p);
+    if (f) f.classList.toggle('show', S.foulPlayer === p);
+  });
   const chrono = document.getElementById('tvChrono');
   if (chrono) {
     chrono.textContent = Math.max(0, remaining);
     chrono.classList.remove('running', 'warn', 'over');
     if (remaining <= 0)                        chrono.classList.add('over');
-    else if (remaining <= 15 && running)       chrono.classList.add('warn');
+    else if (remaining <= 20 && running)       chrono.classList.add('warn');
     else if (running)                          chrono.classList.add('running');
   }
   // Contexte match d'équipe si actif
@@ -2531,12 +2707,6 @@ function updateTvDisplay() {
    INIT
    ═══════════════════════════════════════════════════════════════════════ */
 function init() {
-  // Thème (respecte preferences système si jamais défini)
-  if (!localStorage.getItem(LS_KEY)) {
-    S.theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-  }
-  applyTheme();
-
   // MODE TV SLAVE : la fenêtre a été ouverte via ?tv=1 → uniquement affichage TV, aucun contrôle
   // Elle écoute les updates de la fenêtre maître via BroadcastChannel et redessine.
   if (isTvSlave) {
@@ -2552,10 +2722,10 @@ function init() {
         if (d.score1 !== undefined) S.score1 = d.score1;
         if (d.score2 !== undefined) S.score2 = d.score2;
         if (d.activePlayer !== undefined) S.activePlayer = d.activePlayer;
+        if (d.foulPlayer !== undefined) S.foulPlayer = d.foulPlayer;
         if (d.remaining !== undefined) remaining = d.remaining;
         if (d.running !== undefined) running = d.running;
         if (d.duration !== undefined) S.duration = d.duration;
-        if (d.theme !== undefined && d.theme !== S.theme) { S.theme = d.theme; applyTheme(); }
         if (d.match) {
           S.match.teamA = d.match.teamA;
           S.match.teamB = d.match.teamB;
@@ -2576,7 +2746,12 @@ function init() {
     return;   // stop init — pas de wire-up des contrôles arbitre
   }
 
-  // Preset actif
+  // Preset actif — 45 s par défaut tant que la page Configuration n'a pas été utilisée,
+  // sinon on reprend le dernier réglage choisi
+  if (!S.configTouched) {
+    S.presetKey = 'custom';
+    S.customSec = 45;
+  }
   document.getElementById('customSec').value = S.customSec;
   setPreset(S.presetKey);
   remaining = S.duration;
@@ -2596,6 +2771,7 @@ function init() {
     remaining = S.duration;
     running = true;
     hasBipped = false;
+    extPlayer = null;
     if (gameStartedAt === null) gameStartedAt = Date.now();   // démarre le comptage partie si première fois
     tickInterval = setInterval(tick, 1000);
     renderChrono();
@@ -2609,19 +2785,20 @@ function init() {
       document.querySelectorAll('.player-card').forEach(c => c.classList.toggle('active', c === card));
       // Mémorise le joueur actif (1 ou 2) → utilisé pour l'affichage sur la fenêtre TV séparée
       S.activePlayer = card.classList.contains('p1') ? 1 : 2;
+      clearFoulIfOther(S.activePlayer);
       save();
       // Reset + relance immédiate du chrono
       if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
       remaining = S.duration;
       running = true;
       hasBipped = false;
+      extPlayer = null;
       if (gameStartedAt === null) gameStartedAt = Date.now();   // démarre le comptage partie si première fois
       tickInterval = setInterval(tick, 1000);
       renderChrono();
       vibrate(50);
     });
   });
-  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
   // Mode TV
   document.getElementById('tvToggle').addEventListener('click', enterTvMode);
   document.getElementById('tvExit').addEventListener('click', exitTvMode);
@@ -2636,15 +2813,30 @@ function init() {
   });
   document.getElementById('scoresReset').addEventListener('click', resetScores);
   document.querySelectorAll('.preset-btn').forEach(btn => {
-    btn.addEventListener('click', () => setPreset(btn.dataset.preset));
+    btn.addEventListener('click', () => { S.configTouched = true; setPreset(btn.dataset.preset); });
   });
   document.getElementById('customSec').addEventListener('change', (ev) => {
+    S.configTouched = true;
     const v = clampDur(parseInt(ev.target.value, 10) || 45);
     ev.target.value = v;
     if (S.presetKey === 'custom') {
       S.duration = v; S.customSec = v;
       remaining = v; renderChrono(); save();
     }
+  });
+  // Audio : déverrouillé au premier contact (obligatoire sur mobile)
+  document.addEventListener('pointerdown', unlockAudio, { passive: true });
+
+  // Extensions
+  document.getElementById('ext1').addEventListener('click', () => useExtension(1));
+  document.getElementById('ext2').addEventListener('click', () => useExtension(2));
+  document.getElementById('extSec').value = S.extensionSec;
+  document.getElementById('extSec').addEventListener('change', (ev) => {
+    const v = clampDur(parseInt(ev.target.value, 10) || 45);
+    ev.target.value = v;
+    S.extensionSec = v;
+    save();
+    renderExtensions();
   });
   document.querySelectorAll('.score-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -2661,9 +2853,9 @@ function init() {
     autoClearOnFocus(el);
   });
 
-  // Navigation entre pages (cycle 0 → 1 → 2 → 0)
+  // Navigation entre pages (cycle 0 → 1 → 2 → 3 → 0)
   document.getElementById('navArrow').addEventListener('click', () => {
-    goToPage((currentPage + 1) % 3);
+    goToPage((currentPage + 1) % 4);
     vibrate(20);
   });
   // Flèches latérales PC : gauche = page précédente, droite = page suivante
@@ -2671,7 +2863,7 @@ function init() {
     if (currentPage > 0) { goToPage(currentPage - 1); vibrate(15); }
   });
   document.getElementById('navRight').addEventListener('click', () => {
-    if (currentPage < 2) { goToPage(currentPage + 1); vibrate(15); }
+    if (currentPage < 3) { goToPage(currentPage + 1); vibrate(15); }
   });
   document.querySelectorAll('.page-dot').forEach(dot => {
     dot.addEventListener('click', () => goToPage(parseInt(dot.dataset.page, 10)));
