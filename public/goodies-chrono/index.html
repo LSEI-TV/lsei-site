@@ -327,7 +327,7 @@ html, body { overflow-x: hidden; }
 
 .chrono-btns {
   display: grid;
-  grid-template-columns: 1fr;   /* le chrono se lance en touchant le cadre d'un joueur : seul RESET reste */
+  grid-template-columns: 1.6fr 1fr;
   gap: 10px;
 }
 .chrono-btn { min-width: 0; }
@@ -347,6 +347,7 @@ html, body { overflow-x: hidden; }
   color: #062a15;
 }
 .chrono-btn.primary.paused { background: var(--orange); color: #2a1503; }
+.chrono-btn:disabled { opacity: 0.35; }
 .chrono-btn.secondary {
   background: var(--card);
   border-color: var(--border);
@@ -652,6 +653,7 @@ html, body { overflow-x: hidden; }
    Compacte les paddings, réduit les tailles, cache le sous-titre topbar.
    ═══════════════════════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
+  .chrono-btns { grid-template-columns: 1.7fr 1fr; gap: 8px; }
   .topbar { padding: 8px 8px; gap: 6px; }
   .topbar-logo { height: 28px; }
   .topbar-brand { font-size: 13px; letter-spacing: 1px; }
@@ -1393,6 +1395,8 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
 <div class="section chrono-section">
   <div class="chrono-val" id="chronoVal">45</div>
   <div class="chrono-btns">
+    <!-- Pause / Reprendre : le chrono se LANCE en touchant le cadre d'un joueur -->
+    <button class="chrono-btn primary" id="pauseBtn" disabled>⏸ Pause</button>
     <button class="chrono-btn secondary" id="resetBtn">⟳ Reset</button>
   </div>
 </div>
@@ -1742,6 +1746,12 @@ let extPlayer = null;         // 1 ou 2 : joueur dont l'extension est en cours d
 function renderChrono() {
   const el = document.getElementById('chronoVal');
   if (!el) { if (tvOn) updateTvDisplay(); return; }   // mode slave : pas de contrôles
+  // Bouton Pause / Reprendre : utilisable seulement pour le joueur sélectionné, chrono pas à 0
+  const pauseBtn = document.getElementById('pauseBtn');
+  const canToggle = (S.activePlayer === 1 || S.activePlayer === 2) && remaining > 0;
+  pauseBtn.disabled = !canToggle;
+  pauseBtn.textContent = (canToggle && !running) ? '▶ Reprendre' : '⏸ Pause';
+  pauseBtn.classList.toggle('paused', canToggle && !running);
   el.textContent = Math.max(0, remaining);
   el.classList.remove('running', 'warn', 'over');
   if (remaining <= 0) {
@@ -1756,6 +1766,23 @@ function renderChrono() {
   if (running) stopFoulBip();
   if (tvOn) updateTvDisplay();
   broadcastTvState();        // propage l'état du chrono à la fenêtre TV séparée
+}
+
+// Pause / reprise du temps du joueur sélectionné
+function pauseResume() {
+  if (!(S.activePlayer === 1 || S.activePlayer === 2) || remaining <= 0) return;
+  if (running) {
+    running = false;
+    if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  } else {
+    running = true;
+    hasBipped = false;
+    if (remaining > 20) hasWarned = false;
+    if (gameStartedAt === null) gameStartedAt = Date.now();
+    if (!tickInterval) tickInterval = setInterval(tick, 1000);
+  }
+  renderChrono();
+  vibrate(30);
 }
 
 function tick() {
@@ -2919,6 +2946,7 @@ function init() {
   document.getElementById('name2').value = S.name2;
 
   // Wire-up
+  document.getElementById('pauseBtn').addEventListener('click', pauseResume);
   document.getElementById('resetBtn').addEventListener('click', resetChrono);
   // Tap sur le grand cadre du chrono = "reset + relance" (comme un shot clock arbitre)
   document.getElementById('chronoVal').addEventListener('click', () => {
