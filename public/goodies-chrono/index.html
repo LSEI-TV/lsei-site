@@ -1910,6 +1910,9 @@ function addScore(p, d) {
   S[key] = Math.max(0, (S[key] || 0) + d);
   document.getElementById(key).textContent = S[key];
   if (d > 0) resetExtensions();   // partie terminée → chaque joueur récupère son extension
+  // Le score a changé : plus aucun joueur en rouge (et plus de F) jusqu'au prochain tap sur un cadre
+  document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active'));
+  clearActivePlayer();
   vibrate(d > 0 ? 40 : 20);
   if (tvOn) updateTvDisplay();
 
