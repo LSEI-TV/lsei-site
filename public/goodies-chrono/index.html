@@ -484,6 +484,8 @@ html, body { overflow-x: hidden; }
 .ext-btn.p2 { color: var(--p2); border-color: rgba(196,181,253,0.55); background: rgba(196,181,253,0.10); }
 .ext-btn .ext-sub { font-size: 11px; letter-spacing: 1.5px; font-weight: 700; opacity: 0.85; }
 .ext-btn.used { opacity: 0.38; border-style: dashed; }
+.ext-btn.locked { opacity: 0.25; cursor: not-allowed; }
+.ext-btn.locked:active { transform: none; }
 .ext-btn.running { opacity: 1; border-style: solid; animation: extPulse 1s ease-in-out infinite; }
 .ext-btn.p1.running { box-shadow: 0 0 18px rgba(125,211,252,0.55); }
 .ext-btn.p2.running { box-shadow: 0 0 18px rgba(196,181,253,0.55); }
@@ -1822,6 +1824,8 @@ function resetChrono() {
    EXTENSIONS — 1 par joueur et par partie (durée réglable en page 4)
    ═══════════════════════════════════════════════════════════════════════ */
 function useExtension(p) {
+  // Seul le joueur en train de jouer (cadre rouge) peut demander son extension
+  if (S.activePlayer !== p) { vibrate([20, 40, 20]); return; }
   if (extPlayer === p && running) return;   // déjà en cours pour ce joueur
   if (S['extUsed' + p]) {
     const name = (p === 1 ? S.name1 : S.name2) || ('Joueur ' + p);
@@ -1869,6 +1873,7 @@ function renderExtensions() {
     const isRunning = extPlayer === p && running;
     btn.classList.toggle('running', isRunning);
     btn.classList.toggle('used', !!S['extUsed' + p] && !isRunning);
+    btn.classList.toggle('locked', S.activePlayer !== p);   // pas son tour → bouton inactif
     sub.textContent = isRunning ? 'En cours' : (S['extUsed' + p] ? 'Utilisée' : '+' + S.extensionSec + ' s');
   });
 }
@@ -1963,6 +1968,7 @@ function clearActivePlayer() {
   S.activePlayer = null;
   S.foulPlayer = null;
   renderFouls();
+  renderExtensions();
   if (tvOn) updateTvDisplay();
 }
 function resetScores() {
@@ -2914,6 +2920,9 @@ function init() {
     }
     return;   // stop init — pas de wire-up des contrôles arbitre
   }
+
+  // À l'ouverture, aucun joueur n'est actif (aucun cadre rouge) → les 2 extensions sont verrouillées
+  S.activePlayer = null;
 
   // Preset actif — 45 s par défaut tant que la page Configuration n'a pas été utilisée,
   // sinon on reprend le dernier réglage choisi
