@@ -1616,7 +1616,7 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
       <button class="alert-btn" type="button" data-alert="voice" id="alertVoiceBtn"><span class="preset-dur">🗣</span><span>Voix</span></button>
     </div>
     <button class="alert-test" id="alertTest" type="button">▶ Tester</button>
-    <p class="config-hint" id="alertHint">Voix : « Vingt secondes », « Cinq… quatre… trois… deux… un », « Temps écoulé, faute » + nom du joueur. Les vibrations restent actives dans les 2 modes.</p>
+    <p class="config-hint" id="alertHint">Voix : « Vingt secondes », « Quinze secondes », « Dix secondes », « Cinq… quatre… trois… deux… un », « Temps écoulé, faute » + nom du joueur. Les vibrations restent actives dans les 2 modes.</p>
   </div>
 
   <div class="footer-lsei">
@@ -1794,6 +1794,9 @@ function tick() {
     hasWarned = true;
     alert20();
     vibrate(400);
+  } else if ((remaining === 15 || remaining === 10) && voiceActive()) {
+    // Mode voix uniquement : annonces intermédiaires
+    speak(remaining === 15 ? 'Quinze secondes' : 'Dix secondes');
   } else if (remaining <= 5) {
     // 5 dernières secondes : bip + vibration à chaque seconde
     alertCount(remaining);
@@ -2694,7 +2697,7 @@ function renderAlertMode() {
 }
 function testAlert() {
   unlockAudio();
-  if (voiceActive()) speak('Vingt secondes. Cinq, quatre, trois, deux, un. Temps écoulé, faute !', { rate: 1.1 });
+  if (voiceActive()) speak('Vingt secondes. Quinze secondes. Dix secondes. Cinq, quatre, trois, deux, un. Temps écoulé, faute !', { rate: 1.1 });
   else bip();
 }
 // Écran toujours allumé pendant l'utilisation : sinon la mise en veille auto (souvent 30 s)
