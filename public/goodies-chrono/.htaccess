@@ -1,0 +1,13 @@
+# goodies-chrono — PWA (service worker)
+# Le service worker, le HTML et le manifeste ne doivent JAMAIS être servis depuis
+# un cache (CDN Cloudflare OU navigateur). Sinon une nouvelle version ne parvient
+# pas aux appareils qui ont déjà « installé » l'app : le navigateur revérifie sw.js,
+# reçoit l'ancien fichier depuis le cache, et ne détecte aucune mise à jour.
+# Cloudflare ne met pas en cache une réponse marquée no-store.
+<IfModule mod_headers.c>
+  <FilesMatch "(sw\.js|index\.html|manifest\.webmanifest)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+</IfModule>
