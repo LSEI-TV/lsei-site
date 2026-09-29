@@ -185,6 +185,8 @@ export const partners: Partner[] = [
   { name: 'Christophe Lambert', logo: '/partenaires/logo-cl-noir.webp', url: 'https://christophelambert8pool.com' },
   { name: 'FISTF', logo: '/partenaires/fistf.webp', url: 'https://fistf.com' },
   { name: '3FTS', logo: '/partenaires/3fts.webp', url: 'https://3fts.fr' },
+  { name: 'Arobace', logo: '/partenaires/AROBACE.webp' },
+  { name: 'Depiltech', logo: '/partenaires/DEPILTECH.webp' },
 ];
 
 export interface Stat { num: string; unit?: string; label: string }
