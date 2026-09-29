@@ -1624,7 +1624,8 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
   </div>
 
   <div class="footer-lsei">
-    Un goodies gratuit de <a href="https://lsei.tv" target="_blank" rel="noopener">lsei.tv</a> · Le Sport en Image
+    Un goodies gratuit de <a href="https://lsei.tv" target="_blank" rel="noopener">lsei.tv</a> · Le Sport en Image<br>
+    <span id="appVersion" style="opacity:.6">Version —</span>
   </div>
 </div><!-- /page-config -->
 
@@ -1684,6 +1685,7 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
    STATE (100 % local — pas de serveur, pas de compte, pas de tracking)
    ═══════════════════════════════════════════════════════════════════════ */
 const LS_KEY = 'goodies-chrono-v1';
+const APP_VERSION = 'v32';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
 const DEFAULT = {
   duration: 45,          // durée du preset actif (s)
   presetKey: 'custom',   // '40' | 'custom'
@@ -3009,6 +3011,8 @@ function init() {
   });
   // Audio : déverrouillé au premier contact (obligatoire sur mobile)
   document.addEventListener('pointerdown', unlockAudio, { passive: true });
+
+  document.getElementById('appVersion').textContent = 'Version ' + APP_VERSION;
 
   // Alertes sonores : bip ou voix
   document.querySelectorAll('.alert-btn').forEach(b => b.addEventListener('click', () => setAlertMode(b.dataset.alert)));
