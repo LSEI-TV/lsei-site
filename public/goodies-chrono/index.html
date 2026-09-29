@@ -55,6 +55,7 @@ html, body {
 /* Body : flex column pleine hauteur, pas de scroll global ;
    chaque .page aura son propre scroll interne → plus de blanc en bas */
 body {
+  position: relative;            /* repère du header superposé */
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -71,9 +72,13 @@ button { font-family: inherit; cursor: pointer; }
   padding: 12px 14px;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
-  flex: 0 0 auto;                /* prend sa hauteur naturelle dans le body flex column */
+  /* Superposé en haut : chaque page réserve sa hauteur (--topbar-h), sauf l'accueil où il glisse hors de l'écran.
+     Ainsi le contenu des autres pages ne bouge jamais quand le header apparaît / disparaît. */
+  position: absolute; top: 0; left: 0; right: 0;
   z-index: 20;
+  transition: transform .35s ease, opacity .35s ease;
 }
+body.home-mode .topbar { transform: translateY(-100%); opacity: 0; pointer-events: none; }
 /* ═══════════════════════════════════════════════════════════════════════
    NAVIGATION PAGES — swipe horizontal + boutons flèche
    ═══════════════════════════════════════════════════════════════════════ */
@@ -98,12 +103,14 @@ html, body { overflow-x: hidden; }
   overflow-y: auto;           /* scroll INTERNE à la page si le contenu déborde */
   scroll-snap-align: start;
   scroll-snap-stop: always;
+  padding-top: var(--topbar-h, 56px);   /* place du header superposé */
   padding-bottom: 44px;       /* laisse la place aux dots pagination fixed bottom */
   -webkit-overflow-scrolling: touch;
   display: flex;              /* le footer .footer-lsei se colle au bas via margin-top: auto */
   flex-direction: column;
 }
 .page > .footer-lsei { margin-top: auto; }
+.page.page-home { padding-top: 0; }   /* accueil : pas de header → le logo profite de toute la hauteur */
 /* Bouton flèche navigation dans la topbar */
 .nav-arrow {
   font-family: 'Barlow Condensed', sans-serif;
@@ -512,7 +519,6 @@ html, body { overflow-x: hidden; }
   font-size: 14px; letter-spacing: 6px; text-transform: uppercase; color: var(--dim);
   margin-top: -4px;
 }
-.home-sub { font-size: 13px; color: var(--dim); max-width: 320px; line-height: 1.4; }
 .home-start {
   width: min(100%, 360px);
   background: var(--orange); color: #1a0d00; border: none; border-radius: 14px;
@@ -532,6 +538,7 @@ html, body { overflow-x: hidden; }
   transition: transform .08s, border-color .15s;
 }
 .home-tile .ht-ic { font-size: 20px; line-height: 1; }
+.home-tile.ht-wide { grid-column: 1 / -1; flex-direction: row; justify-content: center; gap: 8px; padding: 11px 6px; border-color: rgba(255,120,0,0.45); }
 .home-tile:active { transform: scale(0.96); border-color: var(--orange); }
 .page-home .partner-banner { padding-top: 10px; }
 /* Écrans peu hauts : logo plus petit */
@@ -899,7 +906,7 @@ html, body { overflow-x: hidden; }
       "reset    partners";
     gap: 16px;
     max-width: none;
-    padding-top: 12px;
+    padding-top: calc(var(--topbar-h, 56px) + 12px);
     padding-bottom: 44px;
     padding-left: max(20px, calc((100% - 1400px) / 2 + 20px));
     padding-right: max(20px, calc((100% - 1400px) / 2 + 20px));
@@ -941,7 +948,7 @@ html, body { overflow-x: hidden; }
 
 /* Écran large mais peu haut (tablette paysage, portable 768 px) : tout le chrono tient sans scroll */
 @media (min-width: 900px) and (orientation: landscape) and (max-height: 860px) {
-  #pageMain { gap: 10px; padding-top: 8px; padding-bottom: 36px; }
+  #pageMain { gap: 10px; padding-top: calc(var(--topbar-h, 56px) + 8px); padding-bottom: 36px; }
   .chrono-section { padding: 10px 12px; }
   .chrono-val { font-size: clamp(80px, 17vh, 150px); padding: 4px 16px 10px; margin-bottom: 10px; }
   .chrono-btn { font-size: 18px; padding: 12px 10px; }
@@ -1578,13 +1585,13 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
       </svg>
     </div>
     <div class="home-tag">by LSEI TV</div>
-    <p class="home-sub">Le chrono billard gratuit : shot clock, extensions, fautes, voix et mode TV.</p>
     <button class="home-start" id="homeStart" type="button">▶ Lancer le chrono</button>
     <div class="home-tiles">
       <button class="home-tile" type="button" data-go="2"><span class="ht-ic">📋</span>Match d'équipes</button>
       <button class="home-tile" type="button" data-go="3"><span class="ht-ic">🏅</span>Historique</button>
       <button class="home-tile" type="button" data-go="4"><span class="ht-ic">⚙</span>Configuration</button>
       <button class="home-tile" type="button" data-go="5"><span class="ht-ic">🤝</span>Partenaires</button>
+      <button class="home-tile ht-wide" type="button" id="homeTv"><span class="ht-ic">📺</span>Mode TV (écran public)</button>
     </div>
     <div class="partner-banner" aria-label="Partenaires LSEI TV">
       <a class="pb-card" id="pbLinkHome" href="https://lsei.tv" target="_blank" rel="noopener"><img id="pbLogoHome" alt=""></a>
@@ -2027,7 +2034,7 @@ function startTvPartnerRotation() {
   setInterval(() => { if (tvOn && !document.hidden) showTvPartner(tvPbIndex + 1, true); }, 8000);
 }
 
-const APP_VERSION = 'v42';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
+const APP_VERSION = 'v43';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
 const DEFAULT = {
   duration: 45,          // durée du preset actif (s)
   presetKey: 'custom',   // '40' | 'custom'
@@ -2902,6 +2909,7 @@ function goToPage(idx) {
 
 function updateNav(idx) {
   currentPage = idx;
+  document.body.classList.toggle('home-mode', idx === 0);   // accueil : header masqué
   document.querySelectorAll('.page-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
   const arrow = document.getElementById('navArrow');
   const brand = document.getElementById('topBrand');
@@ -3454,14 +3462,24 @@ function init() {
 
   // Accueil : bouton « Lancer le chrono » + tuiles de raccourci
   document.getElementById('homeStart').addEventListener('click', () => { goToPage(1); vibrate(20); });
-  document.querySelectorAll('.home-tile').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.home-tile[data-go]').forEach(t => t.addEventListener('click', () => {
     goToPage(parseInt(t.dataset.go, 10)); vibrate(15);
   }));
+  document.getElementById('homeTv').addEventListener('click', () => { enterTvMode(); vibrate(20); });
+
+  // Hauteur réelle du header → réservée en haut de chaque page (sauf l'accueil)
+  const setTopbarH = () => {
+    const tb = document.querySelector('.topbar');
+    if (tb) document.documentElement.style.setProperty('--topbar-h', tb.offsetHeight + 'px');
+  };
+  setTopbarH();
+  window.addEventListener('resize', setTopbarH);
 
   // Ouverture intelligente : match en cours (score ≠ 0-0 ou rencontre d'équipe lancée) → directement le chrono,
   // sinon l'accueil NOVΛ
   const matchInProgress = (S.score1 || 0) + (S.score2 || 0) > 0 || !!(S.match && S.match.activeCell);
   const startPage = matchInProgress ? 1 : 0;
+  document.body.classList.toggle('home-mode', startPage === 0);   // pas de header visible à l'ouverture sur l'accueil
   setTimeout(() => {
     const pg = document.getElementById('pages');
     pg.style.scrollBehavior = 'auto';
