@@ -544,7 +544,7 @@ html, body { overflow-x: hidden; }
 .home-tile .ht-ic { font-size: 20px; line-height: 1; }
 .home-tile.ht-wide { grid-column: 1 / -1; flex-direction: row; justify-content: center; gap: 8px; padding: 11px 6px; border-color: rgba(255,120,0,0.45); }
 .home-tile:active { transform: scale(0.96); border-color: var(--orange); }
-.page-home .partner-banner { padding-top: 10px; position: relative; top: 25px; }
+.page-home .partner-banner { padding-top: 10px; position: relative; top: 45px; }
 /* Écrans peu hauts : logo plus petit */
 @media (max-height: 700px) { .home-logo svg { width: min(58vw, 250px); } .home { gap: 9px; } }
 /* Animation d'ouverture : le sable s'écoule, puis les lettres apparaissent */
@@ -2049,7 +2049,7 @@ function startTvPartnerRotation() {
   setInterval(() => { if (tvOn && !document.hidden) showTvPartner(tvPbIndex + 1, true); }, 8000);
 }
 
-const APP_VERSION = 'v46';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
+const APP_VERSION = 'v47';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
 const DEFAULT = {
   duration: 45,          // durée du preset actif (s)
   presetKey: 'custom',   // '40' | 'custom'
