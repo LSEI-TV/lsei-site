@@ -504,6 +504,10 @@ html, body { overflow-x: hidden; }
   transition: color .15s, border-color .15s;
 }
 .scores-reset:active { color: var(--red); border-color: var(--red); }
+/* Zone du bouton « Remettre tout à zéro » : poussée en bas de la page, loin des boutons de jeu */
+.reset-zone { margin-top: auto; padding: 32px 12px 0; }
+.reset-zone .scores-reset { display: block; max-width: 420px; margin: 0 auto; }
+#pageMain > .footer-lsei { margin-top: 0; padding-top: 14px; }
 
 /* ═══════════════════════════════════════════════════════════════════════
    PAGE 2 — HISTORIQUE DES PARTIES
@@ -757,7 +761,8 @@ html, body { overflow-x: hidden; }
     grid-template-areas:
       "context"
       "chrono"
-      "scores";
+      "scores"
+      "reset";
     gap: 16px;
     max-width: none;
     padding-top: 12px;
@@ -769,6 +774,7 @@ html, body { overflow-x: hidden; }
   #pageMain > .context-bar     { grid-area: context; margin: 0; max-width: none; width: auto; }
   #pageMain > .chrono-section  { grid-area: chrono;  margin: 0; max-width: none; width: auto; }
   #pageMain > .section-scores  { grid-area: scores;  margin: 0; max-width: none; width: auto; }
+  #pageMain > .reset-zone      { grid-area: reset;   margin: 0; padding: 14px 0 0; }
   #pageMain > .footer-lsei     { display: none; }
 
   .chrono-val { font-size: clamp(120px, 11vw, 180px); padding: 20px 16px; margin-bottom: 14px; }
@@ -1414,6 +1420,10 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
     <button class="ext-btn p1" id="ext1" type="button"><span class="ext-label">⏱ Extension</span><span class="ext-sub" id="ext1Sub">+45 s</span></button>
     <button class="ext-btn p2" id="ext2" type="button"><span class="ext-label">⏱ Extension</span><span class="ext-sub" id="ext2Sub">+45 s</span></button>
   </div>
+</div>
+
+<!-- Remise à zéro : volontairement éloignée des boutons de jeu (évite une fausse manip) -->
+<div class="reset-zone">
   <button class="scores-reset" id="scoresReset">⟳ Remettre tout à zéro</button>
 </div>
 
