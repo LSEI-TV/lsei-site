@@ -500,6 +500,27 @@ html, body { overflow-x: hidden; }
 }
 .alert-test:active { border-color: var(--orange); color: var(--orange); }
 .alert-btn:disabled { opacity: 0.35; }
+.club-row { display: flex; align-items: center; gap: 8px; }
+.club-row label {
+  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--dim); font-weight: 700; flex: 0 0 auto;
+}
+.club-row input {
+  flex: 1; min-width: 0;
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 12px; color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px;
+}
+.club-logo { display: grid; grid-template-columns: 110px 1fr; gap: 10px; margin-top: 10px; align-items: center; }
+.club-logo-preview {
+  height: 90px; border: 1px dashed var(--border); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--dim); text-align: center; padding: 6px;
+  background: #000; overflow: hidden;
+}
+.club-logo-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.club-logo-btns { display: grid; gap: 6px; }
+.club-logo-btns .alert-test { margin-top: 0; text-align: center; cursor: pointer; }
 .config-hint { font-size: 12px; color: var(--dim); text-align: center; margin: 10px 4px 0; line-height: 1.4; }
 
 .scores-reset {
@@ -1170,6 +1191,29 @@ html, body { overflow-x: hidden; }
 .tv-exit:hover { background: rgba(255,255,255,0.15); }
 .tv-exit:active { transform: scale(0.94); }
 
+/* En-tête du mode TV : logo du club + nom du tournoi (réglés en page Configuration) */
+.tv-header {
+  display: flex; align-items: center; justify-content: center;
+  gap: clamp(14px, 2vw, 32px);
+  max-width: 100%;
+}
+.tv-header.hidden { display: none; }
+.tv-logo { max-height: clamp(50px, 11vh, 140px); max-width: clamp(90px, 20vw, 320px); object-fit: contain; }
+.tv-logo:not([src]), .tv-logo[src=""] { display: none; }
+.tv-tournament {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(22px, 3.6vw, 60px);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #ff7800;
+  line-height: 1.05;
+  text-align: center;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  min-width: 0;
+}
+.tv-tournament:empty { display: none; }
+
 .tv-teams {
   display: flex;
   align-items: center;
@@ -1286,6 +1330,16 @@ body.is-tv-slave > .nav-side,
 body.is-tv-slave > .qr-modal { display: none !important; }
 body.is-tv-slave .tv-overlay { display: flex !important; }
 body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en slave — l'user ferme la fenêtre */
+
+/* Écran paysage (TV 16/9, PC) : les tailles sont aussi plafonnées par la HAUTEUR de l'écran,
+   pour que en-tête (logo + tournoi), joueurs et chrono tiennent toujours sans être coupés */
+@media (orientation: landscape) {
+  .tv-overlay { gap: clamp(10px, 3vh, 60px); padding: clamp(14px, 3vh, 60px) clamp(20px, 4vw, 60px); }
+  .tv-overlay .tv-name { font-size: min(clamp(28px, 4.5vw, 72px), 6.5vh); margin-bottom: 1vh; }
+  .tv-overlay .tv-score { font-size: min(clamp(120px, 18vw, 320px), 24vh); }
+  .tv-overlay .tv-chrono { font-size: min(clamp(150px, 22vw, 400px), 26vh); padding-top: 1vh; padding-bottom: 1vh; }
+  .tv-overlay .tv-team { padding-top: 1.2vh; padding-bottom: 1.2vh; }
+}
 
 /* Orientation portrait : layout vertical (chrono en haut, teams en bas) sur téléphone/tablette */
 @media (orientation: portrait) {
@@ -1623,6 +1677,24 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
     <p class="config-hint" id="alertHint">Voix : « Vingt secondes », « Quinze secondes », « Dix secondes », « Cinq… quatre… trois… deux… un », « Temps écoulé, faute » + nom du joueur. Les vibrations restent actives dans les 2 modes.</p>
   </div>
 
+  <div class="section section-club">
+    <div class="section-title">🏆 Club et tournoi (mode TV)</div>
+    <div class="club-row">
+      <label for="tournamentName">Tournoi</label>
+      <input type="text" id="tournamentName" maxlength="40" placeholder="Nom du tournoi" autocomplete="off">
+    </div>
+    <div class="club-logo">
+      <div class="club-logo-preview" id="clubLogoPreview">Aucun logo</div>
+      <div class="club-logo-btns">
+        <label class="alert-test" for="clubLogoFile">📷 Choisir un logo</label>
+        <input type="file" id="clubLogoFile" accept="image/*" hidden>
+        <button class="alert-test" id="clubLogoRemove" type="button">🗑 Retirer le logo</button>
+      </div>
+    </div>
+    <button class="alert-test" id="tvPreviewBtn" type="button">📺 Voir le mode TV</button>
+    <p class="config-hint">Le logo du club et le nom du tournoi s'affichent en haut du mode TV (et sur le 2<sup>e</sup> écran). Ils restent enregistrés sur cet appareil.</p>
+  </div>
+
   <div class="footer-lsei">
     Un goodies gratuit de <a href="https://lsei.tv" target="_blank" rel="noopener">lsei.tv</a> · Le Sport en Image<br>
     <span id="appVersion" style="opacity:.6">Version —</span>
@@ -1646,6 +1718,10 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
 <!-- ═══════════════════════════ MODE TV — overlay plein écran ═══════════════════════════ -->
 <div class="tv-overlay" id="tvOverlay" aria-hidden="true">
   <button class="tv-exit" id="tvExit" title="Quitter le mode TV (Échap)">✕</button>
+  <div class="tv-header hidden" id="tvHeader">
+    <img class="tv-logo" id="tvLogo" alt="">
+    <div class="tv-tournament" id="tvTournament"></div>
+  </div>
   <div class="tv-teams">
     <div class="tv-team tv-team-1">
       <div class="tv-name"><span class="tv-foul" id="tvFoul1">F</span><span id="tvName1">JOUEUR 1</span></div>
@@ -1685,13 +1761,15 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
    STATE (100 % local — pas de serveur, pas de compte, pas de tracking)
    ═══════════════════════════════════════════════════════════════════════ */
 const LS_KEY = 'goodies-chrono-v1';
-const APP_VERSION = 'v32';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
+const APP_VERSION = 'v33';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
 const DEFAULT = {
   duration: 45,          // durée du preset actif (s)
   presetKey: 'custom',   // '40' | 'custom'
   customSec: 45,         // durée du preset perso
   configTouched: false,  // true dès que la durée a été réglée en page Configuration (sinon 45 s à l'ouverture)
   extensionSec: 45,      // durée d'une extension (s)
+  tournament: '',        // nom du tournoi affiché en haut du mode TV
+  logoStamp: 0,          // change à chaque nouveau logo → la fenêtre TV (2e écran) sait qu'elle doit le relire
   alertMode: 'bip',      // 'bip' | 'voice' : alertes du chrono en bips ou annoncées par la voix du téléphone
   extUsed1: false,       // extension déjà utilisée dans la partie en cours (réarmée à chaque +1)
   extUsed2: false,
@@ -1718,6 +1796,12 @@ const DEFAULT = {
 
 // gameStartedAt : timestamp Date.now() du premier lancement d'une partie (null = pas de partie en cours)
 let gameStartedAt = null;
+
+/* Logo du club : image redimensionnée (512 px max) stockée À PART dans localStorage
+   pour ne pas alourdir la sauvegarde principale ni les messages envoyés à la fenêtre TV */
+const LOGO_KEY = 'goodies-chrono-logo';
+let clubLogo = '';
+try { clubLogo = localStorage.getItem(LOGO_KEY) || ''; } catch (e) {}
 let S = load();
 
 function load() {
@@ -2699,6 +2783,57 @@ function alertFoul() {
     bipFoul();
   }
 }
+function renderClubConfig() {
+  const prev = document.getElementById('clubLogoPreview');
+  if (prev) {
+    prev.innerHTML = '';
+    if (clubLogo) { const im = document.createElement('img'); im.src = clubLogo; im.alt = 'Logo du club'; prev.appendChild(im); }
+    else prev.textContent = 'Aucun logo';
+  }
+  const rm = document.getElementById('clubLogoRemove');
+  if (rm) rm.disabled = !clubLogo;
+  const tn = document.getElementById('tournamentName');
+  if (tn && document.activeElement !== tn) tn.value = S.tournament || '';
+}
+function setClubLogo(dataUrl) {
+  try {
+    if (dataUrl) localStorage.setItem(LOGO_KEY, dataUrl); else localStorage.removeItem(LOGO_KEY);
+  } catch (e) {
+    alert('Ce logo est trop lourd pour être enregistré sur cet appareil.\nEssaie avec une image plus légère.');
+    return;
+  }
+  clubLogo = dataUrl || '';
+  S.logoStamp = Date.now();
+  renderClubConfig();
+  save();
+  if (tvOn) updateTvDisplay();
+}
+// Redimensionne l'image choisie (512 px max, transparence conservée) avant de l'enregistrer
+function onClubLogoFile(ev) {
+  const file = ev.target.files && ev.target.files[0];
+  ev.target.value = '';
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { alert('Choisis un fichier image (PNG, JPG, SVG…).'); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 512;
+      const ratio = Math.min(1, MAX / Math.max(img.naturalWidth || MAX, img.naturalHeight || MAX));
+      const w = Math.max(1, Math.round((img.naturalWidth || MAX) * ratio));
+      const h = Math.max(1, Math.round((img.naturalHeight || MAX) * ratio));
+      const cv = document.createElement('canvas');
+      cv.width = w; cv.height = h;
+      cv.getContext('2d').drawImage(img, 0, 0, w, h);
+      setClubLogo(cv.toDataURL('image/png'));
+      vibrate(30);
+    };
+    img.onerror = () => alert('Impossible de lire cette image.');
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 function setAlertMode(mode) {
   S.alertMode = (mode === 'voice' && hasSpeech) ? 'voice' : 'bip';
   renderAlertMode();
@@ -2795,6 +2930,8 @@ function broadcastTvState() {
       score1: S.score1, score2: S.score2,
       activePlayer: S.activePlayer,
       foulPlayer: S.foulPlayer,
+      tournament: S.tournament,
+      logoStamp: S.logoStamp,
       remaining, running, duration: S.duration,
       match: {
         teamA: S.match.teamA, teamB: S.match.teamB,
@@ -2845,6 +2982,15 @@ function exitTvMode() {
 }
 function updateTvDisplay() {
   if (!tvOn) return;
+  // En-tête : logo du club + nom du tournoi
+  const tvLogo = document.getElementById('tvLogo');
+  const tvTour = document.getElementById('tvTournament');
+  const tvHead = document.getElementById('tvHeader');
+  if (tvLogo && tvLogo.getAttribute('src') !== clubLogo) {
+    if (clubLogo) tvLogo.setAttribute('src', clubLogo); else tvLogo.removeAttribute('src');
+  }
+  if (tvTour && tvTour.textContent !== (S.tournament || '')) tvTour.textContent = S.tournament || '';
+  if (tvHead) tvHead.classList.toggle('hidden', !clubLogo && !S.tournament);
   const set = (id, v) => { const el = document.getElementById(id); if (el && el.textContent !== String(v)) el.textContent = v; };
   set('tvName1', (S.name1 || 'Joueur 1').toUpperCase());
   set('tvName2', (S.name2 || 'Joueur 2').toUpperCase());
@@ -2905,6 +3051,11 @@ function init() {
         if (d.score2 !== undefined) S.score2 = d.score2;
         if (d.activePlayer !== undefined) S.activePlayer = d.activePlayer;
         if (d.foulPlayer !== undefined) S.foulPlayer = d.foulPlayer;
+        if (d.tournament !== undefined) S.tournament = d.tournament;
+        if (d.logoStamp !== undefined && d.logoStamp !== S.logoStamp) {
+          S.logoStamp = d.logoStamp;
+          try { clubLogo = localStorage.getItem(LOGO_KEY) || ''; } catch (e) {}   // même origine → même stockage
+        }
         if (d.remaining !== undefined) remaining = d.remaining;
         if (d.running !== undefined) running = d.running;
         if (d.duration !== undefined) S.duration = d.duration;
@@ -3013,6 +3164,20 @@ function init() {
   document.addEventListener('pointerdown', unlockAudio, { passive: true });
 
   document.getElementById('appVersion').textContent = 'Version ' + APP_VERSION;
+
+  // Club et tournoi (mode TV)
+  const tn = document.getElementById('tournamentName');
+  tn.addEventListener('input', () => {
+    S.tournament = tn.value.trim();
+    save();
+    if (tvOn) updateTvDisplay();
+  });
+  document.getElementById('clubLogoFile').addEventListener('change', onClubLogoFile);
+  document.getElementById('clubLogoRemove').addEventListener('click', () => {
+    if (confirm('Retirer le logo du club ?')) setClubLogo('');
+  });
+  document.getElementById('tvPreviewBtn').addEventListener('click', enterTvMode);
+  renderClubConfig();
 
   // Alertes sonores : bip ou voix
   document.querySelectorAll('.alert-btn').forEach(b => b.addEventListener('click', () => setAlertMode(b.dataset.alert)));
