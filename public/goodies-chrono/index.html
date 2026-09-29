@@ -1848,6 +1848,8 @@ const PARTNERS = [
   { name: 'Christophe Lambert', logo: '/partenaires/logo-cl-noir.webp', url: 'https://christophelambert8pool.com' },
   { name: 'FISTF', logo: '/partenaires/fistf.webp', url: 'https://fistf.com' },
   { name: '3FTS', logo: '/partenaires/3fts.webp', url: 'https://3fts.fr' },
+  { name: 'Arobace', logo: '/partenaires/AROBACE.webp', url: 'https://www.arobace.net' },
+  { name: 'Depiltech', logo: '/partenaires/DEPILTECH.webp', url: 'https://www.depiltech.com/fr/epilation-definitive/rennes/99' },
 ];
 function renderPartners() {
   const grid = document.getElementById('partnersGrid');
@@ -1893,7 +1895,7 @@ function startPartnerRotation() {
   pbTimer = setInterval(() => { if (!document.hidden) showPartner(pbIndex + 1, true); }, 8000);
 }
 
-const APP_VERSION = 'v39';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
+const APP_VERSION = 'v40';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
 const DEFAULT = {
   duration: 45,          // durée du preset actif (s)
   presetKey: 'custom',   // '40' | 'custom'
