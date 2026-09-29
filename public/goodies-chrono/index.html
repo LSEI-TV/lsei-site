@@ -577,12 +577,8 @@ html, body { overflow-x: hidden; }
 
 /* Bandeau partenaires en bas de la page 1 : 1 logo à la fois, fondu toutes les 8 s, cliquable */
 .partner-banner {
-  padding: 28px 12px 6px;           /* sous « Remettre tout à zéro », toujours visible */
+  padding: 33px 12px 6px;           /* sous « Remettre tout à zéro », toujours visible */
   display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px;
-}
-.pb-label {
-  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
-  font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--dim);
 }
 .pb-card {
   display: flex; align-items: center; justify-content: center;
@@ -1556,8 +1552,7 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
 </div>
 
 <!-- Bandeau partenaires LSEI TV (rotation toutes les 8 s) -->
-<div class="partner-banner" id="partnerBanner">
-  <div class="pb-label">Partenaire LSEI TV</div>
+<div class="partner-banner" id="partnerBanner" aria-label="Partenaires LSEI TV">
   <a class="pb-card" id="pbLink" href="https://lsei.tv" target="_blank" rel="noopener">
     <img id="pbLogo" alt="">
   </a>
@@ -1898,7 +1893,7 @@ function startPartnerRotation() {
   pbTimer = setInterval(() => { if (!document.hidden) showPartner(pbIndex + 1, true); }, 8000);
 }
 
-const APP_VERSION = 'v38';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
+const APP_VERSION = 'v39';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
 const DEFAULT = {
   duration: 45,          // durée du preset actif (s)
   presetKey: 'custom',   // '40' | 'custom'
