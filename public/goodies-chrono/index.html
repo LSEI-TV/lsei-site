@@ -519,49 +519,20 @@ html, body { overflow-x: hidden; }
   padding: 16px 16px 8px; text-align: center;
 }
 .home-main { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
-.home-logo svg { width: min(74vw, 340px); height: auto; display: block; }
+.home-logo svg { width: min(82vw, 400px); height: auto; display: block; }
 .home-tag {
   font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
-  font-size: 14px; letter-spacing: 6px; text-transform: uppercase; color: var(--dim);
-  margin-top: -4px;
+  font-size: 16px; letter-spacing: 7px; text-transform: uppercase; color: var(--dim);
+  margin-top: 2px;
 }
-.home-start {
-  width: min(100%, 360px);
-  background: var(--orange); color: #1a0d00; border: none; border-radius: 14px;
-  padding: 16px 20px 14px;
-  font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 24px;
-  letter-spacing: 2px; text-transform: uppercase;
-  transition: transform .08s;
-}
-.home-start:active { transform: scale(0.97); }
-.home-tiles { width: min(100%, 360px); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.home-tile {
-  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-  color: var(--text); padding: 10px 6px 8px;
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
-  font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px;
-  letter-spacing: 1px; text-transform: uppercase;
-  transition: transform .08s, border-color .15s;
-}
-.home-tile .ht-ic { font-size: 20px; line-height: 1; }
-.home-tile.ht-wide { grid-column: 1 / -1; flex-direction: row; justify-content: center; gap: 8px; padding: 11px 6px; border-color: rgba(255,120,0,0.45); }
-.home-tile:active { transform: scale(0.96); border-color: var(--orange); }
-/* Carte partenaire de l'accueil : plus petite quand l'écran est moins haut */
-/* Écrans peu hauts : logo plus petit */
-@media (max-height: 700px) { .home-logo svg { width: min(58vw, 250px); } .home-main { gap: 9px; } }
-/* Tablette / PC : tout l'accueil grandit avec l'écran (logo proportionnel à la hauteur, colonne 480 px) */
+.page-home { cursor: pointer; }   /* toucher l'écran d'ouverture = aller au chrono */
+/* Écrans peu hauts : logo un peu plus petit */
+@media (max-height: 640px) { .home-logo svg { width: min(70vw, 300px); } }
+/* Tablette / PC : le logo grandit avec la hauteur de l'écran */
 @media (min-width: 700px) {
-  .home-logo svg { width: clamp(240px, 44vh, 560px); }
-  .home-tag { font-size: 16px; }
-  .home-main { gap: 14px; }
-  .home-start, .home-tiles { width: min(100%, 480px); }
-  .home-start { font-size: 28px; padding: 18px 20px 16px; }
-  .home-tile { font-size: 15px; padding: 14px 8px 12px; }
-  .home-tile .ht-ic { font-size: 24px; }
-  .home-tile.ht-wide { padding: 13px 8px; }
+  .home-logo svg { width: clamp(300px, 58vh, 680px); }
+  .home-tag { font-size: 20px; letter-spacing: 9px; }
 }
-/* PC peu haut (portable 768 px) : logo NOVΛ un peu plus petit pour laisser respirer le partenaire */
-@media (min-width: 700px) and (max-height: 820px) { .home-logo svg { width: clamp(240px, 39vh, 560px); } }
 /* Animation d'ouverture : le sable s'écoule, puis les lettres apparaissent */
 @keyframes sandTop  { from { transform: scaleY(1); }   to { transform: scaleY(0.42); } }
 @keyframes sandBot  { from { transform: scaleY(0); }   to { transform: scaleY(1); } }
@@ -1616,14 +1587,6 @@ body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en
       </svg>
     </div>
     <div class="home-tag">by LSEI TV</div>
-    <button class="home-start" id="homeStart" type="button">▶ Lancer le chrono</button>
-    <div class="home-tiles">
-      <button class="home-tile" type="button" data-go="2"><span class="ht-ic">📋</span>Match d'équipes</button>
-      <button class="home-tile" type="button" data-go="3"><span class="ht-ic">🏅</span>Historique</button>
-      <button class="home-tile" type="button" data-go="4"><span class="ht-ic">⚙</span>Configuration</button>
-      <button class="home-tile" type="button" data-go="5"><span class="ht-ic">🤝</span>Partenaires</button>
-      <button class="home-tile ht-wide" type="button" id="homeTv"><span class="ht-ic">📺</span>Mode TV (écran public)</button>
-    </div>
     </div><!-- /home-main -->
   </div>
 </div><!-- /page-home -->
@@ -2063,7 +2026,7 @@ function startTvPartnerRotation() {
   setInterval(() => { if (tvOn && !document.hidden) showTvPartner(tvPbIndex + 1, true); }, 8000);
 }
 
-const APP_VERSION = 'v49';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
+const APP_VERSION = 'v50';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
 const DEFAULT = {
   duration: 45,          // durée du preset actif (s)
   presetKey: 'custom',   // '40' | 'custom'
@@ -3489,12 +3452,8 @@ function init() {
   renderPartners();
   startPartnerRotation();
 
-  // Accueil : bouton « Lancer le chrono » + tuiles de raccourci
-  document.getElementById('homeStart').addEventListener('click', () => { goToPage(1); vibrate(20); });
-  document.querySelectorAll('.home-tile[data-go]').forEach(t => t.addEventListener('click', () => {
-    goToPage(parseInt(t.dataset.go, 10)); vibrate(15);
-  }));
-  document.getElementById('homeTv').addEventListener('click', () => { enterTvMode(); vibrate(20); });
+  // Écran d'ouverture NOVΛ : on balaie vers la droite pour le chrono (un simple toucher y mène aussi)
+  document.getElementById('pageHome').addEventListener('click', () => { goToPage(1); vibrate(15); });
   document.getElementById('topLogo').addEventListener('click', () => { goToPage(0); vibrate(15); });
 
   // Hauteur réelle du header → réservée en haut de chaque page (sauf l'accueil)
