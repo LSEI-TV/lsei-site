@@ -2,9 +2,9 @@
   "name": "NOVΛ — Chrono billard by LSEI TV",
   "short_name": "NOVΛ",
   "description": "Le chrono billard gratuit de LSEI TV : shot clock, extensions, fautes, alertes bip ou voix, scores, feuille de match équipes et mode TV. Sans compte, sans pub, hors ligne.",
-  "start_url": "/goodies-chrono/index.html",
-  "scope": "/goodies-chrono/",
-  "id": "/goodies-chrono/",
+  "start_url": "/nova/",
+  "scope": "/nova/",
+  "id": "/nova/",
   "display": "standalone",
   "display_override": [
     "standalone",

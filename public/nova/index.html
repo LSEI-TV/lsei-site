@@ -1,0 +1,3619 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NOVΛ">
+<meta name="theme-color" content="#0a0c10">
+<meta name="description" content="Chrono billard gratuit : shot clock 40 s (blackball), 60 s (snooker), 30 s ou perso, scores 2 joueurs, thème clair/sombre, offline. Un goodies de lsei.tv.">
+<meta property="og:title" content="NOVΛ — le chrono billard gratuit de LSEI TV">
+<meta property="og:description" content="Shot clock 40 s / 60 s / 30 s + scores 2 joueurs. Gratuit, sans compte, marche hors-ligne.">
+<meta property="og:type" content="website">
+<title>NOVΛ — Chrono billard · LSEI TV</title>
+
+<link rel="icon" href="icons/nova-favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/nova-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   COULEURS — thème sombre unique
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  --bg:        #0a0c10;
+  --surface:   #141820;
+  --card:      #1a1f2e;
+  --border:    rgba(255,255,255,0.10);
+  --text:      #ffffff;
+  --dim:       rgba(255,255,255,0.55);
+  --orange:    #ff7800;
+  --orange-d:  #cc5f00;
+  --cyan:      #00d9ff;
+  --green:     #00cc66;
+  --red:       #ff3333;
+  --yellow:    #ffd633;
+  --p1:        #7dd3fc;   /* bleu ciel joueur 1 */
+  --p2:        #c4b5fd;   /* violet pâle joueur 2 */
+}
+/* ═══════════════════════════════════════════════════════════════════════
+   RESET + BASE
+   ═══════════════════════════════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: background .3s ease, color .3s ease;
+}
+/* Body : flex column pleine hauteur, pas de scroll global ;
+   chaque .page aura son propre scroll interne → plus de blanc en bas */
+body {
+  position: relative;            /* repère du header superposé */
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+button { font-family: inherit; cursor: pointer; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TOP BAR
+   ═══════════════════════════════════════════════════════════════════════ */
+.topbar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  /* Superposé en haut : chaque page réserve sa hauteur (--topbar-h), sauf l'accueil où il glisse hors de l'écran.
+     Ainsi le contenu des autres pages ne bouge jamais quand le header apparaît / disparaît. */
+  position: absolute; top: 0; left: 0; right: 0;
+  z-index: 20;
+  transition: transform .35s ease, opacity .35s ease;
+}
+body.home-mode .topbar { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+/* ═══════════════════════════════════════════════════════════════════════
+   NAVIGATION PAGES — swipe horizontal + boutons flèche
+   ═══════════════════════════════════════════════════════════════════════ */
+html, body { overflow-x: hidden; }
+.pages {
+  display: flex;
+  flex: 1 1 auto;             /* prend toute la hauteur restante du body flex column */
+  min-height: 0;              /* nécessaire pour que le scroll interne des .page fonctionne */
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.pages::-webkit-scrollbar { display: none; }
+.page {
+  flex: 0 0 100%;             /* 100 % de la largeur de .pages (PAS 100vw qui inclut la scrollbar → bug de fuite) */
+  width: 100%;
+  height: 100%;               /* prend la hauteur de .pages */
+  overflow-y: auto;           /* scroll INTERNE à la page si le contenu déborde */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  padding-top: var(--topbar-h, 56px);   /* place du header superposé */
+  padding-bottom: 44px;       /* laisse la place aux dots pagination fixed bottom */
+  -webkit-overflow-scrolling: touch;
+  display: flex;              /* le footer .footer-lsei se colle au bas via margin-top: auto */
+  flex-direction: column;
+}
+.page > .footer-lsei { margin-top: auto; }
+.page.page-home { padding-top: 0; }   /* accueil : pas de header → le logo profite de toute la hauteur */
+/* Bouton flèche navigation dans la topbar */
+.nav-arrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 20px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, transform .08s;
+}
+.nav-arrow:active { transform: scale(0.94); }
+.nav-arrow.active { background: var(--orange); color: #000; border-color: var(--orange); }
+/* Dots pagination en bas */
+.page-dots {
+  position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px;
+  z-index: 15;
+  padding: 6px 10px;
+  background: rgba(0,0,0,0.35);
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+}
+.page-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.30);
+  transition: background .2s, transform .2s;
+}
+.page-dot.active { background: var(--orange); transform: scale(1.2); }
+
+/* Flèches nav latérales : cachées par défaut, apparaissent sur écran ≥ 900 px */
+.nav-side {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  width: 48px; height: 48px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 32px;
+  line-height: 1;
+  display: none;                       /* cachée sur mobile/tablette : swipe suffit */
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  transition: background .15s, transform .1s, opacity .15s;
+}
+.nav-side:hover:not(:disabled) { background: var(--card); }
+.nav-side:active:not(:disabled) { transform: translateY(-50%) scale(0.94); }
+.nav-side.nav-left  { left: 16px; }
+.nav-side.nav-right { right: 16px; }
+.nav-side:disabled { opacity: 0.25; cursor: default; }
+@media (min-width: 900px) {
+  .nav-side { display: flex; }
+}
+/* Logo NOVΛ (SVG vectoriel, net à toutes les tailles) : hauteur --tl-h, largeur = hauteur × 3,63 */
+.topbar-logo {
+  --tl-h: 34px;
+  height: var(--tl-h);
+  width: calc(var(--tl-h) * 3.63);
+  flex-shrink: 0;
+  display: block;
+  cursor: pointer;                 /* touche le logo → retour à l'accueil */
+}
+@media (min-width: 900px) { .topbar-logo { --tl-h: 40px; } }
+.topbar-brand {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 18px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--orange);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.topbar-brand small {
+  display: block;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 500; font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--dim);
+  margin-top: 2px;
+}
+.icon-btn {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, transform .08s;
+}
+.icon-btn:active { transform: scale(0.94); background: var(--card); }
+.icon-btn.on { background: var(--orange); color: #000; border-color: var(--orange); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SECTIONS
+   ═══════════════════════════════════════════════════════════════════════ */
+.section {
+  margin: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  box-sizing: border-box;
+  width: calc(100% - 24px);         /* 100% du parent moins les margins horizontales → largeur uniforme */
+}
+.section:first-of-type { margin-top: 10px; }
+
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 12px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PRESETS (Blackball 40 s / Snooker 60 s / Rapide 30 s / Perso)
+   ═══════════════════════════════════════════════════════════════════════ */
+.presets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.preset-btn, .alert-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 6px;
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 13px;
+  letter-spacing: 1px; text-transform: uppercase;
+  transition: background .15s, border-color .15s, transform .08s;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.preset-btn:active, .alert-btn:active { transform: scale(0.96); }
+.preset-btn.active, .alert-btn.active {
+  background: rgba(255,120,0,0.18);
+  border-color: var(--orange);
+  color: var(--orange);
+}
+.preset-btn .preset-dur, .alert-btn .preset-dur {
+  font-size: 20px; font-weight: 900;
+  color: inherit;
+}
+.custom-row {
+  display: none;
+  margin-top: 8px;
+  gap: 8px;
+  align-items: center;
+}
+.custom-row.show { display: flex; }
+.custom-row label {
+  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--dim); font-weight: 700;
+}
+.custom-row input {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 18px;
+  text-align: center;
+}
+.custom-row input:focus { border-color: var(--orange); outline: none; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CHRONO — l'écran principal
+   ═══════════════════════════════════════════════════════════════════════ */
+.chrono-section {
+  text-align: center;
+  padding: 22px 18px;
+}
+.chrono-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(96px, 22vw, 220px);
+  line-height: 1;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  border: 3px solid var(--border);
+  border-radius: 20px;
+  padding: 20px 16px;
+  background: var(--card);
+  margin-bottom: 18px;
+  transition: color .2s, border-color .2s, background .2s, transform .12s;
+  cursor: pointer;                 /* le grand cadre est tap-safe : tap = reset + relance */
+}
+.chrono-val:active { transform: scale(0.97); }
+.chrono-val.running {
+  border-color: var(--green);
+  color: var(--green);
+  box-shadow: 0 0 28px rgba(0,204,102,0.35), inset 0 0 16px rgba(0,204,102,0.12);
+}
+.chrono-val.warn {
+  border-color: var(--yellow);
+  color: var(--yellow);
+  box-shadow: 0 0 28px rgba(255,214,51,0.45), inset 0 0 16px rgba(255,214,51,0.16);
+  animation: warnPulse 0.6s ease-in-out infinite;
+}
+.chrono-val.over {
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(255,51,51,0.10);
+  box-shadow: 0 0 34px rgba(255,51,51,0.55), inset 0 0 18px rgba(255,51,51,0.20);
+  animation: overFlash 0.5s ease-in-out infinite;
+}
+@keyframes warnPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+@keyframes overFlash { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+.chrono-btns {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 10px;
+}
+.chrono-btn { min-width: 0; }
+.chrono-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 20px;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 20px 12px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  transition: background .15s, transform .08s;
+  color: var(--text);
+}
+.chrono-btn:active { transform: scale(0.96); }
+.chrono-btn.primary {
+  background: var(--green);
+  color: #062a15;
+}
+.chrono-btn.primary.paused { background: var(--orange); color: #2a1503; }
+.chrono-btn:disabled { opacity: 0.35; }
+.chrono-btn.secondary {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--dim);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SCORES 2 JOUEURS
+   ═══════════════════════════════════════════════════════════════════════ */
+.scores {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.player-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+  transition: background .2s, box-shadow .2s, transform .12s;
+  min-width: 0;
+  overflow: hidden;
+}
+.player-card.p1 { border-left: 4px solid var(--p1); }
+.player-card.p2 { border-right: 4px solid var(--p2); }
+/* État actif : joueur en train de jouer = fond rouge plein */
+.player-card.active {
+  background: #c8141e;
+  border-color: #ff4d4d;
+  transform: scale(1.015);
+}
+.player-card.active .player-score { background: rgba(0,0,0,0.45); }
+.player-card.active .score-btn { background: rgba(0,0,0,0.45); border-color: rgba(255,255,255,0.25); }
+.player-name-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+.player-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 14px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  text-align: center;
+  width: auto;
+  max-width: calc(100% - 22px);
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: background .15s;
+}
+.player-name:focus { background: rgba(255,120,0,0.10); outline: none; }
+.player-name-edit {
+  color: var(--dim);
+  font-size: 12px;
+  opacity: 0.7;
+  transition: color .15s, opacity .15s;
+  pointer-events: none;                    /* le tap passe à l'input derrière */
+}
+.player-name-row:focus-within .player-name-edit { color: var(--orange); opacity: 1; }
+/* Le champ nom rétrécit pour laisser la place au F et au crayon (noms longs sur petit écran) */
+.player-name-row { min-width: 0; }
+.player-name-row .player-name { flex: 0 1 auto; min-width: 0; text-overflow: ellipsis; }
+.player-name-edit { flex: 0 0 auto; }
+/* Pastille F (faute) : le chrono est arrivé à 0 pendant le tour de ce joueur */
+.foul-badge {
+  display: none;
+  flex: 0 0 auto;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 16px; line-height: 1;
+  color: var(--red);
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 3px 7px;
+}
+.foul-badge.show { display: inline-block; }
+.player-score {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(56px, 16vw, 100px);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  margin: 8px 0;
+  border: 2px solid rgba(255,255,255,0.75);
+  border-radius: 14px;
+  padding: 6px 12px 20px;                  /* la font Barlow Condensed 900 laisse un ascender-space vide au-dessus des chiffres → on inverse : top-6, bottom-20 pour recentrer visuellement le "0" */
+  background: rgba(0,0,0,0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 1.2em;                       /* garantit une hauteur cohérente */
+  cursor: pointer;                         /* tap = sélectionne ce joueur + relance le chrono */
+  transition: transform .12s;
+}
+.player-score:active { transform: scale(0.97); }
+.p1 .player-score { color: var(--p1); }
+.p2 .player-score { color: var(--p2); }
+.score-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.score-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 22px;
+  padding: 14px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  transition: background .15s, transform .08s;
+}
+.score-btn:active { transform: scale(0.94); }
+.score-btn.plus { background: rgba(0,204,102,0.18); color: var(--green); border-color: rgba(0,204,102,0.45); }
+.score-btn.minus { background: rgba(255,51,51,0.14); color: var(--red); border-color: rgba(255,51,51,0.40); }
+
+/* Bouton EXTENSION sous chaque cadre joueur */
+.ext-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 18px;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 10px 6px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--card);
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  min-width: 0;
+  transition: opacity .15s, transform .08s, box-shadow .2s;
+}
+.ext-btn:active { transform: scale(0.96); }
+.ext-btn.p1 { color: var(--p1); border-color: rgba(125,211,252,0.55); background: rgba(125,211,252,0.10); }
+.ext-btn.p2 { color: var(--p2); border-color: rgba(196,181,253,0.55); background: rgba(196,181,253,0.10); }
+.ext-btn .ext-sub { font-size: 11px; letter-spacing: 1.5px; font-weight: 700; opacity: 0.85; }
+.ext-btn.used { opacity: 0.38; border-style: dashed; }
+.ext-btn.locked { opacity: 0.25; cursor: not-allowed; }
+.ext-btn.locked:active { transform: none; }
+.ext-btn.running { opacity: 1; border-style: solid; animation: extPulse 1s ease-in-out infinite; }
+.ext-btn.p1.running { box-shadow: 0 0 18px rgba(125,211,252,0.55); }
+.ext-btn.p2.running { box-shadow: 0 0 18px rgba(196,181,253,0.55); }
+@keyframes extPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+.alert-test {
+  display: block; width: 100%; margin-top: 8px;
+  background: transparent; border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); padding: 10px;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+.alert-test:active { border-color: var(--orange); color: var(--orange); }
+.alert-btn:disabled { opacity: 0.35; }
+/* Page 0 : accueil NOVΛ (logo animé + bouton Lancer le chrono + raccourcis) */
+/* Accueil : bloc principal (logo, bouton, tuiles) centré verticalement — pas de partenaire sur cette page */
+.home {
+  flex: 1 0 auto;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 16px 16px 8px; text-align: center;
+}
+.home-main { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+.home-logo svg { width: min(82vw, 400px); height: auto; display: block; }
+.home-tag {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: 16px; letter-spacing: 7px; text-transform: uppercase; color: var(--dim);
+  margin-top: 2px;
+}
+.page-home { cursor: pointer; }   /* toucher l'écran d'ouverture = aller au chrono */
+.home-hint {
+  flex: 0 0 auto; text-align: center; padding: 0 0 12px;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: 16px; letter-spacing: 5px; text-transform: uppercase; color: var(--orange);
+  animation: hintIn .6s 2s both;
+}
+.home-hint .hh-arr { display: inline-block; margin-left: 4px; animation: hintArrow 1.4s 2.6s ease-in-out infinite; }
+@keyframes hintIn    { from { opacity: 0; } to { opacity: 0.9; } }
+@keyframes hintArrow { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
+@media (min-width: 700px) { .home-hint { font-size: 19px; padding-bottom: 16px; } }
+/* Écrans peu hauts : logo un peu plus petit */
+@media (max-height: 640px) { .home-logo svg { width: min(70vw, 300px); } }
+/* Tablette / PC : le logo grandit avec la hauteur de l'écran */
+@media (min-width: 700px) {
+  .home-logo svg { width: clamp(300px, 58vh, 680px); }
+  .home-tag { font-size: 20px; letter-spacing: 9px; }
+}
+/* Animation d'ouverture : le sable s'écoule, puis les lettres apparaissent */
+@keyframes sandTop  { from { transform: scaleY(1); }   to { transform: scaleY(0.42); } }
+@keyframes sandBot  { from { transform: scaleY(0); }   to { transform: scaleY(1); } }
+@keyframes ringIn   { from { opacity: 0; transform: rotate(-90deg); } to { opacity: 1; transform: rotate(0); } }
+@keyframes letterIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.home-logo .hl-ring { transform-box: fill-box; transform-origin: center; animation: ringIn .6s ease-out both; }
+.home-logo .hl-top  { transform-box: fill-box; transform-origin: 50% 100%; animation: sandTop 1.1s .3s ease-in-out both; }
+.home-logo .hl-bot  { transform-box: fill-box; transform-origin: 50% 100%; animation: sandBot 1.1s .3s ease-in-out both; }
+.home-logo .hl-l    { animation: letterIn .45s ease-out both; animation-delay: calc(1.1s + var(--i) * .12s); }
+@media (prefers-reduced-motion: reduce) {
+  .home-logo .hl-ring, .home-logo .hl-top, .home-logo .hl-bot, .home-logo .hl-l,
+  .home-hint, .home-hint .hh-arr { animation: none; }
+}
+
+/* Page 5 : partenaires LSEI TV — logos sur cartes blanches (logos prévus pour fond clair) */
+.partners-intro { font-size: 12px; color: var(--dim); text-align: center; margin: 0 0 10px; line-height: 1.35; }
+/* 3 colonnes dès le téléphone : les 10 logos tiennent sur un seul écran */
+.partners-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.partner-card {
+  display: flex; flex-direction: column; gap: 4px;
+  text-decoration: none; color: var(--text);
+  transition: transform .1s;
+}
+.partner-card:active { transform: scale(0.97); }
+.partner-logo {
+  background: #fff; border-radius: 10px;
+  aspect-ratio: 16 / 10;
+  display: flex; align-items: center; justify-content: center;
+  padding: 6px;
+  min-height: 0; overflow: hidden;   /* toutes les cartes à la même hauteur, quel que soit le logo */
+}
+.partner-logo img { width: 100%; height: 100%; object-fit: contain; }
+.partner-name {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase;
+  text-align: center; color: var(--dim); line-height: 1.15;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.partners-cta {
+  display: block; text-align: center; margin-top: 14px;
+  color: var(--orange); font-weight: 700; font-size: 13px; text-decoration: none;
+}
+/* Dernier logo seul sur sa ligne (grille 3 colonnes) → centré */
+.partner-card:last-child:nth-child(3n+1) { grid-column: 2; }
+@media (min-width: 481px) { .partner-name { font-size: 11px; } }
+@media (min-width: 900px) { .partner-card:last-child:nth-child(3n+1) { grid-column: auto; } }
+@media (min-width: 900px) { .partners-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; } }
+
+.club-row { display: flex; align-items: center; gap: 8px; }
+.club-row label {
+  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--dim); font-weight: 700; flex: 0 0 auto;
+}
+.club-row input {
+  flex: 1; min-width: 0;
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 12px; color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px;
+}
+.club-logo { display: grid; grid-template-columns: 110px 1fr; gap: 10px; margin-top: 10px; align-items: center; }
+.club-logo-preview {
+  height: 90px; border: 1px dashed var(--border); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--dim); text-align: center; padding: 6px;
+  background: #000; overflow: hidden;
+}
+.club-logo-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.club-logo-btns { display: grid; gap: 6px; }
+.club-logo-btns .alert-test { margin-top: 0; text-align: center; cursor: pointer; }
+.config-hint { font-size: 12px; color: var(--dim); text-align: center; margin: 10px 4px 0; line-height: 1.4; }
+
+.scores-reset {
+  margin-top: 8px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--dim);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 12px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 10px;
+  border-radius: 8px;
+  width: 100%;
+  transition: color .15s, border-color .15s;
+}
+.scores-reset:active { color: var(--red); border-color: var(--red); }
+/* Zone du bouton « Remettre tout à zéro » : juste sous le cadre Scores (la confirmation protège des fausses manips) */
+.reset-zone { padding: 12px 12px 0; }
+.reset-zone .scores-reset { display: block; max-width: 420px; margin: 0 auto; }
+
+/* Bandeau partenaires en bas de la page 1 : 1 logo à la fois, fondu toutes les 8 s, cliquable */
+.partner-banner {
+  padding: 33px 12px 6px;           /* sous « Remettre tout à zéro », toujours visible */
+  display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px;
+}
+.pb-card {
+  display: flex; align-items: center; justify-content: center;
+  width: 168px; height: 52px;                     /* logo bien lisible (écrans hauts) */
+  background: #fff; border-radius: 10px; padding: 5px 10px;
+  transition: opacity .35s ease;
+}
+.pb-card.fading { opacity: 0; }
+.pb-card img { width: 100%; height: 100%; object-fit: contain; }
+.partner-banner.empty { display: none; }
+/* Petit téléphone (iPhone SE…) : on garde le bandeau plus haut pour ne pas passer sous les points de pagination */
+/* La carte s'adapte à la hauteur disponible pour rester au-dessus des points de pagination */
+@media (max-height: 780px) { .pb-card { width: 150px; height: 46px; padding: 4px 9px; } }
+@media (max-height: 740px) { .pb-card { width: 132px; height: 40px; padding: 3px 8px; } }
+@media (max-width: 480px) and (max-height: 700px) { .partner-banner { padding-top: 8px; } .pb-card { width: 118px; height: 34px; } }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PAGE 2 — HISTORIQUE DES PARTIES
+   ═══════════════════════════════════════════════════════════════════════ */
+.history-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.stat-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+}
+.stat-box-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--dim);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.stat-box-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--text);
+}
+.stat-box.p1 { border-left: 3px solid var(--p1); }
+.stat-box.p1 .stat-box-value { color: var(--p1); }
+.stat-box.p2 { border-right: 3px solid var(--p2); }
+.stat-box.p2 .stat-box-value { color: var(--p2); }
+
+.history-list {
+  display: flex; flex-direction: column; gap: 6px;
+  max-height: 55vh;
+  overflow-y: auto;
+  padding: 4px;
+}
+.history-empty {
+  text-align: center;
+  padding: 24px 12px;
+  color: var(--dim);
+  font-size: 13px;
+  font-style: italic;
+}
+.history-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.history-row .h-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.history-row .h-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 12px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--dim);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.history-row .h-winner {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 14px;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.history-row .h-winner.p1 { color: var(--p1); }
+.history-row .h-winner.p2 { color: var(--p2); }
+.history-row .h-dur {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 18px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.history-actions {
+  display: grid; grid-template-columns: 1fr; gap: 8px;
+  margin-top: 12px;
+}
+.history-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 13px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  transition: transform .08s, background .15s;
+}
+.history-btn:active { transform: scale(0.96); }
+.history-btn.reset { background: rgba(255,51,51,0.14); border-color: rgba(255,51,51,0.40); color: var(--red); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FOOTER — branding LSEI discret
+   ═══════════════════════════════════════════════════════════════════════ */
+.footer-lsei {
+  text-align: center;
+  padding: 22px 14px 30px;
+  color: var(--dim);
+  font-size: 12px;
+  letter-spacing: 1.2px;
+}
+.footer-lsei a {
+  color: var(--orange);
+  text-decoration: none;
+  font-weight: 700;
+}
+.footer-lsei a:hover { text-decoration: underline; }
+
+/* Zone tap-safe pour iPhone bas d'écran */
+@supports (padding: max(0px)) {
+  body { padding-bottom: max(0px, env(safe-area-inset-bottom)); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   RESPONSIVE — téléphone étroit (< 480 px : iPhone SE, Android 5")
+   Compacte les paddings, réduit les tailles, cache le sous-titre topbar.
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .chrono-btns { grid-template-columns: 1.7fr 1fr; gap: 8px; }
+  .topbar { padding: 8px 8px; gap: 6px; }
+  .topbar-logo { --tl-h: 27px; }
+  .topbar-brand { font-size: 13px; letter-spacing: 1px; }
+  .topbar-brand small { display: none; }
+  .icon-btn, .nav-arrow { width: 32px; height: 32px; font-size: 14px; }
+
+  /* Bouton RESET : plus compact pour tenir dans sa colonne */
+  .chrono-btn { padding: 14px 6px; font-size: 16px; letter-spacing: 1px; }
+
+  /* Labels de config longs (« NOMBRE DE SÉRIES ... ») : wrap propre */
+  .match-setup-item label { font-size: 9px; letter-spacing: 1px; line-height: 1.3; }
+  .match-setup-item input.team-name { font-size: 14px; }
+
+  .page { min-height: calc(100vh - 52px); min-height: calc(100dvh - 52px); }
+
+  .section { margin: 6px 8px; padding: 10px; border-radius: 12px; }
+  .section-title { font-size: 11px; letter-spacing: 2px; margin-bottom: 8px; }
+
+  .chrono-section { padding: 12px 10px; }
+  .chrono-val {
+    font-size: clamp(72px, 22vw, 160px);
+    padding: 10px 8px;
+    margin-bottom: 12px;
+    border-width: 2px;
+    border-radius: 14px;
+  }
+  .chrono-btn { padding: 14px 8px; font-size: 17px; letter-spacing: 1.5px; }
+
+  .preset-btn, .alert-btn { padding: 8px 4px; }
+  .preset-btn .preset-dur, .alert-btn .preset-dur { font-size: 18px; }
+
+  .scores { gap: 6px; }
+  .player-card { padding: 8px 6px; }
+  .player-name { font-size: 12px; letter-spacing: 1px; padding: 3px 4px; max-width: calc(100% - 20px); }
+  .player-name-edit { font-size: 11px; }
+  .player-name-row { gap: 4px; }
+  .foul-badge { font-size: 14px; padding: 2px 5px; }
+  .player-score {
+    font-size: clamp(48px, 14vw, 80px);
+    padding: 4px 6px 14px;
+    margin: 6px 0;
+    border-width: 2px;
+    border-radius: 10px;
+  }
+  .score-btn { padding: 12px 4px; font-size: 19px; }
+  .scores-reset { padding: 8px; font-size: 11px; }
+
+  .page-dots { bottom: 8px; padding: 4px 8px; }
+  .page-dot { width: 6px; height: 6px; }
+
+  /* Feuille de match : compacter aussi */
+  .team-score-summary .side-score { font-size: 34px; }
+  .team-score-summary .vs { font-size: 13px; letter-spacing: 2px; }
+  .team-players input { font-size: 12px; padding: 6px 8px; }
+  .match-side select { font-size: 11px; padding: 5px 4px; }
+  .match-play-btn { padding: 10px 4px; font-size: 14px; }
+  .match-row { grid-template-columns: 1fr 48px 1fr; gap: 4px; padding: 5px 4px; }
+
+  /* Historique : compacter les rows */
+  .history-row { padding: 8px 10px; }
+  .history-row .h-num { font-size: 11px; }
+  .history-row .h-winner { font-size: 13px; }
+  .history-row .h-dur { font-size: 16px; }
+}
+
+/* Tablette portrait / phablet (481-899 px) : layout 1 colonne, centré à 640 px,
+   tailles très compactes pour minimiser le scroll vertical. */
+@media (min-width: 481px) and (max-width: 899px) {
+  .topbar, .section, .footer-lsei, .context-bar { max-width: 640px; margin-left: auto; margin-right: auto; }
+
+  .section { margin: 6px auto; padding: 10px 12px; }
+  .section-title { font-size: 11px; letter-spacing: 2px; margin-bottom: 8px; }
+
+  .chrono-section { padding: 12px 10px; }
+  .chrono-val { font-size: 88px; padding: 10px 10px; margin-bottom: 10px; border-width: 2px; }
+  .chrono-btn { font-size: 16px; padding: 12px 6px; letter-spacing: 1.2px; }
+
+  .preset-btn, .alert-btn { padding: 6px 4px; }
+  .preset-btn .preset-dur, .alert-btn .preset-dur { font-size: 17px; }
+
+  .scores { gap: 8px; }
+  .player-card { padding: 8px 8px; }
+  .player-name { font-size: 12px; letter-spacing: 1px; }
+  .player-score { font-size: 58px; padding: 4px 8px 12px; margin: 6px 0; border-width: 2px; }
+  .score-btn { font-size: 19px; padding: 10px 4px; }
+  .scores-reset { padding: 8px; font-size: 11px; }
+}
+
+/* Desktop / tablette large (≥ 900 px) : contenu centré à 900 px, topbar avec contenu aligné sur 1400 px.
+   Le contenu utilise plus d'espace pour éviter le vide sur écran large. */
+@media (min-width: 900px) {
+  .section, .footer-lsei, .context-bar { max-width: 900px; margin-left: auto; margin-right: auto; }
+  .topbar {
+    padding-left: max(14px, calc((100% - 1400px) / 2 + 14px));
+    padding-right: max(14px, calc((100% - 1400px) / 2 + 14px));
+  }
+  .section { box-shadow: 0 2px 10px rgba(0,0,0,0.18); }
+  .chrono-val { font-size: 140px; }
+  .player-score { font-size: 80px; }
+}
+
+/* Tablette / PC PAYSAGE (≥ 900 px de large, orientation landscape) : layout 2 colonnes.
+   Chrono à gauche, scores à droite. Contenu centré et étalé jusqu'à 1400 px sur écran large. */
+@media (min-width: 900px) and (orientation: landscape) {
+  .topbar, .footer-lsei { max-width: 1400px; margin-left: auto; margin-right: auto; }
+
+  /* Pages 📋 Feuille + 🏅 Historique : 1 col centré à 900 px avec shadow */
+  #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei,
+  #pageConfig > .section, #pageConfig > .footer-lsei,
+  #pagePartners > .section, #pagePartners > .footer-lsei { max-width: 900px; margin-left: auto; margin-right: auto; }
+
+  /* Page 🎱 Chrono : layout PC 2 rows verticales (la durée se règle en page 4 Configuration).
+     Row 1 : Grand cadre chrono + boutons Démarrer/Reset (pleine largeur)
+     Row 2 : Joueur 1 (gauche) + Joueur 2 (droite) en 2 col, extensions dessous */
+  #pageMain {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "context  context"
+      "chrono   chrono"
+      "scores   scores"
+      "reset    partners";
+    gap: 16px;
+    max-width: none;
+    padding-top: calc(var(--topbar-h, 56px) + 12px);
+    padding-bottom: 44px;
+    padding-left: max(20px, calc((100% - 1400px) / 2 + 20px));
+    padding-right: max(20px, calc((100% - 1400px) / 2 + 20px));
+    align-content: start;
+  }
+  #pageMain > .context-bar     { grid-area: context; margin: 0; max-width: none; width: auto; }
+  #pageMain > .chrono-section  { grid-area: chrono;  margin: 0; max-width: none; width: auto; }
+  #pageMain > .section-scores  { grid-area: scores;  margin: 0; max-width: none; width: auto; }
+  #pageMain > .reset-zone      { grid-area: reset;   margin: 0; padding: 14px 0 0; align-self: center; }
+  #pageMain > .reset-zone .scores-reset { margin: 0; }
+  /* PC / tablette paysage : bandeau à droite du bouton, sur une seule ligne (la page ne s'allonge pas) */
+  #pageMain > .partner-banner  { grid-area: partners; margin: 0; padding: 14px 0 0; flex-direction: row; justify-content: flex-end; gap: 12px; }
+  #pageMain .pb-card { width: 160px; height: 44px; }
+  #pageMain > .footer-lsei     { display: none; }
+
+  .chrono-val { font-size: clamp(120px, 11vw, 180px); padding: 20px 16px; margin-bottom: 14px; }
+  .chrono-btn { font-size: 22px; padding: 18px 14px; }
+
+  /* Row 3 : les 2 joueurs côte à côte (chacun ~700 px sur écran 1400) */
+  #pageMain .scores { grid-template-columns: 1fr 1fr; gap: 16px; }
+  .player-score { font-size: clamp(72px, 7vw, 110px); padding: 6px 10px 16px; }
+  .score-btn { font-size: 22px; padding: 16px 8px; }
+}
+
+/* Très grand écran / ultrawide (≥ 1700 px) : élargit encore le contenu pour combler le vide */
+@media (min-width: 1700px) and (orientation: landscape) {
+  .topbar, .footer-lsei { max-width: 1700px; }
+  #pageMain {
+    padding-left: max(40px, calc((100% - 1600px) / 2 + 40px));
+    padding-right: max(40px, calc((100% - 1600px) / 2 + 40px));
+    gap: 24px;
+  }
+  #pageMatch > .section, #pageMatch > .footer-lsei, #pageHistory > .section, #pageHistory > .footer-lsei,
+  #pageConfig > .section, #pageConfig > .footer-lsei,
+  #pagePartners > .section, #pagePartners > .footer-lsei { max-width: 1100px; }
+  .chrono-val { font-size: clamp(160px, 10vw, 220px); }
+  .player-score { font-size: clamp(90px, 6vw, 140px); }
+}
+
+/* Écran large mais peu haut (tablette paysage, portable 768 px) : tout le chrono tient sans scroll */
+@media (min-width: 900px) and (orientation: landscape) and (max-height: 860px) {
+  #pageMain { gap: 10px; padding-top: calc(var(--topbar-h, 56px) + 8px); padding-bottom: 36px; }
+  .chrono-section { padding: 10px 12px; }
+  .chrono-val { font-size: clamp(80px, 17vh, 150px); padding: 4px 16px 10px; margin-bottom: 10px; }
+  .chrono-btn { font-size: 18px; padding: 12px 10px; }
+  .section-scores .section-title { margin-bottom: 6px; }
+  .player-card { padding: 8px 10px; }
+  .player-score { font-size: clamp(52px, 10vh, 100px); padding: 2px 10px 10px; margin: 6px 0; }
+  .score-btn { font-size: 19px; padding: 10px 6px; }
+  .scores { gap: 10px; }
+  .ext-btn { padding: 7px 6px; font-size: 16px; }
+  .scores-reset { margin-top: 6px; padding: 8px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FEUILLE DE MATCH ÉQUIPES 5v5 — page 1 (entre chrono et historique)
+   ═══════════════════════════════════════════════════════════════════════ */
+.match-setup { display: grid; gap: 8px; }
+.match-setup-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.match-setup-item label {
+  display: block;
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--dim); font-weight: 700;
+  margin-bottom: 4px;
+  line-height: 1.3;
+  min-height: 2.6em;               /* réserve 2 lignes → aligne les inputs quand les labels ont des longueurs différentes */
+  display: flex;
+  align-items: flex-end;
+}
+.match-setup-item { min-width: 0; overflow: hidden; }
+.match-setup-item input {
+  width: 100%;
+  max-width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 14px;
+  letter-spacing: 1px; text-align: center;
+}
+.match-setup-item input.team-name { font-size: 15px; text-transform: uppercase; }
+.match-setup-item input:focus { border-color: var(--orange); outline: none; }
+
+.team-side {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  min-width: 0;
+  overflow: hidden;
+}
+.team-side.team-a { border-top: 4px solid var(--p1); }
+.team-side.team-b { border-top: 4px solid var(--p2); }
+.team-side-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 8px; text-align: center;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.team-a .team-side-title { color: var(--p1); }
+.team-b .team-side-title { color: var(--p2); }
+.team-players { display: flex; flex-direction: column; gap: 6px; }
+.team-players input {
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 13px;
+  text-align: center; letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.team-players input:focus { border-color: var(--orange); outline: none; }
+
+.team-score-summary {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center; gap: 10px;
+  padding: 4px 4px 6px;
+}
+.team-score-summary .side { text-align: center; min-width: 0; }
+.team-score-summary .side-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 12px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 4px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.team-score-summary .side-score {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 44px; line-height: 1;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.team-score-summary .side.team-a .side-score { color: var(--p1); }
+.team-score-summary .side.team-b .side-score { color: var(--p2); }
+.team-score-summary .vs {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 16px;
+  letter-spacing: 3px; color: var(--dim);
+}
+
+.series-block {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.series-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--orange);
+  text-align: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.match-row {
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 6px;
+  border-bottom: 1px dashed rgba(255,255,255,0.06);
+  border-radius: 8px;
+  transition: background .2s, box-shadow .2s;
+}
+.match-row:last-child { border-bottom: none; }
+.match-row.active {
+  background: rgba(255,120,0,0.14);
+  box-shadow: 0 0 0 2px var(--orange), 0 0 18px rgba(255,120,0,0.35);
+  border-bottom-color: transparent;
+  animation: activePulse 1.3s ease-in-out infinite;
+}
+@keyframes activePulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--orange), 0 0 18px rgba(255,120,0,0.35); }
+  50%      { box-shadow: 0 0 0 2px var(--orange), 0 0 28px rgba(255,120,0,0.55); }
+}
+.match-side { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.match-side select {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 6px;
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 12px;
+  letter-spacing: 0.5px;
+  width: 100%; cursor: pointer;
+  text-transform: uppercase;
+}
+.match-side select option { text-transform: uppercase; }
+.match-side select:focus { border-color: var(--orange); outline: none; }
+.match-row.done .match-side.winner select {
+  background: rgba(0,204,102,0.20);
+  border-color: var(--green);
+  color: var(--green);
+}
+.match-row.done .match-side.loser select {
+  background: rgba(255,51,51,0.14);
+  border-color: var(--red);
+  color: var(--red);
+}
+.match-score {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 11px;
+  color: var(--dim);
+  letter-spacing: 1px; text-align: center;
+  min-height: 12px;
+}
+.match-row.done .match-side.winner .match-score { color: var(--green); }
+.match-row.done .match-side.loser .match-score { color: var(--red); }
+
+.match-play-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 16px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 12px 6px;
+  border-radius: 8px;
+  border: 1px solid var(--orange);
+  background: rgba(255,120,0,0.15);
+  color: var(--orange);
+  transition: transform .08s, background .15s;
+}
+.match-play-btn:active { transform: scale(0.94); }
+.match-play-btn.done {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--dim);
+}
+.match-play-btn.active {
+  background: var(--orange);
+  color: #000;
+  animation: playPulse 1.2s ease-in-out infinite;
+}
+@keyframes playPulse {
+  0%,100% { box-shadow: 0 0 0 rgba(255,120,0,0.5); }
+  50% { box-shadow: 0 0 16px rgba(255,120,0,0.6); }
+}
+
+/* Bannière context au-dessus du chrono quand match d'équipe en cours */
+.context-bar {
+  display: none;
+  background: rgba(255,120,0,0.10);
+  border: 1px solid var(--orange);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin: 10px 12px 0;
+  text-align: center;
+}
+.context-bar.show { display: block; }
+.context-bar-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900; font-size: 12px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 4px;
+}
+.context-bar-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--text);
+}
+.context-bar-quit {
+  margin-top: 8px;
+  background: transparent;
+  border: 1px solid var(--dim);
+  color: var(--dim);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700; font-size: 10px;
+  letter-spacing: 1.5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MODAL QR — pour partager la feuille de match avec un 2ᵉ arbitre
+   ═══════════════════════════════════════════════════════════════════════ */
+.qr-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(0,0,0,0.78);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+}
+.qr-modal.show { display: flex; }
+.qr-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.qr-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 16px;
+}
+.qr-frame {
+  position: relative;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 14px;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qr-img { width: 100%; max-width: 280px; height: auto; display: block; }
+.qr-img.loading { opacity: 0.3; }
+.qr-err { display: none; color: var(--red); font-weight: 700; padding: 20px; text-align: center; }
+.qr-err.show { display: block; }
+.qr-img.show + .qr-err, .qr-err.show + .qr-img { display: none; }
+.qr-hint {
+  font-size: 12px;
+  color: var(--dim);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.qr-hint b { color: var(--orange); font-weight: 700; }
+.qr-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.qr-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background .15s, transform .08s;
+}
+.qr-btn:active { transform: scale(0.96); }
+.qr-btn.copied { background: var(--green); color: #000; }
+.qr-close { background: rgba(255,120,0,0.15); border-color: var(--orange); color: var(--orange); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MODE TV — overlay plein écran pour projection sur télé de club (HDMI/Chromecast)
+   ═══════════════════════════════════════════════════════════════════════ */
+.tv-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: #000;
+  color: #fff;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(20px, 4vh, 60px);
+  padding: clamp(20px, 4vw, 60px);
+  overflow: hidden;
+}
+.tv-overlay.show { display: flex; }
+.tv-exit {
+  position: absolute;
+  top: 20px; right: 20px;
+  background: rgba(255,255,255,0.06);
+  border: 2px solid rgba(255,255,255,0.25);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+.tv-exit:hover { background: rgba(255,255,255,0.15); }
+.tv-exit:active { transform: scale(0.94); }
+
+/* En-tête du mode TV : logo du club + nom du tournoi (réglés en page Configuration) */
+.tv-header {
+  display: flex; align-items: center; justify-content: center;
+  gap: clamp(14px, 2vw, 32px);
+  max-width: 100%;
+}
+.tv-header.hidden { display: none; }
+.tv-logo { max-height: clamp(50px, 11vh, 140px); max-width: clamp(90px, 20vw, 320px); object-fit: contain; }
+.tv-logo:not([src]), .tv-logo[src=""] { display: none; }
+.tv-tournament {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(22px, 3.6vw, 60px);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #ff7800;
+  line-height: 1.05;
+  text-align: center;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  min-width: 0;
+}
+.tv-tournament:empty { display: none; }
+
+.tv-teams {
+  display: flex;
+  align-items: center;
+  gap: clamp(30px, 6vw, 100px);
+  width: 100%;
+  max-width: 1600px;
+  justify-content: space-around;
+}
+.tv-team { flex: 1; text-align: center; min-width: 0; }
+.tv-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: clamp(28px, 4.5vw, 72px);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: clamp(10px, 1.5vh, 24px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tv-foul {
+  display: none;
+  color: #ff3333;
+  background: #ffffff;
+  border-radius: 0.15em;
+  padding: 0 0.25em;
+  margin-right: 0.35em;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+.tv-foul.show { display: inline-block; }
+.tv-team-1 .tv-name { color: #7dd3fc; }
+.tv-team-2 .tv-name { color: #c4b5fd; }
+.tv-score {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(120px, 18vw, 320px);
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+.tv-team-1 .tv-score { color: #7dd3fc; }
+.tv-team-2 .tv-score { color: #c4b5fd; }
+
+/* Joueur en train de jouer (activePlayer) : cadre rouge plein, comme sur la page chrono */
+.tv-team {
+  padding: clamp(10px, 2vh, 28px) clamp(12px, 2vw, 32px);
+  border: 4px solid transparent;
+  border-radius: clamp(16px, 2vw, 32px);
+  transition: background .25s, border-color .25s, transform .25s;
+}
+.tv-team.playing {
+  background: #c8141e;
+  border-color: #ff4d4d;
+  transform: scale(1.03);
+}
+.tv-vs {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(24px, 3vw, 56px);
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 8px;
+}
+
+.tv-chrono {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(150px, 22vw, 400px);
+  line-height: 1;
+  color: #f5f5f5;
+  border: 6px solid rgba(255,255,255,0.15);
+  border-radius: 30px;
+  padding: clamp(10px, 2vh, 30px) clamp(30px, 5vw, 80px);
+  min-width: clamp(280px, 40vw, 560px);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  transition: color .2s, border-color .2s, background .2s;
+}
+.tv-chrono.running { color: #00ff88; border-color: #00ff88; box-shadow: 0 0 60px rgba(0,255,136,0.35); }
+.tv-chrono.warn    { color: #ffd633; border-color: #ffd633; box-shadow: 0 0 60px rgba(255,214,51,0.45); animation: warnPulse 0.6s ease-in-out infinite; }
+.tv-chrono.over    { color: #ff3333; border-color: #ff3333; background: rgba(255,51,51,0.10); box-shadow: 0 0 80px rgba(255,51,51,0.55); animation: overFlash 0.5s ease-in-out infinite; }
+
+.tv-context {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: clamp(16px, 1.8vw, 28px);
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+}
+.tv-context:empty { display: none; }
+/* Mode TV : partenaire LSEI TV en bas à droite (rotation toutes les 8 s, comme un habillage télé) */
+.tv-partner {
+  position: absolute;
+  right: clamp(12px, 2vw, 32px);
+  bottom: clamp(12px, 2.2vh, 28px);
+  width: clamp(110px, 13vw, 240px);
+  height: clamp(42px, 7.5vh, 96px);
+  background: #fff;
+  border-radius: clamp(8px, 1vw, 14px);
+  padding: clamp(4px, 0.8vh, 10px) clamp(8px, 1vw, 16px);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .5s ease;
+}
+.tv-partner.fading { opacity: 0; }
+.tv-partner.empty { display: none; }
+.tv-partner img { width: 100%; height: 100%; object-fit: contain; }
+/* Écran vertical (téléphone) : en haut à gauche, pour ne pas toucher le chrono en bas (la croix ✕ est à droite) */
+@media (orientation: portrait) {
+  .tv-partner { top: 16px; left: 16px; right: auto; bottom: auto; width: 100px; height: 40px; }
+}
+
+.tv-branding {
+  position: absolute;
+  bottom: 20px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  color: rgba(255,255,255,0.30);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Mode TV SLAVE (fenêtre TV séparée, ouverte avec ?tv=1) : cache toute la UI de contrôle,
+   ne laisse visible que l'overlay TV plein écran. Aucun bouton interactif. */
+body.is-tv-slave {
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+}
+body.is-tv-slave > .topbar,
+body.is-tv-slave > .pages,
+body.is-tv-slave > .page-dots,
+body.is-tv-slave > .nav-side,
+body.is-tv-slave > .qr-modal { display: none !important; }
+body.is-tv-slave .tv-overlay { display: flex !important; }
+body.is-tv-slave .tv-exit { display: none; }         /* pas de bouton quitter en slave — l'user ferme la fenêtre */
+
+/* Écran paysage (TV 16/9, PC) : les tailles sont aussi plafonnées par la HAUTEUR de l'écran,
+   pour que en-tête (logo + tournoi), joueurs et chrono tiennent toujours sans être coupés */
+@media (orientation: landscape) {
+  .tv-overlay { gap: clamp(10px, 3vh, 60px); padding: clamp(14px, 3vh, 60px) clamp(20px, 4vw, 60px); }
+  .tv-overlay .tv-name { font-size: min(clamp(28px, 4.5vw, 72px), 6.5vh); margin-bottom: 1vh; }
+  .tv-overlay .tv-score { font-size: min(clamp(120px, 18vw, 320px), 24vh); }
+  .tv-overlay .tv-chrono { font-size: min(clamp(150px, 22vw, 400px), 26vh); padding-top: 1vh; padding-bottom: 1vh; }
+  .tv-overlay .tv-team { padding-top: 1.2vh; padding-bottom: 1.2vh; }
+}
+
+/* Orientation portrait : layout vertical (chrono en haut, teams en bas) sur téléphone/tablette */
+@media (orientation: portrait) {
+  .tv-overlay { justify-content: space-around; }
+  .tv-teams { gap: 20px; }
+  .tv-name { font-size: clamp(20px, 5vw, 40px); }
+  .tv-score { font-size: clamp(80px, 22vw, 180px); }
+  .tv-chrono { font-size: clamp(140px, 40vw, 280px); min-width: 60vw; }
+}
+
+/* Info format & badge vainqueur équipe */
+.match-format-info {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(255,120,0,0.08);
+  border: 1px dashed rgba(255,120,0,0.35);
+  border-radius: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text);
+}
+.match-format-info b { color: var(--orange); font-weight: 900; }
+.team-progress {
+  text-align: center;
+  margin-top: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  color: var(--dim);
+  font-weight: 700;
+}
+.team-progress b { color: var(--text); font-weight: 900; }
+.team-winner-badge {
+  display: none;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(0,204,102,0.15);
+  border: 1px solid var(--green);
+  border-radius: 10px;
+  text-align: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1.5;
+  animation: badgeGlow 1.5s ease-in-out infinite;
+}
+.team-winner-badge.show { display: block; }
+.team-winner-badge b { color: var(--green); font-weight: 900; font-size: 16px; }
+.team-winner-badge small {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--dim);
+  font-weight: 500;
+}
+@keyframes badgeGlow {
+  0%,100% { box-shadow: 0 0 0 rgba(0,204,102,0.5); }
+  50% { box-shadow: 0 0 20px rgba(0,204,102,0.5); }
+}
+
+/* Vainqueur / perdant sur les cartes joueur (fin de match d'équipe) */
+.player-card.winner {
+  background: rgba(0,204,102,0.22);
+  box-shadow: 0 0 32px rgba(0,204,102,0.55), inset 0 0 16px rgba(0,204,102,0.15);
+  border-color: var(--green) !important;
+  animation: winnerPulse 0.8s ease-in-out infinite;
+}
+.player-card.loser {
+  background: rgba(255,51,51,0.15);
+  box-shadow: inset 0 0 12px rgba(255,51,51,0.20);
+  border-color: var(--red) !important;
+  opacity: 0.85;
+}
+@keyframes winnerPulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ TOP BAR ═══════════════════════════ -->
+<div class="topbar">
+  <svg class="topbar-logo" id="topLogo" viewBox="12 12 566 156" role="img" aria-label="NOVΛ — retour à l'accueil">
+    <circle cx="90" cy="90" r="70" fill="none" stroke="#ff7800" stroke-width="12"/>
+    <polygon fill="#ffffff" points="55,42 125,42 90,90"/>
+    <polygon fill="#ff7800" points="90,90 55,138 125,138"/>
+    <path fill="#ffffff" transform="translate(200,40)" d="M0,100 V0 H22 L48,62 V0 H70 V100 H48 L22,38 V100 Z"/>
+    <circle cx="336" cy="90" r="39" fill="none" stroke="#ffffff" stroke-width="22"/>
+    <polygon fill="#ffffff" transform="translate(402,40)" points="0,0 24,0 40,62 56,0 80,0 52,100 28,100"/>
+    <polygon fill="#ff7800" transform="translate(494,40)" points="28,0 52,0 80,100 56,100 40,38 24,100 0,100"/>
+  </svg>
+  <div class="topbar-brand" id="topBrand">🎱 Chrono Billard</div>
+  <button class="nav-arrow" id="navArrow" title="Voir l'historique des parties" aria-label="Voir l'historique">🏅</button>
+  <button class="icon-btn" id="tvToggle" title="Mode TV plein écran (cet écran)" aria-label="Mode TV plein écran">📺</button>
+  <button class="icon-btn" id="tvPopup" title="Ouvrir Mode TV dans une fenêtre séparée (pour 2ᵉ écran)" aria-label="Ouvrir Mode TV sur 2ᵉ écran">↗</button>
+</div>
+
+<div class="pages" id="pages">
+
+<!-- ═══════════════════════════ PAGE 0 : ACCUEIL NOVΛ ═══════════════════════════ -->
+<div class="page page-home" id="pageHome">
+  <div class="home">
+    <div class="home-main">
+    <div class="home-logo" aria-label="NOVΛ by LSEI TV" role="img">
+      <svg viewBox="0 0 440 350" xmlns="http://www.w3.org/2000/svg">
+        <circle class="hl-ring" cx="220" cy="110" r="90" fill="none" stroke="#ff7800" stroke-width="15.4"/>
+        <polygon class="hl-top" fill="#ffffff" points="175,48.3 265,48.3 220,110"/>
+        <polygon class="hl-bot" fill="#ff7800" points="220,110 175,171.7 265,171.7"/>
+        <!-- chaque lettre dans un groupe animé : l'animation CSS ne doit pas écraser le translate() de la forme -->
+        <g class="hl-l" style="--i:0"><path fill="#ffffff" transform="translate(33,240)" d="M0,100 V0 H22 L48,62 V0 H70 V100 H48 L22,38 V100 Z"/></g>
+        <g class="hl-l" style="--i:1"><circle cx="169" cy="290" r="39" fill="none" stroke="#ffffff" stroke-width="22"/></g>
+        <g class="hl-l" style="--i:2"><polygon fill="#ffffff" transform="translate(235,240)" points="0,0 24,0 40,62 56,0 80,0 52,100 28,100"/></g>
+        <g class="hl-l" style="--i:3"><polygon fill="#ff7800" transform="translate(327,240)" points="28,0 52,0 80,100 56,100 40,38 24,100 0,100"/></g>
+      </svg>
+    </div>
+    <div class="home-tag">by LSEI TV</div>
+    </div><!-- /home-main -->
+  </div>
+  <div class="home-hint" aria-hidden="true">Glisse <span class="hh-arr">→</span></div>
+</div><!-- /page-home -->
+
+<!-- ═══════════════════════════ PAGE 1 : CHRONO PRINCIPAL ═══════════════════════════ -->
+<div class="page page-main" id="pageMain">
+
+<!-- Bannière context : n'apparaît que quand un match d'équipe est actif -->
+<div class="context-bar" id="contextBar">
+  <div class="context-bar-title" id="contextBarTitle">—</div>
+  <div class="context-bar-sub" id="contextBarSub">—</div>
+  <button class="context-bar-quit" id="contextBarQuit">✕ Quitter ce match</button>
+</div>
+
+<!-- ═══════════════════════════ CHRONO ═══════════════════════════ -->
+<div class="section chrono-section">
+  <div class="chrono-val" id="chronoVal">45</div>
+  <div class="chrono-btns">
+    <!-- Pause / Reprendre : le chrono se LANCE en touchant le cadre d'un joueur -->
+    <button class="chrono-btn primary" id="pauseBtn" disabled>⏸ Pause</button>
+    <button class="chrono-btn secondary" id="resetBtn">⟳ Reset</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SCORES ═══════════════════════════ -->
+<div class="section section-scores">
+  <div class="section-title">🏆 Scores</div>
+  <div class="scores">
+    <div class="player-card p1">
+      <div class="player-name-row">
+        <span class="foul-badge" id="foul1" title="Faute : temps écoulé">F</span>
+        <input class="player-name" id="name1" value="Joueur 1" maxlength="18" aria-label="Nom joueur 1">
+        <span class="player-name-edit" aria-hidden="true">✎</span>
+      </div>
+      <div class="player-score" id="score1">0</div>
+      <div class="score-btns">
+        <button class="score-btn minus" data-p="1" data-d="-1">−1</button>
+        <button class="score-btn plus"  data-p="1" data-d="1">+1</button>
+      </div>
+    </div>
+    <div class="player-card p2">
+      <div class="player-name-row">
+        <span class="foul-badge" id="foul2" title="Faute : temps écoulé">F</span>
+        <input class="player-name" id="name2" value="Joueur 2" maxlength="18" aria-label="Nom joueur 2">
+        <span class="player-name-edit" aria-hidden="true">✎</span>
+      </div>
+      <div class="player-score" id="score2">0</div>
+      <div class="score-btns">
+        <button class="score-btn minus" data-p="2" data-d="-1">−1</button>
+        <button class="score-btn plus"  data-p="2" data-d="1">+1</button>
+      </div>
+    </div>
+    <!-- Extensions : 1 par joueur et par partie, réarmée à chaque +1 -->
+    <button class="ext-btn p1" id="ext1" type="button"><span class="ext-label">⏱ Extension</span><span class="ext-sub" id="ext1Sub">+45 s</span></button>
+    <button class="ext-btn p2" id="ext2" type="button"><span class="ext-label">⏱ Extension</span><span class="ext-sub" id="ext2Sub">+45 s</span></button>
+  </div>
+</div>
+
+<!-- Remise à zéro : volontairement éloignée des boutons de jeu (évite une fausse manip) -->
+<div class="reset-zone">
+  <button class="scores-reset" id="scoresReset">⟳ Remettre tout à zéro</button>
+</div>
+
+<!-- Bandeau partenaires LSEI TV (rotation toutes les 8 s) -->
+<div class="partner-banner" id="partnerBanner" aria-label="Partenaires LSEI TV">
+  <a class="pb-card" id="pbLink" href="https://lsei.tv" target="_blank" rel="noopener">
+    <img id="pbLogo" alt="">
+  </a>
+</div>
+
+</div><!-- /page-main -->
+
+<!-- ═══════════════════════════ PAGE 2 : FEUILLE DE MATCH ÉQUIPES 5v5 ═══════════════════════════ -->
+<div class="page page-match" id="pageMatch">
+
+  <!-- Score total du match d'équipes -->
+  <div class="section">
+    <div class="section-title">🏆 Score du match</div>
+    <div class="team-score-summary">
+      <div class="side team-a">
+        <div class="side-name" id="scoreTeamAName">Équipe A</div>
+        <div class="side-score" id="scoreTeamA">0</div>
+      </div>
+      <div class="vs">VS</div>
+      <div class="side team-b">
+        <div class="side-name" id="scoreTeamBName">Équipe B</div>
+        <div class="side-score" id="scoreTeamB">0</div>
+      </div>
+    </div>
+    <div id="teamWinnerBadge" class="team-winner-badge">
+      🏆 <b id="teamWinnerName">—</b> a atteint <b id="teamWinnerSeuil">3</b> points — victoire acquise !<br>
+      <small>Les matchs restants se jouent quand même.</small>
+    </div>
+    <div id="teamProgress" class="team-progress">
+      Joués : <b id="tpPlayed">0</b> / <b id="tpTotal">5</b> · Restants : <b id="tpLeft">5</b>
+    </div>
+  </div>
+
+  <!-- Configuration -->
+  <div class="section">
+    <div class="section-title">⚙ Configuration</div>
+    <div class="match-setup">
+      <div class="match-setup-row">
+        <div class="match-setup-item">
+          <label>Équipe A</label>
+          <input type="text" class="team-name" id="cfgTeamA" maxlength="20" value="Équipe A">
+        </div>
+        <div class="match-setup-item">
+          <label>Équipe B</label>
+          <input type="text" class="team-name" id="cfgTeamB" maxlength="20" value="Équipe B">
+        </div>
+      </div>
+      <div class="match-setup-row">
+        <div class="match-setup-item">
+          <label>Nombre de séries (5 matchs/série)</label>
+          <input type="number" id="cfgSeries" min="1" max="5" step="1" value="1">
+        </div>
+        <div class="match-setup-item">
+          <label>Seuil victoire équipe</label>
+          <input type="number" id="cfgSeuilEquipe" min="1" max="25" step="1" value="3">
+        </div>
+      </div>
+      <div id="matchFormatInfo" class="match-format-info">
+        💡 1 rack gagné = 1 point à l'équipe. La rencontre s'arrête après <b id="mfiTotal">5</b> matchs — vainqueur = équipe qui atteint <b id="mfiSeuil">3</b> points (majorité). Tous les matchs prévus sont joués.
+      </div>
+    </div>
+  </div>
+
+  <!-- Joueurs par équipe -->
+  <div class="section">
+    <div class="section-title">👥 Joueurs (5 par équipe)</div>
+    <div class="match-setup-row">
+      <div class="team-side team-a">
+        <div class="team-side-title" id="rosterAName">Équipe A</div>
+        <div class="team-players" id="rosterA"></div>
+      </div>
+      <div class="team-side team-b">
+        <div class="team-side-title" id="rosterBName">Équipe B</div>
+        <div class="team-players" id="rosterB"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau feuille de match -->
+  <div class="section">
+    <div class="section-title">📋 Feuille de match équipe</div>
+    <div id="matchSheet"></div>
+    <p style="text-align:center; font-size:11px; color:var(--dim); margin-top:10px; padding:0 6px;">
+      💡 Chaque capitaine choisit librement l'ordre des joueurs par série. Tape ▶ pour lancer une rencontre — le chrono 40 s s'ouvre et le vainqueur est désigné dès qu'un joueur atteint le score cible.
+    </p>
+  </div>
+
+  <!-- Partage + reset match -->
+  <div class="section">
+    <div class="history-actions">
+      <button class="history-btn" id="btnShareMatch" type="button">📱 Partager par QR</button>
+      <button class="history-btn reset" id="btnResetMatch" type="button">🗑 Nouveau match d'équipes</button>
+    </div>
+    <p style="text-align:center; font-size:11px; color:var(--dim); margin-top:8px; padding:0 6px;">
+      💡 Le partage QR permet à un 2ᵉ arbitre (2ᵉ table) d'avoir la même feuille sur son téléphone en scannant le QR avec son appareil photo.
+    </p>
+  </div>
+
+  <div class="footer-lsei">
+    ← Chrono &nbsp;·&nbsp; Historique →
+  </div>
+</div><!-- /page-match -->
+
+<!-- ═══════════════════════════ PAGE 3 : HISTORIQUE DES PARTIES ═══════════════════════════ -->
+<div class="page page-history" id="pageHistory">
+  <div class="section">
+    <div class="section-title">🏅 Stats du match en cours</div>
+    <div class="history-stats">
+      <div class="stat-box">
+        <div class="stat-box-label">Parties</div>
+        <div class="stat-box-value" id="histTotal">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-label">Durée moyenne</div>
+        <div class="stat-box-value" id="histAvg">—</div>
+      </div>
+      <div class="stat-box p1">
+        <div class="stat-box-label" id="histWinsJ1Label">Gagnées J1</div>
+        <div class="stat-box-value" id="histWinsJ1">0</div>
+      </div>
+      <div class="stat-box p2">
+        <div class="stat-box-label" id="histWinsJ2Label">Gagnées J2</div>
+        <div class="stat-box-value" id="histWinsJ2">0</div>
+      </div>
+    </div>
+    <div style="text-align:center; font-size:12px; color:var(--dim); margin-bottom:10px;">
+      <span id="histDuTotal">Durée totale : —</span> · <span id="histLongest">La + longue : —</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📋 Toutes les parties</div>
+    <div class="history-list" id="historyList">
+      <div class="history-empty">Aucune partie enregistrée pour le moment.<br>Lance le chrono puis clique +1 pour clôturer une partie.</div>
+    </div>
+    <div class="history-actions">
+      <button class="history-btn reset" id="btnNewMatch" type="button">🗑 Effacer et recommencer</button>
+    </div>
+    <p style="text-align:center; font-size:11px; color:var(--dim); margin-top:10px; padding:0 10px;">
+      💡 Astuce : fais un screenshot avant si tu veux garder une trace des résultats.
+    </p>
+  </div>
+
+  <div class="footer-lsei">
+    ← Swipe vers la gauche pour revenir au chrono
+  </div>
+</div><!-- /page-history -->
+
+<!-- ═══════════════════════════ PAGE 4 : CONFIGURATION ═══════════════════════════ -->
+<div class="page page-config" id="pageConfig">
+  <!-- ═══════════════════════════ PRESETS ═══════════════════════════ -->
+  <div class="section section-presets">
+    <div class="section-title">⏱ Durée du chrono</div>
+    <div class="presets">
+      <button class="preset-btn" data-preset="40"><span class="preset-dur">40s</span><span>Blackball</span></button>
+      <button class="preset-btn" data-preset="custom"><span class="preset-dur">⚙</span><span>Perso</span></button>
+    </div>
+    <div class="custom-row" id="customRow">
+      <label for="customSec">Durée</label>
+      <input type="number" id="customSec" min="5" max="600" step="1" value="45">
+      <label>secondes</label>
+    </div>
+  </div>
+
+  <div class="section section-ext">
+    <div class="section-title">⏱ Durée de l'extension</div>
+    <div class="custom-row show">
+      <label for="extSec">Durée</label>
+      <input type="number" id="extSec" min="5" max="600" step="1" value="45">
+      <label>secondes</label>
+    </div>
+    <p class="config-hint">1 extension par joueur et par partie : elle s'ajoute au temps restant du chrono. Elle se réarme automatiquement à chaque point marqué (+1).</p>
+  </div>
+
+  <div class="section section-alerts">
+    <div class="section-title">🔊 Alertes sonores</div>
+    <div class="presets">
+      <button class="alert-btn" type="button" data-alert="bip"><span class="preset-dur">🔔</span><span>Bip</span></button>
+      <button class="alert-btn" type="button" data-alert="voice" id="alertVoiceBtn"><span class="preset-dur">🗣</span><span>Voix</span></button>
+    </div>
+    <button class="alert-test" id="alertTest" type="button">▶ Tester</button>
+    <p class="config-hint" id="alertHint">Voix : « Vingt secondes », « Quinze secondes », « Dix secondes », « Cinq… quatre… trois… deux… un », « Temps écoulé, faute » + nom du joueur. Les vibrations restent actives dans les 2 modes.</p>
+  </div>
+
+  <div class="section section-club">
+    <div class="section-title">🏆 Club et tournoi (mode TV)</div>
+    <div class="club-row">
+      <label for="tournamentName">Tournoi</label>
+      <input type="text" id="tournamentName" maxlength="40" placeholder="Nom du tournoi" autocomplete="off">
+    </div>
+    <div class="club-logo">
+      <div class="club-logo-preview" id="clubLogoPreview">Aucun logo</div>
+      <div class="club-logo-btns">
+        <label class="alert-test" for="clubLogoFile">📷 Choisir un logo</label>
+        <input type="file" id="clubLogoFile" accept="image/*" hidden>
+        <button class="alert-test" id="clubLogoRemove" type="button">🗑 Retirer le logo</button>
+      </div>
+    </div>
+    <button class="alert-test" id="tvPreviewBtn" type="button">📺 Voir le mode TV</button>
+    <p class="config-hint">Le logo du club et le nom du tournoi s'affichent en haut du mode TV (et sur le 2<sup>e</sup> écran). Ils restent enregistrés sur cet appareil.</p>
+  </div>
+
+  <div class="footer-lsei">
+    Un goodies gratuit de <a href="https://lsei.tv" target="_blank" rel="noopener">lsei.tv</a> · Le Sport en Image<br>
+    <span id="appVersion" style="opacity:.6">Version —</span>
+  </div>
+</div><!-- /page-config -->
+
+<!-- ═══════════════════════════ PAGE 5 : PARTENAIRES LSEI TV ═══════════════════════════ -->
+<div class="page page-partners" id="pagePartners">
+  <div class="section">
+    <div class="section-title">🤝 Les partenaires de LSEI TV</div>
+    <p class="partners-intro">Ils font confiance à LSEI TV. Touche un logo pour découvrir le partenaire.</p>
+    <div class="partners-grid" id="partnersGrid"></div>
+    <a class="partners-cta" href="https://lsei.tv" target="_blank" rel="noopener">Découvrir LSEI TV → lsei.tv</a>
+  </div>
+
+  <div class="footer-lsei">
+    Un goodies gratuit de <a href="https://lsei.tv" target="_blank" rel="noopener">lsei.tv</a> · Le Sport en Image
+  </div>
+</div><!-- /page-partners -->
+
+</div><!-- /pages -->
+
+<!-- Dots pagination -->
+<div class="page-dots" id="pageDots">
+  <div class="page-dot active" data-page="0"></div>
+  <div class="page-dot" data-page="1"></div>
+  <div class="page-dot" data-page="2"></div>
+  <div class="page-dot" data-page="3"></div>
+  <div class="page-dot" data-page="4"></div>
+  <div class="page-dot" data-page="5"></div>
+</div>
+
+<!-- Flèches navigation latérales (PC uniquement) -->
+<button class="nav-side nav-left" id="navLeft" type="button" aria-label="Page précédente" title="Page précédente (←)">‹</button>
+<button class="nav-side nav-right" id="navRight" type="button" aria-label="Page suivante" title="Page suivante (→)">›</button>
+
+<!-- ═══════════════════════════ MODE TV — overlay plein écran ═══════════════════════════ -->
+<div class="tv-overlay" id="tvOverlay" aria-hidden="true">
+  <button class="tv-exit" id="tvExit" title="Quitter le mode TV (Échap)">✕</button>
+  <div class="tv-header hidden" id="tvHeader">
+    <img class="tv-logo" id="tvLogo" alt="">
+    <div class="tv-tournament" id="tvTournament"></div>
+  </div>
+  <div class="tv-teams">
+    <div class="tv-team tv-team-1">
+      <div class="tv-name"><span class="tv-foul" id="tvFoul1">F</span><span id="tvName1">JOUEUR 1</span></div>
+      <div class="tv-score" id="tvScore1">0</div>
+    </div>
+    <div class="tv-vs">VS</div>
+    <div class="tv-team tv-team-2">
+      <div class="tv-name"><span class="tv-foul" id="tvFoul2">F</span><span id="tvName2">JOUEUR 2</span></div>
+      <div class="tv-score" id="tvScore2">0</div>
+    </div>
+  </div>
+  <div class="tv-chrono" id="tvChrono">45</div>
+  <div class="tv-context" id="tvContext"></div>
+  <div class="tv-branding">NOVΛ · LSEI TV</div>
+  <div class="tv-partner" id="tvPartner" aria-label="Partenaire LSEI TV"><img id="tvPartnerLogo" alt=""></div>
+</div>
+
+<!-- ═══════════════════════════ MODAL QR DE PARTAGE ═══════════════════════════ -->
+<div class="qr-modal" id="qrModal" aria-hidden="true">
+  <div class="qr-box">
+    <div class="qr-title">📱 Partager la feuille de match</div>
+    <div class="qr-frame">
+      <img class="qr-img" id="qrImg" alt="QR code de la feuille de match">
+      <div class="qr-err" id="qrErr">⚠ QR indisponible. Vérifie ta connexion.</div>
+    </div>
+    <p class="qr-hint">L'autre arbitre pointe l'<b>appareil photo natif</b> de son téléphone sur ce QR → une notification lui propose d'ouvrir la feuille automatiquement.</p>
+    <div class="qr-actions">
+      <button class="qr-btn" id="qrCopy">🔗 Copier le lien</button>
+      <button class="qr-btn qr-close" id="qrClose">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════════════════════
+   STATE (100 % local — pas de serveur, pas de compte, pas de tracking)
+   ═══════════════════════════════════════════════════════════════════════ */
+const LS_KEY = 'goodies-chrono-v1';
+// Partenaires LSEI TV — même liste et mêmes logos que la page d'accueil du site (src/data/site.ts)
+const PARTNERS = [
+  { name: 'Fédération Française de Billard', logo: '/partenaires/ffbillard.webp', url: 'https://www.ffbillard.com' },
+  { name: 'Pays de Fougères Basket', logo: '/partenaires/fougeres-basket.webp', url: 'https://www.paysdefougeresbasket.fr' },
+  { name: 'Ligue de Bretagne de Football', logo: '/partenaires/ligue-bretagne-foot.webp', url: 'https://footbretagne.fff.fr' },
+  { name: 'Bambis Palets', logo: '/partenaires/bambis-palets.webp', url: 'https://www.facebook.com/cfipalet.35' },
+  { name: 'Palet Club Lanrelas', logo: '/partenaires/palet-club-lanrelas.webp', url: 'https://paletclublanrelas.fr' },
+  { name: 'Bowling Promotion', logo: '/partenaires/bowling-promotion.webp', url: 'https://www.bowlingpromotiontour.com' },
+  { name: 'Sport en France', logo: '/partenaires/sport-en-france.webp', url: 'https://sportenfrance.com' },
+  { name: 'Christophe Lambert', logo: '/partenaires/logo-cl-noir.webp', url: 'https://christophelambert8pool.com' },
+  { name: 'FISTF', logo: '/partenaires/fistf.webp', url: 'https://fistf.com' },
+  { name: '3FTS', logo: '/partenaires/3fts.webp', url: 'https://3fts.fr' },
+  { name: 'Arobace', logo: '/partenaires/AROBACE.webp', url: 'https://www.arobace.net' },
+  { name: 'Depiltech', logo: '/partenaires/DEPILTECH.webp', url: 'https://www.depiltech.com/fr/epilation-definitive/rennes/99' },
+];
+function renderPartners() {
+  const grid = document.getElementById('partnersGrid');
+  if (!grid) return;
+  grid.innerHTML = PARTNERS.map(pt => `
+    <a class="partner-card" href="${pt.url}" target="_blank" rel="noopener" title="${escapeHtml(pt.name)}">
+      <span class="partner-logo"><img src="${pt.logo}" alt="${escapeHtml(pt.name)}" loading="lazy"></span>
+      <span class="partner-name">${escapeHtml(pt.name)}</span>
+    </a>`).join('');
+}
+
+/* Bandeau partenaires (page 1) : départ au hasard, 1 logo toutes les 8 s en fondu,
+   rotation en pause quand l'app n'est pas à l'écran, logo introuvable (hors ligne) sauté */
+let pbIndex = Math.floor(Math.random() * PARTNERS.length);
+let pbTimer = null;
+function showPartner(idx, withFade) {
+  if (!PARTNERS.length) return;
+  pbIndex = (idx + PARTNERS.length) % PARTNERS.length;
+  const pt = PARTNERS[pbIndex];
+  // Bandeau partenaire de la page chrono
+  [['pbLink', 'pbLogo']].forEach(([cid, iid]) => {
+    const card = document.getElementById(cid);
+    const img = document.getElementById(iid);
+    if (!card || !img) return;
+    const apply = () => {
+      img.src = pt.logo;
+      img.alt = pt.name;
+      card.href = pt.url;
+      card.title = pt.name + ' — partenaire LSEI TV';
+      card.classList.remove('fading');
+    };
+    if (withFade) { card.classList.add('fading'); setTimeout(apply, 350); } else apply();
+  });
+  // Précharge le logo suivant pour un fondu sans trou
+  new Image().src = PARTNERS[(pbIndex + 1) % PARTNERS.length].logo;
+}
+function startPartnerRotation() {
+  const img = document.getElementById('pbLogo');
+  if (!img) return;
+  let failures = 0;
+  img.addEventListener('load', () => { failures = 0; });
+  img.addEventListener('error', () => {
+    if (++failures >= PARTNERS.length) { document.getElementById('partnerBanner').classList.add('empty'); return; }
+    showPartner(pbIndex + 1, false);   // logo indisponible → partenaire suivant
+  });
+  showPartner(pbIndex, false);
+  pbTimer = setInterval(() => { if (!document.hidden) showPartner(pbIndex + 1, true); }, 8000);
+}
+
+/* Mode TV : rotation des partenaires en bas à droite (8 s, fondu, départ au hasard).
+   Tourne uniquement quand l'écran TV est affiché (plein écran local ou fenêtre 2e écran). */
+let tvPbIndex = Math.floor(Math.random() * PARTNERS.length);
+function showTvPartner(idx, withFade) {
+  const box = document.getElementById('tvPartner');
+  const img = document.getElementById('tvPartnerLogo');
+  if (!box || !img || !PARTNERS.length) return;
+  tvPbIndex = (idx + PARTNERS.length) % PARTNERS.length;
+  const pt = PARTNERS[tvPbIndex];
+  const apply = () => { img.src = pt.logo; img.alt = pt.name; box.title = pt.name; box.classList.remove('fading'); };
+  if (withFade) { box.classList.add('fading'); setTimeout(apply, 500); } else apply();
+  new Image().src = PARTNERS[(tvPbIndex + 1) % PARTNERS.length].logo;
+}
+function startTvPartnerRotation() {
+  const img = document.getElementById('tvPartnerLogo');
+  if (!img) return;
+  let failures = 0;
+  img.addEventListener('load', () => { failures = 0; });
+  img.addEventListener('error', () => {
+    if (++failures >= PARTNERS.length) { document.getElementById('tvPartner').classList.add('empty'); return; }
+    showTvPartner(tvPbIndex + 1, false);
+  });
+  showTvPartner(tvPbIndex, false);
+  setInterval(() => { if (tvOn && !document.hidden) showTvPartner(tvPbIndex + 1, true); }, 8000);
+}
+
+const APP_VERSION = 'v52';   // à garder identique au CACHE_NAME de sw.js (affiché en bas de Configuration)
+const DEFAULT = {
+  duration: 45,          // durée du preset actif (s)
+  presetKey: 'custom',   // '40' | 'custom'
+  customSec: 45,         // durée du preset perso
+  configTouched: false,  // true dès que la durée a été réglée en page Configuration (sinon 45 s à l'ouverture)
+  extensionSec: 45,      // durée d'une extension (s)
+  tournament: '',        // nom du tournoi affiché en haut du mode TV
+  logoStamp: 0,          // change à chaque nouveau logo → la fenêtre TV (2e écran) sait qu'elle doit le relire
+  alertMode: 'bip',      // 'bip' | 'voice' : alertes du chrono en bips ou annoncées par la voix du téléphone
+  extUsed1: false,       // extension déjà utilisée dans la partie en cours (réarmée à chaque +1)
+  extUsed2: false,
+  score1: 0,
+  score2: 0,
+  name1: 'Joueur 1',
+  name2: 'Joueur 2',
+  activePlayer: null,    // 1 ou 2 : joueur en train de jouer (chrono en cours pour lui) — mis à jour au tap
+  foulPlayer: null,      // 1 ou 2 : joueur en faute (chrono arrivé à 0 pendant son tour) — F rouge devant son nom
+  sound: true,
+  games: [],             // historique chrono libre : [{ num, duration, winner, ts }]
+  // Feuille de match équipes 5v5
+  match: {
+    teamA: 'Équipe A', teamB: 'Équipe B',
+    playersA: ['A1', 'A2', 'A3', 'A4', 'A5'],
+    playersB: ['B1', 'B2', 'B3', 'B4', 'B5'],
+    series: 1,                        // nombre de séries
+    scoreCible: 1,                    // rack sec : 1 rack gagné = 1 point pour l'équipe
+    seuilEquipe: 3,                   // points pour être déclaré vainqueur de la rencontre (majorité absolue)
+    sheet: [],                        // tableau [serie][match] = { pA: idx, pB: idx, winner: 'A'|'B'|null, sA: n, sB: n }
+    activeCell: null,                 // { s, m } — rencontre en cours (chrono page 0 lié)
+  },
+};
+
+// gameStartedAt : timestamp Date.now() du premier lancement d'une partie (null = pas de partie en cours)
+let gameStartedAt = null;
+
+/* Logo du club : image redimensionnée (512 px max) stockée À PART dans localStorage
+   pour ne pas alourdir la sauvegarde principale ni les messages envoyés à la fenêtre TV */
+const LOGO_KEY = 'goodies-chrono-logo';
+let clubLogo = '';
+try { clubLogo = localStorage.getItem(LOGO_KEY) || ''; } catch (e) {}
+let S = load();
+
+function load() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return { ...DEFAULT };
+    const parsed = JSON.parse(raw);
+    delete parsed.theme;   // ancien réglage clair/sombre : l'app est désormais en sombre uniquement
+    delete parsed.sound;   // pas de bouton son dans l'interface → bips toujours actifs
+    return { ...DEFAULT, ...parsed };
+  } catch (e) { return { ...DEFAULT }; }
+}
+function save() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(S)); } catch (e) {}
+  broadcastTvState();     // sync la fenêtre TV séparée si ouverte
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CHRONO — logique locale, precision seconde (assez pour un shot clock)
+   ═══════════════════════════════════════════════════════════════════════ */
+let remaining = S.duration;   // secondes restantes
+let running = false;
+let tickInterval = null;
+let hasBipped = false;
+let hasWarned = false;        // true dès qu'on a alerté au passage à 20 s (reset au reset/nouveau tour)
+let extPlayer = null;         // 1 ou 2 : joueur dont l'extension est en cours de décompte (null = chrono normal)
+
+function renderChrono() {
+  const el = document.getElementById('chronoVal');
+  if (!el) { if (tvOn) updateTvDisplay(); return; }   // mode slave : pas de contrôles
+  // Bouton Pause / Reprendre : utilisable seulement pour le joueur sélectionné, chrono pas à 0
+  const pauseBtn = document.getElementById('pauseBtn');
+  const canToggle = (S.activePlayer === 1 || S.activePlayer === 2) && remaining > 0;
+  pauseBtn.disabled = !canToggle;
+  pauseBtn.textContent = (canToggle && !running) ? '▶ Reprendre' : '⏸ Pause';
+  pauseBtn.classList.toggle('paused', canToggle && !running);
+  el.textContent = Math.max(0, remaining);
+  el.classList.remove('running', 'warn', 'over');
+  if (remaining <= 0) {
+    el.classList.add('over');
+  } else if (remaining <= 20 && running) {
+    el.classList.add('warn');
+  } else if (running) {
+    el.classList.add('running');
+  }
+  renderExtensions();
+  renderFouls();
+  if (running) stopFoulBip();
+  if (tvOn) updateTvDisplay();
+  broadcastTvState();        // propage l'état du chrono à la fenêtre TV séparée
+}
+
+// Pause / reprise du temps du joueur sélectionné
+function pauseResume() {
+  if (!(S.activePlayer === 1 || S.activePlayer === 2) || remaining <= 0) return;
+  if (running) {
+    running = false;
+    if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  } else {
+    running = true;
+    hasBipped = false;
+    if (remaining > 20) hasWarned = false;
+    if (gameStartedAt === null) gameStartedAt = Date.now();
+    if (!tickInterval) tickInterval = setInterval(tick, 1000);
+  }
+  renderChrono();
+  vibrate(30);
+}
+
+function tick() {
+  remaining -= 1;
+  if (remaining <= 0) {
+    remaining = 0;
+    running = false;
+    clearInterval(tickInterval);
+    tickInterval = null;
+    // 0 s = FAUTE : bip continu de 3 s + vibration de 3 s
+    if (!hasBipped) { hasBipped = true; alertFoul(); vibrate(3000); }
+    if (S.activePlayer === 1 || S.activePlayer === 2) { S.foulPlayer = S.activePlayer; save(); }
+  } else if (remaining === 20 && !hasWarned) {
+    // 20 s restantes : avertissement
+    hasWarned = true;
+    alert20();
+    vibrate(400);
+  } else if ((remaining === 15 || remaining === 10) && voiceActive()) {
+    // Mode voix uniquement : annonces intermédiaires
+    speak(remaining === 15 ? 'Quinze secondes' : 'Dix secondes');
+  } else if (remaining <= 5) {
+    // 5 dernières secondes : bip + vibration à chaque seconde
+    alertCount(remaining);
+    vibrate(150);
+  } else if (remaining > 20) {
+    hasWarned = false;   // safety : ré-armé si un tap rebascule au-dessus de 20 → nouvelle alerte au prochain passage
+  }
+  renderChrono();
+}
+
+function resetChrono() {
+  running = false;
+  if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  remaining = S.duration;
+  hasBipped = false;
+  hasWarned = false;
+  extPlayer = null;
+  renderChrono();
+  vibrate(25);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   EXTENSIONS — 1 par joueur et par partie (durée réglable en page 4)
+   ═══════════════════════════════════════════════════════════════════════ */
+function useExtension(p) {
+  // Seul le joueur en train de jouer (cadre rouge) peut demander son extension
+  if (S.activePlayer !== p) { vibrate([20, 40, 20]); return; }
+  if (extPlayer === p && running) return;   // déjà en cours pour ce joueur
+  // 1 seule extension par joueur et par partie (réarmée au prochain +1, quel que soit le joueur)
+  if (S['extUsed' + p]) { vibrate([20, 40, 20]); return; }
+  S['extUsed' + p] = true;
+  extPlayer = p;
+  clearFoulIfOther(p);
+  // Le joueur qui demande l'extension devient le joueur actif (halo)
+  S.activePlayer = p;
+  document.querySelectorAll('.player-card').forEach(c => c.classList.toggle('active', c.classList.contains('p' + p)));
+  // L'extension s'AJOUTE au temps restant (ex. 12 s restantes + 45 s = 57 s)
+  remaining = Math.max(0, remaining) + S.extensionSec;
+  running = true;
+  hasBipped = false;
+  if (remaining > 20) hasWarned = false;   // ré-arme l'alerte des 20 s
+  if (gameStartedAt === null) gameStartedAt = Date.now();
+  if (!tickInterval) tickInterval = setInterval(tick, 1000);   // chrono déjà lancé : on garde son rythme
+  save();
+  renderChrono();
+  vibrate([40, 40, 40]);
+  if (voiceActive()) speak('Extension, ' + spokenName(p));
+}
+/* F rouge : disparaît quand l'AUTRE joueur prend la main (tap sur son cadre ou son extension) */
+function renderFouls() {
+  [1, 2].forEach(p => {
+    const el = document.getElementById('foul' + p);
+    if (el) el.classList.toggle('show', S.foulPlayer === p);
+  });
+}
+function clearFoulIfOther(p) {
+  if (S.foulPlayer && S.foulPlayer !== p) S.foulPlayer = null;
+}
+function resetExtensions() {
+  S.extUsed1 = false;
+  S.extUsed2 = false;
+  extPlayer = null;
+  renderExtensions();
+}
+function renderExtensions() {
+  [1, 2].forEach(p => {
+    const btn = document.getElementById('ext' + p);
+    const sub = document.getElementById('ext' + p + 'Sub');
+    if (!btn || !sub) return;
+    const isRunning = extPlayer === p && running;
+    btn.classList.toggle('running', isRunning);
+    btn.classList.toggle('used', !!S['extUsed' + p] && !isRunning);
+    btn.classList.toggle('locked', S.activePlayer !== p);   // pas son tour → bouton inactif
+    sub.textContent = isRunning ? 'En cours' : (S['extUsed' + p] ? 'Utilisée' : '+' + S.extensionSec + ' s');
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PRESETS
+   ═══════════════════════════════════════════════════════════════════════ */
+function setPreset(key) {
+  S.presetKey = key;
+  const customRow = document.getElementById('customRow');
+  if (key === 'custom') {
+    S.duration = clampDur(parseInt(document.getElementById('customSec').value, 10) || 45);
+    S.customSec = S.duration;
+    customRow.classList.add('show');
+  } else {
+    S.duration = parseInt(key, 10);
+    customRow.classList.remove('show');
+  }
+  remaining = S.duration;
+  running = false;
+  if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.preset === key);
+  });
+  renderChrono();
+  save();
+  vibrate(20);
+}
+function clampDur(n) { return Math.max(5, Math.min(600, n | 0)); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SCORES
+   ═══════════════════════════════════════════════════════════════════════ */
+function addScore(p, d) {
+  const key = 'score' + p;
+  S[key] = Math.max(0, (S[key] || 0) + d);
+  document.getElementById(key).textContent = S[key];
+  if (d > 0) resetExtensions();   // partie terminée → chaque joueur récupère son extension
+  // Le score a changé : plus aucun joueur en rouge (et plus de F) jusqu'au prochain tap sur un cadre
+  document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active'));
+  clearActivePlayer();
+  vibrate(d > 0 ? 40 : 20);
+  if (tvOn) updateTvDisplay();
+
+  const m = S.match;
+  const inTeamMatch = m && m.activeCell !== null && m.activeCell !== undefined;
+
+  // Mode match d'équipe : synchronise la cellule active du tableau
+  if (inTeamMatch) {
+    const cell = (m.sheet[m.activeCell.s] || [])[m.activeCell.m];
+    if (cell && cell.winner === null) {
+      cell.sA = S.score1;
+      cell.sB = S.score2;
+      // Détection auto du vainqueur : premier à atteindre le score cible
+      if (S.score1 >= (m.scoreCible || 7)) {
+        cell.winner = 'A';
+        onTeamMatchEnd('A');
+        save();
+        return;
+      }
+      if (S.score2 >= (m.scoreCible || 7)) {
+        cell.winner = 'B';
+        onTeamMatchEnd('B');
+        save();
+        return;
+      }
+    }
+  }
+
+  // +1 : (hors match d'équipe) archive la partie chrono libre, puis stop + réarme chrono
+  if (d > 0) {
+    if (!inTeamMatch && gameStartedAt !== null) {
+      const duration = Math.round((Date.now() - gameStartedAt) / 1000);
+      S.games.push({
+        num: S.games.length + 1,
+        duration: duration,
+        winner: p,
+        ts: Date.now(),
+        winnerName: p === 1 ? S.name1 : S.name2,
+      });
+      gameStartedAt = null;
+      renderHistory();
+    }
+    if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+    running = false;
+    remaining = S.duration;
+    hasBipped = false;
+    extPlayer = null;
+    renderChrono();
+  }
+  save();
+}
+// Plus aucun joueur actif ni faute : retire aussi le halo et le F sur le mode TV (local et 2e écran)
+function clearActivePlayer() {
+  S.activePlayer = null;
+  S.foulPlayer = null;
+  renderFouls();
+  renderExtensions();
+  if (tvOn) updateTvDisplay();
+}
+function resetScores() {
+  if (!confirm('Tout remettre à zéro ?\n\nChrono, noms des joueurs, scores, historique des parties, joueur actif, fautes et extensions seront réinitialisés.\n(Fais un screenshot avant si tu veux garder les résultats.)')) return;
+  S.score1 = 0; S.score2 = 0;
+  S.games = [];
+  gameStartedAt = null;
+  document.getElementById('score1').textContent = '0';
+  document.getElementById('score2').textContent = '0';
+  // Noms remis par défaut (sauf pendant une rencontre d'équipe : ils viennent de la feuille de match)
+  if (!(S.match && S.match.activeCell)) {
+    S.name1 = 'Joueur 1'; S.name2 = 'Joueur 2';
+    document.getElementById('name1').value = S.name1;
+    document.getElementById('name2').value = S.name2;
+  }
+  document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active'));
+  clearActivePlayer();
+  resetExtensions();
+  // Chrono : arrêté et remis à la durée configurée
+  if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  running = false;
+  remaining = S.duration;
+  hasBipped = false;
+  hasWarned = false;
+  stopFoulBip();
+  renderChrono();
+  renderHistory();
+  save();
+  vibrate([50, 40, 50]);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   HISTORIQUE — rendu de la page 2 (stats + liste)
+   ═══════════════════════════════════════════════════════════════════════ */
+function fmtMSec(sec) {
+  if (typeof sec !== 'number' || sec < 0) return '—';
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return m + ':' + String(s).padStart(2, '0');
+}
+
+function renderHistory() {
+  const games = Array.isArray(S.games) ? S.games : [];
+  const total = games.length;
+  const j1 = games.filter(g => g.winner === 1).length;
+  const j2 = games.filter(g => g.winner === 2).length;
+  const durs = games.map(g => g.duration || 0).filter(d => d > 0);
+  const totalDur = durs.reduce((a, b) => a + b, 0);
+  const avg = durs.length ? Math.round(totalDur / durs.length) : 0;
+  const longest = durs.length ? Math.max(...durs) : 0;
+
+  const set = (id, v) => { const el = document.getElementById(id); if (el && el.textContent !== String(v)) el.textContent = v; };
+  set('histTotal', total);
+  set('histAvg', avg ? fmtMSec(avg) : '—');
+  set('histWinsJ1', j1);
+  set('histWinsJ2', j2);
+  set('histWinsJ1Label', 'Gagnées ' + (S.name1 || 'J1'));
+  set('histWinsJ2Label', 'Gagnées ' + (S.name2 || 'J2'));
+  set('histDuTotal', 'Durée totale : ' + (totalDur ? fmtMSec(totalDur) : '—'));
+  set('histLongest', 'La + longue : ' + (longest ? fmtMSec(longest) : '—'));
+
+  const list = document.getElementById('historyList');
+  if (!list) return;
+  if (games.length === 0) {
+    list.innerHTML = '<div class="history-empty">Aucune partie enregistrée pour le moment.<br>Lance le chrono puis clique +1 pour clôturer une partie.</div>';
+    return;
+  }
+  const rows = [];
+  for (let i = games.length - 1; i >= 0; i--) {
+    const g = games[i];
+    const winnerName = g.winnerName || (g.winner === 1 ? (S.name1 || 'Joueur 1') : (S.name2 || 'Joueur 2'));
+    const label = g.matchLabel || ('Partie ' + g.num);
+    rows.push(
+      '<div class="history-row">' +
+        '<div class="h-info">' +
+          '<span class="h-num">' + escapeHtml(label) + '</span>' +
+          '<span class="h-winner p' + g.winner + '">🏆 ' + escapeHtml(winnerName) + '</span>' +
+        '</div>' +
+        '<span class="h-dur">' + fmtMSec(g.duration) + '</span>' +
+      '</div>'
+    );
+  }
+  list.innerHTML = rows.join('');
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+}
+
+/**
+ * Vide un input au focus (pour éviter à l'user d'effacer le pré-rempli à la main)
+ * et restaure sa valeur d'origine au blur si rien n'a été tapé.
+ */
+function autoClearOnFocus(input) {
+  input.addEventListener('focus', () => {
+    input.dataset.prev = input.value;
+    input.value = '';
+  });
+  input.addEventListener('blur', () => {
+    if (input.value.trim() === '') {
+      input.value = input.dataset.prev || '';
+    }
+    delete input.dataset.prev;
+  });
+}
+
+function newMatch() {
+  if (!confirm('Tout effacer et recommencer ?\n\nHistorique des parties, scores : tout sera perdu.\n\n(Fais un screenshot avant si tu veux garder les résultats.)')) return;
+  S.games = [];
+  S.score1 = 0; S.score2 = 0;
+  gameStartedAt = null;
+  document.getElementById('score1').textContent = '0';
+  document.getElementById('score2').textContent = '0';
+  // Retire aussi le halo "joueur actif" éventuellement posé sur les cards
+  document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active'));
+  clearActivePlayer();
+  resetExtensions();
+  renderHistory();
+  save();
+  vibrate([60, 50, 60]);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FEUILLE DE MATCH ÉQUIPES 5v5 — page 1
+   Chaque capitaine peut librement composer/modifier sa feuille. Un tap sur
+   le bouton ▶ d'une cellule ouvre le chrono principal avec les 2 joueurs
+   sélectionnés — le vainqueur est désigné automatiquement quand un joueur
+   atteint le score cible (7 par défaut, paramétrable).
+   ═══════════════════════════════════════════════════════════════════════ */
+function ensureSheet() {
+  const m = S.match;
+  if (!m) return;
+  // Sanitize joueurs
+  if (!Array.isArray(m.playersA) || m.playersA.length !== 5) m.playersA = ['A1','A2','A3','A4','A5'];
+  if (!Array.isArray(m.playersB) || m.playersB.length !== 5) m.playersB = ['B1','B2','B3','B4','B5'];
+  m.series = Math.max(1, Math.min(5, parseInt(m.series, 10) || 1));
+  m.scoreCible = 1;                                             // rack sec : chaque match individuel se joue en 1 rack
+  const total = m.series * 5;
+  const majority = Math.floor(total / 2) + 1;
+  m.seuilEquipe = Math.max(1, Math.min(total, parseInt(m.seuilEquipe, 10) || majority));
+  // Recompose la matrice : préserve les cellules existantes cellule à cellule
+  const old = Array.isArray(m.sheet) ? m.sheet : [];
+  const next = [];
+  for (let s = 0; s < m.series; s++) {
+    const row = [];
+    for (let mm = 0; mm < 5; mm++) {
+      const prev = (old[s] && old[s][mm]) ? old[s][mm] : null;
+      row.push(prev || { pA: mm, pB: mm, winner: null, sA: 0, sB: 0 });
+    }
+    next.push(row);
+  }
+  m.sheet = next;
+}
+
+function computeTeamScore(team) {
+  let n = 0;
+  (S.match.sheet || []).forEach(row => row.forEach(c => { if (c && c.winner === team) n++; }));
+  return n;
+}
+
+function optionsFor(players, selectedIdx) {
+  let html = '';
+  for (let i = 0; i < 5; i++) {
+    const name = escapeHtml(players[i] || ('J' + (i + 1)));
+    html += '<option value="' + i + '"' + (i === selectedIdx ? ' selected' : '') + '>' + name + '</option>';
+  }
+  return html;
+}
+
+function renderMatchSheet() {
+  const m = S.match;
+  if (!m) return;
+  ensureSheet();
+
+  // Score total en haut
+  document.getElementById('scoreTeamAName').textContent = m.teamA || 'Équipe A';
+  document.getElementById('scoreTeamBName').textContent = m.teamB || 'Équipe B';
+  document.getElementById('scoreTeamA').textContent = computeTeamScore('A');
+  document.getElementById('scoreTeamB').textContent = computeTeamScore('B');
+
+  // Configuration
+  document.getElementById('cfgTeamA').value = m.teamA || 'Équipe A';
+  document.getElementById('cfgTeamB').value = m.teamB || 'Équipe B';
+  document.getElementById('cfgSeries').value = m.series;
+  document.getElementById('cfgSeuilEquipe').value = m.seuilEquipe;
+
+  // Info format + progression + badge vainqueur équipe
+  const total = m.series * 5;
+  const scoreA = computeTeamScore('A');
+  const scoreB = computeTeamScore('B');
+  const played = scoreA + scoreB;
+  const left = total - played;
+  document.getElementById('mfiTotal').textContent = total;
+  document.getElementById('mfiSeuil').textContent = m.seuilEquipe;
+  document.getElementById('tpPlayed').textContent = played;
+  document.getElementById('tpTotal').textContent = total;
+  document.getElementById('tpLeft').textContent = left;
+  const badge = document.getElementById('teamWinnerBadge');
+  let winnerTeam = null;
+  if (scoreA >= m.seuilEquipe && scoreA > scoreB) winnerTeam = m.teamA || 'Équipe A';
+  else if (scoreB >= m.seuilEquipe && scoreB > scoreA) winnerTeam = m.teamB || 'Équipe B';
+  else if (played === total && scoreA !== scoreB) winnerTeam = scoreA > scoreB ? (m.teamA || 'Équipe A') : (m.teamB || 'Équipe B');
+  if (winnerTeam) {
+    document.getElementById('teamWinnerName').textContent = winnerTeam;
+    document.getElementById('teamWinnerSeuil').textContent = m.seuilEquipe;
+    badge.classList.add('show');
+  } else {
+    badge.classList.remove('show');
+  }
+
+  // Rosters : reconstruit à chaque render pour reprendre les nouveaux noms
+  document.getElementById('rosterAName').textContent = m.teamA || 'Équipe A';
+  document.getElementById('rosterBName').textContent = m.teamB || 'Équipe B';
+  const rosterA = document.getElementById('rosterA');
+  const rosterB = document.getElementById('rosterB');
+  rosterA.innerHTML = '';
+  rosterB.innerHTML = '';
+  for (let i = 0; i < 5; i++) {
+    const inA = document.createElement('input');
+    inA.type = 'text'; inA.maxLength = 16;
+    inA.value = m.playersA[i] || ('A' + (i + 1));
+    inA.dataset.team = 'A'; inA.dataset.idx = String(i);
+    inA.addEventListener('change', onRosterChange);
+    autoClearOnFocus(inA);
+    rosterA.appendChild(inA);
+
+    const inB = document.createElement('input');
+    inB.type = 'text'; inB.maxLength = 16;
+    inB.value = m.playersB[i] || ('B' + (i + 1));
+    inB.dataset.team = 'B'; inB.dataset.idx = String(i);
+    inB.addEventListener('change', onRosterChange);
+    autoClearOnFocus(inB);
+    rosterB.appendChild(inB);
+  }
+
+  // Séries + rencontres
+  const sheetEl = document.getElementById('matchSheet');
+  sheetEl.innerHTML = '';
+  for (let s = 0; s < m.series; s++) {
+    const block = document.createElement('div');
+    block.className = 'series-block';
+    block.innerHTML = '<div class="series-title">Série ' + (s + 1) + '</div>';
+    for (let mm = 0; mm < 5; mm++) {
+      const cell = m.sheet[s][mm];
+      const isActive = m.activeCell && m.activeCell.s === s && m.activeCell.m === mm;
+      const isDone = cell.winner !== null;
+      const winA = cell.winner === 'A', winB = cell.winner === 'B';
+      const row = document.createElement('div');
+      row.className = 'match-row' + (isDone ? ' done' : '') + (isActive ? ' active' : '');
+      row.innerHTML =
+        '<div class="match-side ' + (winA ? 'winner' : (winB ? 'loser' : '')) + '">' +
+          '<select data-s="' + s + '" data-m="' + mm + '" data-team="A">' + optionsFor(m.playersA, cell.pA) + '</select>' +
+          '<div class="match-score">' + (isDone ? cell.sA : '') + '</div>' +
+        '</div>' +
+        '<button class="match-play-btn ' + (isDone ? 'done' : '') + (isActive ? ' active' : '') + '" data-s="' + s + '" data-m="' + mm + '">' +
+          (isActive ? '⏱' : (isDone ? '↻' : '▶')) +
+        '</button>' +
+        '<div class="match-side ' + (winB ? 'winner' : (winA ? 'loser' : '')) + '">' +
+          '<select data-s="' + s + '" data-m="' + mm + '" data-team="B">' + optionsFor(m.playersB, cell.pB) + '</select>' +
+          '<div class="match-score">' + (isDone ? cell.sB : '') + '</div>' +
+        '</div>';
+      block.appendChild(row);
+    }
+    sheetEl.appendChild(block);
+  }
+
+  // Wire selects (choix des joueurs par cellule)
+  // Règle : dans une même série, chaque joueur ne peut jouer qu'une fois par équipe.
+  // Si l'utilisateur sélectionne un joueur déjà placé dans une autre cellule de la même série,
+  // on échange les 2 (swap) au lieu de créer un doublon.
+  sheetEl.querySelectorAll('select').forEach(sel => {
+    sel.addEventListener('change', () => {
+      const s = parseInt(sel.dataset.s, 10);
+      const mm = parseInt(sel.dataset.m, 10);
+      const team = sel.dataset.team;
+      const cell = S.match.sheet[s][mm];
+      const newIdx = parseInt(sel.value, 10);
+      const oldIdx = team === 'A' ? cell.pA : cell.pB;
+      // Cherche un doublon dans la même série, côté équipe concernée → swap
+      const seriesRow = S.match.sheet[s];
+      for (let otherM = 0; otherM < seriesRow.length; otherM++) {
+        if (otherM === mm) continue;
+        const otherCell = seriesRow[otherM];
+        if (team === 'A' && otherCell.pA === newIdx) { otherCell.pA = oldIdx; break; }
+        if (team === 'B' && otherCell.pB === newIdx) { otherCell.pB = oldIdx; break; }
+      }
+      if (team === 'A') cell.pA = newIdx; else cell.pB = newIdx;
+      save();
+      renderMatchSheet();
+    });
+  });
+  // Wire play buttons (lance une rencontre)
+  sheetEl.querySelectorAll('.match-play-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const s = parseInt(btn.dataset.s, 10);
+      const mm = parseInt(btn.dataset.m, 10);
+      startTeamMatch(s, mm);
+    });
+  });
+
+  updateContextBar();
+}
+
+function onRosterChange(ev) {
+  const team = ev.target.dataset.team;
+  const idx = parseInt(ev.target.dataset.idx, 10);
+  const val = ((ev.target.value || '').trim() || ((team === 'A' ? 'A' : 'B') + (idx + 1))).toUpperCase();
+  ev.target.value = val;
+  if (team === 'A') S.match.playersA[idx] = val;
+  else S.match.playersB[idx] = val;
+  save();
+  renderMatchSheet();
+}
+
+function startTeamMatch(s, mm) {
+  const m = S.match;
+  ensureSheet();
+  const cell = m.sheet[s][mm];
+  // Rejouer une cellule terminée : on remet à zéro
+  if (cell.winner !== null) {
+    if (!confirm('Cette rencontre est déjà terminée. La rejouer effacera son résultat.')) return;
+    cell.winner = null; cell.sA = 0; cell.sB = 0;
+  }
+  m.activeCell = { s, m: mm };
+  // Charge les 2 joueurs comme name1/name2 dans le chrono
+  S.name1 = m.playersA[cell.pA] || ('A' + (cell.pA + 1));
+  S.name2 = m.playersB[cell.pB] || ('B' + (cell.pB + 1));
+  S.score1 = cell.sA || 0;
+  S.score2 = cell.sB || 0;
+  // Update DOM chrono
+  document.getElementById('name1').value = S.name1;
+  document.getElementById('name2').value = S.name2;
+  document.getElementById('score1').textContent = S.score1;
+  document.getElementById('score2').textContent = S.score2;
+  // Nettoie halos / winner-loser d'un match précédent
+  document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active', 'winner', 'loser'));
+  clearActivePlayer();
+  // Reset chrono
+  if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  running = false;
+  remaining = S.duration;
+  hasBipped = false;
+  gameStartedAt = null;
+  resetExtensions();
+  renderChrono();
+  save();
+  goToPage(1);
+  updateContextBar();
+  vibrate(30);
+}
+
+function quitTeamMatch() {
+  S.match.activeCell = null;
+  // Reset scores + noms libres
+  S.score1 = 0; S.score2 = 0;
+  S.name1 = 'Joueur 1'; S.name2 = 'Joueur 2';
+  document.getElementById('score1').textContent = '0';
+  document.getElementById('score2').textContent = '0';
+  document.getElementById('name1').value = 'Joueur 1';
+  document.getElementById('name2').value = 'Joueur 2';
+  document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active', 'winner', 'loser'));
+  clearActivePlayer();
+  resetExtensions();
+  save();
+  updateContextBar();
+  renderMatchSheet();
+}
+
+function updateContextBar() {
+  const bar = document.getElementById('contextBar');
+  const n1 = document.getElementById('name1');
+  const n2 = document.getElementById('name2');
+  if (!bar) return;
+  const m = S.match;
+  if (!m || !m.activeCell) {
+    bar.classList.remove('show');
+    if (n1) n1.readOnly = false;
+    if (n2) n2.readOnly = false;
+    return;
+  }
+  const cell = (m.sheet[m.activeCell.s] || [])[m.activeCell.m];
+  if (!cell) { bar.classList.remove('show'); return; }
+  const pA = m.playersA[cell.pA] || ('A' + (cell.pA + 1));
+  const pB = m.playersB[cell.pB] || ('B' + (cell.pB + 1));
+  document.getElementById('contextBarTitle').textContent =
+    (m.teamA || 'Équipe A') + ' vs ' + (m.teamB || 'Équipe B') +
+    ' · Série ' + (m.activeCell.s + 1) + ' · Match ' + (m.activeCell.m + 1) + '/5 · Rack sec (1 point)';
+  document.getElementById('contextBarSub').textContent = pA + '  ⚔  ' + pB;
+  bar.classList.add('show');
+  if (n1) n1.readOnly = true;
+  if (n2) n2.readOnly = true;
+}
+
+function onTeamMatchEnd(winner) {
+  // Archive la rencontre dans l'historique (page 2) avec son contexte (série, match, joueurs)
+  if (S.match.activeCell && gameStartedAt !== null) {
+    const { s, m: mm } = S.match.activeCell;
+    const cell = S.match.sheet[s] && S.match.sheet[s][mm];
+    if (cell) {
+      const pA = S.match.playersA[cell.pA] || ('A' + (cell.pA + 1));
+      const pB = S.match.playersB[cell.pB] || ('B' + (cell.pB + 1));
+      const duration = Math.round((Date.now() - gameStartedAt) / 1000);
+      S.games.push({
+        num: S.games.length + 1,
+        duration: duration,
+        winner: winner === 'A' ? 1 : 2,
+        ts: Date.now(),
+        matchLabel: 'S' + (s + 1) + ' M' + (mm + 1) + ' · ' + pA + ' vs ' + pB,
+        winnerName: winner === 'A' ? pA : pB,
+        teamMatch: true,
+      });
+      gameStartedAt = null;
+      renderHistory();
+    }
+  }
+  const c1 = document.querySelector('.player-card.p1');
+  const c2 = document.querySelector('.player-card.p2');
+  if (c1) { c1.classList.remove('active'); c1.classList.toggle('winner', winner === 'A'); c1.classList.toggle('loser', winner === 'B'); }
+  if (c2) { c2.classList.remove('active'); c2.classList.toggle('winner', winner === 'B'); c2.classList.toggle('loser', winner === 'A'); }
+  clearActivePlayer();
+  // Stop chrono
+  if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+  running = false;
+  remaining = S.duration;
+  hasBipped = false;
+  hasWarned = false;
+  renderChrono();
+  vibrate([100, 80, 100, 80, 200]);
+  // Retour auto à la feuille dans 2.6 s
+  setTimeout(() => {
+    if (c1) c1.classList.remove('winner', 'loser');
+    if (c2) c2.classList.remove('winner', 'loser');
+    S.match.activeCell = null;
+    S.score1 = 0; S.score2 = 0;
+    S.name1 = 'Joueur 1'; S.name2 = 'Joueur 2';
+    document.getElementById('score1').textContent = '0';
+    document.getElementById('score2').textContent = '0';
+    document.getElementById('name1').value = 'Joueur 1';
+    document.getElementById('name2').value = 'Joueur 2';
+    save();
+    renderMatchSheet();
+    goToPage(2);
+    updateContextBar();
+  }, 2600);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PARTAGE QR — encode le state.match en base64 URL-safe dans le fragment,
+   l'autre arbitre scanne le QR avec l'app photo native → sync sans backend.
+   ═══════════════════════════════════════════════════════════════════════ */
+function b64UrlEncode(str) {
+  const b64 = btoa(unescape(encodeURIComponent(str)));
+  return b64.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+}
+function b64UrlDecode(str) {
+  const b64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = b64 + '='.repeat((4 - b64.length % 4) % 4);
+  return decodeURIComponent(escape(atob(padded)));
+}
+function encodeMatchToFragment() {
+  const m = S.match;
+  const compact = {
+    a: m.teamA, b: m.teamB,
+    s: m.series, e: m.seuilEquipe,
+    pa: m.playersA, pb: m.playersB,
+    // winners uniquement (pas les scores individuels) : 0 = null, 1 = A, 2 = B
+    sh: (m.sheet || []).map(row => row.map(c => (c.winner === 'A' ? 1 : c.winner === 'B' ? 2 : 0))),
+  };
+  return b64UrlEncode(JSON.stringify(compact));
+}
+function decodeFragmentToMatch(str) {
+  try { return JSON.parse(b64UrlDecode(str)); } catch (e) { return null; }
+}
+function showShareQr() {
+  const modal = document.getElementById('qrModal');
+  const img = document.getElementById('qrImg');
+  const err = document.getElementById('qrErr');
+  const url = new URL(location.href);
+  url.hash = '#m=' + encodeMatchToFragment();
+  const shareUrl = url.toString();
+  img.classList.add('loading');
+  err.classList.remove('show');
+  img.style.display = 'block';
+  img.onload = () => { img.classList.remove('loading'); };
+  img.onerror = () => { img.style.display = 'none'; err.classList.add('show'); };
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=500x500&margin=8&data=' + encodeURIComponent(shareUrl);
+  // Stocke l'URL pour le bouton Copier
+  document.getElementById('qrCopy').dataset.url = shareUrl;
+  modal.classList.add('show');
+}
+function hideShareQr() {
+  document.getElementById('qrModal').classList.remove('show');
+}
+function copyShareLink() {
+  const btn = document.getElementById('qrCopy');
+  const url = btn.dataset.url || '';
+  if (!url) return;
+  const done = () => {
+    const original = btn.textContent;
+    btn.textContent = '✓ Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1500);
+  };
+  if (navigator.clipboard) navigator.clipboard.writeText(url).then(done).catch(() => done());
+  else { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done(); }
+}
+function checkImportedMatchFromUrl() {
+  const hash = location.hash || '';
+  if (!hash.startsWith('#m=')) return;
+  const encoded = hash.slice(3);
+  const imported = decodeFragmentToMatch(encoded);
+  if (!imported) return;
+  // Nettoie l'URL pour éviter re-import au refresh
+  history.replaceState(null, '', location.pathname + location.search);
+  const msg = 'Une feuille de match a été partagée avec toi.\n\n'
+    + '  Équipes : ' + (imported.a || 'A') + ' vs ' + (imported.b || 'B') + '\n'
+    + '  Séries : ' + (imported.s || 1) + '\n'
+    + '  Seuil victoire : ' + (imported.e || '?') + '\n\n'
+    + 'Charger cette feuille ?\n(Les données locales seront remplacées.)';
+  if (!confirm(msg)) return;
+  const m = S.match;
+  if (imported.a) m.teamA = imported.a;
+  if (imported.b) m.teamB = imported.b;
+  if (imported.s) m.series = imported.s;
+  if (imported.e) m.seuilEquipe = imported.e;
+  if (Array.isArray(imported.pa) && imported.pa.length === 5) m.playersA = imported.pa;
+  if (Array.isArray(imported.pb) && imported.pb.length === 5) m.playersB = imported.pb;
+  m.sheet = [];
+  m.activeCell = null;
+  ensureSheet();
+  if (Array.isArray(imported.sh)) {
+    for (let s = 0; s < Math.min(imported.sh.length, m.sheet.length); s++) {
+      for (let mm = 0; mm < Math.min(imported.sh[s].length, m.sheet[s].length); mm++) {
+        const w = imported.sh[s][mm];
+        if (w === 1) m.sheet[s][mm].winner = 'A';
+        else if (w === 2) m.sheet[s][mm].winner = 'B';
+      }
+    }
+  }
+  save();
+  renderMatchSheet();
+  goToPage(2);
+}
+
+function resetTeamMatch() {
+  if (!confirm('Nouveau match d\'équipes ?\n\nTout sera réinitialisé : noms des équipes, noms des joueurs, séries, seuil, résultats.\n\nCette action est irréversible.')) return;
+  S.match.teamA = 'Équipe A';
+  S.match.teamB = 'Équipe B';
+  S.match.playersA = ['A1', 'A2', 'A3', 'A4', 'A5'];
+  S.match.playersB = ['B1', 'B2', 'B3', 'B4', 'B5'];
+  S.match.series = 1;
+  S.match.scoreCible = 1;
+  S.match.seuilEquipe = 3;
+  S.match.sheet = [];
+  S.match.activeCell = null;
+  ensureSheet();
+  save();
+  renderMatchSheet();
+  updateContextBar();
+  vibrate([60, 40, 60]);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   NAVIGATION PAGES — swipe + boutons
+   ═══════════════════════════════════════════════════════════════════════ */
+let currentPage = 0;
+
+function goToPage(idx) {
+  const pages = document.getElementById('pages');
+  const w = pages.clientWidth;     /* vraie largeur du container, sans scrollbar */
+  pages.scrollTo({ left: idx * w, behavior: 'smooth' });
+  updateNav(idx);
+}
+
+function updateNav(idx) {
+  currentPage = idx;
+  document.body.classList.toggle('home-mode', idx === 0);   // accueil : header masqué
+  document.querySelectorAll('.page-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+  const arrow = document.getElementById('navArrow');
+  const brand = document.getElementById('topBrand');
+  // 0 : chrono libre · 1 : feuille de match équipes · 2 : historique · 3 : configuration
+  if (arrow) {
+    if (idx === 0)      { arrow.textContent = '🎱'; arrow.title = 'Chrono';                   arrow.classList.remove('active'); }
+    else if (idx === 1) { arrow.textContent = '📋'; arrow.title = 'Feuille de match équipes'; arrow.classList.remove('active'); }
+    else if (idx === 2) { arrow.textContent = '🏅'; arrow.title = 'Historique des parties';   arrow.classList.add('active'); }
+    else if (idx === 3) { arrow.textContent = '⚙'; arrow.title = 'Configuration';            arrow.classList.add('active'); }
+    else if (idx === 4) { arrow.textContent = '🤝'; arrow.title = 'Partenaires';               arrow.classList.add('active'); }
+    else                { arrow.textContent = '←'; arrow.title = 'Revenir au chrono';          arrow.classList.add('active'); }
+  }
+  if (brand) {
+    brand.textContent = ['NOVΛ', '🎱 Chrono Billard', '📋 Feuille de match équipe', '🏅 Historique', '⚙ Configuration', '🤝 Partenaires'][idx] || 'NOVΛ';
+  }
+  const navL = document.getElementById('navLeft');
+  const navR = document.getElementById('navRight');
+  if (navL) navL.disabled = idx === 0;
+  if (navR) navR.disabled = idx === 5;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SON — WebAudio (aucune dépendance, silence si onglet muté)
+   ═══════════════════════════════════════════════════════════════════════ */
+let audioCtx = null;
+function ensureAudio() {
+  if (audioCtx) return audioCtx;
+  try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+  return audioCtx;
+}
+function bip() {
+  if (!S.sound) return;
+  const ctx = ensureAudio(); if (!ctx) return;
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(880, now);
+  gain.gain.setValueAtTime(0.25, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now); osc.stop(now + 0.6);
+}
+// Bip du décompte (5 dernières secondes) : court et aigu
+function bipCount() {
+  if (!S.sound) return;
+  const ctx = ensureAudio(); if (!ctx) return;
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(1000, now);
+  gain.gain.setValueAtTime(0.25, now);
+  gain.gain.setValueAtTime(0.25, now + 0.15);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now); osc.stop(now + 0.2);
+}
+// Bip de FAUTE (0 s) : son continu de 3 s — coupé si le chrono est relancé avant la fin
+let foulOsc = null;
+function bipFoul() {
+  if (!S.sound) return;
+  const ctx = ensureAudio(); if (!ctx) return;
+  stopFoulBip();
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(700, now);
+  gain.gain.setValueAtTime(0.3, now);
+  gain.gain.setValueAtTime(0.3, now + 2.9);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 3);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now); osc.stop(now + 3);
+  osc.onended = () => { if (foulOsc === osc) foulOsc = null; };
+  foulOsc = osc;
+}
+function stopFoulBip() {
+  if (foulSpeaking) {
+    foulSpeaking = false;
+    try { speechSynthesis.cancel(); } catch (e) {}
+  }
+  if (!foulOsc) return;
+  try { foulOsc.stop(); } catch (e) {}
+  foulOsc = null;
+  vibrate(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   VOIX — synthèse vocale du téléphone (Web Speech API, sans réseau ni fichier)
+   ═══════════════════════════════════════════════════════════════════════ */
+const hasSpeech = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+let frVoice = null;
+let foulSpeaking = false;
+function pickFrenchVoice() {
+  if (!hasSpeech) return;
+  const voices = speechSynthesis.getVoices() || [];
+  const fr = voices.filter(v => (v.lang || '').toLowerCase().startsWith('fr'));
+  frVoice = fr.find(v => v.lang === 'fr-FR' && v.localService)
+         || fr.find(v => v.lang === 'fr-FR')
+         || fr[0] || null;
+}
+if (hasSpeech) {
+  pickFrenchVoice();
+  speechSynthesis.onvoiceschanged = pickFrenchVoice;   // Chrome/Android chargent les voix en différé
+}
+function voiceActive() { return S.alertMode === 'voice' && hasSpeech; }
+function speak(text, opts) {
+  if (!hasSpeech) return;
+  try {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'fr-FR';
+    if (frVoice) u.voice = frVoice;
+    u.rate = (opts && opts.rate) || 1.15;
+    u.volume = 1;
+    if (opts && opts.onend) u.onend = opts.onend;
+    // Pas de file d'attente : l'annonce la plus récente coupe la précédente.
+    // Safari iPhone ignore parfois un speak() lancé juste après cancel() → petit délai dans ce cas.
+    if (speechSynthesis.speaking || speechSynthesis.pending) {
+      speechSynthesis.cancel();
+      setTimeout(() => { try { speechSynthesis.speak(u); } catch (e) {} }, 60);
+    } else {
+      speechSynthesis.speak(u);
+    }
+  } catch (e) {}
+}
+// Noms saisis en MAJUSCULES : certaines voix les épellent → on les passe en « Jean-Christophe »
+function spokenName(p) {
+  const raw = (p === 1 ? S.name1 : S.name2) || ('Joueur ' + p);
+  return raw.toLowerCase().replace(/(^|[\s'-])(\S)/g, (m, sep, c) => sep + c.toUpperCase());
+}
+const COUNT_WORDS = { 5: 'Cinq', 4: 'Quatre', 3: 'Trois', 2: 'Deux', 1: 'Un' };
+function alert20() {
+  if (voiceActive()) speak('Vingt secondes');
+  else bip();
+}
+function alertCount(n) {
+  if (voiceActive()) speak(COUNT_WORDS[n] || String(n), { rate: 1.3 });
+  else bipCount();
+}
+function alertFoul() {
+  if (voiceActive()) {
+    const who = (S.activePlayer === 1 || S.activePlayer === 2) ? ', ' + spokenName(S.activePlayer) : '';
+    foulSpeaking = true;
+    speak('Temps écoulé. Faute' + who + ' !', { rate: 1.05, onend: () => { foulSpeaking = false; } });
+  } else {
+    bipFoul();
+  }
+}
+function renderClubConfig() {
+  const prev = document.getElementById('clubLogoPreview');
+  if (prev) {
+    prev.innerHTML = '';
+    if (clubLogo) { const im = document.createElement('img'); im.src = clubLogo; im.alt = 'Logo du club'; prev.appendChild(im); }
+    else prev.textContent = 'Aucun logo';
+  }
+  const rm = document.getElementById('clubLogoRemove');
+  if (rm) rm.disabled = !clubLogo;
+  const tn = document.getElementById('tournamentName');
+  if (tn && document.activeElement !== tn) tn.value = S.tournament || '';
+}
+function setClubLogo(dataUrl) {
+  try {
+    if (dataUrl) localStorage.setItem(LOGO_KEY, dataUrl); else localStorage.removeItem(LOGO_KEY);
+  } catch (e) {
+    alert('Ce logo est trop lourd pour être enregistré sur cet appareil.\nEssaie avec une image plus légère.');
+    return;
+  }
+  clubLogo = dataUrl || '';
+  S.logoStamp = Date.now();
+  renderClubConfig();
+  save();
+  if (tvOn) updateTvDisplay();
+}
+// Redimensionne l'image choisie (512 px max, transparence conservée) avant de l'enregistrer
+function onClubLogoFile(ev) {
+  const file = ev.target.files && ev.target.files[0];
+  ev.target.value = '';
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { alert('Choisis un fichier image (PNG, JPG, SVG…).'); return; }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 512;
+      const ratio = Math.min(1, MAX / Math.max(img.naturalWidth || MAX, img.naturalHeight || MAX));
+      const w = Math.max(1, Math.round((img.naturalWidth || MAX) * ratio));
+      const h = Math.max(1, Math.round((img.naturalHeight || MAX) * ratio));
+      const cv = document.createElement('canvas');
+      cv.width = w; cv.height = h;
+      cv.getContext('2d').drawImage(img, 0, 0, w, h);
+      setClubLogo(cv.toDataURL('image/png'));
+      vibrate(30);
+    };
+    img.onerror = () => alert('Impossible de lire cette image.');
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function setAlertMode(mode) {
+  S.alertMode = (mode === 'voice' && hasSpeech) ? 'voice' : 'bip';
+  renderAlertMode();
+  save();
+  testAlert();
+}
+function renderAlertMode() {
+  document.querySelectorAll('.alert-btn').forEach(b => b.classList.toggle('active', b.dataset.alert === (voiceActive() ? 'voice' : 'bip')));
+  const vb = document.getElementById('alertVoiceBtn');
+  if (vb && !hasSpeech) {
+    vb.disabled = true;
+    const hint = document.getElementById('alertHint');
+    if (hint) hint.textContent = 'La voix n\'est pas disponible sur ce navigateur : les alertes restent en bips.';
+  }
+}
+function testAlert() {
+  unlockAudio();
+  if (voiceActive()) speak('Vingt secondes. Quinze secondes. Dix secondes. Cinq, quatre, trois, deux, un. Temps écoulé, faute !', { rate: 1.1 });
+  else bip();
+}
+// Écran toujours allumé pendant l'utilisation : sinon la mise en veille auto (souvent 30 s)
+// coupe le chrono et ses alertes en plein tour. Relâché par le navigateur si l'app passe en arrière-plan.
+function keepScreenOn() {
+  if (!('wakeLock' in navigator) || (window._wakeLock && !window._wakeLock.released)) return;
+  navigator.wakeLock.request('screen').then(l => { window._wakeLock = l; }).catch(() => {});
+}
+// Les navigateurs mobiles bloquent le son tant que l'utilisateur n'a pas touché l'écran :
+// on « déverrouille » l'audio au premier contact pour que les bips du chrono sortent ensuite
+let speechUnlocked = false;
+function unlockAudio() {
+  // iPhone (Safari 17+) : les bips sortent même si l'interrupteur silencieux est activé
+  try { if (navigator.audioSession && navigator.audioSession.type !== 'playback') navigator.audioSession.type = 'playback'; } catch (e) {}
+  keepScreenOn();
+  const ctx = ensureAudio();
+  if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
+  if (!speechUnlocked && hasSpeech) {
+    speechUnlocked = true;
+    try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch (e) {}
+  }
+}
+function bipShort() {
+  if (!S.sound) return;
+  const ctx = ensureAudio(); if (!ctx) return;
+  const now = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(1200, now);
+  gain.gain.setValueAtTime(0.10, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.10);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now); osc.stop(now + 0.10);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   VIBRATE (silencieux si non supporté — desktop, iOS Safari, etc.)
+   ═══════════════════════════════════════════════════════════════════════ */
+function vibrate(pattern) {
+  try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (e) {}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SON — toggle
+   ═══════════════════════════════════════════════════════════════════════ */
+function applySound() {
+  const btn = document.getElementById('soundToggle');
+  btn.textContent = S.sound ? '🔊' : '🔇';
+  btn.classList.toggle('on', S.sound);
+}
+function toggleSound() {
+  S.sound = !S.sound;
+  applySound();
+  save();
+  if (S.sound) bipShort();
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MODE TV — plein écran pour projection écran de club (même écran OU 2ᵉ écran)
+   ═══════════════════════════════════════════════════════════════════════ */
+let tvOn = false;
+
+// Détection du mode "slave" (fenêtre TV séparée, ouverte via ?tv=1 dans l'URL)
+const isTvSlave = new URLSearchParams(location.search).has('tv');
+
+// BroadcastChannel : sync temps réel entre la fenêtre maître (arbitre) et la fenêtre TV séparée
+let bcTv = null;
+try { if ('BroadcastChannel' in window) bcTv = new BroadcastChannel('chrono-billard-tv'); } catch (e) {}
+
+function broadcastTvState() {
+  if (!bcTv || isTvSlave) return;         // le slave ne broadcast pas, il écoute uniquement
+  try {
+    bcTv.postMessage({
+      name1: S.name1, name2: S.name2,
+      score1: S.score1, score2: S.score2,
+      activePlayer: S.activePlayer,
+      foulPlayer: S.foulPlayer,
+      tournament: S.tournament,
+      logoStamp: S.logoStamp,
+      remaining, running, duration: S.duration,
+      match: {
+        teamA: S.match.teamA, teamB: S.match.teamB,
+        activeCell: S.match.activeCell,
+        playersA: S.match.playersA, playersB: S.match.playersB,
+        scoreCible: S.match.scoreCible,
+        scoreA: (typeof computeTeamScore === 'function') ? computeTeamScore('A') : 0,
+        scoreB: (typeof computeTeamScore === 'function') ? computeTeamScore('B') : 0,
+      },
+    });
+  } catch (e) {}
+}
+
+function openTvOnSecondScreen() {
+  const url = location.pathname + '?tv=1';
+  const win = window.open(url, 'ChronoBillardTV', 'popup,width=1280,height=720,noopener=no');
+  if (!win) {
+    alert('Le popup a été bloqué par le navigateur.\n\nAutorise les popups pour ce site puis retente.');
+    return;
+  }
+  // Push un premier snapshot dès que la fenêtre TV est prête (petit délai le temps qu'elle initialise)
+  setTimeout(broadcastTvState, 500);
+  setTimeout(broadcastTvState, 1500);
+}
+function enterTvMode() {
+  const ov = document.getElementById('tvOverlay');
+  ov.classList.add('show');
+  ov.setAttribute('aria-hidden', 'false');
+  tvOn = true;
+  updateTvDisplay();
+  // Fullscreen API (marche sur PC, tablette, Android récent — pas iOS Safari)
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+  if (req) req.call(el).catch(() => {});
+  // Empêche l'écran de se mettre en veille pendant un match (Wake Lock API)
+  if ('wakeLock' in navigator) {
+    navigator.wakeLock.request('screen').then(lock => { window._wakeLock = lock; }).catch(() => {});
+  }
+}
+function exitTvMode() {
+  const ov = document.getElementById('tvOverlay');
+  ov.classList.remove('show');
+  ov.setAttribute('aria-hidden', 'true');
+  tvOn = false;
+  const ex = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+  if (ex && (document.fullscreenElement || document.webkitFullscreenElement)) ex.call(document).catch(() => {});
+  if (window._wakeLock && window._wakeLock.release) { window._wakeLock.release().catch(() => {}); window._wakeLock = null; }
+}
+function updateTvDisplay() {
+  if (!tvOn) return;
+  // En-tête : logo du club + nom du tournoi
+  const tvLogo = document.getElementById('tvLogo');
+  const tvTour = document.getElementById('tvTournament');
+  const tvHead = document.getElementById('tvHeader');
+  if (tvLogo && tvLogo.getAttribute('src') !== clubLogo) {
+    if (clubLogo) tvLogo.setAttribute('src', clubLogo); else tvLogo.removeAttribute('src');
+  }
+  if (tvTour && tvTour.textContent !== (S.tournament || '')) tvTour.textContent = S.tournament || '';
+  if (tvHead) tvHead.classList.toggle('hidden', !clubLogo && !S.tournament);
+  const set = (id, v) => { const el = document.getElementById(id); if (el && el.textContent !== String(v)) el.textContent = v; };
+  set('tvName1', (S.name1 || 'Joueur 1').toUpperCase());
+  set('tvName2', (S.name2 || 'Joueur 2').toUpperCase());
+  set('tvScore1', S.score1);
+  set('tvScore2', S.score2);
+  // Indique visuellement quel joueur joue (halo + opacité de l'autre baissée)
+  const teams = document.querySelector('.tv-teams');
+  const t1 = document.querySelector('.tv-team-1');
+  const t2 = document.querySelector('.tv-team-2');
+  if (teams) teams.classList.toggle('has-active', S.activePlayer === 1 || S.activePlayer === 2);
+  if (t1) t1.classList.toggle('playing', S.activePlayer === 1);
+  if (t2) t2.classList.toggle('playing', S.activePlayer === 2);
+  [1, 2].forEach(p => {
+    const f = document.getElementById('tvFoul' + p);
+    if (f) f.classList.toggle('show', S.foulPlayer === p);
+  });
+  const chrono = document.getElementById('tvChrono');
+  if (chrono) {
+    chrono.textContent = Math.max(0, remaining);
+    chrono.classList.remove('running', 'warn', 'over');
+    if (remaining <= 0)                        chrono.classList.add('over');
+    else if (remaining <= 20 && running)       chrono.classList.add('warn');
+    else if (running)                          chrono.classList.add('running');
+  }
+  // Contexte match d'équipe si actif
+  const ctx = document.getElementById('tvContext');
+  if (ctx) {
+    const m = S.match;
+    if (m && m.activeCell) {
+      // En mode slave, on utilise les scores pré-calculés reçus via broadcast (sheet n'est pas synchronisée)
+      const scoreA = (m._scoreA !== undefined) ? m._scoreA : (typeof computeTeamScore === 'function' ? computeTeamScore('A') : 0);
+      const scoreB = (m._scoreB !== undefined) ? m._scoreB : (typeof computeTeamScore === 'function' ? computeTeamScore('B') : 0);
+      ctx.textContent = (m.teamA || 'Équipe A') + '  ' + scoreA + ' — ' + scoreB + '  ' + (m.teamB || 'Équipe B')
+        + '  ·  Série ' + (m.activeCell.s + 1) + ' · Match ' + (m.activeCell.m + 1) + '/5';
+    } else {
+      ctx.textContent = '';
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════════════════════ */
+function init() {
+  // Partenaires en mode TV (utile aussi pour la fenêtre 2e écran → lancé avant le return du mode slave)
+  startTvPartnerRotation();
+
+  // MODE TV SLAVE : la fenêtre a été ouverte via ?tv=1 → uniquement affichage TV, aucun contrôle
+  // Elle écoute les updates de la fenêtre maître via BroadcastChannel et redessine.
+  if (isTvSlave) {
+    document.body.classList.add('is-tv-slave');
+    tvOn = true;
+    document.getElementById('tvOverlay').classList.add('show');
+    updateTvDisplay();
+    if (bcTv) {
+      bcTv.onmessage = (ev) => {
+        const d = ev.data || {};
+        if (d.name1 !== undefined) S.name1 = d.name1;
+        if (d.name2 !== undefined) S.name2 = d.name2;
+        if (d.score1 !== undefined) S.score1 = d.score1;
+        if (d.score2 !== undefined) S.score2 = d.score2;
+        if (d.activePlayer !== undefined) S.activePlayer = d.activePlayer;
+        if (d.foulPlayer !== undefined) S.foulPlayer = d.foulPlayer;
+        if (d.tournament !== undefined) S.tournament = d.tournament;
+        if (d.logoStamp !== undefined && d.logoStamp !== S.logoStamp) {
+          S.logoStamp = d.logoStamp;
+          try { clubLogo = localStorage.getItem(LOGO_KEY) || ''; } catch (e) {}   // même origine → même stockage
+        }
+        if (d.remaining !== undefined) remaining = d.remaining;
+        if (d.running !== undefined) running = d.running;
+        if (d.duration !== undefined) S.duration = d.duration;
+        if (d.match) {
+          S.match.teamA = d.match.teamA;
+          S.match.teamB = d.match.teamB;
+          S.match.activeCell = d.match.activeCell;
+          S.match.playersA = d.match.playersA;
+          S.match.playersB = d.match.playersB;
+          S.match.scoreCible = d.match.scoreCible;
+          S.match._scoreA = d.match.scoreA;
+          S.match._scoreB = d.match.scoreB;
+        }
+        updateTvDisplay();
+      };
+    }
+    // Empêche la mise en veille pendant la projection TV
+    if ('wakeLock' in navigator) {
+      navigator.wakeLock.request('screen').then(l => { window._wakeLock = l; }).catch(() => {});
+    }
+    return;   // stop init — pas de wire-up des contrôles arbitre
+  }
+
+  // À l'ouverture, aucun joueur n'est actif (aucun cadre rouge) → les 2 extensions sont verrouillées
+  S.activePlayer = null;
+
+  // Preset actif — 45 s par défaut tant que la page Configuration n'a pas été utilisée,
+  // sinon on reprend le dernier réglage choisi
+  if (!S.configTouched) {
+    S.presetKey = 'custom';
+    S.customSec = 45;
+  }
+  document.getElementById('customSec').value = S.customSec;
+  setPreset(S.presetKey);
+  remaining = S.duration;
+
+  // Scores + noms
+  document.getElementById('score1').textContent = S.score1;
+  document.getElementById('score2').textContent = S.score2;
+  document.getElementById('name1').value = S.name1;
+  document.getElementById('name2').value = S.name2;
+
+  // Wire-up
+  document.getElementById('pauseBtn').addEventListener('click', pauseResume);
+  document.getElementById('resetBtn').addEventListener('click', resetChrono);
+  // Tap sur le grand cadre du chrono = "reset + relance" (comme un shot clock arbitre)
+  document.getElementById('chronoVal').addEventListener('click', () => {
+    if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+    remaining = S.duration;
+    running = true;
+    hasBipped = false;
+    extPlayer = null;
+    if (gameStartedAt === null) gameStartedAt = Date.now();   // démarre le comptage partie si première fois
+    tickInterval = setInterval(tick, 1000);
+    renderChrono();
+    vibrate(50);
+  });
+  // Tap sur un des 2 cadres score = sélectionne ce joueur (halo coloré) + relance le chrono
+  document.querySelectorAll('.player-score').forEach(el => {
+    el.addEventListener('click', (ev) => {
+      const card = ev.target.closest('.player-card');
+      if (!card) return;
+      document.querySelectorAll('.player-card').forEach(c => c.classList.toggle('active', c === card));
+      // Mémorise le joueur actif (1 ou 2) → utilisé pour l'affichage sur la fenêtre TV séparée
+      S.activePlayer = card.classList.contains('p1') ? 1 : 2;
+      clearFoulIfOther(S.activePlayer);
+      save();
+      // Reset + relance immédiate du chrono
+      if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+      remaining = S.duration;
+      running = true;
+      hasBipped = false;
+      extPlayer = null;
+      if (gameStartedAt === null) gameStartedAt = Date.now();   // démarre le comptage partie si première fois
+      tickInterval = setInterval(tick, 1000);
+      renderChrono();
+      vibrate(50);
+    });
+  });
+  // Mode TV
+  document.getElementById('tvToggle').addEventListener('click', enterTvMode);
+  document.getElementById('tvExit').addEventListener('click', exitTvMode);
+  document.getElementById('tvPopup').addEventListener('click', openTvOnSecondScreen);
+  // Échap pour quitter le mode TV
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape' && tvOn) exitTvMode();
+  });
+  // Si l'utilisateur quitte le fullscreen (F11 ou Échap système), sortir aussi du mode TV
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && tvOn) exitTvMode();
+  });
+  document.getElementById('scoresReset').addEventListener('click', resetScores);
+  document.querySelectorAll('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => { S.configTouched = true; setPreset(btn.dataset.preset); });
+  });
+  document.getElementById('customSec').addEventListener('change', (ev) => {
+    S.configTouched = true;
+    const v = clampDur(parseInt(ev.target.value, 10) || 45);
+    ev.target.value = v;
+    if (S.presetKey === 'custom') {
+      S.duration = v; S.customSec = v;
+      remaining = v; renderChrono(); save();
+    }
+  });
+  // Audio : déverrouillé au premier contact (obligatoire sur mobile)
+  document.addEventListener('pointerdown', unlockAudio, { passive: true });
+
+  document.getElementById('appVersion').textContent = 'Version ' + APP_VERSION;
+
+  // Club et tournoi (mode TV)
+  const tn = document.getElementById('tournamentName');
+  tn.addEventListener('input', () => {
+    S.tournament = tn.value.trim();
+    save();
+    if (tvOn) updateTvDisplay();
+  });
+  document.getElementById('clubLogoFile').addEventListener('change', onClubLogoFile);
+  document.getElementById('clubLogoRemove').addEventListener('click', () => {
+    if (confirm('Retirer le logo du club ?')) setClubLogo('');
+  });
+  document.getElementById('tvPreviewBtn').addEventListener('click', enterTvMode);
+  renderClubConfig();
+  renderPartners();
+  startPartnerRotation();
+
+  // Écran d'ouverture NOVΛ : on balaie vers la droite pour le chrono (un simple toucher y mène aussi)
+  document.getElementById('pageHome').addEventListener('click', () => { goToPage(1); vibrate(15); });
+  document.getElementById('topLogo').addEventListener('click', () => { goToPage(0); vibrate(15); });
+
+  // Hauteur réelle du header → réservée en haut de chaque page (sauf l'accueil)
+  const setTopbarH = () => {
+    const tb = document.querySelector('.topbar');
+    if (tb) document.documentElement.style.setProperty('--topbar-h', tb.offsetHeight + 'px');
+  };
+  setTopbarH();
+  window.addEventListener('resize', setTopbarH);
+
+  // Ouverture intelligente : match en cours (score ≠ 0-0 ou rencontre d'équipe lancée) → directement le chrono,
+  // sinon l'accueil NOVΛ
+  const matchInProgress = (S.score1 || 0) + (S.score2 || 0) > 0 || !!(S.match && S.match.activeCell);
+  const startPage = matchInProgress ? 1 : 0;
+  document.body.classList.toggle('home-mode', startPage === 0);   // pas de header visible à l'ouverture sur l'accueil
+  setTimeout(() => {
+    const pg = document.getElementById('pages');
+    pg.style.scrollBehavior = 'auto';
+    pg.scrollLeft = startPage * pg.clientWidth;
+    pg.style.scrollBehavior = '';
+    updateNav(startPage);
+  }, 0);
+
+  // Alertes sonores : bip ou voix
+  document.querySelectorAll('.alert-btn').forEach(b => b.addEventListener('click', () => setAlertMode(b.dataset.alert)));
+  document.getElementById('alertTest').addEventListener('click', testAlert);
+  renderAlertMode();
+
+  // Extensions
+  document.getElementById('ext1').addEventListener('click', () => useExtension(1));
+  document.getElementById('ext2').addEventListener('click', () => useExtension(2));
+  document.getElementById('extSec').value = S.extensionSec;
+  document.getElementById('extSec').addEventListener('change', (ev) => {
+    const v = clampDur(parseInt(ev.target.value, 10) || 45);
+    ev.target.value = v;
+    S.extensionSec = v;
+    save();
+    renderExtensions();
+  });
+  document.querySelectorAll('.score-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      addScore(parseInt(btn.dataset.p, 10), parseInt(btn.dataset.d, 10));
+    });
+  });
+  ['name1', 'name2'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('change', () => {
+      S[id] = (el.value.trim() || (id === 'name1' ? 'Joueur 1' : 'Joueur 2')).toUpperCase();
+      el.value = S[id];
+      save();
+    });
+    autoClearOnFocus(el);
+  });
+
+  // Navigation entre pages (cycle 0 accueil → 1 chrono → 2 → 3 → 4 → 5 → 0)
+  document.getElementById('navArrow').addEventListener('click', () => {
+    goToPage((currentPage + 1) % 6);
+    vibrate(20);
+  });
+  // Flèches latérales PC : gauche = page précédente, droite = page suivante
+  document.getElementById('navLeft').addEventListener('click', () => {
+    if (currentPage > 0) { goToPage(currentPage - 1); vibrate(15); }
+  });
+  document.getElementById('navRight').addEventListener('click', () => {
+    if (currentPage < 5) { goToPage(currentPage + 1); vibrate(15); }
+  });
+  document.querySelectorAll('.page-dot').forEach(dot => {
+    dot.addEventListener('click', () => goToPage(parseInt(dot.dataset.page, 10)));
+  });
+  // Détection du swipe via scroll natif → met à jour dots + bouton flèche
+  const pagesEl = document.getElementById('pages');
+  let scrollTimeout = null;
+  pagesEl.addEventListener('scroll', () => {
+    if (scrollTimeout) clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      const w = pagesEl.clientWidth || 1;
+      const idx = Math.round(pagesEl.scrollLeft / w);
+      if (idx !== currentPage) updateNav(idx);
+    }, 60);
+  });
+
+  // Actions historique
+  document.getElementById('btnNewMatch').addEventListener('click', newMatch);
+
+  // Wire-ups feuille de match équipes
+  const teamAInput = document.getElementById('cfgTeamA');
+  const teamBInput = document.getElementById('cfgTeamB');
+  teamAInput.addEventListener('change', ev => {
+    S.match.teamA = ((ev.target.value || '').trim() || 'Équipe A').toUpperCase();
+    ev.target.value = S.match.teamA;
+    save(); renderMatchSheet();
+  });
+  teamBInput.addEventListener('change', ev => {
+    S.match.teamB = ((ev.target.value || '').trim() || 'Équipe B').toUpperCase();
+    ev.target.value = S.match.teamB;
+    save(); renderMatchSheet();
+  });
+  autoClearOnFocus(teamAInput);
+  autoClearOnFocus(teamBInput);
+  document.getElementById('cfgSeries').addEventListener('change', ev => {
+    const v = Math.max(1, Math.min(5, parseInt(ev.target.value, 10) || 1));
+    ev.target.value = v;
+    S.match.series = v;
+    // Recalcul auto du seuil à la nouvelle majorité (l'utilisateur peut ensuite le modifier)
+    S.match.seuilEquipe = Math.floor((v * 5) / 2) + 1;
+    save(); renderMatchSheet();
+  });
+  document.getElementById('cfgSeuilEquipe').addEventListener('change', ev => {
+    const total = S.match.series * 5;
+    const v = Math.max(1, Math.min(total, parseInt(ev.target.value, 10) || (Math.floor(total / 2) + 1)));
+    ev.target.value = v;
+    S.match.seuilEquipe = v;
+    save(); renderMatchSheet();
+  });
+  document.getElementById('btnResetMatch').addEventListener('click', resetTeamMatch);
+  document.getElementById('btnShareMatch').addEventListener('click', showShareQr);
+  document.getElementById('qrClose').addEventListener('click', hideShareQr);
+  document.getElementById('qrCopy').addEventListener('click', copyShareLink);
+  document.getElementById('qrModal').addEventListener('click', (ev) => {
+    if (ev.target.id === 'qrModal') hideShareQr();
+  });
+  document.getElementById('contextBarQuit').addEventListener('click', () => {
+    if (confirm('Quitter cette rencontre sans désigner de vainqueur ?')) {
+      quitTeamMatch();
+      vibrate(30);
+    }
+  });
+
+  renderChrono();
+  renderHistory();
+  renderMatchSheet();
+  updateContextBar();
+  // Import auto d'une feuille partagée via QR / lien (#m=xxx dans l'URL)
+  checkImportedMatchFromUrl();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+/* PWA — register le service worker (marche hors ligne + installable sur home screen) */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+    // Déménagement /goodies-chrono/ → /nova/ : on retire l'ancien service worker s'il est encore installé
+    navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => {
+      if (r.scope.endsWith('/goodies-chrono/')) r.unregister();
+    })).catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
