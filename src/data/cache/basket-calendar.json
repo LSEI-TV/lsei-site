@@ -1,38 +1,8 @@
 {
-  "updated": "2026-09-29T19:43:55.589Z",
+  "updated": "2026-09-30T15:05:29.545Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
   "pool": "Poule B",
   "matches": [
-    {
-      "date": "2026-09-29",
-      "homeSlug": "tarbes",
-      "awaySlug": "toulouse"
-    },
-    {
-      "date": "2026-09-29",
-      "homeSlug": "rennes",
-      "awaySlug": "laval"
-    },
-    {
-      "date": "2026-09-29",
-      "homeSlug": "angers",
-      "awaySlug": "fougeres"
-    },
-    {
-      "date": "2026-09-29",
-      "homeSlug": "tours",
-      "awaySlug": "bordeaux"
-    },
-    {
-      "date": "2026-09-29",
-      "homeSlug": "lorient",
-      "awaySlug": "vitre"
-    },
-    {
-      "date": "2026-09-29",
-      "homeSlug": "challans",
-      "awaySlug": "sables"
-    },
     {
       "date": "2026-10-02",
       "homeSlug": "bordeaux",
@@ -97,6 +67,11 @@
       "date": "2026-10-13",
       "homeSlug": "challans",
       "awaySlug": "fougeres"
+    },
+    {
+      "date": "2026-10-13",
+      "homeSlug": "tarbes",
+      "awaySlug": "toulouse"
     },
     {
       "date": "2026-10-16",
