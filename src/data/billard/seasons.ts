@@ -72,7 +72,7 @@ export const cal2627: SeasonEvent[] = [
   { short: 'TN1', slug: 'tn1', name: 'Tournoi National 1', date: '2-4 oct. 2026', place: 'Fumel (47)', kind: 'tn', start: '2026-10-02' },
   { short: 'Mondial', slug: 'mondial', name: 'Championnats du Monde', date: '21-28 oct. 2026', place: 'Londres (Angleterre)', kind: 'mondial', start: '2026-10-21' },
   { short: 'TN2', slug: 'tn2', name: 'Tournoi National 2', date: '20-22 nov. 2026', place: 'Albi (81)', kind: 'tn', start: '2026-11-20' },
-  { short: 'TN3', slug: 'tn3', name: 'Tournoi National 3', date: 'Décembre 2026', place: 'Lieu à venir', kind: 'tn', start: '2026-12-01' },
+  { short: 'TN3', slug: 'tn3', name: 'Tournoi National 3', date: '18-20 déc. 2026', place: 'Saint-Nicolas-de-Port (54)', kind: 'tn', start: '2026-12-18' },
   { short: 'TN4', slug: 'tn4', name: 'Tournoi National 4', date: '15-17 janv. 2027', place: 'Villeneuve-sur-Lot (47)', kind: 'tn', start: '2027-01-15' },
   { short: 'TN5', slug: 'tn5', name: 'Tournoi National 5', date: '19-21 févr. 2027', place: 'Hazebrouck (59)', kind: 'tn', start: '2027-02-19' },
   { short: 'TN6', slug: 'tn6', name: 'Tournoi National 6', date: '12-14 mars 2027', place: 'Châtellerault (86)', kind: 'tn', start: '2027-03-12' },
