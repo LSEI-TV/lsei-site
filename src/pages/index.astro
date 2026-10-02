@@ -518,7 +518,17 @@ const slides = programme
           <p>{goodies.text}</p>
         </div>
         <div class="goodies-list">
-          {goodies.liste.map((g) => (
+          {goodies.liste.map((g) => g.decouvrir ? (
+            <div class="goodie goodie--duo">
+              <span class:list={["goodie-ico", { "goodie-ico--logo": g.logo }]} aria-hidden="true">{g.logo ? <img src={assetUrl(g.logo)} alt="" width="52" height="52" loading="lazy" /> : g.icone}</span>
+              <span class="goodie-txt">
+                <a href={g.decouvrir} class="goodie-nom goodie-main">{g.nom}</a>
+                <span class="goodie-desc">{g.texte}</span>
+                <span class="goodie-more" aria-hidden="true">Découvrir →</span>
+              </span>
+              <a href={g.lien} class="goodie-btn" target="_blank" rel="noopener" aria-label={`Ouvrir ${g.nom} (nouvel onglet)`}>{g.bouton}</a>
+            </div>
+          ) : (
             <a href={g.lien} class="goodie" target="_blank" rel="noopener">
               <span class:list={["goodie-ico", { "goodie-ico--logo": g.logo }]} aria-hidden="true">{g.logo ? <img src={assetUrl(g.logo)} alt="" width="52" height="52" loading="lazy" /> : g.icone}</span>
               <span class="goodie-txt">

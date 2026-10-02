@@ -790,6 +790,14 @@ a.evbanner:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 
   transition: background .16s, color .16s, border-color .16s;
 }
 .goodie:hover .goodie-btn { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+/* Carte à 2 liens (ex. NOVA) : toute la carte → page de présentation, le bouton → l'app */
+.goodie--duo { position: relative; }
+.goodie-main { text-decoration: none; }
+.goodie-main::after { content: ""; position: absolute; inset: 0; border-radius: 10px; }
+.goodie-more { font-size: 13px; font-weight: 700; color: var(--accent); margin-top: 2px; }
+.goodie--duo .goodie-btn { position: relative; z-index: 1; text-decoration: none; }
+.goodie--duo:hover .goodie-btn { background: transparent; color: var(--accent); border-color: var(--line-strong); }
+.goodie--duo .goodie-btn:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 
 /* Sur téléphone, le goodie s'utilise au bord de la table : la carte passe en
    pleine largeur et le bouton devient une vraie cible, pas une pastille. */

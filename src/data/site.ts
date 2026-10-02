@@ -231,9 +231,10 @@ export const goodies = {
       icone: '⏱',
       logo: '/nova/icons/nova-512.png',
       nom: 'NOVA',
-      texte: 'Le chrono de vos parties de blackball : 40 secondes, ou la durée de votre choix. Avec le score des deux joueurs.',
-      lien: '/nova/',
-      bouton: 'Ouvrir le chrono',
+      texte: 'Le chrono billard gratuit : shot clock, extensions, fautes, voix et mode TV.',
+      lien: '/nova/',                    // l'app (bouton « Ouvrir », nouvel onglet)
+      bouton: 'Ouvrir ↗',
+      decouvrir: '/chrono-billard/',     // page de présentation (la carte elle-même)
     },
   ],
 };
