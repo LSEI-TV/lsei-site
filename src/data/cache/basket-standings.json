@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-03T18:28:44.222Z",
+  "updated": "2026-10-04T14:15:55.261Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/classement",
   "pool": "Poule B",
   "rows": [
@@ -15,8 +15,19 @@
       "diff": 19
     },
     {
-      "slug": "tours",
+      "slug": "challans",
       "rank": 2,
+      "pts": 6,
+      "played": 3,
+      "w": 3,
+      "l": 0,
+      "pf": 256,
+      "pa": 226,
+      "diff": 30
+    },
+    {
+      "slug": "tours",
+      "rank": 3,
       "pts": 6,
       "played": 4,
       "w": 2,
@@ -27,7 +38,7 @@
     },
     {
       "slug": "tarbes",
-      "rank": 3,
+      "rank": 4,
       "pts": 5,
       "played": 3,
       "w": 2,
@@ -38,7 +49,7 @@
     },
     {
       "slug": "angers",
-      "rank": 4,
+      "rank": 5,
       "pts": 5,
       "played": 3,
       "w": 2,
@@ -49,7 +60,7 @@
     },
     {
       "slug": "fougeres",
-      "rank": 5,
+      "rank": 6,
       "pts": 5,
       "played": 3,
       "w": 2,
@@ -60,7 +71,7 @@
     },
     {
       "slug": "bordeaux",
-      "rank": 6,
+      "rank": 7,
       "pts": 5,
       "played": 4,
       "w": 1,
@@ -68,17 +79,6 @@
       "pf": 295,
       "pa": 311,
       "diff": -16
-    },
-    {
-      "slug": "challans",
-      "rank": 7,
-      "pts": 4,
-      "played": 2,
-      "w": 2,
-      "l": 0,
-      "pf": 167,
-      "pa": 139,
-      "diff": 28
     },
     {
       "slug": "rennes",
@@ -138,13 +138,13 @@
     {
       "slug": "laval",
       "rank": 13,
-      "pts": 2,
-      "played": 2,
+      "pts": 3,
+      "played": 3,
       "w": 0,
-      "l": 2,
-      "pf": 135,
-      "pa": 163,
-      "diff": -28
+      "l": 3,
+      "pf": 222,
+      "pa": 252,
+      "diff": -30
     }
   ]
 }
