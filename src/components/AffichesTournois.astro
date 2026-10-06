@@ -112,6 +112,10 @@ const upcomingEvents = calendar
     if (!cal || !window.matchMedia('(min-width: 861px)').matches) return;
     const calR = cal.getBoundingClientRect();
     const cardR = card.getBoundingClientRect(); // taille/position NATURELLES après reset
+    // On n'aligne QUE si la carte est à côté du calendrier (colonne de droite courte).
+    // Si elle est déjà plus bas que le calendrier (colonne longue : classement, etc.),
+    // on la laisse au naturel — sinon on gonflerait inutilement le cadre calendrier.
+    if (cardR.top > calR.bottom - 24) return;
     // La carte ne remonte jamais (marge ≥ 0, pas de chevauchement du cadre du dessus).
     const mt = Math.max(0, calR.top - cardR.top);
     const cardTop = cardR.top + mt;
