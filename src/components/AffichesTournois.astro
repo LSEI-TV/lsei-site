@@ -30,15 +30,15 @@ const posters = calendar
 const showPosters = posters.length > 0 || seasonStatus === 'upcoming';
 const upcomingEvents = calendar
   .filter((e) => e.start)
-  .map((e) => ({ start: e.start, short: e.short, place: e.place, date: datePhrase(e.date) }));
+  .map((e) => ({ slug: evSlug(e), start: e.start, short: e.short, place: e.place, date: datePhrase(e.date) }));
 ---
 {showPosters && (
   <div class="hub-card aff-card" data-aff-card>
     <div class="hub-card-h"><span>Affiches des tournois</span></div>
     <div class="aff-body">
-      <div class="aff-grid">
+      <div class="aff-grid" data-aff-grid>
         {posters.map(({ e, src }) => (
-          <div class={`aff k-${e.kind}`}>
+          <div class={`aff k-${e.kind}`} data-aff-slug={evSlug(e)} data-aff-start={e.start ?? ''} hidden>
             <a href={src} target="_blank" rel="noopener" class="aff-img" title={`${e.name} — ${e.place} · ${e.date}`}>
               <img src={src} alt={`Affiche ${e.name} — ${e.place}`} loading="lazy" /><span class="aff-zoom">⤢</span>
             </a>
@@ -73,6 +73,7 @@ const upcomingEvents = calendar
   .aff-grid::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--ink) 20%, transparent); border-radius: 7px; }
   .aff-grid::-webkit-scrollbar-track { background: transparent; }
   .aff { display: flex; flex-direction: column; align-items: flex-start; text-decoration: none; color: inherit; width: 100%; }
+  .aff[hidden], .aff-grid[hidden] { display: none !important; }
   .aff-img { position: relative; display: block; width: 100%; aspect-ratio: 210 / 297; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--surface-2); }
   .aff-img img { width: 100%; height: 100%; object-fit: contain; display: block; transition: transform .25s ease; }
   .aff-img:hover img { transform: scale(1.04); }
@@ -133,29 +134,48 @@ const upcomingEvents = calendar
   document.fonts?.ready.then(syncAffHeight);
   [100, 400, 1000].forEach((t) => setTimeout(syncAffHeight, t));
 
-  // Compte à rebours du prochain rendez-vous (calculé côté client → toujours juste).
+  // Focus sur le PROCHAIN tournoi (calculé côté client → toujours juste). On n'affiche
+  // que son affiche (si déposée) ; dès qu'une date est passée, l'affiche disparaît et on
+  // passe au suivant. Une étape reste « en cours » jusqu'à ~3 jours après sa date de début.
+  const card = document.querySelector('[data-aff-card]') as HTMLElement | null;
   const panel = document.querySelector('[data-aff-next]') as HTMLElement | null;
+  const grid = document.querySelector('[data-aff-grid]') as HTMLElement | null;
   const dataEl = document.querySelector('[data-aff-events]');
-  if (panel && dataEl) {
-    let events: { start: string; short: string; place: string; date: string }[] = [];
+  if (card && panel && dataEl) {
+    const GRACE = 3 * 86400000; // durée approx. d'un tournoi (jours) avant de le considérer passé
+    let events: { slug: string; start: string; short: string; place: string; date: string }[] = [];
     try { events = JSON.parse(dataEl.textContent || '[]'); } catch { events = []; }
     const now = new Date(); now.setHours(0, 0, 0, 0);
-    const next = events
+    const focus = events
       .map((e) => ({ ...e, d: new Date(e.start + 'T00:00:00') }))
       .filter((e) => !isNaN(e.d.getTime()))
       .sort((a, b) => a.d.getTime() - b.d.getTime())
-      .find((e) => e.d.getTime() >= now.getTime());
+      .find((e) => e.d.getTime() + GRACE >= now.getTime());
+
+    // Affiches : ne montrer que celle du prochain tournoi (si elle existe).
+    const affs = [...card.querySelectorAll('.aff')] as HTMLElement[];
+    let shown = 0;
+    affs.forEach((a) => {
+      const ok = !!focus && a.getAttribute('data-aff-slug') === focus.slug;
+      a.hidden = !ok;
+      if (ok) shown++;
+    });
+    if (grid) grid.hidden = shown === 0; // pas d'affiche pour le prochain → colonne masquée
+
+    // Compte à rebours du prochain rendez-vous.
     const set = (sel: string, txt: string) => { const el = panel.querySelector(sel); if (el) el.textContent = txt; };
-    if (next) {
-      const days = Math.round((next.d.getTime() - now.getTime()) / 86400000);
-      set('[data-an-days]', days <= 0 ? "C'est parti !" : 'J-' + days);
-      set('[data-an-tn]', next.short);
-      set('[data-an-place]', next.place);
-      set('[data-an-date]', next.date);
+    if (focus) {
+      const days = Math.round((focus.d.getTime() - now.getTime()) / 86400000);
+      set('[data-an-days]', days > 0 ? 'J-' + days : 'En cours');
+      set('[data-an-tn]', focus.short);
+      set('[data-an-place]', focus.place);
+      set('[data-an-date]', focus.date);
       panel.hidden = false;
     } else {
       panel.hidden = true;
     }
+    // Plus rien à montrer (aucune affiche + plus de rendez-vous) → on masque la carte.
+    if (shown === 0 && !focus) card.hidden = true;
     syncAffHeight();
   }
 </script>
