@@ -11,7 +11,7 @@ import { articleCover } from '../../../../lib/articles';
 import { photoOf, fromPov, seasonHighlights, playerSlugs, photoOnlySeasons, playersByPhotoKey } from '../../../../lib/billardStats';
 import SportIcon from '../../../../components/SportIcon.astro';
 import PlayerSearch from '../../../../components/PlayerSearch.astro';
-import { getSeasons, getPalmares, DEFAULT_SEASON, type Season } from '../../../../data/billard/seasons';
+import { getSeasons, getPalmares, DEFAULT_SEASON, mastersGuests2627, type Season } from '../../../../data/billard/seasons';
 import AffichesTournois from '../../../../components/AffichesTournois.astro';
 import rmixte2526 from '../../../../data/billard/results-mixte-2025-2026.json';
 import rmixte2425 from '../../../../data/billard/results-mixte-2024-2025.json';
@@ -61,6 +61,12 @@ const fmtArticleDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'nu
 const fmtShort = (iso: string) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }).format(new Date(iso));
 const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
 const palmares = getPalmares();
+
+// Invités (wildcards) par étape du Masters : 4 par Tournoi National, en plus des
+// permanents. On ne les montre que là où ils sont renseignés (slug d'étape).
+const guestsView = calSeason.calendar
+  .filter((e) => e.slug && mastersGuests2627[e.slug]?.length)
+  .map((e) => ({ short: e.short, name: e.name, place: e.place, names: mastersGuests2627[e.slug!] }));
 
 
 // Entrées & sorties : mouvements de l'effectif du Masters vs la saison précédente
@@ -352,6 +358,23 @@ if (!hasData) {
     </section>
   )}
 
+  {guestsView.length > 0 && (
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Les invités</div><h2>Invités par étape · {season.label}</h2></div></div>
+        <p class="fj-help" style="margin-top:0">Chaque Tournoi National Masters accueille <b>4 invités</b> en plus des permanents. Ils changent à chaque étape.</p>
+        <div class="guests-list">
+          {guestsView.map((g) => (
+            <div class="guests-row">
+              <div class="guests-ev"><span class="guests-tn">{g.short}</span><span class="guests-place">{g.place}</span></div>
+              <div class="guests-names">{g.names.map((n) => <span class="guest-chip">{n}</span>)}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
   {hi && (
     <section class="section" style="padding-top:0">
       <div class="wrap">
@@ -510,3 +533,14 @@ if (!hasData) {
     </section>
   )}
 </Base>
+
+<style>
+  /* Invités par étape (Masters) */
+  .guests-list { display: flex; flex-direction: column; gap: 10px; }
+  .guests-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  .guests-ev { display: flex; align-items: baseline; gap: 8px; min-width: 160px; }
+  .guests-tn { font-family: var(--display); font-weight: 800; font-size: 16px; color: var(--c-billard); }
+  .guests-place { font-size: 13px; color: var(--ink-faint); }
+  .guests-names { display: flex; flex-wrap: wrap; gap: 8px; }
+  .guest-chip { font-size: 13px; font-weight: 600; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 100px; padding: 5px 12px; }
+</style>

@@ -81,35 +81,39 @@ export const cal2627: SeasonEvent[] = [
   { short: 'France', slug: 'france', name: 'Championnats de France', date: '25-27 juin 2027', place: 'Hauts-de-France, Nord (59)', kind: 'france', start: '2027-06-25' },
 ];
 
-// Effectif officiel des 24 permanents engagés au Blackball Master 2026/2027.
-// Source : liste des inscrits Cuescore (FFB — Permanents Blackball Master).
-// Pas de stats : le tirage et le classement s'afficheront au fil des étapes.
+// Permanents engagés au Blackball Master 2026/2027 (hors accédants, affichés à part).
+// Source : liste officielle des inscrits Cuescore (FFB — Permanents Blackball Master),
+// à jour au 06/10/2026 : 28 engagés = 8 accédants (calculés depuis le Mixte National)
+// + ces 20 permanents de retour. Pas de stats : classement au fil des étapes.
 export const roster2627: RosterEntry[] = [
   { name: 'Alexandre Buscetti', country: 'FRA' },
   { name: 'Alexis Klinka', country: 'FRA' },
-  { name: 'Benjamin Piel', country: 'FRA' },
   { name: 'Christophe Lambert', country: 'FRA' },
   { name: 'Christophe Thebeault', country: 'FRA' },
-  { name: 'Cyrille Loncle', country: 'FRA' },
   { name: 'Damien Joly', country: 'FRA' },
   { name: 'Elie Christidis', country: 'FRA' },
-  { name: 'Ismail Zegour', country: 'MAR' },
+  { name: 'Jerome Lanthoen', country: 'FRA' },
   { name: 'Julien Duquesnoy', country: 'FRA' },
   { name: 'Julien Leroux', country: 'FRA' },
   { name: 'Killian Ballon', country: 'FRA' },
   { name: 'Leonardo Moreira', country: 'FRA' },
   { name: 'Léo Ostrowska', country: 'FRA' },
-  { name: 'Mohammed Amine Himid', country: 'MAR' },
-  { name: 'Nathan Gambino', country: 'FRA' },
-  { name: 'Nicolas Grandemange Denizot', country: 'FRA' },
   { name: 'Nordine Mokhtar Mehache', country: 'DZA' },
   { name: 'Paul Coldrick', country: 'FRA' },
   { name: 'Quentin Dumont', country: 'FRA' },
+  { name: 'Sap Nhi Tsan', country: 'FRA' },
   { name: 'Simon Pellissier', country: 'FRA' },
   { name: 'Thomas Louboutin', country: 'FRA' },
   { name: 'Yannick Beaufils', country: 'FRA' },
   { name: 'Yasser Amrani Hanchi', country: 'MAR' },
 ];
+
+// Invités (wildcards) par étape du Masters 2026/2027. Chaque Tournoi National
+// accueille 4 invités EN PLUS des 28 permanents ; ils changent à chaque étape.
+// Clé = slug de l'étape (cf. cal2627). Spécifique au Masters (pas Femmes/Para).
+export const mastersGuests2627: Record<string, string[]> = {
+  tn1: ['Kevin Lefrançois', 'Arthur Crespin', 'Fabien Langlet', 'Frédéric Moreau'],
+};
 
 // La plus récente en premier.
 export const seasons: Season[] = [
