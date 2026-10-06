@@ -70,7 +70,7 @@ const facts = seasonSuperlatives(R, prevSeason?.results);
                   <td class="l">
                     <a href={`/billard/joueur/${slugOf(p.id)}`} class="bplayer">
                       <span class="bphoto"><span class="bavatar">{p.name.slice(0, 1)}</span>{src && <img src={src} alt="" loading="lazy" onerror="this.remove()" />}</span>
-                      <span class="bname">{p.name}</span>
+                      <span class="bname">{p.name}{p.invite && <span class="binv">Invité</span>}</span>
                     </a>
                   </td>
                   <td class="mono bpts">{p.points}</td>

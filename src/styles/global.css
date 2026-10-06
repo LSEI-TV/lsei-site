@@ -1275,6 +1275,7 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .bplayer { display: inline-flex; align-items: center; gap: 11px; }
 .bplayer .bphoto { width: 34px; height: 34px; font-size: 13px; }
 .bname { font-weight: 650; color: var(--ink); }
+.binv { margin-left: 7px; font-size: 9.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #7a4e00; background: #F6C454; border-radius: 5px; padding: 1px 6px; vertical-align: middle; }
 .btable .bwin { color: var(--ink); font-weight: 700; }
 .btable .bpts { color: var(--c-billard); font-weight: 800; }
 /* Classement sur TELEPHONE : on masque les colonnes secondaires -> tient sans scroll */

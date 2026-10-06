@@ -6,6 +6,7 @@
 //  Pour AJOUTER une saison : générer son fichier results-XXXX-XXXX.json
 //  (script depuis le lien de classement Cuescore) puis l'ajouter ci-dessous.
 // ============================================================
+import r2627 from './results-2026-2027.json';
 import r2526 from './results-2025-2026.json';
 import r2425 from './results-2024-2025.json';
 import r2324 from './results-2023-2024.json';
@@ -117,8 +118,8 @@ export const mastersGuests2627: Record<string, string[]> = {
 
 // La plus récente en premier.
 export const seasons: Season[] = [
-  { slug: '2026-2027', label: '2026 / 2027', short: '26/27', status: 'upcoming', competition: 'Blackball Master', calendar: cal2627, roster: roster2627 },
-  { slug: '2025-2026', label: '2025 / 2026', short: '25/26', status: 'current', competition: 'Blackball Master', calendar: calFrom(r2526 as ResultsData), results: r2526 as ResultsData },
+  { slug: '2026-2027', label: '2026 / 2027', short: '26/27', status: 'current', competition: 'Blackball Master', calendar: cal2627, roster: roster2627, results: r2627 as ResultsData },
+  { slug: '2025-2026', label: '2025 / 2026', short: '25/26', status: 'past', competition: 'Blackball Master', calendar: calFrom(r2526 as ResultsData), results: r2526 as ResultsData },
   { slug: '2024-2025', label: '2024 / 2025', short: '24/25', status: 'past', competition: 'Blackball Master', calendar: calFrom(r2425 as ResultsData), results: r2425 as ResultsData },
   { slug: '2023-2024', label: '2023 / 2024', short: '23/24', status: 'past', competition: 'Blackball Master', calendar: calFrom(r2324 as ResultsData), results: r2324 as ResultsData },
   { slug: '2022-2023', label: '2022 / 2023', short: '22/23', status: 'past', competition: 'Blackball Master', calendar: calFrom(r2223 as ResultsData), results: r2223 as ResultsData },
@@ -134,7 +135,9 @@ export const seasons: Season[] = [
 // Palmarès : pour chaque saison jouée, le champion de saison (points TN) et
 // le champion de France (vainqueur de la finale du Championnat de France).
 export function palmaresOf(list: Season[]) {
-  return list.filter((s) => s.results).map((s) => {
+  // Uniquement les saisons TERMINÉES : une saison en cours (status 'current') ne doit
+  // pas figurer au palmarès (sinon on sacrerait un « champion » avant la fin).
+  return list.filter((s) => s.results && s.status === 'past').map((s) => {
     const R = s.results!;
     const champ = (R.players as any[]).find((p) => p.rank === 1) || R.players[0];
     let cdf: { id: number; name: string } | null = null;

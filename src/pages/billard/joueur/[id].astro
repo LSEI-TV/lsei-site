@@ -249,6 +249,7 @@ const personLd = {
           <div class="chero-tags">
             <span class="chero-tag">Blackball Master</span>
             <span class="chero-tag">{latest.p.rank}<sup>e</sup> au classement {latest.label}</span>
+            {latest.p.invite && <span class="chero-tag" style="background:#F6C454;color:#7a4e00;border-color:#F6C454">★ Invité · {latest.label}</span>}
             {leftAfter
               ? <span class="chero-tag off">↩ Parti après {leftAfter}</span>
               : <span class="chero-tag on">● En activité</span>}

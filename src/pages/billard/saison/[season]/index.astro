@@ -79,7 +79,7 @@ if (hasData && prevSeason?.results) {
   const prevPlayers = prevSeason.results.players as any[];
   const curIds = new Set(players.map((p) => p.id));
   const prevIds = new Set(prevPlayers.map((p) => p.id));
-  entrants = players.filter((p) => !prevIds.has(p.id)).sort((a, b) => a.rank - b.rank);
+  entrants = players.filter((p) => !prevIds.has(p.id) && !(p as any).invite).sort((a, b) => a.rank - b.rank);
   leavers = prevPlayers.filter((p) => !curIds.has(p.id)).sort((a, b) => a.rank - b.rank);
 }
 
@@ -168,7 +168,7 @@ if (!hasData) {
     ? new Set((prevSeason.results.players as any[]).map((p) => p.id))
     : earlierIds;
   newcomers = (players as any[])
-    .filter((p) => !prevRosterIds.has(p.id))
+    .filter((p) => !prevRosterIds.has(p.id) && !p.invite) // les invités ne sont pas des accédants
     .sort((a, b) => a.rank - b.rank)
     .map((p) => {
       const back = earlierIds.has(p.id);           // déjà présent au Masters par le passé → de retour
@@ -246,7 +246,7 @@ if (!hasData) {
                   <a href={`/billard/joueur/${slugOf(p.id)}`} class="pod-row">
                     <span class="pod-rank">{p.rank}</span>
                     <span class="bphoto pod-ph"><span class="bavatar">{p.name.slice(0, 1)}</span>{src && <img src={src} alt="" onerror="this.remove()" />}</span>
-                    <span class="pod-name">{p.name}</span>
+                    <span class="pod-name">{p.name}{p.invite && <span class="inv-tag">Invité</span>}</span>
                     <span class="pod-pts">{p.points}<small>pts</small></span>
                   </a>
                 );
@@ -543,4 +543,6 @@ if (!hasData) {
   .guests-place { font-size: 13px; color: var(--ink-faint); }
   .guests-names { display: flex; flex-wrap: wrap; gap: 8px; }
   .guest-chip { font-size: 13px; font-weight: 600; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 100px; padding: 5px 12px; }
+  /* Badge « Invité » (wildcard d'une étape, pas un permanent) */
+  .inv-tag { margin-left: 6px; font-size: 9.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #7a4e00; background: #F6C454; vertical-align: middle; border-radius: 5px; padding: 1px 5px; }
 </style>
