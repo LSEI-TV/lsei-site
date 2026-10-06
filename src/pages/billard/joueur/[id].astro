@@ -108,6 +108,18 @@ const ncPhoto = nc ? photoOf({ name: nc.name } as any, nc.mastersSlug) : null;
 // A quitté le Masters ? Oui si sa dernière saison n'est pas la saison jouée la plus récente.
 const leftAfter = !nc && latest.slug !== seasons[0].slug ? latest.label : null;
 
+// Invité (wildcard) : sa « provenance » est le Mixte National de l'an passé (feeder),
+// d'où il est invité. On affiche son bilan Mixte 2025/2026 sur sa fiche.
+const _gn = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+const GUEST_FEEDER: Record<string, any> = { '2026-2027': rmixte2526, '2025-2026': rmixte2425, '2024-2025': rmixte2324 };
+let guestOrigin: any = null;
+if (!nc && latest?.p?.invite) {
+  const [gya, gyb] = latest.slug.split('-').map(Number);
+  const feeder = GUEST_FEEDER[latest.slug];
+  const mp = feeder && (feeder.players as any[]).find((x) => x.id === pid || _gn(x.name) === _gn(name));
+  if (mp) guestOrigin = { label: `${gya - 1} / ${gyb - 1}`, mastersLabel: latest.label, rank: mp.rank, points: mp.points, wins: mp.wins, losses: mp.losses, played: mp.played, tourns: mp.tourns };
+}
+
 // Cumuls carrière (toutes saisons).
 const career = bySeason.reduce(
   (a, x) => {
@@ -300,6 +312,20 @@ const personLd = {
         <div class="btile" title="Total des matchs disputés, toutes saisons confondues."><div class="bt-num">{career.played}</div><div class="bt-lab">Matchs joués</div></div>
         <div class="btile" title="Total des tournois (étapes) disputés sur la carrière."><div class="bt-num">{career.tourns}</div><div class="bt-lab">Tournois</div></div>
       </div>
+
+      {guestOrigin && (
+        <div class="car-palm" style="margin-top:24px">
+          <div class="car-palm-h">Invité au Masters {guestOrigin.mastersLabel} · sa saison {guestOrigin.label} en Mixte National</div>
+          <div class="btiles" style="margin-top:14px">
+            <div class="btile" title="Classement final au Mixte National la saison précédente."><div class="bt-num" style="color:var(--c-billard)">{guestOrigin.rank}<sup>e</sup></div><div class="bt-lab">Classement Mixte</div></div>
+            <div class="btile" title="Points au classement Mixte National."><div class="bt-num">{guestOrigin.points}</div><div class="bt-lab">Points</div></div>
+            <div class="btile" title="Matchs gagnés (V) et perdus (D) au Mixte National."><div class="bt-num">{guestOrigin.wins}<span>-</span>{guestOrigin.losses}</div><div class="bt-lab">Bilan V-D</div></div>
+            <div class="btile" title="Matchs disputés au Mixte National."><div class="bt-num">{guestOrigin.played}</div><div class="bt-lab">Matchs joués</div></div>
+            <div class="btile" title="Tournois (étapes) disputés au Mixte National."><div class="bt-num">{guestOrigin.tourns}</div><div class="bt-lab">Tournois</div></div>
+          </div>
+          <p class="fj-help" style="margin-top:14px">{name} est <b>invité</b> au Blackball Master : il vient du <b>Mixte National {guestOrigin.label}</b> (ci-dessus son bilan). Ses résultats au Masters cette saison {guestOrigin.mastersLabel} figurent dans sa fiche saison ci-dessous.</p>
+        </div>
+      )}
 
       <p class="fj-help"><b>Pour aller vite :</b> cette fiche résume la carrière du joueur. Pour le détail d'une saison — parcours étape par étape, tous les résultats — cliquez sur la saison voulue ci-dessous.</p>
 
