@@ -47,11 +47,6 @@ const title = firstLine || `${pf.label} · ${fmtDate(post.data.date)}`;
 
       <p class="soc-caption">{post.data.caption}</p>
 
-      <a href={post.data.link} target="_blank" rel="noopener" class="soc-cta" style={`--pc:${pf.color}`}>
-        <span class="soc-cta-ico" set:html={pf.icon}></span>
-        Voir la publication sur {pf.label} ↗
-      </a>
-
       <div class="article-share"><ShareLinks url={shareUrl} title={title} /></div>
     </div>
   </article>

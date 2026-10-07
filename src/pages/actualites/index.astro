@@ -14,10 +14,15 @@ const articles = (await getCollection('articles', ({ data }) => !data.draft && d
 const discOf = (slug?: string) => disciplines.find((d) => d.slug === slug);
 const fmtDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
 
-// Publications réseaux (posts choisis à la main) — affichées en bas de page.
+// Publications réseaux (posts choisis à la main) — désormais le contenu PRINCIPAL
+// des actualités (les posts YouTube tiennent lieu d'articles).
 const socialPosts = (await getCollection('social', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
+
+// Articles éditoriaux masqués pour l'instant. Les .md restent dans src/content/articles/.
+// Pour les réafficher un jour : repasser SHOW_ARTICLES à true.
+const SHOW_ARTICLES = false;
 ---
 <Base title="Actualités" description="Comptes-rendus, portraits et coulisses des disciplines LSEI." active="actualites">
   <section class="disc-hero">
@@ -29,9 +34,46 @@ const socialPosts = (await getCollection('social', ({ data }) => !data.draft)).s
     </div>
   </section>
 
-  <section class="section">
+  <section class="section social-section">
     <div class="wrap">
-      {articles.length > 0 ? (
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow">À suivre</div>
+          <h2>Dernières publications</h2>
+        </div>
+        <div class="social-follow"><SocialLinks compact /></div>
+      </div>
+      {socialPosts.length > 0 ? (
+        <div class="cards">
+          {socialPosts.map((p) => {
+            const pf = PLATFORMS[p.data.platform];
+            return (
+              <a href={`/actualites/reseaux/${p.id}`} class="card social-card" style={`--pc:${pf.color}`}>
+                <div class="frame">
+                  {assetExists(p.data.image)
+                    ? <img class="photo" src={p.data.image} alt={p.data.caption?.split('\n')[0] || pf.label} loading="lazy" />
+                    : <div class="duo social-ph"><span class="soc-ph-ico" set:html={pf.icon}></span></div>}
+                  <div class="grad"></div>
+                  <div class="cap"><div class="disc"><span class="plat-ico" set:html={pf.icon}></span>{pf.label}</div></div>
+                </div>
+                <div class="kicker">{fmtDate(p.data.date)}</div>
+                <p class="social-cap">{p.data.caption}</p>
+                <span class="social-more">Voir la publication →</span>
+              </a>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="dek">Les actualités arrivent bientôt.</p>
+      )}
+    </div>
+  </section>
+
+  {/* Articles éditoriaux — masqués pour l'instant (SHOW_ARTICLES = false).
+      Les .md restent dans src/content/articles/ et sont réactivables d'un seul flag. */}
+  {SHOW_ARTICLES && articles.length > 0 && (
+    <section class="section">
+      <div class="wrap">
         <div class="cards">
           {articles.map((a) => {
             const d = discOf(a.data.discipline);
@@ -48,42 +90,6 @@ const socialPosts = (await getCollection('social', ({ data }) => !data.draft)).s
                 <div class="kicker">{fmtDate(a.data.date)}</div>
                 <h3>{a.data.title}</h3>
                 <p class="ex">{a.data.excerpt}</p>
-              </a>
-            );
-          })}
-        </div>
-      ) : (
-        <p class="dek">Les premiers articles arrivent bientôt.</p>
-      )}
-    </div>
-  </section>
-
-  {socialPosts.length > 0 && (
-    <section class="section social-section">
-      <div class="wrap">
-        <hr class="rule" />
-        <div class="sec-head" style="margin-top:34px">
-          <div>
-            <div class="eyebrow">À suivre</div>
-            <h2>Sur les réseaux sociaux</h2>
-          </div>
-          <div class="social-follow"><SocialLinks compact /></div>
-        </div>
-        <div class="cards">
-          {socialPosts.map((p) => {
-            const pf = PLATFORMS[p.data.platform];
-            return (
-              <a href={`/actualites/reseaux/${p.id}`} class="card social-card" style={`--pc:${pf.color}`}>
-                <div class="frame">
-                  {assetExists(p.data.image)
-                    ? <img class="photo" src={p.data.image} alt={p.data.caption?.split('\n')[0] || pf.label} loading="lazy" />
-                    : <div class="duo social-ph"><span class="soc-ph-ico" set:html={pf.icon}></span></div>}
-                  <div class="grad"></div>
-                  <div class="cap"><div class="disc"><span class="plat-ico" set:html={pf.icon}></span>{pf.label}</div></div>
-                </div>
-                <div class="kicker">{fmtDate(p.data.date)}</div>
-                <p class="social-cap">{p.data.caption}</p>
-                <span class="social-more">Voir la publication →</span>
               </a>
             );
           })}
