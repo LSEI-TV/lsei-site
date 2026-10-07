@@ -4,7 +4,7 @@
 import Base from '../../layouts/Base.astro';
 import HubSwitch from '../../components/HubSwitch.astro';
 import { getReplays } from '../../lib/youtube';
-import { showcaseSeason, getPalmares, LANDING_SEASON } from '../../data/billard/seasons';
+import { showcaseSeason, getPalmares } from '../../data/billard/seasons';
 import { femmesShowcaseSeason, getFemmesPalmares } from '../../data/billard/seasonsFemmes';
 import { paraShowcaseSeason, getParaPalmares } from '../../data/billard/seasonsPara';
 import { paraMvShowcaseSeason, getParaMvPalmares } from '../../data/billard/seasonsParaMalvoyants';
@@ -25,7 +25,7 @@ const pamvPalm = getParaMvPalmares().find((p) => p.slug === pamv.slug);
 
 const comps = [
   {
-    href: `/billard/saison/${LANDING_SEASON}`,
+    href: `/billard/saison/${m.slug}`,
     ficheBase: '/billard/joueur/',
     accent: '#7C4DD6', accentInk: '#ffffff', // violet (Masters)
     eyebrow: 'Compétition',

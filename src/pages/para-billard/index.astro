@@ -1,6 +1,7 @@
 ---
-import { PARA_LANDING_SEASON } from '../../data/billard/seasonsPara';
-const target = '/para-billard/saison/' + PARA_LANDING_SEASON;
+// Dernière saison AVEC des résultats (bascule auto vers la nouvelle dès son 1er tournoi).
+import { paraShowcaseSeason } from '../../data/billard/seasonsPara';
+const target = '/para-billard/saison/' + paraShowcaseSeason().slug;
 ---
 <!doctype html>
 <html lang="fr" data-theme="dark">

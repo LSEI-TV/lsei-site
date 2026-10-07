@@ -1,6 +1,7 @@
 ---
-import { PARAMV_LANDING_SEASON } from '../../data/billard/seasonsParaMalvoyants';
-const target = '/para-billard-malvoyants/saison/' + PARAMV_LANDING_SEASON;
+// Dernière saison AVEC des résultats (bascule auto vers la nouvelle dès son 1er tournoi).
+import { paraMvShowcaseSeason } from '../../data/billard/seasonsParaMalvoyants';
+const target = '/para-billard-malvoyants/saison/' + paraMvShowcaseSeason().slug;
 ---
 <!doctype html>
 <html lang="fr" data-theme="dark">

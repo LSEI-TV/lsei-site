@@ -1,6 +1,8 @@
 ---
-import { FEMMES_LANDING_SEASON } from '../../data/billard/seasonsFemmes';
-const target = '/femmes/saison/' + FEMMES_LANDING_SEASON;
+// On atterrit sur la dernière saison AVEC des résultats (bascule auto vers la nouvelle
+// dès son premier tournoi joué) — évite d'arriver sur une saison « à venir » encore vide.
+import { femmesShowcaseSeason } from '../../data/billard/seasonsFemmes';
+const target = '/femmes/saison/' + femmesShowcaseSeason().slug;
 ---
 <!doctype html>
 <html lang="fr" data-theme="dark">
