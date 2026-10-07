@@ -49,6 +49,9 @@ jobs:
       - name: Récupérer les posts YouTube (actualités, page communautaire)
         run: node scripts/fetch-youtube-posts.mjs || echo "Posts YouTube non mis à jour (page indisponible) — contenu précédent conservé."
 
+      - name: Importer les TN Blackball (Master + Femme, auto-découverte Cuescore)
+        run: node scripts/import-blackball.mjs || echo "Import Blackball non mis à jour (Cuescore indisponible) — résultats précédents conservés."
+
       - name: Construire (récupère YouTube + met à jour le cache)
         run: npm run build
 
@@ -68,15 +71,15 @@ jobs:
             **/node_modules/**
             **/live.json
 
-      - name: Recommiter le cache vidéos + nouveaux posts YouTube
+      - name: Recommiter les données rafraîchies (vidéos, posts, résultats Blackball)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/cache/ src/content/social/
+          git add src/data/cache/ src/content/social/ src/data/billard/results-2026-2027.json src/data/billard/results-femmes-2026-2027.json
           if git diff --staged --quiet; then
             echo "Rien de nouveau, aucun commit."
           else
-            git commit -m "chore: rafraîchissement données (vidéos + posts YouTube) [skip ci]"
+            git commit -m "chore: rafraîchissement données (vidéos + posts + Blackball) [skip ci]"
             git push
           fi
 

@@ -64,9 +64,18 @@ const palmares = getPalmares();
 
 // Invités (wildcards) par étape du Masters : 4 par Tournoi National, en plus des
 // permanents. On ne les montre que là où ils sont renseignés (slug d'étape).
+// Chaque nom est relié à la fiche du joueur (retrouvé par nom dans le classement de la saison).
+const _gn = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+const _guestId = new Map((players as any[]).map((p) => [_gn(p.name), p.id]));
 const guestsView = calSeason.calendar
   .filter((e) => e.slug && mastersGuests2627[e.slug]?.length)
-  .map((e) => ({ short: e.short, name: e.name, place: e.place, names: mastersGuests2627[e.slug!] }));
+  .map((e) => ({
+    short: e.short, name: e.name, place: e.place,
+    names: mastersGuests2627[e.slug!].map((nm) => {
+      const id = _guestId.get(_gn(nm));
+      return { label: nm, link: id != null ? `/billard/joueur/${slugOf(id)}` : null };
+    }),
+  }));
 
 
 // Entrées & sorties : mouvements de l'effectif du Masters vs la saison précédente
@@ -367,7 +376,7 @@ if (!hasData) {
           {guestsView.map((g) => (
             <div class="guests-row">
               <div class="guests-ev"><span class="guests-tn">{g.short}</span><span class="guests-place">{g.place}</span></div>
-              <div class="guests-names">{g.names.map((n) => <span class="guest-chip">{n}</span>)}</div>
+              <div class="guests-names">{g.names.map((n) => (n.link ? <a class="guest-chip guest-chip--link" href={n.link}>{n.label}</a> : <span class="guest-chip">{n.label}</span>))}</div>
             </div>
           ))}
         </div>
@@ -543,6 +552,8 @@ if (!hasData) {
   .guests-place { font-size: 13px; color: var(--ink-faint); }
   .guests-names { display: flex; flex-wrap: wrap; gap: 8px; }
   .guest-chip { font-size: 13px; font-weight: 600; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 100px; padding: 5px 12px; }
+  a.guest-chip--link { text-decoration: none; transition: border-color .15s, color .15s, background .15s; }
+  a.guest-chip--link:hover { color: var(--c-billard); border-color: var(--c-billard); background: color-mix(in srgb, var(--c-billard) 8%, var(--surface-2)); }
   /* Badge « Invité » (wildcard d'une étape, pas un permanent) */
   .inv-tag { margin-left: 6px; font-size: 9.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #7a4e00; background: #F6C454; vertical-align: middle; border-radius: 5px; padding: 1px 5px; }
 </style>
