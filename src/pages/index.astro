@@ -8,7 +8,7 @@ import SportIcon from '../components/SportIcon.astro';
 import { getLiveFeature, getBroadcasts, getReplays, getChannelStats, tagStyle } from '../lib/youtube';
 import { parseProgTitle } from '../lib/programmeTitle';
 import { getCollection } from 'astro:content';
-import { articleCover } from '../lib/articles';
+import { PLATFORMS } from '../lib/social';
 import { assetExists, assetUrl } from '../lib/publicAssets';
 import { defaultSeason, getPalmares, getSeasons, DEFAULT_SEASON } from '../data/billard/seasons';
 import { photoOf, playerSlugs } from '../lib/billardStats';
@@ -48,7 +48,9 @@ const STAT_ICONS: Record<string, string> = {
   partners: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 6.6a4.5 4.5 0 0 0-6.4 0L12 9l-2.4-2.4a4.5 4.5 0 1 0-6.4 6.4L12 21.8l8.8-8.8a4.5 4.5 0 0 0 0-6.4z"/></svg>',
 };
 
-const latestArticles = (await getCollection('articles', ({ data }) => !data.draft && data.date.valueOf() <= Date.now()))
+// « Le mag » de l'accueil : les 3 derniers posts (content/social) — mêmes actualités
+// que la page /actualites (les posts YouTube tiennent lieu d'articles).
+const latestPosts = (await getCollection('social', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 const fmtArticleDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
@@ -436,7 +438,7 @@ const slides = programme
   )}
 
   <!-- ACTUALITÉS (pleine largeur) -->
-  {latestArticles.length > 0 && (
+  {latestPosts.length > 0 && (
     <section class="section">
       <div class="wrap">
         <div class="sec-head">
@@ -447,22 +449,20 @@ const slides = programme
           <a href="/actualites" class="link">Toutes les actualités →</a>
         </div>
         <div class="cards">
-          {latestArticles.map((a) => {
-            const d = disciplines.find((x) => x.slug === a.data.discipline);
-            const cover = articleCover(a);
+          {latestPosts.map((p) => {
+            const pf = PLATFORMS[p.data.platform];
             return (
-              <a href={`/actualites/${a.id}`} class="card" style={d ? `--dc:${d.colorVar}` : ''}>
+              <a href={`/actualites/reseaux/${p.id}`} class="card social-card" style={`--pc:${pf.color}`}>
                 <div class="frame">
-                  {cover
-                    ? <img class="photo" src={cover.src} alt="" loading="lazy" onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />
-                    : <div class="duo" style={d ? `background:linear-gradient(135deg,${d.from},${d.to})` : 'background:linear-gradient(135deg,#1E40E5,#0a1a6b)'}></div>}
+                  {assetExists(p.data.image)
+                    ? <img class="photo" src={p.data.image} alt="" loading="lazy" />
+                    : <div class="duo social-ph"><span class="soc-ph-ico" set:html={pf.icon}></span></div>}
                   <div class="grad"></div>
-                  {d && <div class="cap"><div class="disc"><SportIcon slug={d.slug} class="disc-tag-ic" />{d.label}</div></div>}
+                  <div class="cap"><div class="disc"><span class="plat-ico" set:html={pf.icon}></span>{pf.label}</div></div>
                 </div>
-                <div class="kicker">{fmtArticleDate(a.data.date)}</div>
-                <h3>{a.data.title}</h3>
-                <p class="ex">{a.data.excerpt}</p>
-                <span class="card-more">Lire la suite <span aria-hidden="true">→</span></span>
+                <div class="kicker">{fmtArticleDate(p.data.date)}</div>
+                <p class="social-cap">{p.data.caption}</p>
+                <span class="social-more">Voir la publication →</span>
               </a>
             );
           })}
