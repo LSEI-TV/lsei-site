@@ -16,8 +16,12 @@ const fmtDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', 
 
 // Publications réseaux (posts choisis à la main) — désormais le contenu PRINCIPAL
 // des actualités (les posts YouTube tiennent lieu d'articles).
+// Tri : « mis en avant » d'abord, puis par date, puis par id (départage STABLE —
+// sinon l'ordre entre deux posts de même date varie d'un build à l'autre).
 const socialPosts = (await getCollection('social', ({ data }) => !data.draft)).sort(
-  (a, b) => (Number(b.data.featured) - Number(a.data.featured)) || (b.data.date.valueOf() - a.data.date.valueOf()),
+  (a, b) => (Number(b.data.featured) - Number(a.data.featured))
+    || (b.data.date.valueOf() - a.data.date.valueOf())
+    || a.id.toLowerCase().localeCompare(b.id.toLowerCase()),
 );
 
 // Articles éditoriaux masqués pour l'instant. Les .md restent dans src/content/articles/.
