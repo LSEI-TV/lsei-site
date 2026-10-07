@@ -32,7 +32,7 @@ const PERMANENTS = new Set([
 ].map(mk));
 const isPermanent = (name) => PERMANENTS.has(mk(name));
 // Corrections d'affichage de noms mal orthographiés sur Cuescore.
-const NAME_FIX = { [mk('Jerome Lanthoen')]: 'Jerome Lanthoen' };
+const NAME_FIX = { [mk('Jerome Lanthoen')]: "Jérome L'Anthoen" };
 const fixName = (name) => NAME_FIX[mk(name)] || name;
 
 const slugify = (s) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
