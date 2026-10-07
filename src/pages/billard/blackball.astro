@@ -4,20 +4,24 @@
 import Base from '../../layouts/Base.astro';
 import HubSwitch from '../../components/HubSwitch.astro';
 import { getReplays } from '../../lib/youtube';
-import { defaultSeason, getPalmares, DEFAULT_SEASON, LANDING_SEASON } from '../../data/billard/seasons';
-import { femmesDefaultSeason, getFemmesPalmares, FEMMES_DEFAULT_SEASON } from '../../data/billard/seasonsFemmes';
-import { paraDefaultSeason, getParaPalmares, PARA_DEFAULT_SEASON } from '../../data/billard/seasonsPara';
-import { paraMvDefaultSeason, getParaMvPalmares, PARAMV_DEFAULT_SEASON } from '../../data/billard/seasonsParaMalvoyants';
+import { showcaseSeason, getPalmares, LANDING_SEASON } from '../../data/billard/seasons';
+import { femmesShowcaseSeason, getFemmesPalmares } from '../../data/billard/seasonsFemmes';
+import { paraShowcaseSeason, getParaPalmares } from '../../data/billard/seasonsPara';
+import { paraMvShowcaseSeason, getParaMvPalmares } from '../../data/billard/seasonsParaMalvoyants';
 
 const vidCount = (await getReplays({ discipline: 'billard' })).length;
-const m = defaultSeason();
-const f = femmesDefaultSeason();
-const pa = paraDefaultSeason();
-const pamv = paraMvDefaultSeason();
-const mPalm = getPalmares().find((p) => p.slug === DEFAULT_SEASON);
-const fPalm = getFemmesPalmares().find((p) => p.slug === FEMMES_DEFAULT_SEASON);
-const paPalm = getParaPalmares().find((p) => p.slug === PARA_DEFAULT_SEASON);
-const pamvPalm = getParaMvPalmares().find((p) => p.slug === PARAMV_DEFAULT_SEASON);
+// Chaque carte montre la saison « vitrine » de sa compétition = la plus récente qui a
+// des résultats. Masters → 2026-2027 dès le 1er TN ; les autres restent sur leur dernière
+// saison jouée tant que la nouvelle n'a pas démarré. Le palmarès (champion) n'existe que
+// pour une saison TERMINÉE → une saison en cours n'a pas de champion (feat = null).
+const m = showcaseSeason();
+const f = femmesShowcaseSeason();
+const pa = paraShowcaseSeason();
+const pamv = paraMvShowcaseSeason();
+const mPalm = getPalmares().find((p) => p.slug === m.slug);
+const fPalm = getFemmesPalmares().find((p) => p.slug === f.slug);
+const paPalm = getParaPalmares().find((p) => p.slug === pa.slug);
+const pamvPalm = getParaMvPalmares().find((p) => p.slug === pamv.slug);
 
 const comps = [
   {
@@ -77,7 +81,11 @@ const comps = [
     : c.palm?.champ
     ? { icon: '⭐', label: c.champSeasonLabel, name: c.palm.champ.name, id: c.palm.champ.id }
     : null;
-  return { ...c, players: players.length, tourns: c.R.tournaments.length, matches: c.R.matches.length, top3, feat };
+  // En cours = la saison n'a pas encore de Championnat de France dans ses résultats.
+  // (Critère fiable basé sur les DONNÉES, pas sur le champ `status` qui est incohérent
+  // d'une compétition à l'autre — certaines marquent leur dernière saison jouée 'current'.)
+  const inProgress = !(c.R.tournaments as any[]).some((t) => t.kind === 'france');
+  return { ...c, players: players.length, tourns: c.R.tournaments.length, matches: c.R.matches.length, top3, feat, inProgress };
 });
 ---
 <Base title="Billard — Le hub Blackball" description="Le hub Blackball de LSEI : choisissez la compétition Masters (hommes), Femmes, Para-billard fauteuil ou Para-billard malvoyants." preloadImage="/billard/blackball-hero.webp" active="disciplines">
@@ -121,12 +129,12 @@ const comps = [
               </a>
             )}
 
-            <div class="bchoose-sublab">Podium de la saison {c.season}</div>
+            <div class="bchoose-sublab">{c.inProgress ? `Classement provisoire · ${c.season}` : `Podium de la saison ${c.season}`}</div>
             <div class="bchoose-podium">
               {c.top3.map((p) => (
                 <a href={`${c.ficheBase}${p.id}`} class="bchoose-pod">
                   <span class={`bchoose-pod-r r${p.rank}`}>{p.rank}</span>
-                  <span class="bchoose-pod-n"><span class="pod-name">{p.name}</span>{p.rank === 1 && <em class="pod-tag">{c.champSeasonLabel}</em>}</span>
+                  <span class="bchoose-pod-n"><span class="pod-name">{p.name}</span>{p.rank === 1 && <em class="pod-tag">{c.inProgress ? 'En tête' : c.champSeasonLabel}</em>}</span>
                   <span class="bchoose-pod-p">{p.points}<small>pts</small></span>
                 </a>
               ))}

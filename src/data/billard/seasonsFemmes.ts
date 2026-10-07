@@ -23,4 +23,6 @@ export const FEMMES_LANDING_SEASON = femmesSeasons[0].slug; // saison d'arrivée
 export const getFemmesSeasons = () => femmesSeasons;
 export const getFemmesSeason = (slug: string) => femmesSeasons.find((s) => s.slug === slug);
 export const femmesDefaultSeason = () => getFemmesSeason(FEMMES_DEFAULT_SEASON)!;
+// Saison « vitrine » du hub : la plus récente avec des résultats (déjà commencée).
+export const femmesShowcaseSeason = () => femmesSeasons.find((s) => s.results) ?? femmesDefaultSeason();
 export const getFemmesPalmares = () => palmaresOf(femmesSeasons);

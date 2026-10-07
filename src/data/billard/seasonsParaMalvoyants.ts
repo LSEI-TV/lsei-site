@@ -21,6 +21,8 @@ export const PARAMV_LANDING_SEASON = paraMvSeasons[0].slug; // saison d'arrivée
 export const getParaMvSeasons = () => paraMvSeasons;
 export const getParaMvSeason = (slug: string) => paraMvSeasons.find((s) => s.slug === slug);
 export const paraMvDefaultSeason = () => getParaMvSeason(PARAMV_DEFAULT_SEASON)!;
+// Saison « vitrine » du hub : la plus récente avec des résultats (déjà commencée).
+export const paraMvShowcaseSeason = () => paraMvSeasons.find((s) => s.results) ?? paraMvDefaultSeason();
 
 // Palmarès malvoyants : le CdF 2025/2026 est officiel (jamais « promotion »).
 export const getParaMvPalmares = () =>

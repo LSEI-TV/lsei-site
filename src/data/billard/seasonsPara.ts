@@ -38,6 +38,8 @@ export const PARA_LANDING_SEASON = paraSeasons[0].slug;  // saison d'arrivée du
 export const getParaSeasons = () => paraSeasons;
 export const getParaSeason = (slug: string) => paraSeasons.find((s) => s.slug === slug);
 export const paraDefaultSeason = () => getParaSeason(PARA_DEFAULT_SEASON)!;
+// Saison « vitrine » du hub : la plus récente avec des résultats (déjà commencée).
+export const paraShowcaseSeason = () => paraSeasons.find((s) => s.results) ?? paraDefaultSeason();
 
 // Palmarès para : le CdF est conservé, mais marqué « promotion » (cdfPromo) pour les
 // saisons antérieures à la 1re édition officielle (2025/2026). La fiche l'affiche alors

@@ -158,3 +158,6 @@ export const LANDING_SEASON = seasons[0].slug;   // saison d'ARRIVÉE du hub (la
 export const getSeasons = () => seasons;
 export const getSeason = (slug: string) => seasons.find((s) => s.slug === slug);
 export const defaultSeason = () => getSeason(DEFAULT_SEASON)!;
+// Saison « vitrine » du hub : la plus récente qui a des résultats (donc déjà commencée).
+// Ex. Masters : bascule sur 2026-2027 dès le 1er TN ; sinon dernière saison avec données.
+export const showcaseSeason = () => seasons.find((s) => s.results) ?? defaultSeason();
