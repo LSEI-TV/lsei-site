@@ -4,6 +4,9 @@ import HubNav from '../../../../components/HubNav.astro';
 import SeasonPicker from '../../../../components/SeasonPicker.astro';
 import PlayerSearch from '../../../../components/PlayerSearch.astro';
 import AffichesTournois from '../../../../components/AffichesTournois.astro';
+import VideoPlayer from '../../../../components/VideoPlayer.astro';
+import { getReplays } from '../../../../lib/youtube';
+import { getDiscipline } from '../../../../data/site';
 import { photoOf, fromPov, seasonHighlights, playerSlugs } from '../../../../lib/billardStats';
 import { getParaSeasons, getParaPalmares, PARA_DEFAULT_SEASON } from '../../../../data/billard/seasonsPara';
 const { slugOf } = playerSlugs(getParaSeasons());
@@ -30,6 +33,12 @@ const hi = hasData && matches.length ? seasonHighlights(R) : null;
 const palmares = getParaPalmares();
 const cnt = hasData ? { players: players.length, tourns: R.tournaments.length, matches: matches.length } : null;
 
+// Vidéo à la une : la dernière vidéo Para-billard FAUTEUIL de cette saison (hors malvoyants).
+const d = getDiscipline('billard');
+const seasonVideoKey = season.slug.replace('-', '/');
+const vids = (await getReplays({ discipline: 'billard' })).filter((v) => v.season === seasonVideoKey && v.category === 'Para-billard' && !/malvoyant/i.test(v.title));
+const featured = vids[0];
+
 const fmtShort = (iso: string) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }).format(new Date(iso));
 const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
 ---
@@ -40,14 +49,21 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
     <div class="wrap hub-hero">
       <div class="hub-lead">
         <SeasonPicker current={season.slug} sub="" root="/para-billard" seasons={getParaSeasons()} />
-        <div class="hub-kick">Blackball Para-billard fauteuil · {season.label}</div>
-        {hasData ? (
+        {featured ? (
           <>
+            <VideoPlayer id={featured.id} from={d.from} to={d.to} caption={featured.caption} title={featured.title} image={featured.thumb} />
+            <div class="hub-kick">À la une · Dernière vidéo</div>
+            <h1 class="hub-h1">{featured.title}</h1>
+          </>
+        ) : hasData ? (
+          <>
+            <div class="hub-kick">Blackball Para-billard fauteuil · {season.label}</div>
             <h1 class="hub-h1">Le circuit national Para-billard fauteuil</h1>
             <p class="dek" style="margin-top:8px">{cnt!.players} joueurs classés, {cnt!.tourns} étapes, {cnt!.matches} matchs. Le para-billard fauteuil de la Fédération Française de Billard : classement, fiches carrière et confrontations.</p>
           </>
         ) : (
           <>
+            <div class="hub-kick">Blackball Para-billard fauteuil · {season.label}</div>
             <h1 class="hub-h1">Saison à venir</h1>
             <p class="dek" style="margin-top:8px">La saison {season.label} démarre bientôt. Voici le calendrier officiel — classement, joueurs et statistiques s'afficheront au fil des étapes.</p>
           </>

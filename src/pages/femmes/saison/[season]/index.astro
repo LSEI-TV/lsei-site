@@ -4,6 +4,9 @@ import HubNav from '../../../../components/HubNav.astro';
 import SeasonPicker from '../../../../components/SeasonPicker.astro';
 import PlayerSearch from '../../../../components/PlayerSearch.astro';
 import AffichesTournois from '../../../../components/AffichesTournois.astro';
+import VideoPlayer from '../../../../components/VideoPlayer.astro';
+import { getReplays } from '../../../../lib/youtube';
+import { getDiscipline } from '../../../../data/site';
 import { photoOf, fromPov, seasonHighlights, playerSlugs } from '../../../../lib/billardStats';
 import { getFemmesSeasons, getFemmesPalmares, FEMMES_DEFAULT_SEASON } from '../../../../data/billard/seasonsFemmes';
 const { slugOf } = playerSlugs(getFemmesSeasons());
@@ -30,6 +33,12 @@ const hi = hasData ? seasonHighlights(R) : null;
 const palmares = getFemmesPalmares();
 const cnt = hasData ? { players: players.length, tourns: R.tournaments.length, matches: matches.length } : null;
 
+// Vidéo à la une : la dernière vidéo FEMMES de cette saison (même système que le Masters).
+const d = getDiscipline('billard');
+const seasonVideoKey = season.slug.replace('-', '/');
+const vids = (await getReplays({ discipline: 'billard' })).filter((v) => v.season === seasonVideoKey && v.category === 'Femmes');
+const featured = vids[0];
+
 const fmtShort = (iso: string) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }).format(new Date(iso));
 const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
 ---
@@ -40,14 +49,21 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
     <div class="wrap hub-hero">
       <div class="hub-lead">
         <SeasonPicker current={season.slug} sub="" root="/femmes" seasons={getFemmesSeasons()} />
-        <div class="hub-kick">Blackball Femmes · {season.label}</div>
-        {hasData ? (
+        {featured ? (
           <>
+            <VideoPlayer id={featured.id} from={d.from} to={d.to} caption={featured.caption} title={featured.title} image={featured.thumb} />
+            <div class="hub-kick">À la une · Dernière vidéo</div>
+            <h1 class="hub-h1">{featured.title}</h1>
+          </>
+        ) : hasData ? (
+          <>
+            <div class="hub-kick">Blackball Femmes · {season.label}</div>
             <h1 class="hub-h1">Le circuit national féminin</h1>
             <p class="dek" style="margin-top:8px">{cnt!.players} joueuses classées, {cnt!.tourns} étapes, {cnt!.matches} matchs. Classement officiel FFB, fiches carrière et confrontations — cliquez sur une joueuse pour tout savoir d'elle.</p>
           </>
         ) : (
           <>
+            <div class="hub-kick">Blackball Femmes · {season.label}</div>
             <h1 class="hub-h1">Saison à venir</h1>
             <p class="dek" style="margin-top:8px">La saison {season.label} démarre bientôt. Voici le calendrier officiel — classement, joueuses et statistiques s'afficheront au fil des étapes.</p>
           </>
