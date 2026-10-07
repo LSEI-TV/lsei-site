@@ -4,6 +4,7 @@
 //  Pour AJOUTER une saison : générer results-femmes-XXXX-XXXX.json puis l'ajouter.
 // ============================================================
 import { calFrom, palmaresOf, cal2627, type Season, type ResultsData } from './seasons';
+import rf2627 from './results-femmes-2026-2027.json';
 import rf2526 from './results-femmes-2025-2026.json';
 import rf2425 from './results-femmes-2024-2025.json';
 import rf2324 from './results-femmes-2023-2024.json';
@@ -12,8 +13,8 @@ export const COMPETITION_FEMMES = 'Blackball Femmes';
 
 // La plus récente en premier.
 export const femmesSeasons: Season[] = [
-  { slug: '2026-2027', label: '2026 / 2027', short: '26/27', status: 'upcoming', competition: COMPETITION_FEMMES, calendar: cal2627 },
-  { slug: '2025-2026', label: '2025 / 2026', short: '25/26', status: 'current', competition: COMPETITION_FEMMES, calendar: calFrom(rf2526 as ResultsData), results: rf2526 as ResultsData },
+  { slug: '2026-2027', label: '2026 / 2027', short: '26/27', status: 'current', competition: COMPETITION_FEMMES, calendar: cal2627, results: rf2627 as ResultsData },
+  { slug: '2025-2026', label: '2025 / 2026', short: '25/26', status: 'past', competition: COMPETITION_FEMMES, calendar: calFrom(rf2526 as ResultsData), results: rf2526 as ResultsData },
   { slug: '2024-2025', label: '2024 / 2025', short: '24/25', status: 'past', competition: COMPETITION_FEMMES, calendar: calFrom(rf2425 as ResultsData), results: rf2425 as ResultsData },
   { slug: '2023-2024', label: '2023 / 2024', short: '23/24', status: 'past', competition: COMPETITION_FEMMES, calendar: calFrom(rf2324 as ResultsData), results: rf2324 as ResultsData },
 ];
