@@ -10,7 +10,7 @@ import { parseProgTitle } from '../lib/programmeTitle';
 import { getCollection } from 'astro:content';
 import { PLATFORMS } from '../lib/social';
 import { assetExists, assetUrl, imgOk } from '../lib/publicAssets';
-import { defaultSeason, getPalmares, getSeasons, DEFAULT_SEASON } from '../data/billard/seasons';
+import { showcaseSeason, getSeasons } from '../data/billard/seasons';
 import { photoOf, playerSlugs } from '../lib/billardStats';
 import { nm1Standings, nmClubBy, NM1_POOL, clubHasSite } from '../data/basket';
 
@@ -57,14 +57,15 @@ const latestPosts = (await getCollection('social', ({ data }) => !data.draft))
   .slice(0, 3);
 const fmtArticleDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
 
-// Spotlight billard (remplace l'ancienne section replays) : champion en titre + haut du classement.
-const bilSeason = defaultSeason();
-const bilPalm = getPalmares().find((p) => p.slug === DEFAULT_SEASON);
-const bilChamp = bilPalm?.cdf || bilPalm?.champ || null;
-const bilChampIsCdf = !!bilPalm?.cdf;
+// Spotlight billard : haut du classement de la saison « vitrine » (la plus récente avec
+// des résultats → bascule auto sur 2026-2027 dès le 1er TN). Top 4 : vainqueur, finaliste
+// et les deux demi-finalistes (= les 4 premiers du classement).
+const bilSeason = showcaseSeason();
 const bilPlayers = (bilSeason.results?.players ?? []) as any[];
 const bilRanked = [...bilPlayers].sort((a, b) => a.rank - b.rank);
-const bilTop = bilRanked.slice(0, 3);          // podium (3 cadres)
+// En cours tant que le Championnat de France n'est pas dans les résultats.
+const bilInProgress = !((bilSeason.results?.tournaments ?? []) as any[]).some((t) => t.kind === 'france');
+const bilTop = bilRanked.slice(0, 4);          // top 4 (2 cartes × 2)
 
 // Aperçu Basketball (NM1 Poule B) : uniquement le top 5 du classement officiel
 // (pas de club mis en avant → neutralité ; le détail est sur la page /basket).
@@ -72,9 +73,6 @@ const nbTop5 = nm1Standings().slice(0, 5);
 const nbClub = getDiscipline('basket');
 const nbLogo = (slug: string) => { const c = nmClubBy(slug); return c && assetExists(c.logo) ? assetUrl(c.logo!) : null; };
 const nbHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null);
-const bilTable = bilRanked.slice(3, 8);        // suite du classement (4ᵉ → 8ᵉ), à droite des cadres
-const bilChampP = bilChamp ? bilPlayers.find((p) => p.id === bilChamp!.id) : null;
-const bilChampPhoto = bilChampP ? photoOf(bilChampP, DEFAULT_SEASON) : null;
 const { slugOf: bilSlug } = playerSlugs(getSeasons());
 
 const live = await getLiveFeature();
@@ -320,14 +318,16 @@ const slides = programme
         <div class="sec-head">
           <div>
             <div class="eyebrow" style="color:var(--c-billard)">Blackball Masters</div>
-            <h2>Le podium · {bilSeason.label}</h2>
+            <h2>{bilInProgress ? `Classement provisoire · ${bilSeason.label}` : `Le podium · ${bilSeason.label}`}</h2>
           </div>
-          <a href={`/billard/saison/${DEFAULT_SEASON}/classement`} class="link">Classement complet →</a>
+          <a href={`/billard/saison/${bilSeason.slug}/classement`} class="link">Classement complet →</a>
         </div>
-        <div class="bpod">
+        <div class="bpod bpod--four">
           {bilTop.map((p) => {
-            const ph = photoOf(p, DEFAULT_SEASON);
-            const lab = p.rank === 1 ? 'Leader du classement' : p.rank === 2 ? 'Vice-champion' : '3ᵉ au classement';
+            const ph = photoOf(p, bilSeason.slug);
+            const lab = bilInProgress
+              ? (p.rank === 1 ? 'En tête' : `${p.rank}ᵉ`)
+              : (p.rank === 1 ? 'Champion de saison' : p.rank === 2 ? 'Vice-champion' : `${p.rank}ᵉ`);
             return (
               <a href={`/billard/joueur/${bilSlug(p.id)}`} class={`bpod-card r${p.rank}`}>
                 <span class="bpod-ph">

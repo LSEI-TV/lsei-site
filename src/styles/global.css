@@ -554,6 +554,9 @@ a.hst:hover svg { color: inherit; }
 .home-2col .hcol { min-width: 0; }
 .hcol .bspot { grid-template-columns: 1fr; }
 .hcol .bpod { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+/* Podium à 4 cartes (vainqueur, finaliste, 2 demi-finalistes) → grille 2×2. */
+.hcol .bpod--four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 560px) { .hcol .bpod--four { grid-template-columns: 1fr; } }
 .hcol .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .hcol .cards .card h3 { font-size: 14.5px; }
 .hcol .cards .card .kicker { font-size: 11px; }
