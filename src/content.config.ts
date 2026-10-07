@@ -35,6 +35,9 @@ const social = defineCollection({
     image: z.string().optional(),
     // vidéo YouTube à intégrer sur la page (lien ou ID) — optionnelle
     video: z.string().optional(),
+    // « mis en avant » : affiché en premier dans Actualités et sur « Le Mag »
+    // de l'accueil (priorité sur la date). À poser à la main sur un post.
+    featured: z.boolean().default(false),
     draft: z.boolean().default(false),
   }),
 });

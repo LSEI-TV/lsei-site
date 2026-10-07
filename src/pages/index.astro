@@ -51,7 +51,7 @@ const STAT_ICONS: Record<string, string> = {
 // « Le mag » de l'accueil : les 3 derniers posts (content/social) — mêmes actualités
 // que la page /actualites (les posts YouTube tiennent lieu d'articles).
 const latestPosts = (await getCollection('social', ({ data }) => !data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .sort((a, b) => (Number(b.data.featured) - Number(a.data.featured)) || (b.data.date.valueOf() - a.data.date.valueOf()))
   .slice(0, 3);
 const fmtArticleDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
 

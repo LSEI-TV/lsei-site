@@ -20,5 +20,6 @@ caption: |-
 link: https://www.youtube.com/post/Ugkxo6PBwrgj_kaUEbl3LNL7cIMKMJSTgC_H
 image: https://i.ytimg.com/vi/w6TvWZdzKV0/hqdefault.jpg
 video: https://youtu.be/w6TvWZdzKV0
+featured: true
 draft: false
 ---
