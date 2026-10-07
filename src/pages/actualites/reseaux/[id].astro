@@ -6,7 +6,7 @@ import ShareLinks from '../../../components/ShareLinks.astro';
 import { getCollection } from 'astro:content';
 import VideoPlayer from '../../../components/VideoPlayer.astro';
 import { PLATFORMS } from '../../../lib/social';
-import { assetExists } from '../../../lib/publicAssets';
+import { imgOk } from '../../../lib/publicAssets';
 
 export async function getStaticPaths() {
   const posts = await getCollection('social', ({ data }) => !data.draft);
@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const pf = PLATFORMS[post.data.platform] ?? PLATFORMS.facebook;
-const hasImg = assetExists(post.data.image); // image réellement présente dans public/uploads
+const hasImg = imgOk(post.data.image); // image locale (public/uploads) OU miniature YouTube distante
 // Vidéo YouTube à intégrer (lien ou ID) → lecteur « clic pour lire ».
 const ytId = (s?: string): string | null => {
   if (!s) return null;

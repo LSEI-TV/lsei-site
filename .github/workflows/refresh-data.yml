@@ -46,6 +46,9 @@ jobs:
       - name: Récupérer le calendrier basket (NM1 Poule B, source nm1.ffbb.com)
         run: node scripts/fetch-basket-calendar.mjs || echo "Calendrier basket non mis à jour (source indisponible) — cache précédent conservé."
 
+      - name: Récupérer les posts YouTube (actualités, page communautaire)
+        run: node scripts/fetch-youtube-posts.mjs || echo "Posts YouTube non mis à jour (page indisponible) — contenu précédent conservé."
+
       - name: Construire (récupère YouTube + met à jour le cache)
         run: npm run build
 
@@ -65,15 +68,15 @@ jobs:
             **/node_modules/**
             **/live.json
 
-      - name: Recommiter le cache vidéos mis à jour
+      - name: Recommiter le cache vidéos + nouveaux posts YouTube
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/cache/
+          git add src/data/cache/ src/content/social/
           if git diff --staged --quiet; then
-            echo "Cache inchangé, rien à committer."
+            echo "Rien de nouveau, aucun commit."
           else
-            git commit -m "chore: rafraîchissement cache vidéos YouTube [skip ci]"
+            git commit -m "chore: rafraîchissement données (vidéos + posts YouTube) [skip ci]"
             git push
           fi
 
