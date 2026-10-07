@@ -93,7 +93,7 @@ export const roster2627: RosterEntry[] = [
   { name: 'Christophe Thebeault', country: 'FRA' },
   { name: 'Damien Joly', country: 'FRA' },
   { name: 'Elie Christidis', country: 'FRA' },
-  { name: 'Jerome Lanthoen', country: 'FRA' },
+  { name: "Jérome L'Anthoen", country: 'FRA' },
   { name: 'Julien Duquesnoy', country: 'FRA' },
   { name: 'Julien Leroux', country: 'FRA' },
   { name: 'Killian Ballon', country: 'FRA' },
