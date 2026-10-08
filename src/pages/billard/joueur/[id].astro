@@ -129,7 +129,8 @@ const career = bySeason.reduce(
   { played: 0, wins: 0, losses: 0, tourns: 0 },
 );
 const winPct = career.played ? Math.round((career.wins / career.played) * 100) : 0;
-const bestRank = bySeason.length ? Math.min(...bySeason.map((x) => x.p.rank)) : 0;
+const _ranks = bySeason.map((x) => x.p.rank).filter((r) => r != null);
+const bestRank = _ranks.length ? Math.min(..._ranks) : 0;
 
 // Palmarès personnel : titres (champion de saison / champion de France).
 const palm = getPalmares();
@@ -260,7 +261,7 @@ const personLd = {
         <div class="chero-main">
           <div class="chero-tags">
             <span class="chero-tag">Blackball Master</span>
-            <span class="chero-tag">{latest.p.rank}<sup>e</sup> au classement {latest.label}</span>
+            {latest.p.rank && <span class="chero-tag">{latest.p.rank}<sup>e</sup> au classement {latest.label}</span>}
             {latest.p.invite && <span class="chero-tag" style="background:#F6C454;color:#7a4e00;border-color:#F6C454">★ Invité · {latest.label}</span>}
             {leftAfter
               ? <span class="chero-tag off">↩ Parti après {leftAfter}</span>
@@ -361,7 +362,7 @@ const personLd = {
           <div class="car-sitem">
             <button type="button" class="car-srow" data-accordion aria-expanded="false">
               <span class="car-sn">{x.label}</span>
-              <span class="car-srank"><b style="color:var(--c-billard)">{x.p.rank}<sup>e</sup></b></span>
+              <span class="car-srank">{x.p.rank ? <b style="color:var(--c-billard)">{x.p.rank}<sup>e</sup></b> : <b style="color:#b08400">Invité</b>}</span>
               <span class="car-spts">{x.p.points} pts</span>
               <span class="car-srec"><b class="bwin">{x.p.wins}</b>-{x.p.losses}</span>
               <span class="car-sgo car-schev" aria-hidden="true">▾</span>
@@ -369,7 +370,7 @@ const personLd = {
             <div class="car-sdetail" hidden>
               <div class="btiles car-sd-tiles">
                 <div class="btile" title="Points au classement officiel FFB, gagnés selon les résultats à chaque tournoi."><div class="bt-num" style="color:var(--c-billard)">{x.p.points}</div><div class="bt-lab">Points FFB</div></div>
-                <div class="btile" title="Classement final de la saison."><div class="bt-num">{x.p.rank}<sup>e</sup></div><div class="bt-lab">Classement</div></div>
+                <div class="btile" title="Classement final de la saison."><div class="bt-num">{x.p.rank ? <>{x.p.rank}<sup>e</sup></> : 'Invité'}</div><div class="bt-lab">Classement</div></div>
                 <div class="btile" title="Étapes (tournois) disputées dans la saison."><div class="bt-num">{x.p.tourns}</div><div class="bt-lab">Étapes jouées</div></div>
                 <div class="btile" title="Étapes remportées (vainqueur du tournoi)."><div class="bt-num" style={seasonInfo[i].evWins ? 'color:var(--c-billard)' : ''}>{seasonInfo[i].evWins}</div><div class="bt-lab">Étapes gagnées</div></div>
                 {x.p.played > 0 && <div class="btile" title="Matchs gagnés (V) et perdus (D) sur la saison."><div class="bt-num">{x.p.wins}<span>-</span>{x.p.losses}</div><div class="bt-lab">Bilan V-D</div></div>}

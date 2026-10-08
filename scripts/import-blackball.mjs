@@ -2,10 +2,11 @@
 //  Auto-import des Tournois Nationaux Blackball FFB (Master + Femme) depuis Cuescore.
 //
 //  AUCUN lien à fournir : on lit la page de l'organisation FF Billard (cuescore.com/ffb)
-//  qui liste tous ses tournois, on repère les TN de chaque compétition par leur nom
-//  (« FFB - Blackball - TN<n> - Blackball Master/Femme - <ville> »), et on importe ceux
-//  qui ont des résultats joués. Génère results-2026-2027.json (Master) et
-//  results-femmes-2026-2027.json (Femme). Lancé par refresh-data.yml (2×/jour).
+//  qui liste tous ses tournois, on repère les TN de chaque compétition par leur nom, et
+//  on importe les matchs joués. Les POINTS et l'ordre du classement viennent du CLASSEMENT
+//  OFFICIEL Cuescore (API ranking) → identiques au site FFB. Les invités (présents au TN
+//  mais pas au classement officiel du Masters — ce sont des joueurs du Mixte National) sont
+//  EXCLUS du classement (rank null) mais conservés pour leurs fiches et la section invités.
 //
 //    node scripts/import-blackball.mjs          → importe
 //    node scripts/import-blackball.mjs --dry     → simule (n'écrit rien)
@@ -27,11 +28,11 @@ const mk = (s) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase
 const slugify = (s) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const isWalkOver = (p) => /walk\s*over/i.test(p?.name || '') || !p?.playerId;
 
-// Barème FFB par tour d'élimination (perdant du tour → points ; vainqueur → 440).
-const PTS = { 'Round 1': 100, 'Last sixteen': 160, 'Quarter final': 224, 'Semi final': 292, 'Final': 364 };
-const CHAMP = 440;
+// Corrections d'affichage de noms mal orthographiés sur Cuescore (Masters).
+const NAME_FIX = { [mk('Jerome Lanthoen')]: "Jérome L'Anthoen" };
+const fixName = (n) => NAME_FIX[mk(n)] || n;
 
-// MASTERS uniquement : 28 permanents (tout autre engagé = invité). Femme : pas d'invité.
+// Secours (si le classement officiel est indisponible) : liste des 28 permanents Masters.
 const PERMANENTS_MASTER = new Set([
   'Alexandre Buscetti', 'Alexis Klinka', 'Christophe Lambert', 'Christophe Thebeault', 'Damien Joly',
   'Elie Christidis', 'Jerome Lanthoen', 'Julien Duquesnoy', 'Julien Leroux', 'Killian Ballon',
@@ -40,16 +41,23 @@ const PERMANENTS_MASTER = new Set([
   'Nicolas Larroquere', 'Théo Schneider', 'Levent Afyon', 'Calvin Creach', 'Francois Marotel',
   'Patrick Dang', 'Pierre Damien Coz', 'Pierrick Viton',
 ].map(mk));
-// Corrections d'affichage de noms mal orthographiés sur Cuescore.
-const NAME_FIX = { [mk('Jerome Lanthoen')]: "Jérome L'Anthoen" };
-const fixName = (n) => NAME_FIX[mk(n)] || n;
 
 const COMPETITIONS = [
-  { key: 'master', re: /-\s*Blackball\s*Master\s*-/i, out: 'results-2026-2027.json',        competition: 'Blackball Master', permanents: PERMANENTS_MASTER },
-  { key: 'femme',  re: /-\s*Femme\s*-/i,              out: 'results-femmes-2026-2027.json', competition: 'Blackball Femmes', permanents: null },
+  {
+    key: 'master', re: /-\s*Blackball\s*Master\s*-/i, out: 'results-2026-2027.json',
+    competition: 'Blackball Master', rankingId: 88637449, hasInvites: true,
+    // Barème FFB Masters (secours si classement officiel indisponible).
+    PTS: { 'Round 1': 100, 'Last sixteen': 160, 'Quarter final': 224, 'Semi final': 292, 'Final': 364 }, CHAMP: 440,
+  },
+  {
+    key: 'femme', re: /-\s*Femme\s*-/i, out: 'results-femmes-2026-2027.json',
+    competition: 'Blackball Femmes', rankingId: 88637419, hasInvites: false,
+    // Barème FFB Femmes (secours) — échelle plus basse que le Masters.
+    PTS: { 'Round 1': 44, 'Last sixteen': 60, 'Quarter final': 80, 'Semi final': 104, 'Final': 132 }, CHAMP: 164,
+  },
 ];
 
-// 1) Liste des tournois de l'organisation FF Billard (id → nom).
+// Liste des tournois de l'organisation FF Billard (id → nom).
 async function ffbTournaments() {
   const html = await fetch('https://cuescore.com/ffb', {
     headers: { 'User-Agent': 'Mozilla/5.0 (LSEI blackball import bot)' },
@@ -67,14 +75,25 @@ async function ffbTournaments() {
   return out;
 }
 
-// 2) Import d'une compétition à partir de ses TN.
+// Classement OFFICIEL d'une compétition (rang + points par joueur), via l'API ranking Cuescore.
+async function officialRanking(rankingId) {
+  if (!rankingId) return null;
+  try {
+    const rk = await fetch(`https://api.cuescore.com/ranking/?id=${rankingId}`).then((r) => r.json());
+    const parts = rk.participants || [];
+    if (!parts.length) return null;
+    const byId = new Map(), byName = new Map();
+    for (const p of parts) {
+      const v = { rank: p.rank, points: p.points };
+      byId.set(String(p.participantId), v); byName.set(mk(p.name), v);
+    }
+    return { byId, byName };
+  } catch { return null; }
+}
+
 async function importCompetition(cfg, allTournaments) {
-  // TN de cette compétition cette saison, triés par numéro.
   const tns = allTournaments
-    .map((t) => {
-      const mm = t.name.match(/\bTN(\d+)\b/i);
-      return mm && cfg.re.test(t.name) ? { ...t, tn: Number(mm[1]) } : null;
-    })
+    .map((t) => { const mm = t.name.match(/\bTN(\d+)\b/i); return mm && cfg.re.test(t.name) ? { ...t, tn: Number(mm[1]) } : null; })
     .filter(Boolean)
     .sort((a, b) => a.tn - b.tn);
 
@@ -85,11 +104,9 @@ async function importCompetition(cfg, allTournaments) {
   for (const t of tns) {
     const api = await fetch(`https://api.cuescore.com/tournament/?id=${t.id}`).then((r) => r.json());
     const date = (api.starttime || '').slice(0, 10);
-    if (date && (date < SEASON_START || date > SEASON_END)) continue;   // hors saison en cours
-    const finished = (api.matches || []).filter(
-      (m) => m.matchstatusCode === 2 && !isWalkOver(m.playerA) && !isWalkOver(m.playerB),
-    );
-    if (!finished.length) continue;   // TN pas encore joué → ignoré jusqu'à ce qu'il le soit
+    if (date && (date < SEASON_START || date > SEASON_END)) continue;
+    const finished = (api.matches || []).filter((m) => m.matchstatusCode === 2 && !isWalkOver(m.playerA) && !isWalkOver(m.playerB));
+    if (!finished.length) continue;
 
     const name = api.name || t.name;
     const city = (name.split(' - ').pop() || '').trim();
@@ -97,11 +114,10 @@ async function importCompetition(cfg, allTournaments) {
 
     const ensure = (p) => {
       if (!players.has(p.playerId)) {
-        const nm = cfg.permanents ? fixName(p.name) : p.name;
+        const nm = cfg.hasInvites ? fixName(p.name) : p.name;
         players.set(p.playerId, {
-          id: p.playerId, name: nm, slug: slugify(nm),
+          id: p.playerId, name: nm, slug: slugify(nm), rawName: p.name,
           country: p.country?.alpha3 || 'FRA',
-          invite: cfg.permanents ? !cfg.permanents.has(mk(p.name)) : false,
           points: 0, played: 0, wins: 0, losses: 0, pf: 0, pa: 0, tourns: new Set(), _lostRound: {}, _won: {},
         });
       }
@@ -124,34 +140,56 @@ async function importCompetition(cfg, allTournaments) {
 
   if (!tournaments.length) { console.log(`[${cfg.key}] aucun TN joué — fichier inchangé.`); return; }
 
+  // Points de secours (barème FFB), remplacés ensuite par les points officiels si dispo.
   for (const p of players.values()) {
     for (const t of p.tourns) {
-      if (p._won[t]) p.points += CHAMP;
-      else if (p._lostRound[t]) p.points += (PTS[p._lostRound[t]] ?? 0);
+      if (p._won[t]) p.points += cfg.CHAMP;
+      else if (p._lostRound[t]) p.points += (cfg.PTS[p._lostRound[t]] ?? 0);
     }
   }
 
-  const list = [...players.values()].map((p) => ({
-    id: p.id, name: p.name, slug: p.slug, country: p.country,
-    points: p.points, played: p.played, wins: p.wins, losses: p.losses,
-    winPct: p.played ? Math.round((p.wins / p.played) * 100) : 0,
-    pf: p.pf, pa: p.pa, diff: p.pf - p.pa, tourns: p.tourns.size, invite: p.invite,
-  })).sort((a, b) => b.points - a.points || b.diff - a.diff || b.pf - a.pf);
-  list.forEach((p, i) => { p.rank = i + 1; });
-  const ordered = list.map((p) => ({
+  // Classement OFFICIEL : rang + points officiels, et statut invité (absent du classement officiel).
+  const official = await officialRanking(cfg.rankingId);
+  for (const p of players.values()) {
+    const off = official ? (official.byId.get(String(p.id)) ?? official.byName.get(mk(p.rawName))) : undefined;
+    if (off) { p.points = off.points; p.offRank = off.rank; }     // rang + points officiels
+    if (cfg.hasInvites) {
+      p.invite = official ? !off : !PERMANENTS_MASTER.has(mk(p.rawName));
+    } else {
+      p.invite = false;
+    }
+  }
+
+  // Rangs : non-invités uniquement. On REPREND le rang officiel Cuescore (donc son départage et
+  // ses ex-aequo) mais on COMPRIME pour retirer les trous laissés par les joueurs du Mixte.
+  // (Secours sans classement officiel : tri par points, ex-aequo.)
+  const ranked = [...players.values()].filter((p) => !p.invite)
+    .sort((a, b) => (a.offRank ?? 1e9) - (b.offRank ?? 1e9) || b.points - a.points || (b.pf - b.pa) - (a.pf - a.pa) || (a.name < b.name ? -1 : 1));
+  ranked.forEach((p) => {
+    p.rank = official && p.offRank
+      ? 1 + ranked.filter((q) => q.offRank < p.offRank).length         // compression des rangs officiels
+      : 1 + ranked.filter((q) => q.points > p.points).length;          // secours : par points
+  });
+  const guests = [...players.values()].filter((p) => p.invite).sort((a, b) => b.points - a.points);
+  guests.forEach((p) => { p.rank = null; });
+
+  const toRow = (p) => ({
     id: p.id, name: p.name, slug: p.slug, country: p.country, rank: p.rank, points: p.points,
-    played: p.played, wins: p.wins, losses: p.losses, winPct: p.winPct, pf: p.pf, pa: p.pa, diff: p.diff, tourns: p.tourns, invite: p.invite,
-  }));
+    played: p.played, wins: p.wins, losses: p.losses, winPct: p.played ? Math.round((p.wins / p.played) * 100) : 0,
+    pf: p.pf, pa: p.pa, diff: p.pf - p.pa, tourns: p.tourns.size, invite: p.invite,
+  });
+  const ordered = [...ranked.map(toRow), ...guests.map(toRow)];
 
   const out = { competition: cfg.competition, season: SEASON, tournaments, players: ordered, matches };
   const file = join(DATA, cfg.out);
   if (DRY) {
-    console.log(`[dry][${cfg.key}] ${tournaments.length} TN, ${ordered.length} joueur(s) → ${cfg.out}`);
-    console.log('       top 3:', ordered.slice(0, 3).map((p) => `${p.rank}. ${p.name} (${p.points})`).join(' | '));
+    console.log(`[dry][${cfg.key}] ${tournaments.length} TN · ${ranked.length} classés + ${guests.length} invité(s) · points ${official ? 'OFFICIELS' : 'barème (secours)'}`);
+    console.log('       top 5:', ranked.slice(0, 5).map((p) => `${p.rank}. ${p.name} (${p.points})`).join(' | '));
+    if (guests.length) console.log('       invités:', guests.map((p) => p.name).join(', '));
     return;
   }
   await writeFile(file, JSON.stringify(out, null, 1) + '\n', 'utf8');
-  console.log(`[${cfg.key}] ${tournaments.length} TN · ${ordered.length} joueur(s) · ${matches.length} matchs → ${cfg.out}`);
+  console.log(`[${cfg.key}] ${ranked.length} classés + ${guests.length} invité(s) · points ${official ? 'officiels' : 'barème'} → ${cfg.out}`);
 }
 
 const all = await ffbTournaments();

@@ -11,7 +11,8 @@ export function getStaticPaths() {
 }
 const { season } = Astro.props as { season: Season };
 const R = season.results!;
-const players = R.players as any[];
+// Les invités (absents du classement officiel) ne figurent pas dans le tableau du classement.
+const players = (R.players as any[]).filter((p) => !p.invite);
 const base = `/billard/saison/${season.slug}`;
 const cnt = { tourns: R.tournaments.length, players: players.length, matches: R.matches.length };
 

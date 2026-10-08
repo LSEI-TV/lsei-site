@@ -37,8 +37,10 @@ const R: any = season.results;
 const hasData = !!R;
 const players: any[] = hasData ? R.players : [];
 const matches: any[] = hasData ? R.matches : [];
-const top5 = players.slice(0, 5);
-const spot = players[0];
+// Top 5 / joueur à la une : parmi les classés (invités exclus).
+const ranked = players.filter((p) => !p.invite);
+const top5 = ranked.slice(0, 5);
+const spot = ranked[0];
 const spotPhoto = spot ? photoOf(spot, season.slug) : null;
 const spotResults = spot
   ? matches.filter((m) => m.aId === spot.id || m.bId === spot.id).sort((a, b) => (a.date < b.date ? 1 : -1)).map((m) => fromPov(m, spot.id)).slice(0, 4)

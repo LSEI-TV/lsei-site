@@ -63,7 +63,7 @@ const fmtArticleDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'num
 // et les deux demi-finalistes (= les 4 premiers du classement).
 const bilSeason = showcaseSeason();
 const bilPlayers = (bilSeason.results?.players ?? []) as any[];
-const bilRanked = [...bilPlayers].sort((a, b) => a.rank - b.rank);
+const bilRanked = bilPlayers.filter((p) => !p.invite).sort((a, b) => a.rank - b.rank);
 // En cours tant que le Championnat de France n'est pas dans les résultats.
 const bilInProgress = !((bilSeason.results?.tournaments ?? []) as any[]).some((t) => t.kind === 'france');
 const bilTop = bilRanked.slice(0, 4);          // top 4 (2 cartes × 2)
@@ -78,7 +78,7 @@ const { slugOf: bilSlug } = playerSlugs(getSeasons());
 
 // Même principe pour le Blackball FEMMES : top 4 de la saison vitrine (sous le Masters).
 const femSeason = femmesShowcaseSeason();
-const femRanked = [...((femSeason.results?.players ?? []) as any[])].sort((a, b) => a.rank - b.rank);
+const femRanked = ((femSeason.results?.players ?? []) as any[]).filter((p) => !p.invite).sort((a, b) => a.rank - b.rank);
 const femInProgress = !((femSeason.results?.tournaments ?? []) as any[]).some((t) => t.kind === 'france');
 const femTop = femRanked.slice(0, 4);
 const { slugOf: femSlug } = playerSlugs(getFemmesSeasons());

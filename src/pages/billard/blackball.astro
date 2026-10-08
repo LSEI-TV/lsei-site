@@ -74,7 +74,7 @@ const comps = [
   },
 ].map((c) => {
   const players = c.R.players as any[];
-  const top3 = [...players].sort((a, b) => a.rank - b.rank).slice(0, 3);
+  const top3 = players.filter((p) => !p.invite).sort((a, b) => a.rank - b.rank).slice(0, 3);
   // Champion à la une : le Champion de France s'il existe (titre suprême), sinon le champion de saison.
   const feat = c.palm?.cdf
     ? { icon: '🏆', label: c.champFranceLabel, name: c.palm.cdf.name, id: c.palm.cdf.id }
