@@ -1,8 +1,155 @@
 {
-  "updated": "2026-10-07T20:22:32.353Z",
+  "updated": "2026-10-08T09:08:08.520Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
   "pool": "Poule B",
   "matches": [
+    {
+      "date": "2026-09-18",
+      "homeSlug": "angers",
+      "awaySlug": "tours",
+      "homeScore": 75,
+      "awayScore": 65
+    },
+    {
+      "date": "2026-09-18",
+      "homeSlug": "sables",
+      "awaySlug": "chartres",
+      "homeScore": 81,
+      "awayScore": 75
+    },
+    {
+      "date": "2026-09-18",
+      "homeSlug": "tarbes",
+      "awaySlug": "bordeaux",
+      "homeScore": 89,
+      "awayScore": 85
+    },
+    {
+      "date": "2026-09-18",
+      "homeSlug": "lorient",
+      "awaySlug": "laval",
+      "homeScore": 82,
+      "awayScore": 73
+    },
+    {
+      "date": "2026-09-25",
+      "homeSlug": "tours",
+      "awaySlug": "lorient",
+      "homeScore": 84,
+      "awayScore": 80
+    },
+    {
+      "date": "2026-09-25",
+      "homeSlug": "bordeaux",
+      "awaySlug": "angers",
+      "homeScore": 56,
+      "awayScore": 63
+    },
+    {
+      "date": "2026-09-25",
+      "homeSlug": "vitre",
+      "awaySlug": "tarbes",
+      "homeScore": 69,
+      "awayScore": 66
+    },
+    {
+      "date": "2026-09-25",
+      "homeSlug": "toulouse",
+      "awaySlug": "rennes",
+      "homeScore": 87,
+      "awayScore": 85
+    },
+    {
+      "date": "2026-09-25",
+      "homeSlug": "fougeres",
+      "awaySlug": "sables",
+      "homeScore": 66,
+      "awayScore": 61
+    },
+    {
+      "date": "2026-09-25",
+      "homeSlug": "chartres",
+      "awaySlug": "challans",
+      "homeScore": 73,
+      "awayScore": 87
+    },
+    {
+      "date": "2026-09-29",
+      "homeSlug": "rennes",
+      "awaySlug": "laval",
+      "homeScore": 81,
+      "awayScore": 62
+    },
+    {
+      "date": "2026-09-29",
+      "homeSlug": "angers",
+      "awaySlug": "fougeres",
+      "homeScore": 54,
+      "awayScore": 64
+    },
+    {
+      "date": "2026-09-29",
+      "homeSlug": "tours",
+      "awaySlug": "bordeaux",
+      "homeScore": 82,
+      "awayScore": 84
+    },
+    {
+      "date": "2026-09-29",
+      "homeSlug": "lorient",
+      "awaySlug": "vitre",
+      "homeScore": 70,
+      "awayScore": 63
+    },
+    {
+      "date": "2026-09-29",
+      "homeSlug": "challans",
+      "awaySlug": "sables",
+      "homeScore": 80,
+      "awayScore": 66
+    },
+    {
+      "date": "2026-10-02",
+      "homeSlug": "bordeaux",
+      "awaySlug": "lorient",
+      "homeScore": 70,
+      "awayScore": 77
+    },
+    {
+      "date": "2026-10-02",
+      "homeSlug": "toulouse",
+      "awaySlug": "tours",
+      "homeScore": 77,
+      "awayScore": 86
+    },
+    {
+      "date": "2026-10-02",
+      "homeSlug": "fougeres",
+      "awaySlug": "tarbes",
+      "homeScore": 79,
+      "awayScore": 96
+    },
+    {
+      "date": "2026-10-02",
+      "homeSlug": "chartres",
+      "awaySlug": "rennes",
+      "homeScore": 103,
+      "awayScore": 89
+    },
+    {
+      "date": "2026-10-03",
+      "homeSlug": "laval",
+      "awaySlug": "challans",
+      "homeScore": 87,
+      "awayScore": 89
+    },
+    {
+      "date": "2026-10-07",
+      "homeSlug": "bordeaux",
+      "awaySlug": "laval",
+      "homeScore": 78,
+      "awayScore": 59
+    },
     {
       "date": "2026-10-09",
       "homeSlug": "tours",

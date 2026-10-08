@@ -265,13 +265,16 @@ export const calendarUpdated: string | null = (calendarCache as any)?.updated ??
 
 /** Tout le calendrier de la Poule B (matchs entre 2 clubs du site), trié par date. */
 export function poolCalendar(): PoolMatch[] {
-  const raw = ((calendarCache as any)?.matches ?? []) as { date: string; homeSlug: string; awaySlug: string }[];
+  const raw = ((calendarCache as any)?.matches ?? []) as { date: string; homeSlug: string; awaySlug: string; homeScore?: number; awayScore?: number }[];
   return raw
     .filter((m) => nmClubBy(m.homeSlug) && nmClubBy(m.awaySlug))
     .map((m) => {
-      const sc = MANUAL_SCORES[`${m.homeSlug}_${m.awaySlug}`];
-      return sc
-        ? { date: m.date, homeSlug: m.homeSlug, awaySlug: m.awaySlug, homeScore: sc[0], awayScore: sc[1] }
+      // Priorité : score saisi à la main (correction) > score récupéré sur nm1.ffbb.com.
+      const man = MANUAL_SCORES[`${m.homeSlug}_${m.awaySlug}`];
+      const homeScore = man ? man[0] : m.homeScore;
+      const awayScore = man ? man[1] : m.awayScore;
+      return homeScore != null && awayScore != null
+        ? { date: m.date, homeSlug: m.homeSlug, awaySlug: m.awaySlug, homeScore, awayScore }
         : { date: m.date, homeSlug: m.homeSlug, awaySlug: m.awaySlug };
     })
     .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
