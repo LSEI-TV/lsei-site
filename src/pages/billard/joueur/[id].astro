@@ -274,7 +274,7 @@ const personLd = {
           <div class="chero-record">{career.wins} V – {career.losses} D <span>· {bySeason.length} saison{bySeason.length > 1 ? 's' : ''}</span></div>
           <div class="chero-stats">
             {titles.length > 0 && <div class="chero-stat"><div class="chero-num">{titles.length}</div><div class="chero-lab">Titre{titles.length > 1 ? 's' : ''}</div></div>}
-            <div class="chero-stat"><div class="chero-num">{guestMixteRank ?? bestRank}<sup>e</sup></div><div class="chero-lab">{guestMixteRank ? 'au Mixte National' : 'Meilleur classement'}</div></div>
+            <div class="chero-stat"><div class="chero-num">{guestMixteRank ?? bestRank}<sup>{(guestMixteRank ?? bestRank) === 1 ? 'er' : 'e'}</sup></div><div class="chero-lab">{guestMixteRank ? 'au Mixte National' : 'Meilleur classement'}</div></div>
             <div class="chero-stat"><div class="chero-num">{careerStreak}</div><div class="chero-lab">Victoires d'affilée<br />(meilleure série)</div></div>
             {biggestCareer && <div class="chero-stat"><div class="chero-num">{biggestCareer.my}-{biggestCareer.opp}</div><div class="chero-lab">Plus large victoire</div></div>}
           </div>
@@ -309,7 +309,7 @@ const personLd = {
 
       <div class="btiles">
         <div class="btile" title="Nombre de saisons du Blackball Master où le joueur a participé."><div class="bt-num" style="color:var(--c-billard)">{bySeason.length}</div><div class="bt-lab">Saison{bySeason.length > 1 ? 's' : ''}</div></div>
-        <div class="btile" title={guestMixteRank ? 'Classement actuel au Mixte National (circuit d\'où il est invité au Masters).' : 'Le meilleur classement final atteint sur l\'ensemble de sa carrière.'}><div class="bt-num">{guestMixteRank ?? bestRank}<sup>e</sup></div><div class="bt-lab">{guestMixteRank ? 'Classement Mixte' : 'Meilleur classement'}</div></div>
+        <div class="btile" title={guestMixteRank ? 'Classement actuel au Mixte National (circuit d\'où il est invité au Masters).' : 'Le meilleur classement final atteint sur l\'ensemble de sa carrière.'}><div class="bt-num">{guestMixteRank ?? bestRank}<sup>{(guestMixteRank ?? bestRank) === 1 ? 'er' : 'e'}</sup></div><div class="bt-lab">{guestMixteRank ? 'Classement Mixte' : 'Meilleur classement'}</div></div>
         <div class="btile" title="Total des matchs gagnés (V) et perdus (D) sur toute la carrière."><div class="bt-num">{career.wins}<span>-</span>{career.losses}</div><div class="bt-vdbar"><span class="bt-vd-w" style={`width:${winPct}%`}></span><span class="bt-vd-l" style={`width:${100 - winPct}%`}></span></div><div class="bt-lab">Bilan carrière</div></div>
         <div class="btile" title="Part de matchs gagnés sur l'ensemble de la carrière."><div class="bt-ring"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="bt-ring-bg" cx="18" cy="18" r="15.915"></circle><circle class="bt-ring-fg" cx="18" cy="18" r="15.915" style={`stroke-dasharray:${winPct} ${100 - winPct}`}></circle></svg><span class="bt-ring-val">{winPct}<small>%</small></span></div><div class="bt-lab">Victoires</div></div>
         <div class="btile" title="Total des matchs disputés, toutes saisons confondues."><div class="bt-num">{career.played}</div><div class="bt-lab">Matchs joués</div></div>

@@ -278,7 +278,7 @@ if (!hasData) {
                     <span class="hub-pod-ph"><span class="bavatar">{p.name.slice(0, 1)}</span>{ph && <img src={ph} alt={p.name} loading="lazy" onerror="this.remove()" />}<span class="hub-pod-rk hub-pod-rk--inv">★</span></span>
                     <span class="hub-pod-lab">Invité</span>
                     <span class="hub-pod-name">{p.name}</span>
-                    <span class="hub-pod-pts">{p.mixteRank ? <>{p.mixteRank}<sup>e</sup> au Mixte</> : 'Mixte National'}</span>
+                    <span class="hub-pod-pts">{p.mixteRank ? <>{p.mixteRank}<sup>{p.mixteRank === 1 ? 'er' : 'e'}</sup> au Mixte</> : 'Mixte National'}</span>
                   </a>
                 );
               })}
