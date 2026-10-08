@@ -42,16 +42,23 @@ const PERMANENTS_MASTER = new Set([
   'Patrick Dang', 'Pierre Damien Coz', 'Pierrick Viton',
 ].map(mk));
 
+// tnRe = nom d'un Tournoi National de la catégorie ; cdfRe = nom du Championnat de France
+// de la catégorie (format différent : « - Masters/Femmes - » au lieu de « - Blackball Master/Femme - »).
+// On importe les TN ET le Championnat de France (regex PRÉCISES pour ne pas attraper le Mixte National).
 const COMPETITIONS = [
   {
-    key: 'master', re: /-\s*Blackball\s*Master\s*-/i, out: 'results-2026-2027.json',
-    competition: 'Blackball Master', rankingId: 88637449, hasInvites: true,
+    key: 'master',
+    tnRe: /-\s*Blackball\s*Master\s*-/i,
+    cdfRe: /Championnat\s+de\s+France\s*-\s*Masters?\s*-/i,
+    out: 'results-2026-2027.json', competition: 'Blackball Master', rankingId: 88637449, hasInvites: true,
     // Barème FFB Masters (secours si classement officiel indisponible).
     PTS: { 'Round 1': 100, 'Last sixteen': 160, 'Quarter final': 224, 'Semi final': 292, 'Final': 364 }, CHAMP: 440,
   },
   {
-    key: 'femme', re: /-\s*Femme\s*-/i, out: 'results-femmes-2026-2027.json',
-    competition: 'Blackball Femmes', rankingId: 88637419, hasInvites: false,
+    key: 'femme',
+    tnRe: /-\s*Femme\s*-/i,
+    cdfRe: /Championnat\s+de\s+France\s*-\s*Femmes?\s*-/i,
+    out: 'results-femmes-2026-2027.json', competition: 'Blackball Femmes', rankingId: 88637419, hasInvites: false,
     // Barème FFB Femmes (secours) — échelle plus basse que le Masters.
     PTS: { 'Round 1': 44, 'Last sixteen': 60, 'Quarter final': 80, 'Semi final': 104, 'Final': 132 }, CHAMP: 164,
   },
@@ -92,9 +99,14 @@ async function officialRanking(rankingId) {
 }
 
 async function importCompetition(cfg, allTournaments) {
+  // TN + Championnat de France de cette compétition, triés (TN par numéro, CHF en dernier).
   const tns = allTournaments
-    .map((t) => { const mm = t.name.match(/\bTN(\d+)\b/i); return mm && cfg.re.test(t.name) ? { ...t, tn: Number(mm[1]) } : null; })
-    .filter(Boolean)
+    .filter((t) => cfg.tnRe.test(t.name) || cfg.cdfRe.test(t.name))
+    .map((t) => {
+      const cdf = cfg.cdfRe.test(t.name);
+      const mm = t.name.match(/\bTN\s*(\d+)\b/i);
+      return { ...t, tn: cdf ? 999 : (mm ? Number(mm[1]) : 998), cdf };
+    })
     .sort((a, b) => a.tn - b.tn);
 
   const tournaments = [];
@@ -110,7 +122,11 @@ async function importCompetition(cfg, allTournaments) {
 
     const name = api.name || t.name;
     const city = (name.split(' - ').pop() || '').trim();
-    tournaments.push({ id: String(t.id), name, level: `TN${t.tn}`, city, date, kind: 'tn' });
+    tournaments.push({
+      id: String(t.id), name, city, date,
+      level: t.cdf ? 'Championnat de France' : `TN${t.tn}`,
+      kind: t.cdf ? 'france' : 'tn',
+    });
 
     const ensure = (p) => {
       if (!players.has(p.playerId)) {
@@ -160,16 +176,11 @@ async function importCompetition(cfg, allTournaments) {
     }
   }
 
-  // Rangs : non-invités uniquement. On REPREND le rang officiel Cuescore (donc son départage et
-  // ses ex-aequo) mais on COMPRIME pour retirer les trous laissés par les joueurs du Mixte.
-  // (Secours sans classement officiel : tri par points, ex-aequo.)
+  // Rangs : non-invités uniquement, dans l'ORDRE officiel Cuescore (rang officiel puis départage),
+  // numérotés en SÉQUENTIEL 1..N (chaque joueur un rang unique, pas d'ex-aequo affiché).
   const ranked = [...players.values()].filter((p) => !p.invite)
     .sort((a, b) => (a.offRank ?? 1e9) - (b.offRank ?? 1e9) || b.points - a.points || (b.pf - b.pa) - (a.pf - a.pa) || (a.name < b.name ? -1 : 1));
-  ranked.forEach((p) => {
-    p.rank = official && p.offRank
-      ? 1 + ranked.filter((q) => q.offRank < p.offRank).length         // compression des rangs officiels
-      : 1 + ranked.filter((q) => q.points > p.points).length;          // secours : par points
-  });
+  ranked.forEach((p, i) => { p.rank = i + 1; });
   const guests = [...players.values()].filter((p) => p.invite).sort((a, b) => b.points - a.points);
   guests.forEach((p) => { p.rank = null; });
 
