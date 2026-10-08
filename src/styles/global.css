@@ -557,6 +557,16 @@ a.hst:hover svg { color: inherit; }
 /* Podium à 4 cartes (vainqueur, finaliste, 2 demi-finalistes) → grille 2×2. */
 .hcol .bpod--four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 560px) { .hcol .bpod--four { grid-template-columns: 1fr; } }
+/* Podium COMPACT (rangée de 4 cartes réduites) — pour empiler Masters + Femmes. */
+.hcol .bpod--compact { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.bpod--compact .bpod-card { padding: 14px 6px 12px; gap: 3px; border-radius: 12px; }
+.bpod--compact .bpod-ph { width: 60px; height: 60px; border-width: 2px; }
+.bpod--compact .bpod-av { font-size: 22px; }
+.bpod--compact .bpod-rk { width: 22px; height: 22px; font-size: 11px; border-width: 2px; bottom: -2px; right: -2px; }
+.bpod--compact .bpod-lab { margin-top: 5px; font-size: 9px; letter-spacing: .04em; }
+.bpod--compact .bpod-name { font-size: 12.5px; }
+.bpod--compact .bpod-pts { font-size: 12px; }
+@media (max-width: 560px) { .hcol .bpod--compact { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .hcol .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .hcol .cards .card h3 { font-size: 14.5px; }
 .hcol .cards .card .kicker { font-size: 11px; }

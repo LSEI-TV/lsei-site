@@ -11,6 +11,7 @@ import { getCollection } from 'astro:content';
 import { PLATFORMS } from '../lib/social';
 import { assetExists, assetUrl, imgOk } from '../lib/publicAssets';
 import { showcaseSeason, getSeasons } from '../data/billard/seasons';
+import { femmesShowcaseSeason, getFemmesSeasons } from '../data/billard/seasonsFemmes';
 import { photoOf, playerSlugs } from '../lib/billardStats';
 import { nm1Standings, nmClubBy, NM1_POOL, clubHasSite } from '../data/basket';
 
@@ -74,6 +75,13 @@ const nbClub = getDiscipline('basket');
 const nbLogo = (slug: string) => { const c = nmClubBy(slug); return c && assetExists(c.logo) ? assetUrl(c.logo!) : null; };
 const nbHref = (slug: string) => (clubHasSite(slug) ? `/clubs/${slug}` : null);
 const { slugOf: bilSlug } = playerSlugs(getSeasons());
+
+// Même principe pour le Blackball FEMMES : top 4 de la saison vitrine (sous le Masters).
+const femSeason = femmesShowcaseSeason();
+const femRanked = [...((femSeason.results?.players ?? []) as any[])].sort((a, b) => a.rank - b.rank);
+const femInProgress = !((femSeason.results?.tournaments ?? []) as any[]).some((t) => t.kind === 'france');
+const femTop = femRanked.slice(0, 4);
+const { slugOf: femSlug } = playerSlugs(getFemmesSeasons());
 
 const live = await getLiveFeature();
 
@@ -322,7 +330,7 @@ const slides = programme
           </div>
           <a href={`/billard/saison/${bilSeason.slug}/classement`} class="link">Classement complet →</a>
         </div>
-        <div class="bpod bpod--four">
+        <div class="bpod bpod--compact">
           {bilTop.map((p) => {
             const ph = photoOf(p, bilSeason.slug);
             const lab = bilInProgress
@@ -341,6 +349,37 @@ const slides = programme
             );
           })}
         </div>
+
+        {femTop.length > 0 && (
+          <>
+            <div class="sec-head" style="margin-top:24px">
+              <div>
+                <div class="eyebrow" style="color:var(--c-billard)">Blackball Femmes</div>
+                <h2>{femInProgress ? `Classement provisoire · ${femSeason.label}` : `Le podium · ${femSeason.label}`}</h2>
+              </div>
+              <a href={`/femmes/saison/${femSeason.slug}/classement`} class="link">Classement complet →</a>
+            </div>
+            <div class="bpod bpod--compact">
+              {femTop.map((p) => {
+                const ph = photoOf(p, femSeason.slug);
+                const lab = femInProgress
+                  ? (p.rank === 1 ? 'En tête' : `${p.rank}ᵉ`)
+                  : (p.rank === 1 ? 'Championne de saison' : p.rank === 2 ? 'Vice-championne' : `${p.rank}ᵉ`);
+                return (
+                  <a href={`/femmes/joueur/${femSlug(p.id)}`} class={`bpod-card r${p.rank}`}>
+                    <span class="bpod-ph">
+                      {ph ? <img src={ph} alt={p.name} onerror="this.remove()" /> : <span class="bpod-av">{p.name.slice(0, 1)}</span>}
+                      <span class="bpod-rk">{p.rank}</span>
+                    </span>
+                    <span class="bpod-lab">{lab}</span>
+                    <span class="bpod-name">{p.name}</span>
+                    <span class="bpod-pts mono">{p.points}<small> pts</small></span>
+                  </a>
+                );
+              })}
+            </div>
+          </>
+        )}
           </div>
           )}
 
