@@ -51,6 +51,8 @@ const COMPETITIONS = [
     tnRe: /-\s*Blackball\s*Master\s*-/i,
     cdfRe: /Championnat\s+de\s+France\s*-\s*Masters?\s*-/i,
     out: 'results-2026-2027.json', competition: 'Blackball Master', rankingId: 88637449, hasInvites: true,
+    mixteRankingId: 88637443, // classement Mixte National — pour afficher le rang Mixte des invités
+
     // Barème FFB Masters (secours si classement officiel indisponible).
     PTS: { 'Round 1': 100, 'Last sixteen': 160, 'Quarter final': 224, 'Semi final': 292, 'Final': 364 }, CHAMP: 440,
   },
@@ -176,6 +178,16 @@ async function importCompetition(cfg, allTournaments) {
     }
   }
 
+  // Rang au Mixte National des invités (pour leur fiche : « Xe au Mixte National »).
+  if (cfg.mixteRankingId) {
+    const mixte = await officialRanking(cfg.mixteRankingId);
+    if (mixte) for (const p of players.values()) {
+      if (!p.invite) continue;
+      const m = mixte.byId.get(String(p.id)) ?? mixte.byName.get(mk(p.rawName));
+      if (m) p.mixteRank = m.rank;
+    }
+  }
+
   // Rangs : non-invités uniquement, dans l'ORDRE officiel Cuescore (rang officiel puis départage),
   // numérotés en SÉQUENTIEL 1..N (chaque joueur un rang unique, pas d'ex-aequo affiché).
   const ranked = [...players.values()].filter((p) => !p.invite)
@@ -188,6 +200,7 @@ async function importCompetition(cfg, allTournaments) {
     id: p.id, name: p.name, slug: p.slug, country: p.country, rank: p.rank, points: p.points,
     played: p.played, wins: p.wins, losses: p.losses, winPct: p.played ? Math.round((p.wins / p.played) * 100) : 0,
     pf: p.pf, pa: p.pa, diff: p.pf - p.pa, tourns: p.tourns.size, invite: p.invite,
+    ...(p.mixteRank ? { mixteRank: p.mixteRank } : {}),
   });
   const ordered = [...ranked.map(toRow), ...guests.map(toRow)];
 

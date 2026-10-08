@@ -503,7 +503,8 @@
    "pa": 30,
    "diff": 8,
    "tourns": 1,
-   "invite": true
+   "invite": true,
+   "mixteRank": 1
   },
   {
    "id": 31840159,
@@ -520,7 +521,8 @@
    "pa": 13,
    "diff": -2,
    "tourns": 1,
-   "invite": true
+   "invite": true,
+   "mixteRank": 6
   },
   {
    "id": 1286631,
@@ -537,7 +539,8 @@
    "pa": 8,
    "diff": -1,
    "tourns": 1,
-   "invite": true
+   "invite": true,
+   "mixteRank": 19
   },
   {
    "id": 15565264,
@@ -554,7 +557,8 @@
    "pa": 8,
    "diff": -2,
    "tourns": 1,
-   "invite": true
+   "invite": true,
+   "mixteRank": 20
   }
  ],
  "matches": [
