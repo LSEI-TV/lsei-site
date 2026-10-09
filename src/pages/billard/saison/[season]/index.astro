@@ -13,6 +13,7 @@ import SportIcon from '../../../../components/SportIcon.astro';
 import PlayerSearch from '../../../../components/PlayerSearch.astro';
 import { getSeasons, getPalmares, DEFAULT_SEASON, mastersGuests2627, type Season } from '../../../../data/billard/seasons';
 import AffichesTournois from '../../../../components/AffichesTournois.astro';
+import PodiumTournoi from '../../../../components/PodiumTournoi.astro';
 import rmixte2526 from '../../../../data/billard/results-mixte-2025-2026.json';
 import rmixte2425 from '../../../../data/billard/results-mixte-2024-2025.json';
 import rmixte2324 from '../../../../data/billard/results-mixte-2023-2024.json';
@@ -37,14 +38,12 @@ const R: any = season.results;
 const hasData = !!R;
 const players: any[] = hasData ? R.players : [];
 const matches: any[] = hasData ? R.matches : [];
-// Top 5 / joueur à la une / podium : parmi les classés (invités exclus).
+// Top 5 / joueur à la une : parmi les classés (invités exclus).
+// Le podium (par étape, via <PodiumTournoi/>) inclut lui les invités.
 const ranked = players.filter((p) => !p.invite);
 const top5 = ranked.slice(0, 5);
-const podium = ranked.slice(0, 4);
 const guests = players.filter((p: any) => p.invite);   // invités (wildcards) à mettre en avant
 const spot = ranked[0];
-// Saison en cours tant que le Championnat de France n'est pas dans les résultats.
-const seasonInProgress = hasData && !((R.tournaments ?? []) as any[]).some((t: any) => t.kind === 'france');
 const spotPhoto = spot ? photoOf(spot, season.slug) : null;
 const spotResults = spot
   ? matches.filter((m) => m.aId === spot.id || m.bId === spot.id).sort((a, b) => (a.date < b.date ? 1 : -1)).map((m) => fromPov(m, spot.id)).slice(0, 4)
@@ -245,27 +244,7 @@ if (!hasData) {
           </div>
         )}
 
-        {podium.length > 0 && (
-          <div class="hub-podium">
-            <div class="hub-pod-h">{seasonInProgress ? 'Classement provisoire · le podium' : 'Le podium'}</div>
-            <div class="hub-pod-grid">
-              {podium.map((p) => {
-                const ph = photoOf(p, season.slug);
-                const lab = seasonInProgress
-                  ? (p.rank === 1 ? 'En tête' : `${p.rank}ᵉ`)
-                  : (p.rank === 1 ? 'Champion' : p.rank === 2 ? 'Vice-champion' : `${p.rank}ᵉ`);
-                return (
-                  <a href={`/billard/joueur/${slugOf(p.id)}`} class={`hub-pod-card r${p.rank}`}>
-                    <span class="hub-pod-ph"><span class="bavatar">{p.name.slice(0, 1)}</span>{ph && <img src={ph} alt={p.name} loading="lazy" onerror="this.remove()" />}<span class="hub-pod-rk">{p.rank}</span></span>
-                    <span class="hub-pod-lab">{lab}</span>
-                    <span class="hub-pod-name">{p.name}</span>
-                    <span class="hub-pod-pts">{p.points}<small> pts</small></span>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        )}
+        <PodiumTournoi results={R} seasonSlug={season.slug} hrefBase="/billard/joueur/" slugOf={slugOf} />
 
         {guests.length > 0 && (
           <div class="hub-podium hub-guests">

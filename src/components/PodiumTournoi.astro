@@ -1,0 +1,62 @@
+---
+// Podium du DERNIER tournoi joué (étape) : 1er, 2e et 3es ex æquo, calculés
+// depuis le tableau (finale + demi-finales), SANS points. Réutilisable sur les
+// 4 hubs Blackball (Masters, Femmes, Para fauteuil, Para malvoyants) : il ne
+// s'affiche que quand une étape a été jouée (sinon rien). Un nouveau tournoi
+// remplace automatiquement le podium précédent au prochain build.
+import { photoOf, tournamentPodium, type SeasonData } from '../lib/billardStats';
+
+interface Props {
+  /** Résultats de la saison (ou undefined → rien ne s'affiche). */
+  results: SeasonData | null | undefined;
+  /** Slug de saison (pour retrouver la bonne photo de maillot). */
+  seasonSlug: string;
+  /** Préfixe des fiches joueur, ex. « /billard/joueur/ ». */
+  hrefBase: string;
+  /** id joueur → slug de fiche. */
+  slugOf: (id: number) => string;
+}
+const { results, seasonSlug, hrefBase, slugOf } = Astro.props as Props;
+const podium = tournamentPodium(results);
+const LABELS: Record<number, string> = { 1: 'Vainqueur', 2: 'Finaliste', 3: 'Demi-finaliste' };
+const t = podium?.tournament;
+const tag = t ? [t.level, t.city].filter(Boolean).join(' · ') : '';
+---
+{podium && podium.places.length > 0 && (
+  <div class="hub-podium">
+    <div class="hub-pod-h">Le podium{tag && <span class="hub-pod-sub"> · {tag}</span>}</div>
+    <div class="hub-pod-grid">
+      {podium.places.map(({ player: p, place }) => {
+        const ph = photoOf(p, seasonSlug);
+        return (
+          <a href={`${hrefBase}${slugOf(p.id)}`} class={`hub-pod-card r${place}`}>
+            <span class="hub-pod-ph"><span class="bavatar">{p.name.slice(0, 1)}</span>{ph && <img src={ph} alt={p.name} loading="lazy" onerror="this.remove()" />}<span class="hub-pod-rk">{place}</span></span>
+            <span class="hub-pod-lab">{LABELS[place] ?? `${place}ᵉ`}</span>
+            <span class="hub-pod-name">{p.name}{(p as any).invite && <span class="hub-pod-inv">Invité</span>}</span>
+          </a>
+        );
+      })}
+    </div>
+  </div>
+)}
+
+<style>
+  .hub-podium { margin-top: 18px; }
+  .hub-pod-h { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--c-billard); margin-bottom: 10px; }
+  .hub-pod-sub { color: var(--ink-faint); font-weight: 700; }
+  .hub-pod-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .hub-pod-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 3px; padding: 14px 6px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); text-decoration: none; color: inherit; transition: border-color .15s, transform .15s; }
+  .hub-pod-card:hover { transform: translateY(-3px); border-color: var(--c-billard); }
+  .hub-pod-card.r1 { border-color: color-mix(in srgb, #E8B008 55%, var(--line)); background: color-mix(in srgb, #E8B008 7%, var(--surface)); }
+  .hub-pod-ph { position: relative; width: 56px; height: 56px; border-radius: 50%; overflow: hidden; background: var(--surface-2); border: 2px solid var(--line); display: grid; place-items: center; }
+  .hub-pod-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .hub-pod-card.r1 .hub-pod-ph { border-color: #E8B008; }
+  .bavatar { font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--ink-faint); }
+  .hub-pod-rk { position: absolute; right: -2px; bottom: -2px; width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; font-size: 11px; font-weight: 800; color: #fff; background: var(--c-billard); border: 2px solid var(--surface); }
+  .hub-pod-card.r1 .hub-pod-rk { background: #E8B008; }
+  .hub-pod-lab { font-size: 10.5px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; color: var(--c-billard); }
+  .hub-pod-card.r1 .hub-pod-lab { color: #b08400; }
+  .hub-pod-name { font-size: 12.5px; font-weight: 700; color: var(--ink); line-height: 1.2; }
+  .hub-pod-inv { display: inline-block; margin-left: 4px; padding: 1px 5px; border-radius: 6px; font-size: 9.5px; font-weight: 800; letter-spacing: .02em; vertical-align: middle; background: #F6C454; color: #7a4e00; }
+  @media (max-width: 560px) { .hub-pod-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>

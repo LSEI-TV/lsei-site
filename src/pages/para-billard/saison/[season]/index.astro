@@ -4,6 +4,7 @@ import HubNav from '../../../../components/HubNav.astro';
 import SeasonPicker from '../../../../components/SeasonPicker.astro';
 import PlayerSearch from '../../../../components/PlayerSearch.astro';
 import AffichesTournois from '../../../../components/AffichesTournois.astro';
+import PodiumTournoi from '../../../../components/PodiumTournoi.astro';
 import VideoPlayer from '../../../../components/VideoPlayer.astro';
 import { getReplays } from '../../../../lib/youtube';
 import { getDiscipline } from '../../../../data/site';
@@ -82,6 +83,7 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
             ))}
           </div>
         </div>
+        <PodiumTournoi results={R} seasonSlug={season.slug} hrefBase="/para-billard/joueur/" slugOf={slugOf} />
       </div>
 
       <aside class="hub-side">

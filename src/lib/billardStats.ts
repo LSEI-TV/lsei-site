@@ -165,6 +165,49 @@ export const stats = defaultSeason().results as unknown as {
 // Données d'une saison (sous-ensemble suffisant pour les calculs).
 export interface SeasonData { players: Player[]; matches: Match[]; tournaments: Tournament[] }
 
+// ------------------------------------------------------------
+//  PODIUM D'UN TOURNOI (étape) — 1er, 2e et 3es ex æquo, calculé depuis le
+//  tableau à élimination (finale + demi-finales), SANS points. On prend le
+//  DERNIER tournoi joué (le plus récent AYANT une finale) → « le podium de
+//  l'étape ». Réutilisable Masters / Femmes / Para. Invités inclus (un invité
+//  peut gagner ou finir finaliste, ex. Fumel 2026).
+// ------------------------------------------------------------
+export type PodiumPlayer = Player & { invite?: boolean };
+export interface PodiumPlace { player: PodiumPlayer; place: number }
+export interface TournamentPodium { tournament: Tournament; places: PodiumPlace[] }
+
+export function tournamentPodium(R: SeasonData | null | undefined): TournamentPodium | null {
+  if (!R || !R.matches?.length || !R.tournaments?.length) return null;
+  const byId = new Map((R.players as PodiumPlayer[]).map((p) => [p.id, p]));
+  const rn = (s: string) => (s || '').toLowerCase().replace(/[^a-z]/g, ''); // « Semi final » → « semifinal »
+  const isFinal = (r: string) => rn(r) === 'final' || rn(r) === 'finale';
+  const isSemi = (r: string) => rn(r).startsWith('semifinal') || rn(r).startsWith('demifinale');
+  const winLose = (m: Match) => (m.sA > m.sB ? [m.aId, m.bId] : [m.bId, m.aId]);
+  // Tournois du plus récent au plus ancien : on s'arrête au 1er qui a une finale.
+  const tours = [...R.tournaments].sort((a, b) => (a.date < b.date ? 1 : -1));
+  for (const t of tours) {
+    const ms = R.matches.filter((m) => m.tid === t.id);
+    const finalM = ms.find((m) => isFinal(m.round));
+    if (!finalM) continue;
+    const [champ, vice] = winLose(finalM);
+    const thirds = ms.filter((m) => isSemi(m.round)).map((m) => winLose(m)[1]);
+    const order: Array<{ id: number; place: number }> = [
+      { id: champ, place: 1 },
+      { id: vice, place: 2 },
+      ...thirds.map((id) => ({ id, place: 3 })),
+    ];
+    const places: PodiumPlace[] = [];
+    const seen = new Set<number>();
+    for (const o of order) {
+      if (seen.has(o.id)) continue;
+      const p = byId.get(o.id);
+      if (p) { places.push({ player: p, place: o.place }); seen.add(o.id); }
+    }
+    return { tournament: t, places };
+  }
+  return null;
+}
+
 export const getPlayer = (data: SeasonData, id: number) => data.players.find((p) => p.id === id);
 export const tournamentById = (data: SeasonData, tid: string) => data.tournaments.find((t) => t.id === tid);
 
