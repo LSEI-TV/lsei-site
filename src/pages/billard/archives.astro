@@ -10,13 +10,30 @@ const { slugOf } = playerSlugs(getSeasons());
 const byPhotoKey = playersByPhotoKey(getSeasons()); // relier une photo d'archive à une fiche connue
 
 // Une galerie par saison AVEC données : effectif de la saison (photo de l'année + nom + lien fiche).
-const dataGal = seasons.map((s) => ({
-  slug: s.slug,
-  label: s.label,
-  players: (s.results!.players as any[])
-    .map((p) => ({ name: p.name, url: photoOf(p, s.slug), link: `/billard/joueur/${slugOf(p.id)}` }))
-    .sort((a, b) => a.name.localeCompare(b.name, 'fr')),
-}));
+// Les PERMANENTS composent la galerie principale ; les INVITÉS (wildcards, qui
+// changent à chaque Tournoi National) sont regroupés par étape, en dessous.
+const card = (p: any, slug: string) => ({ name: p.name, url: photoOf(p, slug), link: `/billard/joueur/${slugOf(p.id)}` });
+const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name, 'fr');
+const dataGal = seasons.map((s) => {
+  const all = s.results!.players as any[];
+  const permanents = all.filter((p) => !p.invite);
+  const invites = all.filter((p) => p.invite);
+  const matches = (s.results!.matches as any[]) ?? [];
+  // Invités regroupés par tournoi, dans l'ordre des étapes (un invité = rattaché
+  // aux tournois où il a au moins un match).
+  const guestGroups = ((s.results!.tournaments as any[]) ?? [])
+    .map((t) => {
+      const ids = new Set(matches.filter((m) => m.tid === t.id).flatMap((m) => [m.aId, m.bId]));
+      return { tournament: t, players: invites.filter((p) => ids.has(p.id)).map((p) => card(p, s.slug)).sort(byName) };
+    })
+    .filter((g) => g.players.length > 0);
+  return {
+    slug: s.slug,
+    label: s.label,
+    players: permanents.map((p) => card(p, s.slug)).sort(byName),
+    guestGroups,
+  };
+});
 
 // Une galerie par saison SANS données : photos seules (nom de fichier), reliées à une fiche si le joueur est connu.
 const rawPhoto = photoOnlySeasons(new Set(seasons.map((s) => s.slug)));
@@ -27,6 +44,7 @@ const photoGal = rawPhoto.map((g) => ({
     const k = byPhotoKey.get(pl.key);
     return { name: k?.name || pl.name, url: pl.url, link: k ? `/billard/joueur/${slugOf(k.id)}` : null };
   }),
+  guestGroups: [] as { tournament: any; players: { name: string; url: string | null; link: string | null }[] }[],
 }));
 
 const galleries = [...dataGal, ...photoGal].sort((a, b) => (a.slug < b.slug ? 1 : -1)); // récent → ancien
@@ -49,24 +67,36 @@ for (const s of seasons) for (const p of s.results!.players as any[]) uniq.add(p
     <div class="wrap" style="max-width:900px">
       <div style="max-width:460px;margin-bottom:24px"><PlayerSearch placeholder="Rechercher un joueur…" /></div>
 
-      {galleries.map((g) => (
-        <div class="gal-season">
-          <div class="gal-season-h">Saison {g.label} · {g.players.length} joueurs</div>
-          <div class="gal-grid">
-            {g.players.map((pl) => {
-              const inner = (
-                <>
-                  <span class="bphoto gal-ph"><span class="bavatar">{pl.name.slice(0, 1)}</span>{pl.url && <img src={pl.url} alt="" loading="lazy" onerror="this.remove()" />}</span>
-                  <span class="gal-name">{pl.name}</span>
-                </>
-              );
-              return pl.link
-                ? <a href={pl.link} class="gal-item">{inner}</a>
-                : <span class="gal-item gal-item-off">{inner}</span>;
-            })}
+      {galleries.map((g) => {
+        const hasGuests = g.guestGroups && g.guestGroups.length > 0;
+        const galItem = (pl: { name: string; url: string | null; link: string | null }) => {
+          const inner = (
+            <>
+              <span class="bphoto gal-ph"><span class="bavatar">{pl.name.slice(0, 1)}</span>{pl.url && <img src={pl.url} alt="" loading="lazy" onerror="this.remove()" />}</span>
+              <span class="gal-name">{pl.name}</span>
+            </>
+          );
+          return pl.link ? <a href={pl.link} class="gal-item">{inner}</a> : <span class="gal-item gal-item-off">{inner}</span>;
+        };
+        return (
+          <div class="gal-season">
+            <div class="gal-season-h">Saison {g.label} · {g.players.length} {hasGuests ? 'permanents' : 'joueurs'}</div>
+            <div class="gal-grid">{g.players.map(galItem)}</div>
+            {hasGuests && g.guestGroups.map((grp) => (
+              <div class="gal-guests">
+                <div class="gal-guests-h">Invités · {[grp.tournament.level, grp.tournament.city].filter(Boolean).join(' · ')}</div>
+                <div class="gal-grid">{grp.players.map(galItem)}</div>
+              </div>
+            ))}
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   </section>
+
+  <style>
+    /* Sous-section « Invités » (wildcards par étape), sous la galerie des permanents. */
+    .gal-guests { margin-top: 20px; }
+    .gal-guests-h { font-size: 11.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #b08400; margin-bottom: 12px; padding-left: 10px; border-left: 3px solid #F6C454; }
+  </style>
 </Base>
