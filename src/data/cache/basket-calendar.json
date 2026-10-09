@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-09T15:28:00.798Z",
+  "updated": "2026-10-09T19:57:49.517Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
   "pool": "Poule B",
   "matches": [
@@ -177,13 +177,13 @@
     },
     {
       "date": "2026-10-13",
-      "homeSlug": "challans",
-      "awaySlug": "fougeres"
+      "homeSlug": "tarbes",
+      "awaySlug": "toulouse"
     },
     {
       "date": "2026-10-13",
-      "homeSlug": "tarbes",
-      "awaySlug": "toulouse"
+      "homeSlug": "challans",
+      "awaySlug": "fougeres"
     },
     {
       "date": "2026-10-16",
