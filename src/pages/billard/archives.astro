@@ -49,8 +49,11 @@ const photoGal = rawPhoto.map((g) => ({
 
 const galleries = [...dataGal, ...photoGal].sort((a, b) => (a.slug < b.slug ? 1 : -1)); // récent → ancien
 
+// Total global : uniquement les PERMANENTS (les invités, wildcards de passage qui
+// changent à chaque étape, sont comptés à part dans leurs sous-sections). Évite que
+// le total gonfle artificiellement au fil de la saison.
 const uniq = new Set<number>();
-for (const s of seasons) for (const p of s.results!.players as any[]) uniq.add(p.id);
+for (const s of seasons) for (const p of s.results!.players as any[]) if (!p.invite) uniq.add(p.id);
 ---
 <Base title="Archives des joueurs — Blackball Master" description="Tous les joueurs qui ont composé le Blackball Master, saison après saison, en images." active="disciplines">
   <HubNav season={LANDING_SEASON} dataSeason={DEFAULT_SEASON} active="archives" archivesHref="/billard/archives" />
