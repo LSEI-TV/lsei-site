@@ -4,7 +4,7 @@
 import Base from '../../layouts/Base.astro';
 import HubSwitch from '../../components/HubSwitch.astro';
 import { getReplays } from '../../lib/youtube';
-import { showcaseSeason, getPalmares } from '../../data/billard/seasons';
+import { showcaseSeason, getPalmares, cal2627 } from '../../data/billard/seasons';
 import { femmesShowcaseSeason, getFemmesPalmares } from '../../data/billard/seasonsFemmes';
 import { paraShowcaseSeason, getParaPalmares } from '../../data/billard/seasonsPara';
 import { paraMvShowcaseSeason, getParaMvPalmares } from '../../data/billard/seasonsParaMalvoyants';
@@ -144,6 +144,25 @@ const comps = [
           </div>
         ))}
       </div>
+
+      {cal2627.length > 0 && (
+        <div class="parcours parcours-box bch-cal">
+          <div class="parcours-h">Calendrier des compétitions · 2026 / 2027 · {cal2627.length} rendez-vous</div>
+          <div class="parcours-grid">
+            {cal2627.map((e) => (
+              <div class={`etape k-${e.kind}`} title={e.name}>
+                <span class="et-num">{e.short}</span>
+                <span class="et-city">{e.place}</span>
+                <span class="et-date">{e.date}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   </section>
 </Base>
+
+<style>
+  .bch-cal { margin-top: 24px; }
+</style>

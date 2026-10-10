@@ -4,7 +4,7 @@
 // - Snooker & Billard américain : uniquement des vidéos -> vidéothèque de la catégorie
 import Base from '../../layouts/Base.astro';
 import { getReplays } from '../../lib/youtube';
-import { getSeasons, cal2627 } from '../../data/billard/seasons';
+import { getSeasons } from '../../data/billard/seasons';
 
 const bilVids = await getReplays({ discipline: 'billard' });
 const nSnooker = bilVids.filter((v) => v.category === 'Snooker').length;
@@ -86,22 +86,6 @@ const ICONS: Record<string, string> = {
         ))}
       </div>
 
-      <!-- Calendrier des compétitions nationales (circuit Blackball FFB) -->
-      {cal2627.length > 0 && (
-        <div class="parcours parcours-box bh-cal">
-          <div class="parcours-h">Calendrier des compétitions · 2026 / 2027 · {cal2627.length} rendez-vous</div>
-          <div class="parcours-grid">
-            {cal2627.map((e) => (
-              <div class={`etape k-${e.kind}`} title={e.name}>
-                <span class="et-num">{e.short}</span>
-                <span class="et-city">{e.place}</span>
-                <span class="et-date">{e.date}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       <!-- Bandeau récap -->
       <div class="bh-stats">
         <div class="bh-stat"><span class="bh-stat-ic" style="color:var(--c-billard)" set:html={ICONS.balls}></span><span class="bh-stat-tx"><b>3 univers</b><i>Blackball, Snooker, Billard américain</i></span></div>
@@ -114,8 +98,6 @@ const ICONS: Record<string, string> = {
 </Base>
 
 <style>
-  .bh-cal { margin: 26px 0 8px; }
-
   /* ---------- HERO pleine largeur ---------- */
   .bh-hero { position: relative; padding-top: 22px; }
   .bh-hero-box { position: relative; overflow: hidden; border-radius: 18px; background: #070c16; border: 1px solid var(--line); }
