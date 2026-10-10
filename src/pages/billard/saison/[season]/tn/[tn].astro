@@ -17,13 +17,28 @@ const { slugOf } = playerSlugs(getSeasons());
 
 export function getStaticPaths() {
   const tnSlug = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  // Un tableau n'est affichable que si c'est une élimination directe « propre » : chaque
+  // tour vaut la moitié du précédent, jusqu'à 1 (1er tour = puissance de 2).
+  // → écarte les formats à poules/brassage (ex. certains Championnats de France).
+  const isCleanBracket = (ms: any[]): boolean => {
+    const sizes: Record<number, number> = {};
+    for (const m of ms) sizes[m.roundNo] = (sizes[m.roundNo] || 0) + 1;
+    const counts = Object.keys(sizes).map(Number).sort((a, b) => a - b).map((n) => sizes[n]);
+    if (counts.length < 2 || counts[counts.length - 1] !== 1) return false;
+    // À partir du 2e tour, chaque tour vaut la moitié du précédent (bracket propre).
+    for (let i = 1; i < counts.length - 1; i++) if (counts[i] !== counts[i + 1] * 2) return false;
+    // Le 2e tour est une puissance de 2, et le 1er tour peut être partiel (byes) : 1..2×2e tour.
+    const c1 = counts[1];
+    if ((c1 & (c1 - 1)) !== 0) return false;
+    return counts[0] >= 1 && counts[0] <= c1 * 2;
+  };
   const paths: any[] = [];
   for (const s of getSeasons()) {
     if (!s.results) continue;
     const R: any = s.results;
     for (const t of R.tournaments) {
       const ms = R.matches.filter((m: any) => m.tid === t.id && m.matchno != null && m.roundNo != null);
-      if (!ms.length) continue;
+      if (!ms.length || !isCleanBracket(ms)) continue;
       paths.push({ params: { season: s.slug, tn: tnSlug(t.level) }, props: { season: s, tournament: t, matches: ms } });
     }
   }
@@ -34,16 +49,16 @@ const { season, tournament: t, matches } = Astro.props as { season: Season; tour
 const base = `/billard/saison/${season.slug}`;
 const ph = (id: number, name: string) => photoOf({ id, name } as any, season.slug);
 
-const roundSizes: Record<number, number> = {};
-for (const m of matches) roundSizes[m.roundNo] = (roundSizes[m.roundNo] || 0) + 1;
-const LABELS: Record<number, string> = { 1: 'Finale', 2: 'Demi-finales', 4: 'Quarts de finale', 8: '8es de finale', 16: '16es de finale', 32: '32es de finale', 64: '64es de finale' };
-const labelOf = (rn: number) => LABELS[roundSizes[rn]] || 'Tour';
-
 const winnerOf = (m: any) => (m.sA > m.sB ? m.aId : m.bId);
 const roundNos = [...new Set(matches.map((m: any) => m.roundNo))].sort((a, b) => a - b);
 const rounds = roundNos.map((no) => ({ no, ms: matches.filter((m: any) => m.roundNo === no).sort((a: any, b: any) => a.matchno - b.matchno) }));
-const n1 = rounds[0]?.ms.length || 1;
-const nPlayers = n1 * 2;
+
+// Intitulé d'un tour par sa POSITION depuis la finale (robuste aux byes du 1er tour).
+const DIST_LABELS = ['Finale', 'Demi-finales', 'Quarts de finale', '8es de finale', '16es de finale', '32es de finale', '64es de finale'];
+const labelByRound = new Map<number, string>();
+roundNos.forEach((rn, i) => labelByRound.set(rn, DIST_LABELS[(roundNos.length - 1) - i] || `Tour ${i + 1}`));
+const labelOf = (rn: number) => labelByRound.get(rn) || 'Tour';
+const nPlayers = 2 ** roundNos.length; // taille du tableau (ex. 5 tours → 32)
 
 const finalM = matches.reduce((a: any, b: any) => (a.roundNo > b.roundNo ? a : b));
 const champId = winnerOf(finalM);
@@ -81,10 +96,10 @@ const cfData = (m: any) => {
   };
 };
 
-// --- POULES : chaque poule = 2 matchs de 1/16 + leur 1/8 décisif → 1 qualifié. ---
-// (Les 16 matchs du 1er tour s'apparient 2 à 2, chaque paire alimentant un match du
-//  tour suivant, exactement comme la structure du tableau Cuescore.)
-const hasPools = rounds.length >= 3 && rounds[0].ms.length === rounds[1].ms.length * 2;
+// --- POULES : chaque poule = le match « décisif » du 2e tour + les matchs du 1er tour
+// de ses deux joueurs (0, 1 ou 2 selon les exempts/byes). Appariement par VAINQUEUR
+// (robuste aux byes : un joueur exempté au 1er tour n'a pas de match à ce tour). ---
+const hasPools = rounds.length >= 3;
 let pools: any[] = [];
 let finalRounds = rounds;
 if (hasPools) {
@@ -93,7 +108,9 @@ if (hasPools) {
     const qid = winnerOf(m16);
     return {
       idx: k + 1,
-      r1a: r1[2 * k], r1b: r1[2 * k + 1], r16: m16,
+      r1a: r1.find((x: any) => winnerOf(x) === m16.aId),
+      r1b: r1.find((x: any) => winnerOf(x) === m16.bId),
+      r16: m16,
       qName: m16.aId === qid ? m16.aName : m16.bName,
       qSlug: slugOf(qid),
       qPhoto: ph(qid, m16.aId === qid ? m16.aName : m16.bName),
@@ -147,7 +164,7 @@ const champPath = matches
       <div class="tv-panel tv-tableau">
         {hasPools && (
           <div class="tn-stage">
-            <div class="tn-stage-h"><span class="tn-stage-n">Poules</span><span class="tn-stage-s">{lab1} &amp; {lab2} · le 1ᵉʳ de chaque poule file en quarts</span></div>
+            <div class="tn-stage-h"><span class="tn-stage-n">Poules</span><span class="tn-stage-s">{lab1} &amp; {lab2} · le 1ᵉʳ de chaque poule rejoint la phase finale</span></div>
             <div class="pool-grid">
               {pools.map((p, i) => (
                 <div class="pool" style={`--c-billard:${POOL_COLORS[i % POOL_COLORS.length]}`}>
@@ -159,8 +176,8 @@ const champPath = matches
                     </a>
                   </div>
                   <div class="pool-mm">
-                    <MatchMini m={p.r1a} cf={cfData(p.r1a)} seasonSlug={season.slug} label={lab1} />
-                    <MatchMini m={p.r1b} cf={cfData(p.r1b)} seasonSlug={season.slug} label={lab1} />
+                    {p.r1a && <MatchMini m={p.r1a} cf={cfData(p.r1a)} seasonSlug={season.slug} label={lab1} />}
+                    {p.r1b && <MatchMini m={p.r1b} cf={cfData(p.r1b)} seasonSlug={season.slug} label={lab1} />}
                     <MatchMini m={p.r16} cf={cfData(p.r16)} seasonSlug={season.slug} label={`${lab2} · décisif`} />
                   </div>
                 </div>

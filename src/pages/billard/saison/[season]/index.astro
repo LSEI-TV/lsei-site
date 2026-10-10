@@ -86,7 +86,21 @@ const guestsView = calSeason.calendar
 // Lien « tableau » (bracket) d'une étape du calendrier : cliquable seulement si le
 // tournoi correspondant a des matchs positionnés (matchno) → page /tn/<slug>.
 const _tnSlug = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const bracketTids = new Set((matches as any[]).filter((m) => m.matchno != null).map((m) => m.tid));
+// Un tableau n'existe que pour une élimination directe « propre » (tours qui se divisent
+// par 2 jusqu'à 1) — même règle que la page du tableau. Écarte les formats à poules.
+const _cleanBracket = (ms: any[]): boolean => {
+  const sizes: Record<number, number> = {};
+  for (const m of ms) if (m.matchno != null && m.roundNo != null) sizes[m.roundNo] = (sizes[m.roundNo] || 0) + 1;
+  const counts = Object.keys(sizes).map(Number).sort((a, b) => a - b).map((n) => sizes[n]);
+  if (counts.length < 2 || counts[counts.length - 1] !== 1) return false;
+  for (let i = 1; i < counts.length - 1; i++) if (counts[i] !== counts[i + 1] * 2) return false;
+  const c1 = counts[1];
+  if ((c1 & (c1 - 1)) !== 0) return false;
+  return counts[0] >= 1 && counts[0] <= c1 * 2;
+};
+const _byTid = new Map<string, any[]>();
+for (const m of matches as any[]) { if (!_byTid.has(m.tid)) _byTid.set(m.tid, []); _byTid.get(m.tid)!.push(m); }
+const bracketTids = new Set([..._byTid.entries()].filter(([, ms]) => _cleanBracket(ms)).map(([tid]) => tid));
 const bracketHref = (e: any): string | null => {
   if (!hasData) return null;
   const t = (R.tournaments as any[]).find((t) => t.level === e.short || (e.kind === 'france' && t.kind === 'france'));
