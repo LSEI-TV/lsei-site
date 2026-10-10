@@ -1,10 +1,11 @@
 ---
-// Page tableau d'un tournoi MASTERS → composant partagé TournamentBoard.
+// Page tableau d'un tournoi FEMMES → composant partagé TournamentBoard.
 import TournamentBoard from '../../../../../components/TournamentBoard.astro';
-import { getSeasons, type Season } from '../../../../../data/billard/seasons';
+import { getFemmesSeasons } from '../../../../../data/billard/seasonsFemmes';
+import type { Season } from '../../../../../data/billard/seasons';
 import { playerSlugs } from '../../../../../lib/billardStats';
 
-const { slugOf } = playerSlugs(getSeasons());
+const { slugOf } = playerSlugs(getFemmesSeasons());
 
 export function getStaticPaths() {
   const tnSlug = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -19,7 +20,7 @@ export function getStaticPaths() {
     return counts[0] >= 1 && counts[0] <= c1 * 2;
   };
   const paths: any[] = [];
-  for (const s of getSeasons()) {
+  for (const s of getFemmesSeasons()) {
     if (!s.results) continue;
     const R: any = s.results;
     for (const t of R.tournaments) {
@@ -38,8 +39,8 @@ const { season, tournament, matches } = Astro.props as { season: Season; tournam
   tournament={tournament}
   matches={matches}
   slugOf={slugOf}
-  allSeasons={getSeasons()}
-  base={`/billard/saison/${season.slug}`}
-  ficheBase="/billard/joueur/"
-  compLabel="Blackball Master"
+  allSeasons={getFemmesSeasons()}
+  base={`/femmes/saison/${season.slug}`}
+  ficheBase="/femmes/joueur/"
+  compLabel="Blackball Femmes"
 />

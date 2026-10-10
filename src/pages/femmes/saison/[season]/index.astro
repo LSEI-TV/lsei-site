@@ -24,6 +24,28 @@ const R: any = season.results;
 const hasData = !!R;
 const players: any[] = hasData ? R.players : [];
 const matches: any[] = hasData ? R.matches : [];
+
+// Lien « tableau » (bracket) d'une étape : cliquable si le tournoi est une élimination
+// directe « propre » avec positions de matchs → page /femmes/saison/<s>/tn/<slug>.
+const _tnSlug = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const _cleanBracket = (ms: any[]): boolean => {
+  const sizes: Record<number, number> = {};
+  for (const m of ms) if (m.matchno != null && m.roundNo != null) sizes[m.roundNo] = (sizes[m.roundNo] || 0) + 1;
+  const counts = Object.keys(sizes).map(Number).sort((a, b) => a - b).map((n) => sizes[n]);
+  if (counts.length < 2 || counts[counts.length - 1] !== 1) return false;
+  for (let i = 1; i < counts.length - 1; i++) if (counts[i] !== counts[i + 1] * 2) return false;
+  const c1 = counts[1];
+  if ((c1 & (c1 - 1)) !== 0) return false;
+  return counts[0] >= 1 && counts[0] <= c1 * 2;
+};
+const _byTid = new Map<string, any[]>();
+for (const m of matches) { if (!_byTid.has(m.tid)) _byTid.set(m.tid, []); _byTid.get(m.tid)!.push(m); }
+const _bracketTids = new Set([..._byTid.entries()].filter(([, ms]) => _cleanBracket(ms)).map(([tid]) => tid));
+const bracketHref = (e: any): string | null => {
+  if (!hasData) return null;
+  const tt = (R.tournaments as any[]).find((x) => x.level === e.short || (e.kind === 'france' && x.kind === 'france'));
+  return tt && _bracketTids.has(tt.id) ? `/femmes/saison/${season.slug}/tn/${_tnSlug(tt.level)}` : null;
+};
 const top5 = players.slice(0, 5);
 const spot = players[0];
 const spotPhoto = spot ? photoOf(spot, season.slug) : null;
@@ -73,14 +95,23 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
         <div class="parcours parcours-box">
           <div class="parcours-h">Calendrier · Saison {calSeason.label} · {calSeason.calendar.length} rendez-vous</div>
           <div class="parcours-grid">
-            {calSeason.calendar.map((e) => (
-              <div class={`etape k-${e.kind}`} title={e.name}>
-                <span class="et-num">{e.short}</span>
-                <span class="et-city">{e.place}</span>
-                <span class="et-date">{evDate(e.date)}</span>
-                {e.winner && <a class="et-winner" href={`/femmes/joueur/${slugOf(e.winner.id)}`} title={`Vainqueur : ${e.winner.name}`}>🏆 {e.winner.name}</a>}
-              </div>
-            ))}
+            {calSeason.calendar.map((e) => {
+              const href = bracketHref(e);
+              const inner = (
+                <>
+                  <span class="et-num">{e.short}</span>
+                  <span class="et-city">{e.place}</span>
+                  <span class="et-date">{evDate(e.date)}</span>
+                  {e.winner && (href
+                    ? <span class="et-winner">🏆 {e.winner.name}</span>
+                    : <a class="et-winner" href={`/femmes/joueur/${slugOf(e.winner.id)}`} title={`Vainqueur : ${e.winner.name}`}>🏆 {e.winner.name}</a>)}
+                  {href && <span class="et-go">Tableau <i class="et-go-ar">→</i></span>}
+                </>
+              );
+              return href
+                ? <a class={`etape k-${e.kind} etape--link`} href={href} title={`${e.name} — voir le tableau`}>{inner}</a>
+                : <div class={`etape k-${e.kind}`} title={e.name}>{inner}</div>;
+            })}
           </div>
         </div>
         <PodiumTournoi results={R} seasonSlug={season.slug} hrefBase="/femmes/joueur/" slugOf={slugOf} />
@@ -239,3 +270,18 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
     </section>
   )}
 </Base>
+
+<style>
+  /* Étape du calendrier cliquable → page du tableau (bracket) */
+  a.etape--link { cursor: pointer; text-decoration: none; position: relative; overflow: hidden; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease; }
+  a.etape--link::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1; background: linear-gradient(115deg, transparent 32%, color-mix(in srgb, var(--c-billard) 16%, transparent) 50%, transparent 68%); transform: translateX(-130%); animation: etShimmer 4.8s ease-in-out infinite; }
+  @keyframes etShimmer { 0%, 58% { transform: translateX(-130%); } 82%, 100% { transform: translateX(130%); } }
+  a.etape--link:hover { transform: translateY(-3px); border-color: var(--c-billard); background: color-mix(in srgb, var(--c-billard) 5%, var(--surface)); box-shadow: 0 10px 26px color-mix(in srgb, var(--c-billard) 22%, transparent); }
+  a.etape--link:active { transform: translateY(-1px); box-shadow: 0 4px 12px color-mix(in srgb, var(--c-billard) 18%, transparent); }
+  .et-go { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 5px; align-self: flex-start; margin-top: 7px; padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--c-billard); background: color-mix(in srgb, var(--c-billard) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--c-billard) 32%, transparent); transition: background .18s, color .18s, border-color .18s; }
+  .et-go-ar { font-style: normal; display: inline-block; animation: etBob 1.6s ease-in-out infinite; }
+  @keyframes etBob { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+  a.etape--link:hover .et-go { background: var(--c-billard); color: #fff; border-color: var(--c-billard); }
+  a.etape--link:hover .et-go-ar { animation: none; transform: translateX(3px); }
+  @media (prefers-reduced-motion: reduce) { a.etape--link::after, .et-go-ar { animation: none; } }
+</style>

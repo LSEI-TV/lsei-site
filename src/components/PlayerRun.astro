@@ -6,8 +6,9 @@ import PlayerRun from './PlayerRun.astro';
 interface Props {
   playerId: number; beforeRound: number; matches: any[];
   slugOf: (id: number) => string; labelOf: (rn: number) => string; depth?: number;
+  ficheBase?: string;
 }
-const { playerId, beforeRound, matches, slugOf, labelOf, depth = 0 } = Astro.props as Props;
+const { playerId, beforeRound, matches, slugOf, labelOf, depth = 0, ficheBase = '/billard/joueur/' } = Astro.props as Props;
 const winnerOf = (m: any) => (m.sA > m.sB ? m.aId : m.bId);
 const run = matches
   .filter((x) => (x.aId === playerId || x.bId === playerId) && winnerOf(x) === playerId && x.roundNo < beforeRound)
@@ -25,13 +26,13 @@ const run = matches
         <div class="prun-item">
           <div class="prun-row">
             <span class="prun-rnd">{o.round}</span>
-            <span class="prun-txt">bat <a href={`/billard/joueur/${slugOf(o.beatId)}`}>{o.beatName}</a></span>
+            <span class="prun-txt">bat <a href={`${ficheBase}${slugOf(o.beatId)}`}>{o.beatName}</a></span>
             <span class="prun-sc">{o.my}–{o.opp}</span>
           </div>
           {beatenHasRun && (
             <details class="prun-more">
               <summary><span class="prun-ar">▸</span> parcours de {o.beatName.split(' ')[0]}</summary>
-              <PlayerRun playerId={o.beatId} beforeRound={o.roundNo} matches={matches} slugOf={slugOf} labelOf={labelOf} depth={depth + 1} />
+              <PlayerRun playerId={o.beatId} beforeRound={o.roundNo} matches={matches} slugOf={slugOf} labelOf={labelOf} ficheBase={ficheBase} depth={depth + 1} />
             </details>
           )}
         </div>

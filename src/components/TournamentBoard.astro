@@ -1,0 +1,413 @@
+---
+// ============================================================
+//  Composant PARTAGÉ du tableau d'un tournoi (Masters, Femmes, …) — DEUX vues :
+//   • « Tableau » (défaut) : poules de 4 (1/16 + 1/8 → 1 qualifié) puis phase finale,
+//     en cartes colorées ; clic sur un match → fenêtre « Face-à-face ».
+//   • « Parcours » : Le Fil du Champion (cascade PlayerRun).
+//  Paramétré par compétition via les props (slugOf, base des fiches, historique…).
+// ============================================================
+import Base from '../layouts/Base.astro';
+import { photoOf } from '../lib/billardStats';
+import type { Season } from '../data/billard/seasons';
+import PlayerRun from './PlayerRun.astro';
+import MatchMini from './MatchMini.astro';
+
+interface Props {
+  season: Season;
+  tournament: any;
+  matches: any[];
+  slugOf: (id: number) => string;
+  allSeasons: Season[];
+  base: string;       // ex. /billard/saison/2026-2027
+  ficheBase: string;  // ex. /billard/joueur/  ou  /femmes/joueur/
+  compLabel: string;  // ex. Blackball Master / Blackball Femmes
+}
+const { season, tournament: t, matches, slugOf, allSeasons, base, ficheBase, compLabel } = Astro.props as Props;
+const ph = (id: number, name: string) => photoOf({ id, name } as any, season.slug);
+
+const winnerOf = (m: any) => (m.sA > m.sB ? m.aId : m.bId);
+const roundNos = [...new Set(matches.map((m: any) => m.roundNo))].sort((a, b) => a - b);
+const rounds = roundNos.map((no) => ({ no, ms: matches.filter((m: any) => m.roundNo === no).sort((a: any, b: any) => a.matchno - b.matchno) }));
+
+const DIST_LABELS = ['Finale', 'Demi-finales', 'Quarts de finale', '8es de finale', '16es de finale', '32es de finale', '64es de finale'];
+const labelByRound = new Map<number, string>();
+roundNos.forEach((rn, i) => labelByRound.set(rn, DIST_LABELS[(roundNos.length - 1) - i] || `Tour ${i + 1}`));
+const labelOf = (rn: number) => labelByRound.get(rn) || 'Tour';
+const nPlayers = 2 ** roundNos.length;
+
+const finalM = matches.reduce((a: any, b: any) => (a.roundNo > b.roundNo ? a : b));
+const champId = winnerOf(finalM);
+const champName = finalM.aId === champId ? finalM.aName : finalM.bName;
+const champPhoto = ph(champId, champName);
+
+// Index de TOUT l'historique de la compétition (pour le face-à-face au clic).
+const histMatches: any[] = [];
+for (const s of allSeasons) {
+  if (!s.results || s.results.competition !== (season as any).results?.competition) continue;
+  const R: any = s.results;
+  const tById = new Map(R.tournaments.map((tt: any) => [tt.id, tt]));
+  for (const m of R.matches) {
+    const tt: any = tById.get(m.tid);
+    histMatches.push({ aId: m.aId, bId: m.bId, sA: m.sA, sB: m.sB, date: m.date, tour: tt ? `${tt.level}${tt.city ? ' · ' + tt.city : ''}` : '', season: s.label });
+  }
+}
+const cfData = (m: any) => {
+  const aId = m.aId, bId = m.bId, aWin = m.sA > m.sB;
+  const raw = histMatches.filter((x) => (x.aId === aId && x.bId === bId) || (x.aId === bId && x.bId === aId));
+  let aw = 0, bw = 0; const h2h: any[] = [];
+  for (const x of raw) {
+    const aIsA = x.aId === aId;
+    const aSc = aIsA ? x.sA : x.sB, bSc = aIsA ? x.sB : x.sA;
+    const w = aSc > bSc ? 'a' : 'b'; if (w === 'a') aw++; else bw++;
+    h2h.push({ d: x.date, t: x.tour, s: x.season, aSc, bSc, w });
+  }
+  h2h.sort((p, q) => (p.d < q.d ? 1 : -1));
+  return {
+    round: labelOf(m.roundNo), date: m.date,
+    a: { name: m.aName, slug: slugOf(aId), photo: ph(aId, m.aName) || '', sc: m.sA, win: aWin },
+    b: { name: m.bName, slug: slugOf(bId), photo: ph(bId, m.bName) || '', sc: m.sB, win: !aWin },
+    rec: { aw, bw }, h2h,
+  };
+};
+
+const hasPools = rounds.length >= 3;
+let pools: any[] = [];
+let finalRounds = rounds;
+if (hasPools) {
+  const r1 = rounds[0].ms, r16 = rounds[1].ms;
+  pools = r16.map((m16: any, k: number) => {
+    const qid = winnerOf(m16);
+    return {
+      idx: k + 1,
+      r1a: r1.find((x: any) => winnerOf(x) === m16.aId),
+      r1b: r1.find((x: any) => winnerOf(x) === m16.bId),
+      r16: m16,
+      qName: m16.aId === qid ? m16.aName : m16.bName,
+      qSlug: slugOf(qid),
+      qPhoto: ph(qid, m16.aId === qid ? m16.aName : m16.bName),
+    };
+  });
+  finalRounds = rounds.slice(2);
+}
+const lab1 = hasPools ? labelOf(rounds[0].no) : '';
+const lab2 = hasPools ? labelOf(rounds[1].no) : '';
+
+const POOL_COLORS = ['#7C4DD6', '#0E8A6B', '#D6453B', '#E07B00', '#2563C9', '#C0398A', '#0E8AA8', '#7A7D00'];
+const FIN_COLORS = ['#2563C9', '#C0398A', '#E4B23C'];
+const finColor = (i: number) => FIN_COLORS[Math.min(i, FIN_COLORS.length - 1)];
+
+const fmtDate = (iso: string) => (/^\d{4}-\d{2}-\d{2}$/.test(iso) ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso)) : iso);
+const titleTxt = t.kind === 'france' ? 'Championnat de France' : t.level;
+
+const champPath = matches
+  .filter((m: any) => m.aId === champId || m.bId === champId)
+  .sort((a: any, b: any) => b.roundNo - a.roundNo)
+  .map((m: any) => {
+    const champA = m.aId === champId;
+    return { round: labelOf(m.roundNo), roundNo: m.roundNo, opp: { id: champA ? m.bId : m.aId, name: champA ? m.bName : m.aName }, champSc: champA ? m.sA : m.sB, oppSc: champA ? m.sB : m.sA };
+  });
+---
+<Base title={`Billard — ${t.level} ${t.city} — ${compLabel} ${season.label}`} description={`Le tournoi ${t.name} (${compLabel} ${season.label}) : poules, phase finale et parcours du vainqueur — tous les matchs, scores et joueurs.`} active="disciplines">
+  <section class="section tn-sec" style="--dc:var(--c-billard)">
+    <div class="wrap">
+      <a href={base} class="link" style="display:inline-block;margin-bottom:14px">← Saison {season.label}</a>
+
+      <div class="tn-top">
+        <div class="fil-head">
+          <span class={`fil-tag k-${t.kind}`}>{t.level}</span>
+          <span class="fil-head-sub">{compLabel} · {season.label}</span>
+        </div>
+        <h1 class="tn-title">{titleTxt} · {t.city}</h1>
+        <div class="tn-meta">{fmtDate(t.date)} · {matches.length} matchs · tableau à {nPlayers} joueurs</div>
+      </div>
+
+      <input type="radio" name="tnview" id="tnv-parcours" class="tv-radio" />
+      <input type="radio" name="tnview" id="tnv-tableau" class="tv-radio" checked />
+      <div class="tv-switch" role="tablist">
+        <label for="tnv-tableau" class="tv-lab tv-lab--t"><span>🏆 Tableau</span></label>
+        <label for="tnv-parcours" class="tv-lab tv-lab--p"><span>🧗 Parcours</span></label>
+      </div>
+
+      <div class="tv-panel tv-tableau">
+        {hasPools && (
+          <div class="tn-stage">
+            <div class="tn-stage-h"><span class="tn-stage-n">Poules</span><span class="tn-stage-s">{lab1} &amp; {lab2} · le 1ᵉʳ de chaque poule rejoint la phase finale</span></div>
+            <div class="pool-grid">
+              {pools.map((p, i) => (
+                <div class="pool" style={`--c-billard:${POOL_COLORS[i % POOL_COLORS.length]}`}>
+                  <div class="pool-h">
+                    <span class="pool-no">Poule {p.idx}</span>
+                    <a href={`${ficheBase}${p.qSlug}`} class="pool-qual">
+                      <span class="pool-qual-ph"><span class="bavatar">{p.qName.slice(0, 1)}</span>{p.qPhoto && <img src={p.qPhoto} alt="" loading="lazy" onerror="this.remove()" />}</span>
+                      <span class="pool-qual-tx"><small>Qualifié</small>{p.qName}</span>
+                    </a>
+                  </div>
+                  <div class="pool-mm">
+                    {p.r1a && <MatchMini m={p.r1a} cf={cfData(p.r1a)} seasonSlug={season.slug} label={lab1} />}
+                    {p.r1b && <MatchMini m={p.r1b} cf={cfData(p.r1b)} seasonSlug={season.slug} label={lab1} />}
+                    <MatchMini m={p.r16} cf={cfData(p.r16)} seasonSlug={season.slug} label={`${lab2} · décisif`} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div class="tn-stage">
+          <div class="tn-stage-h"><span class="tn-stage-n">Phase finale</span><span class="tn-stage-s">des quarts au titre</span></div>
+          {finalRounds.map((r, i) => (
+            <div class={`fin-round${r.ms.length === 1 ? ' is-final' : ''}`} style={`--c-billard:${finColor(i)}`}>
+              <div class="fin-h">{labelOf(r.no)}</div>
+              <div class={`fin-grid${r.ms.length === 1 ? ' is-final' : ''}`}>
+                {r.ms.map((m) => (
+                  <MatchMini m={m} cf={cfData(m)} seasonSlug={season.slug} gold={r.ms.length === 1} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="tv-panel tv-parcours">
+        <div class="fil-champ">
+          <span class="fil-champ-ph"><span class="bavatar">{champName.slice(0, 1)}</span>{champPhoto && <img src={champPhoto} alt={champName} onerror="this.remove()" />}</span>
+          <span class="fil-champ-crown">🏆</span>
+          <div class="fil-champ-lab">Vainqueur</div>
+          <a href={`${ficheBase}${slugOf(champId)}`} class="fil-champ-nm">{champName}</a>
+        </div>
+        <div class="fil-track">
+          {champPath.map((step, i) => {
+            const oppPhoto = ph(step.opp.id, step.opp.name);
+            const oppHasRun = matches.some((x: any) => (x.aId === step.opp.id || x.bId === step.opp.id) && winnerOf(x) === step.opp.id && x.roundNo < step.roundNo);
+            return (
+              <div class={`fil-step${i === 0 ? ' is-final' : ''}`}>
+                <span class="fil-node"><span class="fil-node-dot"></span></span>
+                <div class="fil-round">{step.round}</div>
+                <div class="fil-match">
+                  <div class="fil-vs">
+                    <a href={`${ficheBase}${slugOf(champId)}`} class="fil-p fil-p--win">
+                      <span class="fil-ph"><span class="bavatar">{champName.slice(0, 1)}</span>{champPhoto && <img src={champPhoto} alt="" onerror="this.remove()" />}</span>
+                      <span class="fil-nm">{champName}</span>
+                      <span class="fil-sc">{step.champSc}</span>
+                    </a>
+                    <a href={`${ficheBase}${slugOf(step.opp.id)}`} class="fil-p">
+                      <span class="fil-ph"><span class="bavatar">{step.opp.name.slice(0, 1)}</span>{oppPhoto && <img src={oppPhoto} alt="" onerror="this.remove()" />}</span>
+                      <span class="fil-nm">{step.opp.name}</span>
+                      <span class="fil-sc">{step.oppSc}</span>
+                    </a>
+                  </div>
+                  {oppHasRun && (
+                    <details class="fil-opp">
+                      <summary><span class="fil-opp-ar">▸</span> Le parcours de {step.opp.name.split(' ')[0]}</summary>
+                      <div class="fil-opp-body">
+                        <PlayerRun playerId={step.opp.id} beforeRound={step.roundNo} matches={matches} slugOf={slugOf} labelOf={labelOf} ficheBase={ficheBase} />
+                      </div>
+                    </details>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+          <div class="fil-start">Entrée en lice · {t.level}</div>
+        </div>
+        <p class="fil-hint">💡 Dépliez « Le parcours de … » pour remonter tout le tableau, match après match.</p>
+      </div>
+    </div>
+  </section>
+
+  <dialog class="cf" id="cf-dlg" data-cmp={`${base}/comparateur`} data-fiche={ficheBase}>
+    <div class="cf-inner">
+      <button type="button" class="cf-x" aria-label="Fermer">✕</button>
+      <div class="cf-head"><span class="cf-round-txt"></span><span class="cf-date"></span></div>
+      <div class="cf-vs">
+        <a class="cf-player cf-pa" href="#"><span class="cf-ph"><span class="bavatar"></span><img alt="" onerror="this.style.display='none'" /></span><span class="cf-nm"></span></a>
+        <div class="cf-score"><b class="cf-sa"></b><i>–</i><b class="cf-sb"></b></div>
+        <a class="cf-player cf-pb" href="#"><span class="cf-ph"><span class="bavatar"></span><img alt="" onerror="this.style.display='none'" /></span><span class="cf-nm"></span></a>
+      </div>
+      <div class="cf-h2h">
+        <div class="cf-h2h-h">Face-à-face <small>· confrontations directes</small></div>
+        <div class="cf-rec"><span class="cf-rec-a"></span><b class="cf-rec-aw"></b><span class="cf-rec-dash">—</span><b class="cf-rec-bw"></b><span class="cf-rec-b"></span></div>
+        <div class="cf-list"></div>
+      </div>
+      <a class="cf-cmp" href="#">⚔ Comparer les deux joueurs en détail →</a>
+    </div>
+  </dialog>
+
+  <script>
+    (function () {
+      const dlg = document.getElementById('cf-dlg');
+      if (!dlg) return;
+      const fiche = dlg.getAttribute('data-fiche') || '/billard/joueur/';
+      const q = (s) => dlg.querySelector(s);
+      const fmt = (iso) => { if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return iso || ''; try { return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return iso; } };
+      function setP(side, d) {
+        const el = q('.cf-p' + side);
+        el.setAttribute('href', fiche + d.slug);
+        const img = el.querySelector('img'), av = el.querySelector('.bavatar');
+        av.textContent = (d.name || '?').charAt(0);
+        if (d.photo) { img.setAttribute('src', d.photo); img.style.display = ''; } else { img.removeAttribute('src'); img.style.display = 'none'; }
+        el.querySelector('.cf-nm').textContent = d.name;
+        el.classList.toggle('win', !!d.win);
+      }
+      function fill(d) {
+        q('.cf-round-txt').textContent = d.round;
+        q('.cf-date').textContent = fmt(d.date);
+        dlg.classList.toggle('is-final', d.round === 'Finale');
+        setP('a', d.a); setP('b', d.b);
+        const sa = q('.cf-sa'), sb = q('.cf-sb');
+        sa.textContent = d.a.sc; sb.textContent = d.b.sc;
+        sa.classList.toggle('win', !!d.a.win); sb.classList.toggle('win', !!d.b.win);
+        q('.cf-rec-a').textContent = d.a.name; q('.cf-rec-b').textContent = d.b.name;
+        q('.cf-rec-aw').textContent = d.rec.aw; q('.cf-rec-bw').textContent = d.rec.bw;
+        q('.cf-rec-aw').classList.toggle('lead', d.rec.aw > d.rec.bw);
+        q('.cf-rec-bw').classList.toggle('lead', d.rec.bw > d.rec.aw);
+        const list = q('.cf-list'); list.innerHTML = '';
+        if (!d.h2h.length) { list.innerHTML = '<div class="cf-empty">Aucune autre rencontre.</div>'; }
+        d.h2h.forEach((x) => {
+          const row = document.createElement('div'); row.className = 'cf-row';
+          const aw = x.w === 'a' ? ' lead' : '', bw = x.w === 'b' ? ' lead' : '';
+          row.innerHTML = '<span class="cf-row-d">' + fmt(x.d) + '</span><span class="cf-row-t">' + (x.t || '') + '</span><span class="cf-row-s"><b class="' + (aw ? 'lead' : '') + '">' + x.aSc + '</b>–<b class="' + (bw ? 'lead' : '') + '">' + x.bSc + '</b></span>';
+          list.appendChild(row);
+        });
+        q('.cf-cmp').setAttribute('href', dlg.getAttribute('data-cmp') || '#');
+      }
+      document.querySelectorAll('[data-cf]').forEach((el) => {
+        el.addEventListener('click', () => {
+          let d; try { d = JSON.parse(el.getAttribute('data-cf')); } catch (e) { return; }
+          fill(d);
+          if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+        });
+      });
+      q('.cf-x').addEventListener('click', () => dlg.close());
+      dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    })();
+  </script>
+</Base>
+
+<style>
+  .tn-top { max-width: 620px; margin: 0 auto; text-align: center; }
+  .fil-head { display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .fil-tag { display: inline-block; font-family: var(--display); font-weight: 800; color: #fff; background: var(--c-billard); border-radius: 7px; padding: 3px 11px; font-size: 15px; }
+  .fil-tag.k-france { background: #C9A227; color: #2a2205; }
+  .fil-head-sub { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-faint); }
+  .tn-title { font-family: var(--display); font-weight: 800; font-size: clamp(22px, 4vw, 32px); line-height: 1.08; margin: 10px 0 4px; }
+  .tn-meta { font-size: 13px; color: var(--ink-faint); }
+
+  .tv-radio { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .tv-switch { max-width: 360px; margin: 22px auto 26px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 100px; }
+  .tv-lab { cursor: pointer; text-align: center; padding: 9px 10px; border-radius: 100px; font-size: 13px; font-weight: 800; color: var(--ink-faint); transition: background .18s, color .18s, box-shadow .18s; }
+  .tv-lab:hover { color: var(--ink); }
+  #tnv-parcours:checked ~ .tv-switch .tv-lab--p,
+  #tnv-tableau:checked ~ .tv-switch .tv-lab--t { background: var(--c-billard); color: #fff; box-shadow: 0 3px 10px color-mix(in srgb, var(--c-billard) 32%, transparent); }
+  .tv-radio:focus-visible ~ .tv-switch .tv-lab { outline: 2px solid var(--c-billard); outline-offset: 2px; }
+  .tv-panel { display: none; }
+  #tnv-parcours:checked ~ .tv-parcours { display: block; }
+  #tnv-tableau:checked ~ .tv-tableau { display: block; }
+
+  .tn-stage { margin-bottom: 30px; }
+  .tn-stage-h { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid color-mix(in srgb, var(--c-billard) 26%, transparent); }
+  .tn-stage-n { font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--ink); }
+  .tn-stage-s { font-size: 12.5px; color: var(--ink-faint); }
+
+  .pool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(236px, 1fr)); gap: 14px; }
+  .pool { border: 1px solid color-mix(in srgb, var(--c-billard) 28%, var(--line)); border-top: 3px solid var(--c-billard); border-radius: 16px; background: color-mix(in srgb, var(--c-billard) 4%, var(--surface)); padding: 12px; }
+  .pool-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+  .pool-no { display: inline-block; font-family: var(--display); font-weight: 800; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: #fff; background: var(--c-billard); border-radius: 8px; padding: 5px 12px; box-shadow: 0 2px 8px color-mix(in srgb, var(--c-billard) 40%, transparent); }
+  .pool-qual { display: flex; align-items: center; gap: 7px; text-decoration: none; max-width: 62%; }
+  .pool-qual-ph { position: relative; width: 30px; height: 30px; border-radius: 50%; overflow: hidden; background: var(--surface-2); border: 2px solid var(--c-billard); display: grid; place-items: center; flex: none; }
+  .pool-qual-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .pool-qual-ph .bavatar { font-family: var(--display); font-weight: 800; font-size: 12px; color: var(--ink-faint); }
+  .pool-qual-tx { display: flex; flex-direction: column; min-width: 0; font-family: var(--display); font-weight: 800; font-size: 12.5px; line-height: 1.1; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pool-qual-tx small { font-family: var(--sans, inherit); font-weight: 800; font-size: 8.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--c-billard); }
+  .pool-qual:hover .pool-qual-tx { color: var(--c-billard); }
+  .pool-mm { display: flex; flex-direction: column; gap: 8px; }
+
+  .fin-round { margin-bottom: 16px; }
+  .fin-h { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #fff; background: var(--c-billard); border-radius: 8px; padding: 5px 12px; margin-bottom: 11px; box-shadow: 0 2px 8px color-mix(in srgb, var(--c-billard) 38%, transparent); }
+  .fin-round.is-final .fin-h { color: #2a2205; }
+  .fin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(236px, 1fr)); gap: 12px; }
+
+  .cf { width: min(94vw, 480px); max-height: 88vh; padding: 0; border: none; border-radius: 20px; background: var(--surface); color: var(--ink); box-shadow: 0 24px 70px rgba(0,0,0,.4); overflow: hidden; }
+  .cf::backdrop { background: rgba(10, 14, 22, .55); backdrop-filter: blur(3px); }
+  .cf-inner { position: relative; padding: 22px 20px 20px; overflow-y: auto; max-height: 88vh; }
+  .cf-x { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink-faint); font-size: 15px; cursor: pointer; display: grid; place-items: center; transition: background .15s, color .15s; }
+  .cf-x:hover { background: var(--c-billard); color: #fff; border-color: var(--c-billard); }
+  .cf-head { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-bottom: 14px; }
+  .cf-round-txt { font-family: var(--display); font-weight: 800; font-size: 15px; color: var(--c-billard); text-transform: uppercase; letter-spacing: .04em; }
+  .cf.is-final .cf-round-txt { color: #b08400; }
+  .cf-date { font-size: 12px; color: var(--ink-faint); }
+  .cf-vs { display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 10px; }
+  .cf-player { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; text-decoration: none; }
+  .cf-ph { position: relative; width: 78px; height: 78px; border-radius: 50%; overflow: hidden; background: var(--surface-2); border: 2px solid var(--line); display: grid; place-items: center; }
+  .cf-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .cf-ph .bavatar { font-family: var(--display); font-weight: 800; font-size: 28px; color: var(--ink-faint); }
+  .cf-player.win .cf-ph { border-color: var(--c-billard); }
+  .cf.is-final .cf-player.win .cf-ph { border-color: #E4B23C; }
+  .cf-nm { font-family: var(--display); font-weight: 700; font-size: 15px; line-height: 1.12; color: var(--ink); }
+  .cf-player.win .cf-nm { font-weight: 800; }
+  .cf-player:hover .cf-nm { color: var(--c-billard); }
+  .cf-score { display: flex; align-items: center; gap: 5px; padding-top: 20px; font-family: var(--mono); font-weight: 800; }
+  .cf-score b { font-size: 34px; color: var(--ink-faint); }
+  .cf-score b.win { color: var(--c-billard); }
+  .cf.is-final .cf-score b.win { color: #b08400; }
+  .cf-score i { font-size: 20px; color: var(--ink-faint); font-style: normal; }
+  .cf-h2h { margin-top: 20px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .cf-h2h-h { font-size: 12px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--ink); margin-bottom: 10px; }
+  .cf-h2h-h small { font-weight: 600; color: var(--ink-faint); text-transform: none; letter-spacing: 0; }
+  .cf-rec { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; font-size: 13px; }
+  .cf-rec-a, .cf-rec-b { flex: 1; color: var(--ink-faint); font-weight: 600; }
+  .cf-rec-a { text-align: right; } .cf-rec-b { text-align: left; }
+  .cf-rec b { font-family: var(--mono); font-size: 22px; font-weight: 800; color: var(--ink-faint); }
+  .cf-rec b.lead { color: var(--c-billard); }
+  .cf-rec-dash { color: var(--ink-faint); }
+  .cf-list { display: flex; flex-direction: column; gap: 4px; }
+  :global(.cf-row) { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; font-size: 12.5px; padding: 7px 10px; border-radius: 8px; background: var(--surface-2); }
+  :global(.cf-row-d) { color: var(--ink-faint); font-size: 11px; white-space: nowrap; }
+  :global(.cf-row-t) { color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  :global(.cf-row-s) { font-family: var(--mono); font-weight: 700; color: var(--ink-faint); white-space: nowrap; }
+  :global(.cf-row-s b) { color: var(--ink-faint); } :global(.cf-row-s b.lead) { color: var(--c-billard); }
+  :global(.cf-empty) { font-size: 12.5px; color: var(--ink-faint); text-align: center; padding: 6px; }
+  .cf-cmp { display: block; text-align: center; margin-top: 16px; padding: 11px; border-radius: 12px; background: var(--c-billard); color: #fff; font-weight: 800; font-size: 13px; text-decoration: none; transition: filter .15s; }
+  .cf-cmp:hover { filter: brightness(1.08); }
+
+  .tv-parcours { max-width: 620px; margin: 0 auto; }
+  .fil-champ { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 22px; }
+  .fil-champ-ph { position: relative; width: 104px; height: 104px; border-radius: 50%; overflow: hidden; background: var(--surface-2); border: 3px solid #E4B23C; box-shadow: 0 8px 28px color-mix(in srgb, #E4B23C 40%, transparent); display: grid; place-items: center; }
+  .fil-champ-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .fil-champ-ph .bavatar { font-family: var(--display); font-weight: 800; font-size: 38px; color: var(--ink-faint); }
+  .fil-champ-crown { position: absolute; top: -10px; font-size: 28px; filter: drop-shadow(0 2px 3px rgba(0,0,0,.25)); }
+  .fil-champ-lab { margin-top: 10px; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #b08400; }
+  .fil-champ-nm { font-family: var(--display); font-weight: 800; font-size: 26px; line-height: 1.1; color: var(--ink); text-decoration: none; }
+  .fil-track { position: relative; padding-left: 34px; }
+  .fil-track::before { content: ''; position: absolute; left: 11px; top: 0; bottom: 26px; width: 3px; border-radius: 3px; background: linear-gradient(to bottom, #E4B23C, var(--c-billard) 22%, color-mix(in srgb, var(--c-billard) 25%, transparent)); }
+  .fil-step { position: relative; margin-bottom: 16px; }
+  .fil-node { position: absolute; left: -34px; top: 22px; width: 24px; height: 24px; display: grid; place-items: center; }
+  .fil-node-dot { width: 13px; height: 13px; border-radius: 50%; background: var(--c-billard); border: 3px solid var(--surface); box-shadow: 0 0 0 2px color-mix(in srgb, var(--c-billard) 40%, transparent); }
+  .fil-step.is-final .fil-node-dot { background: #E4B23C; box-shadow: 0 0 0 2px color-mix(in srgb, #E4B23C 55%, transparent), 0 0 14px color-mix(in srgb, #E4B23C 60%, transparent); width: 15px; height: 15px; }
+  .fil-round { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--c-billard); margin-bottom: 6px; }
+  .fil-step.is-final .fil-round { color: #b08400; }
+  .fil-match { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); overflow: hidden; }
+  .fil-step.is-final .fil-match { border-color: #E4B23C; box-shadow: 0 6px 20px color-mix(in srgb, #E4B23C 16%, transparent); }
+  .fil-vs { display: flex; flex-direction: column; }
+  .fil-p { display: flex; align-items: center; gap: 11px; padding: 10px 14px; text-decoration: none; color: var(--ink); transition: background .12s; }
+  .fil-p:first-child { border-bottom: 1px solid var(--line); }
+  .fil-p:hover { background: var(--surface-2); }
+  .fil-p--win { background: color-mix(in srgb, var(--c-billard) 8%, var(--surface)); }
+  .fil-step.is-final .fil-p--win { background: color-mix(in srgb, #E4B23C 12%, var(--surface)); }
+  .fil-ph { position: relative; width: 38px; height: 38px; border-radius: 50%; overflow: hidden; background: var(--surface-2); border: 1px solid var(--line); display: grid; place-items: center; flex: none; }
+  .fil-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .fil-ph .bavatar { font-family: var(--display); font-weight: 800; font-size: 15px; color: var(--ink-faint); }
+  .fil-nm { flex: 1; min-width: 0; font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fil-p--win .fil-nm { font-weight: 800; }
+  .fil-sc { font-family: var(--mono); font-weight: 800; font-size: 18px; color: var(--ink-faint); flex: none; }
+  .fil-p--win .fil-sc { color: var(--c-billard); }
+  .fil-step.is-final .fil-p--win .fil-sc { color: #b08400; }
+  .fil-opp { border-top: 1px dashed var(--line); background: var(--surface-2); }
+  .fil-opp > summary { cursor: pointer; list-style: none; padding: 9px 14px; font-size: 12px; font-weight: 700; color: var(--ink-faint); display: flex; align-items: center; gap: 6px; }
+  .fil-opp > summary::-webkit-details-marker { display: none; }
+  .fil-opp-ar { transition: transform .18s; display: inline-block; color: var(--c-billard); }
+  .fil-opp[open] > summary .fil-opp-ar { transform: rotate(90deg); }
+  .fil-opp-body { padding: 0 14px 12px; }
+  .fil-start { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-faint); padding-top: 4px; }
+  .fil-hint { margin-top: 18px; font-size: 12.5px; color: var(--ink-faint); text-align: center; }
+</style>

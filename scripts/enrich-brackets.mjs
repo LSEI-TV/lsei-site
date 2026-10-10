@@ -19,7 +19,7 @@ const DRY = process.argv.includes('--dry');
 const mk = (s) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-const files = readdirSync(DATA).filter((f) => /^results-\d{4}-\d{4}\.json$/.test(f)).sort();
+const files = readdirSync(DATA).filter((f) => /^results-(femmes-)?\d{4}-\d{4}\.json$/.test(f)).sort();
 
 for (const file of files) {
   const path = join(DATA, file);
