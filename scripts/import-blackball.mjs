@@ -146,7 +146,7 @@ async function importCompetition(cfg, allTournaments) {
       const a = ensure(m.playerA), b = ensure(m.playerB);
       const sA = m.scoreA ?? 0, sB = m.scoreB ?? 0;
       const mdate = (m.starttime || date).slice(0, 10);
-      matches.push({ tid: String(t.id), date: mdate, aId: a.id, bId: b.id, aName: a.name, bName: b.name, sA, sB, round: m.roundName });
+      matches.push({ tid: String(t.id), date: mdate, aId: a.id, bId: b.id, aName: a.name, bName: b.name, sA, sB, round: m.roundName, matchno: m.matchno ?? null, roundNo: m.round ?? null });
       for (const [pl, my, opp, loser] of [[a, sA, sB, sA < sB], [b, sB, sA, sB < sA]]) {
         pl.played++; pl.pf += my; pl.pa += opp; pl.tourns.add(t.id);
         if (my > opp) pl.wins++; else pl.losses++;

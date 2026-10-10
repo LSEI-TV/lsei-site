@@ -1,0 +1,63 @@
+---
+// Parcours RÉCURSIF d'un joueur dans un tournoi : les matchs qu'il a gagnés AVANT un
+// tour donné (beforeRound). Chaque joueur battu est lui-même dépliable → on peut
+// descendre tout le tableau de proche en proche (les 31 matchs deviennent accessibles).
+import PlayerRun from './PlayerRun.astro';
+interface Props {
+  playerId: number; beforeRound: number; matches: any[];
+  slugOf: (id: number) => string; labelOf: (rn: number) => string; depth?: number;
+}
+const { playerId, beforeRound, matches, slugOf, labelOf, depth = 0 } = Astro.props as Props;
+const winnerOf = (m: any) => (m.sA > m.sB ? m.aId : m.bId);
+const run = matches
+  .filter((x) => (x.aId === playerId || x.bId === playerId) && winnerOf(x) === playerId && x.roundNo < beforeRound)
+  .sort((a, b) => a.roundNo - b.roundNo)
+  .map((x) => {
+    const a = x.aId === playerId;
+    return { roundNo: x.roundNo, round: labelOf(x.roundNo), beatId: a ? x.bId : x.aId, beatName: a ? x.bName : x.aName, my: a ? x.sA : x.sB, opp: a ? x.sB : x.sA };
+  });
+---
+{run.length > 0 && (
+  <div class="prun">
+    {run.map((o) => {
+      const beatenHasRun = matches.some((x) => (x.aId === o.beatId || x.bId === o.beatId) && winnerOf(x) === o.beatId && x.roundNo < o.roundNo);
+      return (
+        <div class="prun-item">
+          <div class="prun-row">
+            <span class="prun-rnd">{o.round}</span>
+            <span class="prun-txt">bat <a href={`/billard/joueur/${slugOf(o.beatId)}`}>{o.beatName}</a></span>
+            <span class="prun-sc">{o.my}–{o.opp}</span>
+          </div>
+          {beatenHasRun && (
+            <details class="prun-more">
+              <summary><span class="prun-ar">▸</span> parcours de {o.beatName.split(' ')[0]}</summary>
+              <PlayerRun playerId={o.beatId} beforeRound={o.roundNo} matches={matches} slugOf={slugOf} labelOf={labelOf} depth={depth + 1} />
+            </details>
+          )}
+        </div>
+      );
+    })}
+  </div>
+)}
+
+<style>
+  .prun { display: flex; flex-direction: column; gap: 4px; }
+  .prun-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 3px 0; }
+  .prun-rnd { flex: none; width: 96px; font-size: 10px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; color: var(--ink-faint); }
+  .prun-txt { flex: 1; color: var(--ink); }
+  .prun-txt a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 2px; }
+  .prun-txt a:hover { color: var(--c-billard); }
+  .prun-sc { font-family: var(--mono); font-weight: 700; color: var(--ink-faint); }
+  /* Dépliage en cascade : chaque niveau s'indente et prend un filet à gauche. */
+  .prun-more { margin: 2px 0 2px 96px; border-left: 2px solid color-mix(in srgb, var(--c-billard) 22%, transparent); padding-left: 10px; }
+  .prun-more summary { cursor: pointer; list-style: none; font-size: 11px; font-weight: 700; color: var(--c-billard); opacity: .85; padding: 2px 0; }
+  .prun-more summary::-webkit-details-marker { display: none; }
+  .prun-more[open] > summary { opacity: 1; }
+  .prun-ar { display: inline-block; transition: transform .18s; }
+  .prun-more[open] > summary .prun-ar { transform: rotate(90deg); }
+  @media (max-width: 420px) {
+    .prun-row { flex-wrap: wrap; gap: 2px 8px; }
+    .prun-rnd { width: 100%; }
+    .prun-more { margin-left: 0; }
+  }
+</style>
