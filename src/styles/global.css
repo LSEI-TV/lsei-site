@@ -1487,18 +1487,18 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .bm-meta { grid-area: meta; font-size: 11.5px; color: var(--ink-faint); align-self: start; }
 
 /* page de choix Billard (Masters / Femmes) — direction « Champion à la une » */
-.bchoose { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.bchoose-card { position: relative; display: flex; flex-direction: column; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--surface); padding: 18px 22px; overflow: hidden; transition: border-color .15s; }
+.bchoose { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.bchoose-card { position: relative; display: flex; flex-direction: column; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--surface); padding: 15px 15px; overflow: hidden; transition: border-color .15s; }
 .bchoose-card::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--cc, var(--c-billard)); }
 .bchoose-card:hover { border-color: var(--cc, var(--c-billard)); }
 .bchoose-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--cc, var(--c-billard)); line-height: 1.35; }
 .bchoose-title-link { display: inline-block; }
-.bchoose-title { font-family: var(--display); text-transform: uppercase; font-weight: 700; font-size: 23px; line-height: 1.1; color: var(--ink); margin: 0; }
+.bchoose-title { font-family: var(--display); text-transform: uppercase; font-weight: 700; font-size: 17px; line-height: 1.12; color: var(--ink); margin: 0; }
 .bchoose-title .bt-cat { color: var(--cc, var(--c-billard)); }
 .bchoose-title .bt-arrow { color: var(--cc, var(--c-billard)); display: inline-block; margin-right: 5px; transition: transform .18s ease; }
 .bchoose-title-link:hover .bt-arrow { transform: translateX(3px); }
 .bchoose-title-link:hover .bchoose-title { opacity: .85; }
-.bchoose-desc { margin-top: 8px; font-size: 13px; line-height: 1.45; color: var(--ink-soft); min-height: 40px; }
+.bchoose-desc { margin-top: 6px; font-size: 12px; line-height: 1.4; color: var(--ink-soft); display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* champion à la une (or) */
 .champ-feature { display: flex; align-items: center; gap: 12px; margin-top: 14px; padding: 10px 14px; border-radius: 12px; border: 1px solid color-mix(in srgb, #E4B23C 55%, var(--line-strong)); background: color-mix(in srgb, #E4B23C 13%, var(--surface)); transition: border-color .15s, background .15s; }
@@ -1509,18 +1509,18 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .champ-name { font-family: var(--display); text-transform: uppercase; font-weight: 700; font-size: 18px; color: var(--ink); line-height: 1.05; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .champ-go { flex: none; color: #E4B23C; font-weight: 700; font-size: 16px; }
 
-.bchoose-sublab { margin-top: 14px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint); }
-.bchoose-podium { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
-.bchoose-pod { display: flex; align-items: center; gap: 11px; padding: 5px 10px; border-radius: 8px; border: 1px solid transparent; }
+.bchoose-sublab { margin-top: 10px; font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-faint); }
+.bchoose-podium { margin-top: 5px; display: flex; flex-direction: column; gap: 2px; }
+.bchoose-pod { display: flex; align-items: center; gap: 8px; padding: 4px 7px; border-radius: 8px; border: 1px solid transparent; }
 .bchoose-pod:hover { border-color: var(--cc, var(--c-billard)); background: color-mix(in srgb, var(--cc, var(--c-billard)) 7%, var(--surface)); }
 .bchoose-pod-r { flex: none; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 800; font-size: 12px; background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line-strong); }
 .bchoose-pod-r.r1 { background: color-mix(in srgb, #E4B23C 24%, transparent); border-color: #E4B23C; color: #E4B23C; }
 .bchoose-pod-r.r2 { background: color-mix(in srgb, #C6CAD2 22%, transparent); border-color: #C6CAD2; color: #C6CAD2; }
 .bchoose-pod-r.r3 { background: color-mix(in srgb, #CD8A54 22%, transparent); border-color: #CD8A54; color: #CD8A54; }
 .bchoose-pod-n { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
-.pod-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; font-size: 14px; color: var(--ink); }
+.pod-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; font-size: 12.5px; color: var(--ink); }
 .pod-tag { font-style: normal; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: #E4B23C; white-space: nowrap; line-height: 1.1; }
-.bchoose-pod-p { flex: none; font-family: var(--mono); font-size: 12.5px; color: var(--ink-soft); }
+.bchoose-pod-p { flex: none; font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
 .bchoose-pod-p small { color: var(--ink-faint); margin-left: 2px; }
 
 .bchoose-stats { display: flex; gap: 10px; margin-top: 12px; }
@@ -1539,7 +1539,8 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .bchoose-video-s { font-size: 13px; color: var(--ink-soft); }
 .bchoose-video-cta { flex: none; font-weight: 700; font-size: 14px; color: var(--c-billard); white-space: nowrap; }
 .bchoose-video:hover .bchoose-video-cta { text-decoration: underline; }
-@media (max-width: 620px) { .bchoose { grid-template-columns: 1fr; } .bchoose-title { font-size: 26px; } .bchoose-video { flex-wrap: wrap; } .bchoose-video-cta { flex-basis: 100%; } }
+@media (max-width: 1080px) { .bchoose { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .bchoose { grid-template-columns: 1fr; } .bchoose-title { font-size: 20px; } .bchoose-video { flex-wrap: wrap; } .bchoose-video-cta { flex-basis: 100%; } }
 
 /* recherche joueur */
 .psearch { position: relative; max-width: 460px; }
