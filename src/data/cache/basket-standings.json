@@ -1,22 +1,55 @@
 {
-  "updated": "2026-10-09T19:57:48.795Z",
+  "updated": "2026-10-10T14:34:57.706Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/classement",
   "pool": "Poule B",
   "rows": [
     {
       "slug": "lorient",
       "rank": 1,
+      "pts": 8,
+      "played": 5,
+      "w": 3,
+      "l": 2,
+      "pf": 370,
+      "pa": 360,
+      "diff": 10
+    },
+    {
+      "slug": "tarbes",
+      "rank": 2,
       "pts": 7,
       "played": 4,
       "w": 3,
       "l": 1,
-      "pf": 309,
-      "pa": 290,
-      "diff": 19
+      "pf": 331,
+      "pa": 307,
+      "diff": 24
+    },
+    {
+      "slug": "angers",
+      "rank": 3,
+      "pts": 7,
+      "played": 4,
+      "w": 3,
+      "l": 1,
+      "pf": 282,
+      "pa": 274,
+      "diff": 8
+    },
+    {
+      "slug": "fougeres",
+      "rank": 4,
+      "pts": 7,
+      "played": 4,
+      "w": 3,
+      "l": 1,
+      "pf": 279,
+      "pa": 272,
+      "diff": 7
     },
     {
       "slug": "bordeaux",
-      "rank": 2,
+      "rank": 5,
       "pts": 7,
       "played": 5,
       "w": 2,
@@ -26,8 +59,19 @@
       "diff": 3
     },
     {
+      "slug": "tours",
+      "rank": 6,
+      "pts": 7,
+      "played": 5,
+      "w": 2,
+      "l": 3,
+      "pf": 389,
+      "pa": 392,
+      "diff": -3
+    },
+    {
       "slug": "challans",
-      "rank": 3,
+      "rank": 7,
       "pts": 6,
       "played": 3,
       "w": 3,
@@ -37,85 +81,63 @@
       "diff": 30
     },
     {
-      "slug": "tours",
-      "rank": 4,
+      "slug": "rennes",
+      "rank": 8,
       "pts": 6,
       "played": 4,
       "w": 2,
       "l": 2,
-      "pf": 317,
-      "pa": 316,
-      "diff": 1
+      "pf": 350,
+      "pa": 341,
+      "diff": 9
     },
     {
-      "slug": "tarbes",
-      "rank": 5,
+      "slug": "vitre",
+      "rank": 9,
       "pts": 5,
       "played": 3,
       "w": 2,
       "l": 1,
-      "pf": 251,
-      "pa": 233,
-      "diff": 18
-    },
-    {
-      "slug": "angers",
-      "rank": 6,
-      "pts": 5,
-      "played": 3,
-      "w": 2,
-      "l": 1,
-      "pf": 192,
-      "pa": 185,
-      "diff": 7
-    },
-    {
-      "slug": "fougeres",
-      "rank": 7,
-      "pts": 5,
-      "played": 3,
-      "w": 2,
-      "l": 1,
-      "pf": 209,
-      "pa": 211,
-      "diff": -2
-    },
-    {
-      "slug": "rennes",
-      "rank": 8,
-      "pts": 4,
-      "played": 3,
-      "w": 1,
-      "l": 2,
-      "pf": 255,
-      "pa": 252,
-      "diff": 3
+      "pf": 208,
+      "pa": 208,
+      "diff": 0
     },
     {
       "slug": "chartres",
-      "rank": 9,
-      "pts": 4,
-      "played": 3,
+      "rank": 10,
+      "pts": 5,
+      "played": 4,
       "w": 1,
-      "l": 2,
-      "pf": 251,
-      "pa": 257,
-      "diff": -6
+      "l": 3,
+      "pf": 325,
+      "pa": 337,
+      "diff": -12
     },
     {
       "slug": "sables",
-      "rank": 10,
+      "rank": 11,
+      "pts": 5,
+      "played": 4,
+      "w": 1,
+      "l": 3,
+      "pf": 297,
+      "pa": 316,
+      "diff": -19
+    },
+    {
+      "slug": "toulouse",
+      "rank": 12,
       "pts": 4,
       "played": 3,
       "w": 1,
       "l": 2,
-      "pf": 208,
-      "pa": 221,
-      "diff": -13
+      "pf": 253,
+      "pa": 261,
+      "diff": -8
     },
     {
       "slug": "laval",
-      "rank": 11,
+      "rank": 13,
       "pts": 4,
       "played": 4,
       "w": 0,
@@ -123,28 +145,6 @@
       "pf": 281,
       "pa": 330,
       "diff": -49
-    },
-    {
-      "slug": "vitre",
-      "rank": 12,
-      "pts": 3,
-      "played": 2,
-      "w": 1,
-      "l": 1,
-      "pf": 132,
-      "pa": 136,
-      "diff": -4
-    },
-    {
-      "slug": "toulouse",
-      "rank": 13,
-      "pts": 3,
-      "played": 2,
-      "w": 1,
-      "l": 1,
-      "pf": 164,
-      "pa": 171,
-      "diff": -7
     }
   ]
 }
