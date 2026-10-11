@@ -158,6 +158,26 @@ const liveDisc = live ? getDiscipline(live.discipline) : null;
 // Couleurs de fond auto par sport (pour le swap temps réel du hero côté client).
 const heroColors = Object.fromEntries(disciplines.map((d) => [d.slug, { from: d.from, to: d.to }]));
 
+// Fond « low-poly » : maillage de triangles, recoloré par la discipline via --h-from/--h-to.
+// Plus visible à droite (côté couleur), s'efface vers le texte à gauche.
+const POLY = (() => {
+  const COLS = 10, ROWS = 5, W = 1200, H = 420, cw = W / COLS, ch = H / ROWS;
+  const tris: { pts: string; col: string; op: string }[] = [];
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    const x0 = c * cw, x1 = (c + 1) * cw, y0 = r * ch, y1 = (r + 1) * ch;
+    const cells: number[][][] = ((r + c) % 2 === 0)
+      ? [[[x0, y0], [x1, y0], [x0, y1]], [[x1, y0], [x1, y1], [x0, y1]]]
+      : [[[x0, y0], [x1, y0], [x1, y1]], [[x0, y0], [x1, y1], [x0, y1]]];
+    cells.forEach((t, k) => {
+      const xc = (t[0][0] + t[1][0] + t[2][0]) / 3, yc = (t[0][1] + t[1][1] + t[2][1]) / 3;
+      const op = (0.015 + (xc / W) * 0.15 + (1 - yc / H) * 0.03).toFixed(3);
+      const col = ((r * COLS + c + k) % 3 === 0) ? 'var(--h-to)' : 'var(--h-from)';
+      tris.push({ pts: t.map((p) => p.map(Math.round).join(',')).join(' '), col, op });
+    });
+  }
+  return tris;
+})();
+
 // (Le hero de l'accueil est désormais auto-généré par sport — plus d'image de fond fixe.)
 const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t as any).label);
 // Catégorie de la vidéo à la une (déduite du titre, ex. « Femmes »), sinon la discipline.
@@ -220,6 +240,9 @@ const slides = programme
   {live && liveDisc && (
     <section class="mhero" data-sport={live.discipline} style={`--hero-accent:${liveDisc.colorVar};--h-from:${liveDisc.from};--h-to:${liveDisc.to}`}>
       <div class="mhero-media" aria-hidden="true">
+        <svg class="mhero-poly" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMid slice">
+          {POLY.map((t) => <polygon points={t.pts} style={`fill:${t.col}`} fill-opacity={t.op} stroke="#ffffff" stroke-opacity="0.03" stroke-width="1" />)}
+        </svg>
         <span class="mhero-ico">
           {disciplines.map((d) => (
             <span class:list={['mhero-ico-item', { 'is-on': d.slug === live.discipline }]} data-sport={d.slug}><SportIcon slug={d.slug} /></span>
@@ -250,6 +273,7 @@ const slides = programme
           <a class="btn hero-play" href={heroBtnHref} target="_blank" rel="noopener">▸ {live.isLive ? 'Regarder le direct' : 'Regarder'}</a>
           {!live.isLive && gcalUrl && <a class="btn ghost hero-cal" href={gcalUrl} target="_blank" rel="noopener">＋ Ajouter au calendrier</a>}
         </div>
+        <a class="mhero-more" href="/direct" style="display:none"><span class="pulse"></span><b data-n>2</b>&nbsp;directs en cours · voir tout →</a>
       </div>
     </section>
   )}
@@ -282,6 +306,7 @@ const slides = programme
       var count = hero.querySelector('.hero-count');
       var when = hero.querySelector('.mhero-when');
       var sub = hero.querySelector('.mhero-sub');
+      var more = hero.querySelector('.mhero-more');
       var heroColors = {}; try { heroColors = JSON.parse(document.getElementById('hero-colors').textContent); } catch (e) {}
       function clean(t) { var p = (t || '').split('|').map(function (s) { return s.trim(); }).filter(Boolean); return p.length ? p[p.length - 1] : (t || ''); }
       // Fond AUTO : adapte les couleurs + l'icône du hero au sport du direct.
@@ -297,6 +322,8 @@ const slides = programme
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (d) {
             var lives = (d && d.lives) ? d.lives : (d && d.live && d.id ? [{ id: d.id, title: d.title || 'Direct' }] : []);
+            // Plusieurs directs simultanés (ex. billard + basket le même week-end) → pastille « voir tout ».
+            if (more) { if (lives.length > 1) { var nb = more.querySelector('[data-n]'); if (nb) nb.textContent = lives.length; more.style.display = ''; } else { more.style.display = 'none'; } }
             if (!lives.length) return; // pas de direct : on garde la une construite (à venir / à revoir)
             var l = lives[0];
             if (l.discipline) setSport(l.discipline);
