@@ -105,6 +105,14 @@ const defB = R.players[2]?.id;
         html += '</div>';
         out.innerHTML = html;
       }
+      // Présélection via l'URL (?a=<id>&b=<id>) — ex. lien « Comparer » depuis un tableau.
+      try {
+        var sp = new URLSearchParams(location.search);
+        var qa = sp.get('a'), qb = sp.get('b');
+        var has = function (sel, v) { return v && Array.prototype.some.call(sel.options, function (o) { return o.value === String(v); }); };
+        if (has(selA, qa)) selA.value = qa;
+        if (has(selB, qb)) selB.value = qb;
+      } catch (e) {}
       selA.addEventListener('change', render);
       selB.addEventListener('change', render);
       render();

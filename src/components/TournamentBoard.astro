@@ -64,8 +64,8 @@ const cfData = (m: any) => {
   h2h.sort((p, q) => (p.d < q.d ? 1 : -1));
   return {
     round: labelOf(m.roundNo), date: m.date,
-    a: { name: m.aName, slug: slugOf(aId), photo: ph(aId, m.aName) || '', sc: m.sA, win: aWin },
-    b: { name: m.bName, slug: slugOf(bId), photo: ph(bId, m.bName) || '', sc: m.sB, win: !aWin },
+    a: { id: aId, name: m.aName, slug: slugOf(aId), photo: ph(aId, m.aName) || '', sc: m.sA, win: aWin },
+    b: { id: bId, name: m.bName, slug: slugOf(bId), photo: ph(bId, m.bName) || '', sc: m.sB, win: !aWin },
     rec: { aw, bw }, h2h,
   };
 };
@@ -269,7 +269,9 @@ const champPath = matches
           row.innerHTML = '<span class="cf-row-d">' + fmt(x.d) + '</span><span class="cf-row-t">' + (x.t || '') + '</span><span class="cf-row-s"><b class="' + (aw ? 'lead' : '') + '">' + x.aSc + '</b>–<b class="' + (bw ? 'lead' : '') + '">' + x.bSc + '</b></span>';
           list.appendChild(row);
         });
-        q('.cf-cmp').setAttribute('href', dlg.getAttribute('data-cmp') || '#');
+        var cmp = dlg.getAttribute('data-cmp') || '#';
+        if (d.a && d.a.id != null && d.b && d.b.id != null) cmp += (cmp.indexOf('?') < 0 ? '?' : '&') + 'a=' + d.a.id + '&b=' + d.b.id;
+        q('.cf-cmp').setAttribute('href', cmp);
       }
       document.querySelectorAll('[data-cf]').forEach((el) => {
         el.addEventListener('click', () => {
