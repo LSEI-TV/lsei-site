@@ -155,8 +155,28 @@ if (!programme.length) {
 }
 
 const liveDisc = live ? getDiscipline(live.discipline) : null;
-// Couleurs de fond auto par sport (pour le swap temps réel du hero côté client).
-const heroColors = Object.fromEntries(disciplines.map((d) => [d.slug, { from: d.from, to: d.to }]));
+// Couleurs + libellé par sport (pour le swap temps réel du hero côté client, simple ET double).
+const heroColors = Object.fromEntries(disciplines.map((d) => [d.slug, { from: d.from, to: d.to, label: d.label }]));
+
+// Maillage low-poly « double » : facettes var(--mix-l) à gauche, var(--mix-r) à droite
+// (recolorées par les 2 disciplines quand 2 directs simultanés).
+const POLY_DUAL = (() => {
+  const COLS = 12, ROWS = 5, W = 1200, H = 420, cw = W / COLS, ch = H / ROWS;
+  const tris: { pts: string; col: string; op: string }[] = [];
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    const x0 = c * cw, x1 = (c + 1) * cw, y0 = r * ch, y1 = (r + 1) * ch;
+    const cells: number[][][] = ((r + c) % 2 === 0)
+      ? [[[x0, y0], [x1, y0], [x0, y1]], [[x1, y0], [x1, y1], [x0, y1]]]
+      : [[[x0, y0], [x1, y0], [x1, y1]], [[x0, y0], [x1, y1], [x0, y1]]];
+    cells.forEach((t) => {
+      const xc = (t[0][0] + t[1][0] + t[2][0]) / 3;
+      const col = xc < W * 0.5 ? 'var(--mix-l)' : 'var(--mix-r)';
+      const op = (0.02 + Math.abs(xc / W - 0.5) * 2 * 0.14).toFixed(3);
+      tris.push({ pts: t.map((p) => p.map(Math.round).join(',')).join(' '), col, op });
+    });
+  }
+  return tris;
+})();
 
 // Fond « low-poly » : maillage de triangles, recoloré par la discipline via --h-from/--h-to.
 // Plus visible à droite (côté couleur), s'efface vers le texte à gauche.
@@ -249,6 +269,14 @@ const slides = programme
           ))}
         </span>
       </div>
+      <!-- Fond DOUBLE (2 directs simultanés de sports différents) — activé par le script. -->
+      <div class="mhero-dual-media" aria-hidden="true" style="display:none">
+        <svg class="mhero-poly" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMid slice">
+          {POLY_DUAL.map((t) => <polygon points={t.pts} style={`fill:${t.col}`} fill-opacity={t.op} stroke="#ffffff" stroke-opacity="0.03" stroke-width="1" />)}
+        </svg>
+        <span class="mhero-ico mhero-ico--l">{disciplines.map((d) => <span class="mhero-ico-item" data-sport={d.slug}><SportIcon slug={d.slug} /></span>)}</span>
+        <span class="mhero-ico mhero-ico--r">{disciplines.map((d) => <span class="mhero-ico-item" data-sport={d.slug}><SportIcon slug={d.slug} /></span>)}</span>
+      </div>
       <script type="application/json" id="hero-colors" set:html={JSON.stringify(heroColors)}></script>
       <div class="wrap mhero-in">
         <span class={`hero-pill${live.isLive ? ' is-live' : ' is-soon'}`}>{live.isLive ? '● En direct' : (live.status === 'upcoming' ? 'En direct bientôt' : 'À revoir')}{heroCat ? ` · ${heroCat}` : ''}</span>
@@ -274,6 +302,16 @@ const slides = programme
           {!live.isLive && gcalUrl && <a class="btn ghost hero-cal" href={gcalUrl} target="_blank" rel="noopener">＋ Ajouter au calendrier</a>}
         </div>
         <a class="mhero-more" href="/direct" style="display:none"><span class="pulse"></span><b data-n>2</b>&nbsp;directs en cours · voir tout →</a>
+      </div>
+      <!-- Contenu DOUBLE (2 directs simultanés) — rempli/affiché par le script. -->
+      <div class="wrap mhero-dual" style="display:none">
+        <span class="hero-pill is-live mhero-dual-pill">● 2 directs en cours</span>
+        <div class="mhero-dual-grid">
+          <a class="mhero-dual-ev mhero-dual-ev--l" href="/direct"><span class="mhero-dual-tag"></span><span class="mhero-dual-h"></span><span class="mhero-dual-sub"></span></a>
+          <span class="mhero-dual-vs">VS</span>
+          <a class="mhero-dual-ev mhero-dual-ev--r" href="/direct"><span class="mhero-dual-tag"></span><span class="mhero-dual-h"></span><span class="mhero-dual-sub"></span></a>
+        </div>
+        <a class="btn mhero-dual-btn" href="/direct">▸ Voir les deux directs</a>
       </div>
     </section>
   )}
@@ -307,22 +345,59 @@ const slides = programme
       var when = hero.querySelector('.mhero-when');
       var sub = hero.querySelector('.mhero-sub');
       var more = hero.querySelector('.mhero-more');
+      var singleMedia = hero.querySelector('.mhero-media');
+      var singleIn = hero.querySelector('.mhero-in');
+      var dualMedia = hero.querySelector('.mhero-dual-media');
+      var dual = hero.querySelector('.mhero-dual');
       var heroColors = {}; try { heroColors = JSON.parse(document.getElementById('hero-colors').textContent); } catch (e) {}
       function clean(t) { var p = (t || '').split('|').map(function (s) { return s.trim(); }).filter(Boolean); return p.length ? p[p.length - 1] : (t || ''); }
-      // Fond AUTO : adapte les couleurs + l'icône du hero au sport du direct.
+      function ctxOf(l) { var c = l.context || ''; if (l.place) c = c ? (c + ' · 📍 ' + l.place) : ('📍 ' + l.place); return c; }
+      // Fond AUTO (mode simple) : couleurs + icône du hero au sport du direct.
       function setSport(disc) {
         if (!disc) return;
         hero.setAttribute('data-sport', disc);
         var c = heroColors[disc]; if (c) { hero.style.setProperty('--h-from', c.from); hero.style.setProperty('--h-to', c.to); }
         hero.style.setProperty('--hero-accent', 'var(--c-' + disc + ')');
-        hero.querySelectorAll('.mhero-ico-item').forEach(function (it) { it.classList.toggle('is-on', it.getAttribute('data-sport') === disc); });
+        if (singleMedia) singleMedia.querySelectorAll('.mhero-ico-item').forEach(function (it) { it.classList.toggle('is-on', it.getAttribute('data-sport') === disc); });
+      }
+      function setIco(slot, disc) { if (slot) slot.querySelectorAll('.mhero-ico-item').forEach(function (it) { it.classList.toggle('is-on', it.getAttribute('data-sport') === disc); }); }
+      function fillEv(ev, l) {
+        if (!ev) return;
+        var c = heroColors[l.discipline] || {};
+        var tag = ev.querySelector('.mhero-dual-tag');
+        if (tag) { tag.textContent = c.label || l.discipline || 'Direct'; tag.style.background = 'var(--c-' + l.discipline + ')'; }
+        var h = ev.querySelector('.mhero-dual-h'); if (h) h.textContent = l.match || clean(l.title);
+        var s = ev.querySelector('.mhero-dual-sub'); if (s) s.textContent = ctxOf(l);
+      }
+      // Mode DOUBLE : 2 directs de sports différents en même temps → hero « mélange ».
+      function showDual(a, b) {
+        var ca = heroColors[a.discipline] || {}, cb = heroColors[b.discipline] || {};
+        hero.style.setProperty('--mix-l', ca.from); hero.style.setProperty('--mix-l2', ca.to);
+        hero.style.setProperty('--mix-r', cb.from); hero.style.setProperty('--mix-r2', cb.to);
+        if (dualMedia) { setIco(dualMedia.querySelector('.mhero-ico--l'), a.discipline); setIco(dualMedia.querySelector('.mhero-ico--r'), b.discipline); }
+        fillEv(dual && dual.querySelector('.mhero-dual-ev--l'), a);
+        fillEv(dual && dual.querySelector('.mhero-dual-ev--r'), b);
+        if (singleMedia) singleMedia.style.display = 'none';
+        if (singleIn) singleIn.style.display = 'none';
+        if (more) more.style.display = 'none';
+        if (dualMedia) dualMedia.style.display = '';
+        if (dual) dual.style.display = '';
+      }
+      function showSingle() {
+        if (dualMedia) dualMedia.style.display = 'none';
+        if (dual) dual.style.display = 'none';
+        if (singleMedia) singleMedia.style.display = '';
+        if (singleIn) singleIn.style.display = '';
       }
       function sync() {
         fetch('/live.json', { cache: 'no-store' })
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (d) {
             var lives = (d && d.lives) ? d.lives : (d && d.live && d.id ? [{ id: d.id, title: d.title || 'Direct' }] : []);
-            // Plusieurs directs simultanés (ex. billard + basket le même week-end) → pastille « voir tout ».
+            // 2 directs de sports DIFFÉRENTS en même temps → hero « mélange ».
+            if (lives.length >= 2 && lives[0].discipline && lives[1].discipline && lives[0].discipline !== lives[1].discipline) { showDual(lives[0], lives[1]); return; }
+            showSingle();
+            // Plusieurs directs du même sport → pastille « voir tout ».
             if (more) { if (lives.length > 1) { var nb = more.querySelector('[data-n]'); if (nb) nb.textContent = lives.length; more.style.display = ''; } else { more.style.display = 'none'; } }
             if (!lives.length) return; // pas de direct : on garde la une construite (à venir / à revoir)
             var l = lives[0];

@@ -1850,6 +1850,32 @@ th, td, figcaption, .chip, .badge {
 .mhero-ico-item svg { width: 86%; height: 86%; color: #fff; opacity: .09;
   filter: drop-shadow(0 0 48px color-mix(in srgb, var(--hero-accent, #ffffff) 55%, transparent)); }
 @media (max-width: 620px) { .mhero-ico { width: 62%; right: -8%; opacity: .9; } }
+
+/* ----- Hero DOUBLE : 2 directs simultanés de sports différents (fond + contenu) ----- */
+.mhero-dual-media { position: absolute; inset: 0;
+  background:
+    radial-gradient(90% 120% at 12% 42%, color-mix(in srgb, var(--mix-l, #26324a) 55%, #0A0E1A) 0%, transparent 52%),
+    radial-gradient(90% 120% at 90% 42%, color-mix(in srgb, var(--mix-r, #26324a) 58%, #0A0E1A) 0%, transparent 52%),
+    linear-gradient(90deg, color-mix(in srgb, var(--mix-l2, #141c2e) 55%, #0A0E1A) 0%, #0A0E1A 50%, color-mix(in srgb, var(--mix-r2, #141c2e) 60%, #0A0E1A) 100%); }
+.mhero-dual-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(10,14,26,.72) 0%, transparent 60%), radial-gradient(58% 100% at 50% 48%, rgba(10,14,26,.55) 0%, transparent 72%); }
+.mhero-ico--l { left: -2%; right: auto; width: 34%; max-width: 360px; }
+.mhero-ico--r { right: -2%; left: auto; width: 34%; max-width: 360px; }
+.mhero-dual { position: relative; z-index: 2; padding-top: 46px; padding-bottom: 42px; text-align: center; }
+.mhero-dual-grid { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 22px; margin: 18px 0 12px; }
+.mhero-dual-ev { display: flex; flex-direction: column; gap: 6px; text-decoration: none; }
+.mhero-dual-ev--l { align-items: flex-end; text-align: right; }
+.mhero-dual-ev--r { align-items: flex-start; text-align: left; }
+.mhero-dual-tag { font-size: 11px; font-weight: 800; color: #fff; border-radius: 100px; padding: 3px 12px; letter-spacing: .03em; text-transform: uppercase; }
+.mhero-dual-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; color: #fff; font-size: clamp(18px, 2.6vw, 30px); line-height: 1.02; }
+.mhero-dual-ev:hover .mhero-dual-h { text-decoration: underline; }
+.mhero-dual-sub { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: rgba(255,255,255,.8); }
+.mhero-dual-vs { font-family: var(--display); font-weight: 800; font-size: 14px; color: rgba(255,255,255,.55); text-transform: uppercase; }
+.mhero .mhero-dual-btn { margin-top: 6px; background: #fff; color: #14161d; }
+@media (max-width: 640px) {
+  .mhero-dual-grid { grid-template-columns: 1fr; gap: 14px; }
+  .mhero-dual-ev--l, .mhero-dual-ev--r { align-items: center; text-align: center; }
+  .mhero-ico--l, .mhero-ico--r { width: 52%; }
+}
 .mhero-in { position: relative; padding-top: 62px; padding-bottom: 54px; }
 .mhero-h { color: #fff; font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.02em;
   font-size: clamp(30px, 5vw, 54px); line-height: .98; margin: 12px 0 8px; max-width: 18ch; }
