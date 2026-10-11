@@ -151,6 +151,13 @@ const onerr = (id: string) => `this.onerror=null;this.src='https://i.ytimg.com/v
       var mid = parts.slice(1, -1);
       return { main: main, sub: [lead].concat(mid).filter(Boolean).join(' · ') };
     }
+    // Préfère les champs enrichis de live.json (context/match/place), repli sur le titre.
+    function ctxOf(l) {
+      var p = parseTitle(l.title);
+      var c = l.context || p.sub;
+      if (l.place) c = c ? (c + ' · 📍 ' + l.place) : ('📍 ' + l.place);
+      return { main: l.match || p.main, sub: c };
+    }
     function embed(container, src, title) {
       var f = document.createElement('iframe');
       f.src = src; f.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
@@ -202,7 +209,7 @@ const onerr = (id: string) => `this.onerror=null;this.src='https://i.ytimg.com/v
       if (!ups || !ups.length) return '';
       var rows = ups.slice(0, 8).map(function (u) {
         var d = discMap[u.discipline] || {};
-        var p = parseTitle(u.title);
+        var p = ctxOf(u);
         return '<a class="dru-row" href="https://www.youtube.com/watch?v=' + u.id + '" target="_blank" rel="noopener" style="--dc:' + (d.color || 'var(--live)') + '">' +
           '<span class="dru-disc">' + esc(d.label || 'Direct') + '</span>' +
           '<span class="dru-title">' + esc(p.main) + '</span>' +
@@ -227,13 +234,13 @@ const onerr = (id: string) => `this.onerror=null;this.src='https://i.ytimg.com/v
         html += '<div class="live-tabs" role="tablist" aria-label="Directs en cours">';
         lives.forEach(function (l, i) {
           var d = discMap[l.discipline] || {};
-          var p = parseTitle(l.title);
+          var p = ctxOf(l);
           html += '<button type="button" class="live-tab' + (i === 0 ? ' active' : '') + '" data-id="' + l.id + '" data-title="' + esc(p.main) + '" data-sub="' + esc(p.sub) + '" style="--dc:' + (d.color || 'var(--live)') + '">' +
             '<span class="pulse"></span><b>LIVE ' + (i + 1) + '</b><span class="live-tab-disc">' + esc(d.label || '') + '</span></button>';
         });
         html += '</div>';
       }
-      var p0 = parseTitle(lives[0].title);
+      var p0 = ctxOf(lives[0]);
       html += '<div id="live-main">' + liveFacade(lives[0]) +
         '<h3 class="live-title" id="live-main-title">' + esc(p0.main) + '</h3>' +
         '<div class="live-sub" id="live-main-sub">' + esc(p0.sub) + '</div></div>';

@@ -222,7 +222,7 @@ const slides = programme
       <div class="wrap mhero-in">
         <span class={`hero-pill${live.isLive ? ' is-live' : ' is-soon'}`}>{live.isLive ? '● En direct' : (live.status === 'upcoming' ? 'En direct bientôt' : 'À revoir')}{heroCat ? ` · ${heroCat}` : ''}</span>
         <h1 class="mhero-h">{heroTitle}</h1>
-        {heroSub && <div class="mhero-sub">{heroSub}</div>}
+        <div class="mhero-sub" style={heroSub ? '' : 'display:none'}>{heroSub}</div>
         {heroWhenLabel && (
           <div class="mhero-when">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
@@ -282,12 +282,15 @@ const slides = programme
             var lives = (d && d.lives) ? d.lives : (d && d.live && d.id ? [{ id: d.id, title: d.title || 'Direct' }] : []);
             if (!lives.length) return; // pas de direct : on garde la une construite (à venir / à revoir)
             var l = lives[0];
+            // Contexte « guide TV » (compétition · phase · saison) + lieu, depuis live.json enrichi.
+            var ctx = l.context || '';
+            if (l.place) ctx = ctx ? (ctx + ' · 📍 ' + l.place) : ('📍 ' + l.place);
             if (pill) { pill.textContent = '● En direct'; pill.classList.add('is-live'); pill.classList.remove('is-soon'); }
-            if (h1) h1.textContent = clean(l.title);
+            if (h1) h1.textContent = l.match || clean(l.title);
             if (playBtn) { playBtn.setAttribute('href', 'https://www.youtube.com/watch?v=' + l.id); playBtn.setAttribute('target', '_blank'); playBtn.textContent = '▸ Regarder le direct'; }
             if (count) count.style.display = 'none';
             if (when) when.style.display = 'none';
-            if (sub) sub.style.display = 'none';
+            if (sub) { if (ctx) { sub.textContent = ctx; sub.style.display = ''; } else { sub.style.display = 'none'; } }
           })
           .catch(function () {});
       }
