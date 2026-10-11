@@ -1832,10 +1832,24 @@ th, td, figcaption, .chip, .badge {
 
 /* ============ ACCUEIL — « une » cinématique (Variante C) ============ */
 .mhero { position: relative; overflow: hidden; background: #0A0E1A; }
-.mhero-media { position: absolute; inset: 0; background-size: cover; background-position: right center; background-color: #0A0E1A; }
+/* Fond AUTO par sport : dégradé dans les couleurs de la discipline (--h-from/--h-to),
+   motif géométrique léger, et icône du sport en filigrane (markup .mhero-ico). */
+.mhero-media { position: absolute; inset: 0; background-color: #0A0E1A;
+  background:
+    radial-gradient(105% 125% at 84% 28%, color-mix(in srgb, var(--h-from, #26324a) 62%, #0A0E1A) 0%, transparent 60%),
+    linear-gradient(118deg, #0A0E1A 38%, color-mix(in srgb, var(--h-to, #141c2e) 72%, #0A0E1A) 122%); }
+.mhero-media::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(58deg, transparent 0 17px, rgba(255,255,255,.022) 17px 18px); }
 .mhero-media::after { content: ""; position: absolute; inset: 0;
   background: linear-gradient(90deg, #0A0E1A 4%, rgba(10,14,26,.62) 46%, rgba(10,14,26,.2) 76%, rgba(10,14,26,.55) 100%),
               linear-gradient(0deg, rgba(10,14,26,.7) 0%, transparent 55%); }
+/* Icône du sport en filigrane, à droite (là où était la 8-ball). */
+.mhero-ico { position: absolute; right: -1%; top: 50%; transform: translateY(-50%); width: 44%; max-width: 540px; aspect-ratio: 1; pointer-events: none; z-index: 1; display: grid; }
+.mhero-ico-item { display: none; grid-area: 1/1; place-items: center; }
+.mhero-ico-item.is-on { display: grid; }
+.mhero-ico-item svg { width: 86%; height: 86%; color: #fff; opacity: .09;
+  filter: drop-shadow(0 0 48px color-mix(in srgb, var(--hero-accent, #ffffff) 55%, transparent)); }
+@media (max-width: 620px) { .mhero-ico { width: 62%; right: -8%; opacity: .9; } }
 .mhero-in { position: relative; padding-top: 62px; padding-bottom: 54px; }
 .mhero-h { color: #fff; font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.02em;
   font-size: clamp(30px, 5vw, 54px); line-height: .98; margin: 12px 0 8px; max-width: 18ch; }

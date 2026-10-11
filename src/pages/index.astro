@@ -155,6 +155,8 @@ if (!programme.length) {
 }
 
 const liveDisc = live ? getDiscipline(live.discipline) : null;
+// Couleurs de fond auto par sport (pour le swap temps réel du hero côté client).
+const heroColors = Object.fromEntries(disciplines.map((d) => [d.slug, { from: d.from, to: d.to }]));
 
 // Image du hero de l'accueil : fichier unique home-hero.webp, géré manuellement.
 const heroImg = assetExists('/home-hero.webp') ? assetUrl('/home-hero.webp') : '/home-hero.webp';
@@ -217,8 +219,15 @@ const slides = programme
 
   <!-- HERO — « une » cinématique (Variante C : corps clair, une sombre) -->
   {live && liveDisc && (
-    <section class="mhero" style={`--hero-accent:${liveDisc.colorVar}`}>
-      <div class="mhero-media" style={`background-image:url('${heroImg}')`} aria-hidden="true"></div>
+    <section class="mhero" data-sport={live.discipline} style={`--hero-accent:${liveDisc.colorVar};--h-from:${liveDisc.from};--h-to:${liveDisc.to}`}>
+      <div class="mhero-media" aria-hidden="true">
+        <span class="mhero-ico">
+          {disciplines.map((d) => (
+            <span class:list={['mhero-ico-item', { 'is-on': d.slug === live.discipline }]} data-sport={d.slug}><SportIcon slug={d.slug} /></span>
+          ))}
+        </span>
+      </div>
+      <script type="application/json" id="hero-colors" set:html={JSON.stringify(heroColors)}></script>
       <div class="wrap mhero-in">
         <span class={`hero-pill${live.isLive ? ' is-live' : ' is-soon'}`}>{live.isLive ? '● En direct' : (live.status === 'upcoming' ? 'En direct bientôt' : 'À revoir')}{heroCat ? ` · ${heroCat}` : ''}</span>
         <h1 class="mhero-h">{heroTitle}</h1>
@@ -274,7 +283,16 @@ const slides = programme
       var count = hero.querySelector('.hero-count');
       var when = hero.querySelector('.mhero-when');
       var sub = hero.querySelector('.mhero-sub');
+      var heroColors = {}; try { heroColors = JSON.parse(document.getElementById('hero-colors').textContent); } catch (e) {}
       function clean(t) { var p = (t || '').split('|').map(function (s) { return s.trim(); }).filter(Boolean); return p.length ? p[p.length - 1] : (t || ''); }
+      // Fond AUTO : adapte les couleurs + l'icône du hero au sport du direct.
+      function setSport(disc) {
+        if (!disc) return;
+        hero.setAttribute('data-sport', disc);
+        var c = heroColors[disc]; if (c) { hero.style.setProperty('--h-from', c.from); hero.style.setProperty('--h-to', c.to); }
+        hero.style.setProperty('--hero-accent', 'var(--c-' + disc + ')');
+        hero.querySelectorAll('.mhero-ico-item').forEach(function (it) { it.classList.toggle('is-on', it.getAttribute('data-sport') === disc); });
+      }
       function sync() {
         fetch('/live.json', { cache: 'no-store' })
           .then(function (r) { return r.ok ? r.json() : null; })
@@ -282,6 +300,7 @@ const slides = programme
             var lives = (d && d.lives) ? d.lives : (d && d.live && d.id ? [{ id: d.id, title: d.title || 'Direct' }] : []);
             if (!lives.length) return; // pas de direct : on garde la une construite (à venir / à revoir)
             var l = lives[0];
+            if (l.discipline) setSport(l.discipline);
             // Contexte « guide TV » (compétition · phase · saison) + lieu, depuis live.json enrichi.
             var ctx = l.context || '';
             if (l.place) ctx = ctx ? (ctx + ' · 📍 ' + l.place) : ('📍 ' + l.place);
