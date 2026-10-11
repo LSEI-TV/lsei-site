@@ -1510,7 +1510,7 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .champ-go { flex: none; color: #E4B23C; font-weight: 700; font-size: 16px; }
 
 .bchoose-sublab { margin-top: 10px; font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-faint); }
-.bchoose-podium { margin-top: 5px; display: flex; flex-direction: column; gap: 2px; }
+.bchoose-podium { margin-top: 5px; margin-bottom: 18px; display: flex; flex-direction: column; gap: 2px; }
 .bchoose-pod { display: flex; align-items: center; gap: 8px; padding: 4px 7px; border-radius: 8px; border: 1px solid transparent; }
 .bchoose-pod:hover { border-color: var(--cc, var(--c-billard)); background: color-mix(in srgb, var(--cc, var(--c-billard)) 7%, var(--surface)); }
 .bchoose-pod-r { flex: none; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 800; font-size: 12px; background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line-strong); }
