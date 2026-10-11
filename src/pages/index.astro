@@ -158,8 +158,7 @@ const liveDisc = live ? getDiscipline(live.discipline) : null;
 // Couleurs de fond auto par sport (pour le swap temps réel du hero côté client).
 const heroColors = Object.fromEntries(disciplines.map((d) => [d.slug, { from: d.from, to: d.to }]));
 
-// Image du hero de l'accueil : fichier unique home-hero.webp, géré manuellement.
-const heroImg = assetExists('/home-hero.webp') ? assetUrl('/home-hero.webp') : '/home-hero.webp';
+// (Le hero de l'accueil est désormais auto-généré par sport — plus d'image de fond fixe.)
 const tagLabel = (t: string) => (t === 'magazine' ? 'Magazine' : getDiscipline(t as any).label);
 // Catégorie de la vidéo à la une (déduite du titre, ex. « Femmes »), sinon la discipline.
 const fmtCat = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '');
@@ -214,7 +213,7 @@ const slides = programme
     };
   });
 ---
-<Base active="direct" preloadImage={heroImg}>
+<Base active="direct">
   <Ticker />
 
   <!-- HERO — « une » cinématique (Variante C : corps clair, une sombre) -->
