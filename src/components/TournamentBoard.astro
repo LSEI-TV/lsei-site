@@ -32,12 +32,15 @@ const ph = (id: number, name: string) => photoOf({ id, name } as any, season.slu
 const _vidRound = (t2: string) => (/1\s*\/\s*2/.test(t2) ? 'Demi-finales' : /1\s*\/\s*4/.test(t2) ? 'Quarts de finale' : /1\s*\/\s*8/.test(t2) ? '8es de finale' : /1\s*\/\s*16/.test(t2) ? '16es de finale' : /finale?/i.test(t2) ? 'Finale' : null);
 const _compFemme = /femme/i.test(compLabel);
 const _seasonKey = nk(season.label);
+// Séparateur des 2 joueurs : « vs », « v », « vs. », « v. » (entouré d'espaces).
+const _VS = /\s+vs?\.?\s+/i;
 const _vidEntries = (videos || []).filter((v: any) => {
   const ti = v.title || '';
-  return nk(v.season || '') === _seasonKey && (_compFemme ? /femme/i.test(ti) : /master/i.test(ti)) && /\bvs\b/i.test(ti);
+  const aff = (ti.split('|').pop() || '');
+  return nk(v.season || '') === _seasonKey && (_compFemme ? /femme/i.test(ti) : /master/i.test(ti)) && _VS.test(aff);
 }).map((v: any) => {
   const aff = (v.title.split('|').pop() || '').replace(/\(.*/, '');
-  const [pa, pb] = aff.split(/\bvs\b/i).map((x: string) => (x || '').trim());
+  const [pa, pb] = aff.split(_VS).map((x: string) => (x || '').trim());
   const lm = v.title.match(/\bTN\s*(\d+)\b/i);
   const lvl = /championnat|france/i.test(v.title) ? 'Championnat de France' : (lm ? 'TN' + lm[1] : null);
   return { id: v.id, round: _vidRound(v.title), lvl, pa, pb };
