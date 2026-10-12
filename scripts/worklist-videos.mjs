@@ -7,13 +7,14 @@
 //     complète (miniature + lien YouTube + titre), prête pour de futures pages.
 //  Ne touche À RIEN sur YouTube.    node scripts/worklist-videos.mjs
 // ============================================================
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA = join(__dirname, '..', 'src', 'data', 'billard');
 const CACHE = join(__dirname, '..', 'src', 'data', 'cache', 'replays.json');
+const FULL = join(__dirname, '..', 'channel-billard.json'); // liste COMPLÈTE de la chaîne (si dispo)
 
 const PART = new Set(['de', 'du', 'des', 'le', 'la', 'les', 'van', 'von', 'der', 'den', 'el', 'al', 'di', 'da', 'the', 'of']);
 const nk = (s) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -62,8 +63,17 @@ for (const f of readdirSync(DATA).filter((f) => /^results-(femmes-)?\d{4}-\d{4}\
 const PLAYERS = [...players];
 const looksNamed = (t) => PLAYERS.some((n) => titleHas(t, n)) || /\s(?:vs|v)\.?\s/i.test(t);
 
-const raw = JSON.parse(readFileSync(CACHE, 'utf8'));
-const vids = (Array.isArray(raw) ? raw : raw.items || []).filter((v) => v.discipline === 'billard' && !/basket|militaire|fougeres/i.test(v.title || ''));
+// Source : la liste COMPLÈTE de la chaîne si elle a été récupérée
+// (node scripts/fetch-channel-billard.mjs), sinon le cache du site.
+let vids, SOURCE;
+if (existsSync(FULL)) {
+  vids = JSON.parse(readFileSync(FULL, 'utf8')).filter((v) => !/basket|militaire|fougeres/i.test(v.title || ''));
+  SOURCE = `chaîne complète (${vids.length})`;
+} else {
+  const raw = JSON.parse(readFileSync(CACHE, 'utf8'));
+  vids = (Array.isArray(raw) ? raw : raw.items || []).filter((v) => v.discipline === 'billard' && !/basket|militaire|fougeres/i.test(v.title || ''));
+  SOURCE = `cache du site (${vids.length})`;
+}
 const dday = (a, b) => Math.abs((new Date(a) - new Date(b)) / 86400000);
 
 // Rattache une vidéo Masters/Femmes à un tournoi connu (sinon null).
@@ -170,6 +180,7 @@ h2{margin:.2em 0 .6em;font-size:20px}.badge{font-size:12px;font-weight:600;color
 <nav>${nav.join('')}</nav><main>${sections.join('')}</main></body></html>`;
 
 writeFileSync(join(__dirname, '..', 'worklist-videos.html'), html, 'utf8');
+console.log(`Source : ${SOURCE}`);
 console.log(`Inventaire : ${totAll} vidéos · ${totToName} à nommer → worklist-videos.html`);
 for (const [cat, b] of cats) {
   const richVids = [...b.rich.values()].reduce((s, g) => s + [...g.rounds.values()].reduce((a, r) => a + r.vids.length, 0), 0);
