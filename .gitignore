@@ -14,6 +14,8 @@ youtube-oauth.json
 # audit vidéos (générés localement, non déployés)
 audit-videos.md
 rename-videos.csv
+autofill-videos.csv
+worklist-videos.html
 
 # os / editor
 .DS_Store
