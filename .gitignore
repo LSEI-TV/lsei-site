@@ -9,6 +9,11 @@ node_modules/
 .env
 .env.local
 .env.*.local
+youtube-oauth.json
+
+# audit vidéos (générés localement, non déployés)
+audit-videos.md
+rename-videos.csv
 
 # os / editor
 .DS_Store

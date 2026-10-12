@@ -11,6 +11,7 @@ import { photoOf } from '../lib/billardStats';
 import type { Season } from '../data/billard/seasons';
 import PlayerRun from './PlayerRun.astro';
 import MatchMini from './MatchMini.astro';
+import { nk, namesMatch } from '../lib/videoMatch';
 
 interface Props {
   season: Season;
@@ -28,25 +29,23 @@ const ph = (id: number, name: string) => photoOf({ id, name } as any, season.slu
 
 // --- Fusion VIDÉO ↔ données : chaque match filmé = une vidéo YouTube (titre « … | 1/4 Finale
 //     – TN1 | A vs B »). On relie un match à SA vidéo par saison + compétition + tour + paire de noms.
-const _nk = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const _vidRound = (t2: string) => (/1\s*\/\s*2/.test(t2) ? 'Demi-finales' : /1\s*\/\s*4/.test(t2) ? 'Quarts de finale' : /1\s*\/\s*8/.test(t2) ? '8es de finale' : /1\s*\/\s*16/.test(t2) ? '16es de finale' : /finale?/i.test(t2) ? 'Finale' : null);
 const _compFemme = /femme/i.test(compLabel);
-const _seasonKey = _nk(season.label);
+const _seasonKey = nk(season.label);
 const _vidEntries = (videos || []).filter((v: any) => {
   const ti = v.title || '';
-  return _nk(v.season || '') === _seasonKey && (_compFemme ? /femme/i.test(ti) : /master/i.test(ti)) && /\bvs\b/i.test(ti);
+  return nk(v.season || '') === _seasonKey && (_compFemme ? /femme/i.test(ti) : /master/i.test(ti)) && /\bvs\b/i.test(ti);
 }).map((v: any) => {
   const aff = (v.title.split('|').pop() || '').replace(/\(.*/, '');
-  const [pa, pb] = aff.split(/\bvs\b/i).map((x: string) => _nk(x));
+  const [pa, pb] = aff.split(/\bvs\b/i).map((x: string) => (x || '').trim());
   const lm = v.title.match(/\bTN\s*(\d+)\b/i);
   const lvl = /championnat|france/i.test(v.title) ? 'Championnat de France' : (lm ? 'TN' + lm[1] : null);
   return { id: v.id, round: _vidRound(v.title), lvl, pa, pb };
 });
-const _nameHit = (matchName: string, vn: string) => { const a = _nk(matchName); return !!(a && vn && (a.includes(vn) || vn.includes(a))); };
 const videoForMatch = (m: any): string => {
   const rl = labelOf(m.roundNo);
   const e = _vidEntries.find((v) => v.round === rl && v.lvl === t.level && v.pa && v.pb &&
-    ((_nameHit(m.aName, v.pa) && _nameHit(m.bName, v.pb)) || (_nameHit(m.aName, v.pb) && _nameHit(m.bName, v.pa))));
+    ((namesMatch(m.aName, v.pa) && namesMatch(m.bName, v.pb)) || (namesMatch(m.aName, v.pb) && namesMatch(m.bName, v.pa))));
   return e ? e.id : '';
 };
 

@@ -5,6 +5,7 @@ import { getCollection } from 'astro:content';
 import { photoOf, fromPov, fmtDate, frRound, playersInText, playerSlugs, seasonSuperlatives } from '../../../lib/billardStats';
 import { getReplays } from '../../../lib/youtube';
 import { parseProgTitle } from '../../../lib/programmeTitle';
+import { titleMatchesPlayer } from '../../../lib/videoMatch';
 import { getSeasons, getPalmares } from '../../../data/billard/seasons';
 import rmixte2526 from '../../../data/billard/results-mixte-2025-2026.json';
 import rmixte2425 from '../../../data/billard/results-mixte-2024-2025.json';
@@ -203,11 +204,8 @@ const fmtArtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeri
 
 // « Ses vidéos » : vidéos YouTube billard où le joueur apparaît (match filmé « A vs B » ou
 // interview) — reliage auto par le NOM (nom de famille distinctif présent dans le titre).
-const _vk = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
-const _nameToks = (name || '').split(/\s+/).map(_vk).filter((x) => x.length >= 4);
-const _lastTok = _nameToks.length ? _nameToks[_nameToks.length - 1] : _vk(name);
 const playerVideos = (await getReplays({ discipline: 'billard' }))
-  .filter((v: any) => !/femme/i.test(v.title || '') && _lastTok && _vk(v.title || '').includes(_lastTok))
+  .filter((v: any) => !/femme/i.test(v.title || '') && titleMatchesPlayer(v.title || '', name))
   .map((v: any) => { const pt = parseProgTitle(v.title); return { id: v.id, main: pt.main || v.title, sub: [pt.kicker, ...pt.badges].filter(Boolean).join(' · '), cat: v.category || '' }; })
   .slice(0, 12);
 

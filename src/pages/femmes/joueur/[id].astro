@@ -5,6 +5,7 @@ import { getCollection } from 'astro:content';
 import { photoOf, fromPov, fmtDate, frRound, playersInText, playerSlugs } from '../../../lib/billardStats';
 import { getReplays } from '../../../lib/youtube';
 import { parseProgTitle } from '../../../lib/programmeTitle';
+import { titleMatchesPlayer } from '../../../lib/videoMatch';
 import { getFemmesSeasons, getFemmesPalmares } from '../../../data/billard/seasonsFemmes';
 
 export function getStaticPaths() {
@@ -118,11 +119,8 @@ const fmtArtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeri
 
 // « Ses matchs en vidéo » : vidéos YouTube billard FEMMES où la joueuse apparaît (reliage
 // auto par le nom de famille ; filtre « Femmes » pour éviter un homonyme masculin).
-const _vk = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
-const _nameToks = (name || '').split(/\s+/).map(_vk).filter((x) => x.length >= 4);
-const _lastTok = _nameToks.length ? _nameToks[_nameToks.length - 1] : _vk(name);
 const playerVideos = (await getReplays({ discipline: 'billard' }))
-  .filter((v: any) => (v.category === 'Femmes' || /femme/i.test(v.title || '')) && _lastTok && _vk(v.title || '').includes(_lastTok))
+  .filter((v: any) => (v.category === 'Femmes' || /femme/i.test(v.title || '')) && titleMatchesPlayer(v.title || '', name))
   .map((v: any) => { const pt = parseProgTitle(v.title); return { id: v.id, main: pt.main || v.title, sub: [pt.kicker, ...pt.badges].filter(Boolean).join(' · ') }; })
   .slice(0, 12);
 ---
