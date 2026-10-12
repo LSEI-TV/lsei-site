@@ -12,6 +12,7 @@ const rows = [
 ];
 ---
 <button type="button" class:list={['mm', { gold }]} data-cf={JSON.stringify(cf)}>
+  {cf?.video && <span class="mm-vid" title="Match filmé — revoir la vidéo">▶</span>}
   {label && <div class="mm-lab">{label}</div>}
   {rows.map((p) => (
     <span class:list={['mm-p', { win: p.my > p.opp }]}>
@@ -28,6 +29,7 @@ const rows = [
   .mm:hover { border-color: var(--c-billard); box-shadow: 0 4px 14px color-mix(in srgb, var(--c-billard) 14%, transparent); }
   .mm.gold { border: 2px solid #E4B23C; box-shadow: 0 6px 18px color-mix(in srgb, #E4B23C 18%, transparent); }
   .mm.gold:hover { box-shadow: 0 6px 20px color-mix(in srgb, #E4B23C 26%, transparent); }
+  .mm-vid { position: absolute; top: 6px; right: 6px; z-index: 2; width: 20px; height: 20px; border-radius: 50%; background: #e4002b; color: #fff; font-size: 8px; display: grid; place-items: center; padding-left: 1px; box-shadow: 0 2px 6px rgba(228,0,43,.5); }
   .mm-lab { font-size: 9px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-faint); padding: 5px 11px 1px; }
   .mm-p { display: flex; align-items: center; gap: 9px; padding: 7px 11px; color: var(--ink); }
   .mm-p:not(:last-of-type) { border-bottom: 1px solid var(--line); }

@@ -4,8 +4,10 @@ import TournamentBoard from '../../../../../components/TournamentBoard.astro';
 import { getFemmesSeasons } from '../../../../../data/billard/seasonsFemmes';
 import type { Season } from '../../../../../data/billard/seasons';
 import { playerSlugs } from '../../../../../lib/billardStats';
+import { getReplays } from '../../../../../lib/youtube';
 
 const { slugOf } = playerSlugs(getFemmesSeasons());
+const videos = await getReplays({ discipline: 'billard' });
 
 export function getStaticPaths() {
   const tnSlug = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -43,4 +45,5 @@ const { season, tournament, matches } = Astro.props as { season: Season; tournam
   base={`/femmes/saison/${season.slug}`}
   ficheBase="/femmes/joueur/"
   compLabel="Blackball Femmes"
+  videos={videos}
 />

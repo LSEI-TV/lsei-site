@@ -3,8 +3,10 @@
 import TournamentBoard from '../../../../../components/TournamentBoard.astro';
 import { getSeasons, type Season } from '../../../../../data/billard/seasons';
 import { playerSlugs } from '../../../../../lib/billardStats';
+import { getReplays } from '../../../../../lib/youtube';
 
 const { slugOf } = playerSlugs(getSeasons());
+const videos = await getReplays({ discipline: 'billard' });
 
 export function getStaticPaths() {
   const tnSlug = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -42,4 +44,5 @@ const { season, tournament, matches } = Astro.props as { season: Season; tournam
   base={`/billard/saison/${season.slug}`}
   ficheBase="/billard/joueur/"
   compLabel="Blackball Master"
+  videos={videos}
 />

@@ -21,9 +21,34 @@ interface Props {
   base: string;       // ex. /billard/saison/2026-2027
   ficheBase: string;  // ex. /billard/joueur/  ou  /femmes/joueur/
   compLabel: string;  // ex. Blackball Master / Blackball Femmes
+  videos?: any[];     // replays YouTube billard (pour relier chaque match filmé à SA vidéo)
 }
-const { season, tournament: t, matches, slugOf, allSeasons, base, ficheBase, compLabel } = Astro.props as Props;
+const { season, tournament: t, matches, slugOf, allSeasons, base, ficheBase, compLabel, videos = [] } = Astro.props as Props;
 const ph = (id: number, name: string) => photoOf({ id, name } as any, season.slug);
+
+// --- Fusion VIDÉO ↔ données : chaque match filmé = une vidéo YouTube (titre « … | 1/4 Finale
+//     – TN1 | A vs B »). On relie un match à SA vidéo par saison + compétition + tour + paire de noms.
+const _nk = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+const _vidRound = (t2: string) => (/1\s*\/\s*2/.test(t2) ? 'Demi-finales' : /1\s*\/\s*4/.test(t2) ? 'Quarts de finale' : /1\s*\/\s*8/.test(t2) ? '8es de finale' : /1\s*\/\s*16/.test(t2) ? '16es de finale' : /finale?/i.test(t2) ? 'Finale' : null);
+const _compFemme = /femme/i.test(compLabel);
+const _seasonKey = _nk(season.label);
+const _vidEntries = (videos || []).filter((v: any) => {
+  const ti = v.title || '';
+  return _nk(v.season || '') === _seasonKey && (_compFemme ? /femme/i.test(ti) : /master/i.test(ti)) && /\bvs\b/i.test(ti);
+}).map((v: any) => {
+  const aff = (v.title.split('|').pop() || '').replace(/\(.*/, '');
+  const [pa, pb] = aff.split(/\bvs\b/i).map((x: string) => _nk(x));
+  const lm = v.title.match(/\bTN\s*(\d+)\b/i);
+  const lvl = /championnat|france/i.test(v.title) ? 'Championnat de France' : (lm ? 'TN' + lm[1] : null);
+  return { id: v.id, round: _vidRound(v.title), lvl, pa, pb };
+});
+const _nameHit = (matchName: string, vn: string) => { const a = _nk(matchName); return !!(a && vn && (a.includes(vn) || vn.includes(a))); };
+const videoForMatch = (m: any): string => {
+  const rl = labelOf(m.roundNo);
+  const e = _vidEntries.find((v) => v.round === rl && v.lvl === t.level && v.pa && v.pb &&
+    ((_nameHit(m.aName, v.pa) && _nameHit(m.bName, v.pb)) || (_nameHit(m.aName, v.pb) && _nameHit(m.bName, v.pa))));
+  return e ? e.id : '';
+};
 
 const winnerOf = (m: any) => (m.sA > m.sB ? m.aId : m.bId);
 const roundNos = [...new Set(matches.map((m: any) => m.roundNo))].sort((a, b) => a - b);
@@ -63,7 +88,7 @@ const cfData = (m: any) => {
   }
   h2h.sort((p, q) => (p.d < q.d ? 1 : -1));
   return {
-    round: labelOf(m.roundNo), date: m.date,
+    round: labelOf(m.roundNo), date: m.date, video: videoForMatch(m),
     a: { id: aId, name: m.aName, slug: slugOf(aId), photo: ph(aId, m.aName) || '', sc: m.sA, win: aWin },
     b: { id: bId, name: m.bName, slug: slugOf(bId), photo: ph(bId, m.bName) || '', sc: m.sB, win: !aWin },
     rec: { aw, bw }, h2h,
@@ -224,6 +249,7 @@ const champPath = matches
         <div class="cf-score"><b class="cf-sa"></b><i>–</i><b class="cf-sb"></b></div>
         <a class="cf-player cf-pb" href="#"><span class="cf-ph"><span class="bavatar"></span><img alt="" onerror="this.style.display='none'" /></span><span class="cf-nm"></span></a>
       </div>
+      <a class="cf-replay" href="#" target="_blank" rel="noopener" style="display:none">▶ Revoir ce match en vidéo</a>
       <div class="cf-h2h">
         <div class="cf-h2h-h">Face-à-face <small>· confrontations directes</small></div>
         <div class="cf-rec"><span class="cf-rec-a"></span><b class="cf-rec-aw"></b><span class="cf-rec-dash">—</span><b class="cf-rec-bw"></b><span class="cf-rec-b"></span></div>
@@ -272,6 +298,8 @@ const champPath = matches
         var cmp = dlg.getAttribute('data-cmp') || '#';
         if (d.a && d.a.id != null && d.b && d.b.id != null) cmp += (cmp.indexOf('?') < 0 ? '?' : '&') + 'a=' + d.a.id + '&b=' + d.b.id;
         q('.cf-cmp').setAttribute('href', cmp);
+        var rep = q('.cf-replay');
+        if (rep) { if (d.video) { rep.setAttribute('href', 'https://www.youtube.com/watch?v=' + d.video); rep.style.display = ''; } else { rep.style.display = 'none'; } }
       }
       document.querySelectorAll('[data-cf]').forEach((el) => {
         el.addEventListener('click', () => {
@@ -369,7 +397,9 @@ const champPath = matches
   :global(.cf-row-s) { font-family: var(--mono); font-weight: 700; color: var(--ink-faint); white-space: nowrap; }
   :global(.cf-row-s b) { color: var(--ink-faint); } :global(.cf-row-s b.lead) { color: var(--c-billard); }
   :global(.cf-empty) { font-size: 12.5px; color: var(--ink-faint); text-align: center; padding: 6px; }
-  .cf-cmp { display: block; text-align: center; margin-top: 16px; padding: 11px; border-radius: 12px; background: var(--c-billard); color: #fff; font-weight: 800; font-size: 13px; text-decoration: none; transition: filter .15s; }
+  .cf-replay { display: block; text-align: center; margin-top: 16px; padding: 11px; border-radius: 12px; background: #e4002b; color: #fff; font-weight: 800; font-size: 13px; text-decoration: none; transition: filter .15s; }
+  .cf-replay:hover { filter: brightness(1.08); }
+  .cf-cmp { display: block; text-align: center; margin-top: 10px; padding: 11px; border-radius: 12px; background: var(--c-billard); color: #fff; font-weight: 800; font-size: 13px; text-decoration: none; transition: filter .15s; }
   .cf-cmp:hover { filter: brightness(1.08); }
 
   .tv-parcours { max-width: 620px; margin: 0 auto; }
