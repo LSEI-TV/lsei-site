@@ -1,10 +1,11 @@
 // ============================================================
-//  PLAN DE TRAVAIL « renommage vidéos » — page HTML locale (worklist-videos.html).
-//  Liste les vidéos du circuit Masters/Femmes SANS noms, groupées par TOURNOI puis
-//  par TOUR, avec : miniature, lien YouTube cliquable, titre actuel, et surtout les
-//  AFFICHES POSSIBLES de ce tour (tirées des résultats) → Marc identifie vite, dit
-//  « c'est la n°X », on valide. Ne touche À RIEN sur YouTube.
-//    node scripts/worklist-videos.mjs
+//  PLAN DE TRAVAIL / INVENTAIRE COMPLET des vidéos billard — page HTML locale
+//  (worklist-videos.html). TOUTES les vidéos, classées par CATÉGORIE :
+//   • Masters / Femmes : vue riche (tournoi → tour + AFFICHES candidates issues
+//     des résultats Cuescore) pour nommer vite et sûr.
+//   • Vétérans, Espoirs, Jeu de la 9/8, Mixte, Para, Interviews, Autres : grille
+//     complète (miniature + lien YouTube + titre), prête pour de futures pages.
+//  Ne touche À RIEN sur YouTube.    node scripts/worklist-videos.mjs
 // ============================================================
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -21,18 +22,33 @@ const strong = (t) => t.filter((w) => w.length >= 3);
 const tokEq = (a, b) => a === b || (Math.min(a.length, b.length) >= 5 && (a.includes(b) || b.includes(a)));
 const titleHas = (title, name) => { const pt = strong(toksf(name)); if (!pt.length) return false; const s = pt[pt.length - 1]; return toksf(title).some((w) => tokEq(w, s)); };
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const frd = (d) => d ? new Date(d).toLocaleDateString('fr-FR') : '';
 
 const ORDER = ['Finale', '1/2', '1/4', '1/8', '1/16', '1/32'];
 const roundOf = (t) => /1\s*\/\s*2/.test(t) ? '1/2' : /1\s*\/\s*4/.test(t) ? '1/4' : /1\s*\/\s*8/.test(t) ? '1/8' : /1\s*\/\s*16/.test(t) ? '1/16' : /1\s*\/\s*32/.test(t) ? '1/32' : /finale/i.test(t) ? 'Finale' : null;
 
-// --- Résultats : tournois (avec matchs par tour) + joueurs. ---
+// Catégorie (le 1er motif qui matche gagne — spécifiques avant génériques).
+const CATS = [
+  ['Interviews', /interview/i],
+  ['Para-billard', /\bpara\b|fauteuil|malvoyant/i],
+  ['Mixte National', /mixte/i],
+  ['Vétérans', /veteran/i],
+  ['Espoirs', /espoir/i],
+  ['Jeu de la 9', /jeu\s*de\s*la\s*9|9\s*ball/i],
+  ['Jeu de la 8', /jeu\s*de\s*la\s*8|8\s*ball/i],
+  ['Femmes', /femme/i],
+  ['Masters', /master/i],
+];
+const catOf = (t) => { for (const [n, re] of CATS) if (re.test(t)) return n; return 'Autres (lives, multiplex…)'; };
+const CAT_ORDER = ['Masters', 'Femmes', 'Vétérans', 'Espoirs', 'Jeu de la 9', 'Jeu de la 8', 'Mixte National', 'Para-billard', 'Interviews', 'Autres (lives, multiplex…)'];
+
+// --- Résultats : tournois (matchs par tour) + joueurs. ---
 const players = new Set();
-const tours = []; // {season, seasonCompact, comp, level, city, date, kind, finalRound, byRound:Map}
+const tours = [];
 for (const f of readdirSync(DATA).filter((f) => /^results-(femmes-)?\d{4}-\d{4}\.json$/.test(f))) {
   const R = JSON.parse(readFileSync(join(DATA, f), 'utf8'));
   const comp = /femmes/.test(f) ? 'Femmes' : 'Masters';
   const sm = f.match(/(\d{4})-(\d{4})/);
-  const seasonCompact = sm ? `${sm[1].slice(2)}-${sm[2].slice(2)}` : '';
   for (const p of R.players || []) if (p.name) players.add(p.name);
   for (const t of R.tournaments || []) {
     const ms = (R.matches || []).filter((m) => m.tid === t.id && m.roundNo != null);
@@ -40,92 +56,122 @@ for (const f of readdirSync(DATA).filter((f) => /^results-(femmes-)?\d{4}-\d{4}\
     const finalRound = Math.max(...ms.map((m) => m.roundNo));
     const byRound = new Map();
     for (const m of ms) { if (!byRound.has(m.roundNo)) byRound.set(m.roundNo, []); byRound.get(m.roundNo).push(m); }
-    tours.push({ season: sm ? `${sm[1]}-${sm[2]}` : '', seasonCompact, comp, level: t.level, city: t.city, date: t.date, kind: t.kind, finalRound, byRound });
+    tours.push({ season: sm ? `${sm[1]}-${sm[2]}` : '', comp, level: t.level, city: t.city, date: t.date, kind: t.kind, finalRound, byRound });
   }
 }
 const PLAYERS = [...players];
+const looksNamed = (t) => PLAYERS.some((n) => titleHas(t, n)) || /\s(?:vs|v)\.?\s/i.test(t);
 
 const raw = JSON.parse(readFileSync(CACHE, 'utf8'));
 const vids = (Array.isArray(raw) ? raw : raw.items || []).filter((v) => v.discipline === 'billard' && !/basket|militaire|fougeres/i.test(v.title || ''));
 const dday = (a, b) => Math.abs((new Date(a) - new Date(b)) / 86400000);
 
-// --- Appariement vidéo → tournoi (circuit Masters/Femmes clairement étiqueté). ---
-const groups = new Map(); // key tournoi → {tour, rounds:Map(label→{cands, vids})}
-let offCircuit = 0, unmatched = 0;
-for (const v of vids) {
-  const ti = v.title || '';
-  if (/interview/i.test(ti)) continue;
-  if (PLAYERS.some((n) => titleHas(ti, n))) continue; // déjà reconnue
-  const r = roundOf(ti);
-  if (!r) continue; // live/multiplex sans tour identifiable
-  if (/veteran|espoir|jeu\s*de\s*la|9\s*ball|8\s*ball|\bpara\b|fauteuil|malvoyant|mixte|senior|cadet|junior|minime/i.test(ti)) { offCircuit++; continue; }
-  const comp = /blackball\s+femmes/i.test(ti) ? 'Femmes' : /blackball\s+masters/i.test(ti) ? 'Masters' : null;
-  if (!comp || !v.date) { offCircuit++; continue; }
+// Rattache une vidéo Masters/Femmes à un tournoi connu (sinon null).
+function matchTour(ti, date, comp) {
+  if (!date) return null;
   const tnm = ti.match(/\bTN\s*(\d+)\b/i);
   const cdf = /championnat|france/i.test(ti);
-  let cand = tours.filter((t) => t.comp === comp &&
+  const cand = tours.filter((t) => t.comp === comp &&
     (tnm ? new RegExp(`\\bTN\\s*${tnm[1]}\\b`, 'i').test(t.level) : cdf ? (t.kind === 'france' || /championnat|france/i.test(t.level)) : true) &&
-    t.date && dday(v.date, t.date) <= (tnm || cdf ? 10 : 3));
-  if (cand.length !== 1) { unmatched++; continue; }
-  const t = cand[0];
-  const key = `${t.season}|${t.comp}|${t.level}`;
-  if (!groups.has(key)) groups.set(key, { t, rounds: new Map() });
-  const g = groups.get(key);
-  if (!g.rounds.has(r)) {
-    // affiches candidates de ce tour
-    const rn = t.finalRound - ORDER.indexOf(r);
-    const ms = (t.byRound.get(rn) || []).slice().sort((a, b) => (a.matchno || 0) - (b.matchno || 0));
-    const cands = ms.map((m) => ({ a: m.aName, b: m.bName, sa: m.sA, sb: m.sB }));
-    g.rounds.set(r, { cands, vids: [] });
-  }
-  g.rounds.get(r).vids.push({ id: v.id, title: ti, date: v.date });
+    t.date && dday(date, t.date) <= (tnm || cdf ? 10 : 3));
+  return cand.length === 1 ? cand[0] : null;
 }
 
-// --- Tri : saison récente d'abord, puis tours des finales vers les 16es. ---
-const gList = [...groups.values()].sort((a, b) => (a.t.season < b.t.season ? 1 : a.t.season > b.t.season ? -1 : a.t.comp.localeCompare(b.t.comp)));
-let nVid = 0;
-const sections = gList.map((g) => {
-  const rounds = [...g.rounds.entries()].sort((a, b) => ORDER.indexOf(a[0]) - ORDER.indexOf(b[0]));
-  const roundsHtml = rounds.map(([label, d]) => {
-    const cands = d.cands.length
-      ? `<ol class="cands">${d.cands.map((c) => `<li>${esc(c.a)} <b>${c.sa}–${c.sb}</b> ${esc(c.b)}</li>`).join('')}</ol>`
-      : `<p class="nocand">(affiches non disponibles pour ce tour)</p>`;
-    const vidsHtml = d.vids.map((v) => { nVid++; return `<div class="vid">
-      <a href="https://youtu.be/${v.id}" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></a>
-      <div class="meta"><a href="https://youtu.be/${v.id}" target="_blank" rel="noopener">▶ Ouvrir sur YouTube</a>
-      <code>${v.id}</code><span class="cur">${esc(v.title)}</span></div></div>`; }).join('');
-    return `<div class="round"><h3>${label} <span class="n">${d.vids.length} vidéo${d.vids.length > 1 ? 's' : ''}</span></h3>
-      <div class="cols"><div class="candbox"><p class="lbl">Affiches possibles de ce tour :</p>${cands}</div>
-      <div class="vids">${vidsHtml}</div></div></div>`;
+// --- Répartition ---
+const cats = new Map(); // cat → { rich: Map(tourKey→{t,rounds}), simple: [vids] }
+for (const n of CAT_ORDER) cats.set(n, { rich: new Map(), simple: [] });
+for (const v of vids) {
+  const ti = v.title || '';
+  const cat = catOf(ti);
+  if (!cats.has(cat)) cats.set(cat, { rich: new Map(), simple: [] });
+  const bucket = cats.get(cat);
+  let placed = false;
+  if (cat === 'Masters' || cat === 'Femmes') {
+    const t = matchTour(ti, v.date, cat);
+    const r = roundOf(ti);
+    if (t && r) {
+      const key = `${t.season}|${t.comp}|${t.level}`;
+      if (!bucket.rich.has(key)) bucket.rich.set(key, { t, rounds: new Map() });
+      const g = bucket.rich.get(key);
+      if (!g.rounds.has(r)) {
+        const rn = t.finalRound - ORDER.indexOf(r);
+        const ms = (t.byRound.get(rn) || []).slice().sort((a, b) => (a.matchno || 0) - (b.matchno || 0));
+        g.rounds.set(r, { cands: ms.map((m) => ({ a: m.aName, b: m.bName, sa: m.sA, sb: m.sB })), vids: [] });
+      }
+      g.rounds.get(r).vids.push(v); placed = true;
+    }
+  }
+  if (!placed) bucket.simple.push(v);
+}
+
+// --- Rendu ---
+const vidCard = (v) => `<div class="vid${looksNamed(v.title || '') ? ' ok' : ''}">
+  <a href="https://youtu.be/${v.id}" target="_blank" rel="noopener"><img src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy"></a>
+  <div class="meta"><a href="https://youtu.be/${v.id}" target="_blank" rel="noopener">▶ Ouvrir</a> <span class="dt">${frd(v.date)}</span>
+  <code>${v.id}</code><span class="cur">${esc(v.title)}</span></div></div>`;
+
+let totToName = 0, totAll = 0;
+const nav = [], sections = [];
+for (const [cat, b] of cats) {
+  const richVids = [...b.rich.values()].reduce((s, g) => s + [...g.rounds.values()].reduce((a, r) => a + r.vids.length, 0), 0);
+  const count = richVids + b.simple.length;
+  if (!count) continue;
+  totAll += count;
+  const toName = [...b.rich.values()].reduce((s, g) => s + [...g.rounds.values()].reduce((a, r) => a + r.vids.filter((v) => !looksNamed(v.title || '')).length, 0), 0)
+    + b.simple.filter((v) => !looksNamed(v.title || '')).length;
+  totToName += toName;
+  const id = 'c' + nk(cat).replace(/[^a-z0-9]+/g, '-');
+  nav.push(`<a href="#${id}">${esc(cat)} <b>${count}</b></a>`);
+
+  // vue riche (tournois triés saison récente d'abord)
+  const rich = [...b.rich.values()].sort((a, c) => (a.t.season < c.t.season ? 1 : a.t.season > c.t.season ? -1 : 0)).map((g) => {
+    const rounds = [...g.rounds.entries()].sort((a, c) => ORDER.indexOf(a[0]) - ORDER.indexOf(c[0])).map(([label, d]) => {
+      const cands = d.cands.length ? `<ol class="cands">${d.cands.map((c) => `<li>${esc(c.a)} <b>${c.sa}–${c.sb}</b> ${esc(c.b)}</li>`).join('')}</ol>` : `<p class="nocand">(affiches non dispo)</p>`;
+      return `<div class="round"><h4>${label} <span class="n">${d.vids.length}</span></h4><div class="cols">
+        <div class="candbox"><p class="lbl">Affiches possibles</p>${cands}</div>
+        <div class="vids">${d.vids.map(vidCard).join('')}</div></div></div>`;
+    }).join('');
+    return `<div class="tour"><h3>${esc(g.t.level)}${g.t.city ? ' · ' + esc(g.t.city) : ''} <span class="season">${esc(g.t.season)}</span></h3>${rounds}</div>`;
   }).join('');
-  return `<section><h2>${esc(g.t.comp)} · ${esc(g.t.level)}${g.t.city ? ' · ' + esc(g.t.city) : ''} <span class="season">${esc(g.t.season)}</span></h2>${roundsHtml}</section>`;
-}).join('');
+
+  const simple = b.simple.length
+    ? `<h3 class="simple-h">${b.rich.size ? 'Autres vidéos de la catégorie' : 'Vidéos'} <span class="n">${b.simple.length}</span></h3>
+       <div class="vids">${b.simple.slice().sort((a, c) => (a.date < c.date ? 1 : -1)).map(vidCard).join('')}</div>` : '';
+
+  sections.push(`<section id="${id}"><h2>${esc(cat)} <span class="badge">${count} vidéos · ${toName} à nommer</span></h2>${rich}${simple}</section>`);
+}
 
 const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Plan de travail — renommage vidéos</title><style>
+<title>Inventaire vidéos billard</title><style>
 :root{color-scheme:light}body{font:15px/1.5 system-ui,sans-serif;margin:0;background:#f4f5f7;color:#1a1d21}
-header{position:sticky;top:0;background:#111;color:#fff;padding:14px 20px;z-index:5}
-header b{color:#ffd24a}main{max-width:1100px;margin:0 auto;padding:16px}
-section{background:#fff;border-radius:12px;padding:16px 18px;margin:16px 0;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-h2{margin:.2em 0 .6em;font-size:19px}h2 .season{font-weight:400;color:#888;font-size:14px}
-.round{border-top:1px solid #eee;padding:12px 0}.round h3{margin:.2em 0;font-size:16px}
-.round h3 .n{font-weight:400;color:#999;font-size:13px;margin-left:6px}
-.cols{display:grid;grid-template-columns:minmax(240px,1fr) 2fr;gap:16px;align-items:start}
-@media(max-width:720px){.cols{grid-template-columns:1fr}}
-.candbox{background:#f8f9fb;border:1px solid #eef;border-radius:8px;padding:8px 12px}
-.lbl{margin:.2em 0;font-size:12px;color:#667;text-transform:uppercase;letter-spacing:.04em}
-.cands{margin:.3em 0;padding-left:1.4em}.cands li{margin:.15em 0}.cands b{color:#c0392b}
-.nocand{color:#999;font-style:italic;font-size:13px}
-.vids{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+header{position:sticky;top:0;background:#111;color:#fff;padding:12px 20px;z-index:9}header b{color:#ffd24a}
+nav{display:flex;flex-wrap:wrap;gap:6px;padding:10px 20px;background:#1c1f24;position:sticky;top:46px;z-index:8}
+nav a{color:#cfd3da;text-decoration:none;font-size:13px;background:#2a2e35;padding:3px 9px;border-radius:999px}
+nav a b{color:#ffd24a;margin-left:4px}
+main{max-width:1180px;margin:0 auto;padding:16px}
+section{background:#fff;border-radius:12px;padding:16px 18px;margin:16px 0;box-shadow:0 1px 4px rgba(0,0,0,.08);scroll-margin-top:96px}
+h2{margin:.2em 0 .6em;font-size:20px}.badge{font-size:12px;font-weight:600;color:#fff;background:#1a73e8;padding:2px 10px;border-radius:999px;vertical-align:middle;margin-left:8px}
+.tour{border-top:2px solid #eef;padding:10px 0}.tour h3{margin:.2em 0;font-size:16px}.tour h3 .season{font-weight:400;color:#999;font-size:13px}
+.round{padding:8px 0 8px 10px}.round h4{margin:.2em 0;font-size:14px;color:#333}.round h4 .n,.simple-h .n{font-weight:400;color:#aaa;font-size:12px;margin-left:5px}
+.cols{display:grid;grid-template-columns:minmax(220px,1fr) 2fr;gap:14px;align-items:start}@media(max-width:720px){.cols{grid-template-columns:1fr}}
+.candbox{background:#f8f9fb;border:1px solid #eef;border-radius:8px;padding:6px 10px}
+.lbl{margin:.2em 0;font-size:11px;color:#667;text-transform:uppercase;letter-spacing:.04em}
+.cands{margin:.3em 0;padding-left:1.4em}.cands li{margin:.12em 0}.cands b{color:#c0392b}.nocand{color:#aaa;font-style:italic;font-size:13px}
+.simple-h{font-size:15px;margin:.8em 0 .3em;color:#333}
+.vids{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
 .vid{border:1px solid #e6e8ec;border-radius:8px;overflow:hidden;background:#fff}
-.vid img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover}
-.vid .meta{padding:7px 9px;font-size:12px;display:flex;flex-direction:column;gap:3px}
-.vid .meta a{color:#1a73e8;text-decoration:none;font-weight:600}.vid code{color:#888;font-size:11px}
-.vid .cur{color:#444}
+.vid.ok{opacity:.55}.vid.ok .cur::before{content:"✓ ";color:#2e8b57}
+.vid img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;background:#ddd}
+.vid .meta{padding:6px 8px;font-size:12px;display:flex;flex-direction:column;gap:2px}
+.vid .meta a{color:#1a73e8;text-decoration:none;font-weight:600}.vid .dt{color:#999;font-size:11px}
+.vid code{color:#8a8f98;font-size:10px;word-break:break-all}.vid .cur{color:#444;font-size:11.5px}
 </style></head><body>
-<header>Plan de travail — <b>${nVid}</b> vidéos à nommer · circuit Masters/Femmes · groupées par tournoi puis par tour</header>
-<main>${sections}</main></body></html>`;
+<header>Inventaire vidéos billard — <b>${totAll}</b> au total · <b>${totToName}</b> à nommer <span style="color:#9aa">(✓ = semble déjà nommée)</span></header>
+<nav>${nav.join('')}</nav><main>${sections.join('')}</main></body></html>`;
 
 writeFileSync(join(__dirname, '..', 'worklist-videos.html'), html, 'utf8');
-console.log(`Plan de travail : ${nVid} vidéos (circuit Masters/Femmes) dans ${gList.length} tournois → worklist-videos.html`);
-console.log(`Écartées : ${offCircuit} hors circuit (Vétérans/Espoirs/9-8 ball/Para…) · ${unmatched} non rattachées à un tournoi connu`);
+console.log(`Inventaire : ${totAll} vidéos · ${totToName} à nommer → worklist-videos.html`);
+for (const [cat, b] of cats) {
+  const richVids = [...b.rich.values()].reduce((s, g) => s + [...g.rounds.values()].reduce((a, r) => a + r.vids.length, 0), 0);
+  const count = richVids + b.simple.length; if (count) console.log(`  ${cat.padEnd(26)} ${count}`);
+}
