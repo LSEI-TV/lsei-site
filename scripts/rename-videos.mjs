@@ -8,6 +8,7 @@
 //    node scripts/rename-videos.mjs auth      → (une seule fois) autorise l'accès à TA chaîne
 //    node scripts/rename-videos.mjs           → aperçu (dry-run) : liste ce qui SERAIT renommé
 //    node scripts/rename-videos.mjs --apply   → applique réellement les renommages
+//    node scripts/rename-videos.mjs mon.csv [--apply]  → utilise un autre fichier CSV
 //
 //  Pré-requis (une seule fois, côté Google) :
 //    1. Google Cloud Console → crée/choisis un projet → active « YouTube Data API v3 ».
@@ -69,7 +70,9 @@ async function auth() {
     });
     srv.listen(PORT, () => {
       console.log('\nOuvre cette page et autorise l’accès :\n' + url + '\n');
-      const opener = process.platform === 'win32' ? ['cmd', ['/c', 'start', '', url]]
+      // L'URL contient des « & » → sous Windows « start » la couperait. rundll32
+      // reçoit l'URL comme UN seul argument (pas d'interprétation du shell).
+      const opener = process.platform === 'win32' ? ['rundll32', ['url.dll,FileProtocolHandler', url]]
         : process.platform === 'darwin' ? ['open', [url]] : ['xdg-open', [url]];
       try { spawn(opener[0], opener[1], { stdio: 'ignore', detached: true }).unref(); } catch {}
     });
@@ -116,10 +119,11 @@ function parseCsv(text) {
 }
 
 // ---------- Renommage ----------
-async function run(apply) {
+async function run(apply, csvPath) {
   const c = loadCreds();
-  if (!existsSync(CSV)) { console.error('✗ rename-videos.csv introuvable. Lance d’abord : node scripts/audit-videos.mjs'); process.exit(1); }
-  const planned = parseCsv(readFileSync(CSV, 'utf8')).filter((r) => r.id && r.neo && r.neo !== r.current);
+  const file = csvPath || CSV;
+  if (!existsSync(file)) { console.error(`✗ ${file} introuvable. Lance d’abord : node scripts/audit-videos.mjs`); process.exit(1); }
+  const planned = parseCsv(readFileSync(file, 'utf8')).filter((r) => r.id && r.neo && r.neo !== r.current);
   if (!planned.length) { console.log('Rien à renommer : aucune ligne avec un « nouveau_titre » différent du titre actuel.'); return; }
   console.log(`${planned.length} vidéo(s) à renommer${apply ? '' : ' (DRY-RUN — rien ne sera modifié)'} :\n`);
   for (const p of planned) console.log(`  ${p.id}\n    − ${p.current}\n    + ${p.neo}`);
@@ -143,6 +147,9 @@ async function run(apply) {
   console.log(`\nTerminé : ${done} renommée(s), ${fail} échec(s).`);
 }
 
-const arg = process.argv[2];
-if (arg === 'auth') auth();
-else run(process.argv.includes('--apply'));
+const args = process.argv.slice(2);
+if (args[0] === 'auth') auth();
+else {
+  const csvPath = args.find((a) => !a.startsWith('--') && a !== 'auth');
+  run(args.includes('--apply'), csvPath);
+}
