@@ -22,7 +22,7 @@
 //       enregistre le refresh_token dans youtube-oauth.json. Ce fichier NE DOIT PAS être
 //       commité (il est dans .gitignore).
 // ============================================================
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, appendFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { createServer } from 'node:http';
@@ -141,7 +141,7 @@ async function run(apply, csvPath) {
     const res = await fetch('https://www.googleapis.com/youtube/v3/videos?part=snippet', {
       method: 'PUT', headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' }, body: JSON.stringify(body),
     }).then((r) => r.json());
-    if (res.id) { console.log(`  ✓ ${p.id} → ${p.neo}`); done++; }
+    if (res.id) { console.log(`  ✓ ${p.id} → ${p.neo}`); done++; try { appendFileSync(join(ROOT, 'video-done.txt'), p.id + '\n'); } catch {} }
     else { console.error(`  ✗ ${p.id} :`, res.error?.message || JSON.stringify(res)); fail++; }
   }
   console.log(`\nTerminé : ${done} renommée(s), ${fail} échec(s).`);

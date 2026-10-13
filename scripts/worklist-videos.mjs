@@ -15,7 +15,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA = join(__dirname, '..', 'src', 'data', 'billard');
 const CACHE = join(__dirname, '..', 'src', 'data', 'cache', 'replays.json');
 const FULL = join(__dirname, '..', 'channel-billard.json'); // liste COMPLÈTE de la chaîne (si dispo)
-const EXCL = (() => { const p = join(__dirname, '..', 'video-exclude.txt'); if (!existsSync(p)) return new Set(); return new Set(readFileSync(p, 'utf8').split(/\r?\n/).map((l) => l.split('#')[0].trim()).filter(Boolean)); })();
+const EXCL = (() => { const s = new Set(); for (const fn of ['video-exclude.txt', 'video-done.txt']) { const p = join(__dirname, '..', fn); if (existsSync(p)) for (const l of readFileSync(p, 'utf8').split(/\r?\n/)) { const id = l.split('#')[0].trim(); if (id) s.add(id); } } return s; })();
 
 const PART = new Set(['de', 'du', 'des', 'le', 'la', 'les', 'van', 'von', 'der', 'den', 'el', 'al', 'di', 'da', 'the', 'of']);
 const nk = (s) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
