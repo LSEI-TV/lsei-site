@@ -15,6 +15,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA = join(__dirname, '..', 'src', 'data', 'billard');
 const CACHE = join(__dirname, '..', 'src', 'data', 'cache', 'replays.json');
 const FULL = join(__dirname, '..', 'channel-billard.json'); // liste COMPLÈTE de la chaîne (si dispo)
+const EXCL = (() => { const p = join(__dirname, '..', 'video-exclude.txt'); if (!existsSync(p)) return new Set(); return new Set(readFileSync(p, 'utf8').split(/\r?\n/).map((l) => l.split('#')[0].trim()).filter(Boolean)); })();
 
 const PART = new Set(['de', 'du', 'des', 'le', 'la', 'les', 'van', 'von', 'der', 'den', 'el', 'al', 'di', 'da', 'the', 'of']);
 const nk = (s) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -91,6 +92,7 @@ function matchTour(ti, date, comp) {
 const cats = new Map(); // cat → { rich: Map(tourKey→{t,rounds}), simple: [vids] }
 for (const n of CAT_ORDER) cats.set(n, { rich: new Map(), simple: [] });
 for (const v of vids) {
+  if (EXCL.has(v.id)) continue;
   const ti = v.title || '';
   const cat = catOf(ti);
   if (!cats.has(cat)) cats.set(cat, { rich: new Map(), simple: [] });

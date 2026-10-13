@@ -1,0 +1,3 @@
+# Vidéos à NE PAS proposer au renommage (résumés, multiplex, montages, etc.)
+# Une par ligne (id YouTube). Les lignes vides et # sont ignorées.
+XwI_ixS6LJ4   # résumé de la finale Masters N°2 Hazebrouck (pas un match unique)
