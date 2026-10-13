@@ -460,6 +460,15 @@ async function fetchRealReplays(): Promise<Video[]> {
       for (const v of fresh) byId.set(v.id, v); // le fetch récent gagne sur les doublons
       result = [...byId.values()].sort((a, b) => ((a.date || '') < (b.date || '') ? 1 : -1));
     }
+    // Rafraîchir le TITRE de toutes les vidéos du résultat (y compris celles venues du
+    // cache, dont la playlist a échoué ce run) via videos.list — autrement un renommage
+    // met des jours à apparaître (le titre d'item de playlist traîne beaucoup).
+    const needTitle = result.map((v) => v.id).filter((id) => !freshTitle.has(id));
+    for (let i = 0; i < needTitle.length; i += 50) {
+      const chunk = needTitle.slice(i, i + 50);
+      try { const r = await yt(`videos?part=snippet&id=${chunk.join(',')}`); for (const v of r.items || []) if (v.snippet?.title) freshTitle.set(v.id, v.snippet.title); } catch { /* ignore */ }
+    }
+    for (const v of result) { const ft = freshTitle.get(v.id); if (ft) v.title = ft; }
     writeReplaysCache(result);
     _realReplays = result;
   } else if (cached) {
