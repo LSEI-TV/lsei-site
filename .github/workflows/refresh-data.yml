@@ -63,6 +63,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           port: 21
+          timeout: 600000   # 10 min : OVH coupe parfois la socket de contrôle (défaut 30 s trop court)
           local-dir: ./dist/
           server-dir: /site/
           exclude: |
