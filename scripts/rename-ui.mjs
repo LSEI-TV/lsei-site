@@ -57,7 +57,9 @@ const vids = existsSync(FULL)
 const dday = (a, b) => Math.abs((new Date(a) - new Date(b)) / 86400000);
 function matchTour(ti, date, comp) {
   if (!date) return null;
-  const tnm = ti.match(/\bTN\s*(\d+)\b/i);
+  // Numéro d'étape : « TN4 », « TN N°2 », « MASTERS N°1 »… (le « N° » ou « TN » évite
+  // de confondre avec la saison « 25/26 »).
+  const tnm = ti.match(/\bTN\s*0*(\d+)/i) || ti.match(/N°\s*0*(\d+)/i);
   const cdf = /championnat|france/i.test(ti);
   const cand = tours.filter((t) => t.comp === comp &&
     (tnm ? new RegExp(`\\bTN\\s*${tnm[1]}\\b`, 'i').test(t.level) : cdf ? (t.kind === 'france' || /championnat|france/i.test(t.level)) : true) &&

@@ -79,7 +79,7 @@ const dday = (a, b) => Math.abs((new Date(a) - new Date(b)) / 86400000);
 // Rattache une vidéo Masters/Femmes à un tournoi connu (sinon null).
 function matchTour(ti, date, comp) {
   if (!date) return null;
-  const tnm = ti.match(/\bTN\s*(\d+)\b/i);
+  const tnm = ti.match(/\bTN\s*0*(\d+)/i) || ti.match(/N°\s*0*(\d+)/i);
   const cdf = /championnat|france/i.test(ti);
   const cand = tours.filter((t) => t.comp === comp &&
     (tnm ? new RegExp(`\\bTN\\s*${tnm[1]}\\b`, 'i').test(t.level) : cdf ? (t.kind === 'france' || /championnat|france/i.test(t.level)) : true) &&
