@@ -60,7 +60,7 @@ function matchTour(ti, date, comp) {
   if (!date) return null;
   // Numéro d'étape : « TN4 », « TN N°2 », « MASTERS N°1 »… (le « N° » ou « TN » évite
   // de confondre avec la saison « 25/26 »).
-  const tnm = ti.match(/\bTN\s*0*(\d+)/i) || ti.match(/N°\s*0*(\d+)/i);
+  const tnm = ti.match(/\bTN\s*0*(\d+)/i) || ti.match(/N°\s*0*(\d+)/i) || ti.match(/National\s*#?\s*0*(\d+)/i) || ti.match(/#\s*0*(\d+)/) || ti.match(/\bMASTERS\s+0*([1-9])\b(?!\d|\s*\/)/i) || ti.match(/\bFEMMES\s+0*([1-9])\b(?!\d|\s*\/)/i);
   const cdf = /championnat|france/i.test(ti);
   const cand = tours.filter((t) => t.comp === comp &&
     (tnm ? new RegExp(`\\bTN\\s*${tnm[1]}\\b`, 'i').test(t.level) : cdf ? (t.kind === 'france' || /championnat|france/i.test(t.level)) : true) &&
@@ -74,6 +74,7 @@ for (const v of vids) {
   if (EXCL.has(v.id)) continue;
   const ti = v.title || '';
   if (/basket|militaire|fougeres/i.test(ti)) continue;
+  if (/afrique|marrakech|chinese|\bfauteuil|\béquipes?\b|\bequipes?\b|ultimate\s*pool|coupe\s*d/i.test(ti)) continue; // hors circuit FFB
   const comp = /femme/i.test(ti) ? 'FEMMES' : /master/i.test(ti) ? 'MASTERS' : null;
   if (!comp) continue;
   const r = roundOf(ti); if (!r) continue;
