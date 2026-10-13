@@ -405,17 +405,21 @@ async function fetchRealReplays(): Promise<Video[]> {
   //    pour les directs (elle ne suit pas l'ordre des matchs).
   const ids = [...map.keys()];
   const airTime = new Map<string, string>();
+  // Titre RÉEL de la vidéo (videos.list), à jour immédiatement après un renommage —
+  // contrairement au titre d'item de playlist, qui se propage très lentement côté YouTube.
+  const freshTitle = new Map<string, string>();
   const upcomingIds = new Set<string>(); // lives PROGRAMMÉS, pas encore diffusés → exclus des replays
   const chunks: string[][] = [];
   for (let i = 0; i < ids.length; i += 50) chunks.push(ids.slice(i, i + 50));
   const detailResults = await Promise.all(
-    chunks.map((chunk) => yt(`videos?part=liveStreamingDetails&id=${chunk.join(',')}`).catch(() => ({ items: [] }))),
+    chunks.map((chunk) => yt(`videos?part=liveStreamingDetails,snippet&id=${chunk.join(',')}`).catch(() => ({ items: [] }))),
   );
   for (const res of detailResults) {
     for (const v of res.items || []) {
       const d = v.liveStreamingDetails;
       if (d?.actualStartTime) airTime.set(v.id, d.actualStartTime);
       else if (d?.scheduledStartTime) upcomingIds.add(v.id); // programmé mais jamais diffusé
+      if (v.snippet?.title) freshTitle.set(v.id, v.snippet.title);
     }
   }
 
@@ -428,7 +432,7 @@ async function fetchRealReplays(): Promise<Video[]> {
       v: {
         id: m.id,
         discipline: m.discipline,
-        title: m.title,
+        title: freshTitle.get(m.id) || m.title,
         kicker: 'Replay',
         caption: disciplineLabel(m.discipline),
         when: frenchDate(eff),
