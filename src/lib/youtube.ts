@@ -35,6 +35,8 @@ export interface Video {
   season?: string;
   /** catégorie/compétition (billard uniquement), ex. "Masters" */
   category?: string;
+  /** durée ISO 8601 (ex. "PT1H12M"), pour les données structurées vidéo (SEO) */
+  duration?: string;
   /** date de diffusion au format ISO (pour les données structurées SEO) */
   date?: string;
 }
@@ -408,11 +410,12 @@ async function fetchRealReplays(): Promise<Video[]> {
   // Titre RÉEL de la vidéo (videos.list), à jour immédiatement après un renommage —
   // contrairement au titre d'item de playlist, qui se propage très lentement côté YouTube.
   const freshTitle = new Map<string, string>();
+  const durations = new Map<string, string>(); // id → durée ISO 8601 (pour les rich results vidéo)
   const upcomingIds = new Set<string>(); // lives PROGRAMMÉS, pas encore diffusés → exclus des replays
   const chunks: string[][] = [];
   for (let i = 0; i < ids.length; i += 50) chunks.push(ids.slice(i, i + 50));
   const detailResults = await Promise.all(
-    chunks.map((chunk) => yt(`videos?part=liveStreamingDetails,snippet&id=${chunk.join(',')}`).catch(() => ({ items: [] }))),
+    chunks.map((chunk) => yt(`videos?part=liveStreamingDetails,snippet,contentDetails&id=${chunk.join(',')}`).catch(() => ({ items: [] }))),
   );
   for (const res of detailResults) {
     for (const v of res.items || []) {
@@ -420,6 +423,8 @@ async function fetchRealReplays(): Promise<Video[]> {
       if (d?.actualStartTime) airTime.set(v.id, d.actualStartTime);
       else if (d?.scheduledStartTime) upcomingIds.add(v.id); // programmé mais jamais diffusé
       if (v.snippet?.title) freshTitle.set(v.id, v.snippet.title);
+      const dur = v.contentDetails?.duration;
+      if (dur && dur !== 'P0D') durations.set(v.id, dur); // P0D = live en cours (pas de durée)
     }
   }
 
@@ -440,6 +445,7 @@ async function fetchRealReplays(): Promise<Video[]> {
         season: m.plSeason || seasonOf(eff), // le « 25/26 » du nom de playlist fait foi
         category: m.category,
         date: eff, // ISO, pour les données structurées vidéo
+        duration: durations.get(m.id), // durée ISO 8601 (rich results vidéo)
       } as Video,
     };
   });

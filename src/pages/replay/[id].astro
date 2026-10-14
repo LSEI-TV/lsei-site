@@ -5,10 +5,21 @@ import Thumb from '../../components/Thumb.astro';
 import ShareLinks from '../../components/ShareLinks.astro';
 import { getDiscipline } from '../../data/site';
 import { getReplays } from '../../lib/youtube';
+import channelBillard from '../../data/billard/channel-billard.json';
 
 export async function getStaticPaths() {
   const videos = await getReplays();
-  return videos.map((v) => ({ params: { id: v.id }, props: { video: v } }));
+  const have = new Set(videos.map((v) => v.id));
+  const frDate = (iso: string) => (iso ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(iso)) : '');
+  // Union : toute vidéo billard de la chaîne non présente dans le cache reçoit AUSSI
+  // sa page /replay (sinon lien cassé depuis les fiches) → rich result vidéo pour TOUT.
+  const extra = (channelBillard as { id: string; title: string; date?: string }[])
+    .filter((c) => !have.has(c.id))
+    .map((c) => {
+      const iso = c.date ? (c.date.length === 10 ? `${c.date}T00:00:00Z` : c.date) : '';
+      return { id: c.id, discipline: 'billard' as const, title: c.title, kicker: 'Replay', caption: 'Billard', when: frDate(iso), thumb: `https://i.ytimg.com/vi/${c.id}/hqdefault.jpg`, date: iso || undefined };
+    });
+  return [...videos, ...extra].map((v) => ({ params: { id: v.id }, props: { video: v } }));
 }
 
 const { video } = Astro.props;
@@ -25,8 +36,14 @@ const videoLd = {
   '@type': 'VideoObject',
   name: video.title,
   description: video.excerpt || `${video.title} — ${d.name} en replay sur LSEI, Le Sport en Image.`,
-  ...(video.thumb ? { thumbnailUrl: [video.thumb] } : {}),
+  // Plusieurs tailles de miniature → meilleure éligibilité aux rich results vidéo.
+  thumbnailUrl: [
+    `https://i.ytimg.com/vi/${video.id}/maxresdefault.jpg`,
+    `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`,
+    `https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`,
+  ],
   ...(video.date ? { uploadDate: video.date } : {}),
+  ...(video.duration ? { duration: video.duration } : {}),
   embedUrl: `https://www.youtube.com/embed/${video.id}`,
   contentUrl: `https://www.youtube.com/watch?v=${video.id}`,
   publisher: {
@@ -46,8 +63,8 @@ const videoLd = {
         <h1>{video.title}</h1>
         <div class="byline">
           <a href={`/disciplines/${d.slug}`} class="k" style={`color:${d.colorVar}`}>{d.name}</a><span class="sep"></span>
-          <span>{video.when}</span><span class="sep"></span>
-          <span class="mono">{video.views} vues</span>
+          <span>{video.when}</span>
+          {video.views && <Fragment><span class="sep"></span><span class="mono">{video.views} vues</span></Fragment>}
         </div>
         <p class="dek">{video.excerpt}</p>
         <p style="margin-top:18px">
