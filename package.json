@@ -11,12 +11,14 @@
     "astro": "astro",
     "cms": "decap-server",
     "gen:season": "node scripts/generate-season.mjs",
-    "gen:tournament": "node scripts/generate-tournament.mjs"
+    "gen:tournament": "node scripts/generate-tournament.mjs",
+    "assets": "node scripts/build-player-assets.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^5.13.0",
+    "sharp": "^0.34.5",
     "unist-util-visit": "^5.1.0"
   },
   "devDependencies": {

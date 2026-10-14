@@ -1362,7 +1362,7 @@ footer { background: var(--surface); border-top: 1px solid var(--line); margin-t
 .fj-hint { color: var(--ink-faint); font-weight: 400; font-size: 12px; }
 .fj-help { font-size: 13px; color: var(--ink-soft); background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 12px 15px; margin-top: 14px; line-height: 1.55; }
 .fj-help b { color: var(--ink); font-weight: 700; }
-.btile[title] { cursor: help; }
+.btile[title] { cursor: default; }
 
 /* page joueur */
 .bplayer-head { display: flex; align-items: center; gap: 20px; }

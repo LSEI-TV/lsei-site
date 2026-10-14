@@ -38,6 +38,9 @@ jobs:
           echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" >> .env
           echo "YOUTUBE_CHANNEL_ID=UCYUOdKr28cOjLzHWv6pTpjQ" >> .env
 
+      - name: Régénérer les photos / couleurs de fond / logos des joueurs
+        run: node scripts/build-player-assets.mjs || echo "Régénération des assets joueurs échouée — fichiers existants conservés."
+
       - name: Construire le site
         run: npm run build
 

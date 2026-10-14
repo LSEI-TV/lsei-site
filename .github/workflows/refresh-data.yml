@@ -52,6 +52,15 @@ jobs:
       - name: Importer les TN Blackball (Master + Femme, auto-découverte Cuescore)
         run: node scripts/import-blackball.mjs || echo "Import Blackball non mis à jour (Cuescore indisponible) — résultats précédents conservés."
 
+      - name: Rafraîchir la liste complète des vidéos billard de la chaîne
+        run: node scripts/refresh-channel-billard.mjs || echo "channel-billard non mis à jour — snapshot conservé."
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          YOUTUBE_CHANNEL_ID: UCYUOdKr28cOjLzHWv6pTpjQ
+
+      - name: Régénérer les photos / couleurs de fond / logos des joueurs
+        run: node scripts/build-player-assets.mjs || echo "Régénération des assets joueurs échouée — fichiers existants conservés."
+
       - name: Construire (récupère YouTube + met à jour le cache)
         run: npm run build
 
@@ -76,7 +85,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/cache/ src/content/social/ src/data/billard/results-2026-2027.json src/data/billard/results-femmes-2026-2027.json
+          git add src/data/cache/ src/content/social/ src/data/billard/results-2026-2027.json src/data/billard/results-femmes-2026-2027.json src/data/billard/channel-billard.json
           if git diff --staged --quiet; then
             echo "Rien de nouveau, aucun commit."
           else

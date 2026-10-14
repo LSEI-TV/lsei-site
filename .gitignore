@@ -16,7 +16,7 @@ audit-videos.md
 rename-videos.csv
 autofill-videos.csv
 worklist-videos.html
-channel-billard.json
+/channel-billard.json
 
 # os / editor
 .DS_Store
