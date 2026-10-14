@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-13T20:28:05.444Z",
+  "updated": "2026-10-14T13:55:42.368Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
   "pool": "Poule B",
   "matches": [
@@ -184,11 +184,6 @@
       "awaySlug": "fougeres",
       "homeScore": 61,
       "awayScore": 70
-    },
-    {
-      "date": "2026-10-13",
-      "homeSlug": "tarbes",
-      "awaySlug": "toulouse"
     },
     {
       "date": "2026-10-13",
@@ -446,6 +441,11 @@
       "date": "2026-11-24",
       "homeSlug": "vitre",
       "awaySlug": "angers"
+    },
+    {
+      "date": "2026-11-25",
+      "homeSlug": "tarbes",
+      "awaySlug": "toulouse"
     },
     {
       "date": "2026-12-04",
