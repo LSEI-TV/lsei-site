@@ -18,11 +18,12 @@ interface Props {
   preloadImage?: string;
   /** 'bare' = sans le masthead/footer LSEI (pour un « site dans le site » qui pose son propre chrome). */
   chrome?: 'full' | 'bare';
+  canonical?: string;
 }
-const { title, description = site.description, active, image, ogType = 'website', preloadImage, chrome = 'full' } = Astro.props;
+const { title, description = site.description, active, image, ogType = 'website', preloadImage, chrome = 'full', canonical: canonicalProp } = Astro.props;
 const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
 // URLs absolues (nécessaires pour le partage réseaux sociaux + le référencement).
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const canonical = new URL(canonicalProp ?? Astro.url.pathname, Astro.site).href;
 const ogImage = image
   ? (image.startsWith('http') ? image : new URL(image, Astro.site).href)
   : new URL('/og-image.jpg', Astro.site).href;

@@ -9,7 +9,10 @@ export default defineConfig({
   // On exclut l'interface d'admin /admin.
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/admin'),
+      // Exclut /admin et les URL JOUEUR numériques (anciens liens) : chaque joueur n'a
+      // qu'UNE URL canonique dans le sitemap — la version lisible (slug) — pour éviter
+      // le contenu dupliqué. Les liens numériques restent valides (canonical → slug).
+      filter: (page) => !page.includes('/admin') && !/\/joueur\/\d+\/?$/.test(page),
     }),
   ],
   // Rendu statique : le site est pré-généré au build (rapide, SEO, hébergement gratuit).

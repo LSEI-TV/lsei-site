@@ -16,13 +16,13 @@ export function getStaticPaths() {
   const { entries } = playerSlugs(getFemmesSeasons());
   const paths: any[] = [];
   for (const { id, slug } of entries) {
-    paths.push({ params: { id: slug }, props: { pid: id } });
-    paths.push({ params: { id: String(id) }, props: { pid: id } });
+    paths.push({ params: { id: slug }, props: { pid: id, slug } });
+    paths.push({ params: { id: String(id) }, props: { pid: id, slug } });
   }
   return paths;
 }
 
-const { pid } = Astro.props as { pid: number };
+const { pid, slug } = Astro.props as { pid: number; slug: string };
 const { slugOf } = playerSlugs(getFemmesSeasons());
 const seasons = getFemmesSeasons().filter((s) => s.results);
 
@@ -177,7 +177,7 @@ const fmtArtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeri
 // auto par le nom de famille ; filtre « Femmes » pour éviter un homonyme masculin).
 const playerVideos = playerVideosFor(name, await getReplays({ discipline: 'billard' }), 'femmes');
 ---
-<Base title={`${name} — Fiche carrière · Blackball Femmes`} description={`Fiche carrière de ${name} au Blackball Femmes : palmarès, statistiques et confrontations sur ${bySeason.length} saison${bySeason.length > 1 ? 's' : ''}.`} active="disciplines">
+<Base title={`${name} — Fiche carrière · Blackball Femmes`} description={`Fiche carrière de ${name} au Blackball Femmes : palmarès, statistiques et confrontations sur ${bySeason.length} saison${bySeason.length > 1 ? 's' : ''}.`} canonical={`/femmes/joueur/${slug}`} active="disciplines">
   <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'Person', name, url: new URL(Astro.url.pathname, Astro.site).href, ...(photo ? { image: new URL(photo, Astro.site).href } : {}), description: `${name}, joueuse de billard blackball au Blackball Femmes, suivie par LSEI — Le Sport en Image.`, memberOf: { '@type': 'SportsOrganization', name: 'Blackball Femmes' } })} />
   <HubNav season={latest.slug} active="joueurs" root="/femmes" brand="Billard Femmes" sub="· Blackball Femmes" joueursLabel="Joueuses" videosHref="/disciplines/billard/categorie/femmes" />
   <section class="section jfiche">

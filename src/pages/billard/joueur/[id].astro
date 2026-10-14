@@ -22,8 +22,8 @@ export function getStaticPaths() {
   const used = new Set<string>();
   for (const { id, slug } of entries) {
     used.add(slug);
-    paths.push({ params: { id: slug }, props: { pid: id } });
-    paths.push({ params: { id: String(id) }, props: { pid: id } });
+    paths.push({ params: { id: slug }, props: { pid: id, slug } });
+    paths.push({ params: { id: String(id) }, props: { pid: id, slug } });
   }
 
   // --- PROMUS d'une saison À VENIR (top 8 du Mixte National), pas encore au Masters. ---
@@ -51,14 +51,14 @@ export function getStaticPaths() {
       let base = slugify(p.name) || String(p.id), slug = base, k = 2;
       while (used.has(slug)) slug = `${base}-${k++}`;
       used.add(slug);
-      paths.push({ params: { id: slug }, props: { pid: p.id, nc } });
-      paths.push({ params: { id: String(p.id) }, props: { pid: p.id, nc } });
+      paths.push({ params: { id: slug }, props: { pid: p.id, nc, slug } });
+      paths.push({ params: { id: String(p.id) }, props: { pid: p.id, nc, slug } });
     }
   }
   return paths;
 }
 
-const { pid, nc } = Astro.props as { pid: number; nc?: any };
+const { pid, nc, slug } = Astro.props as { pid: number; nc?: any; slug: string };
 const { slugOf } = playerSlugs(getSeasons());
 const seasons = getSeasons().filter((s) => s.results); // récent d'abord
 
@@ -276,7 +276,7 @@ const personLd = {
   memberOf: { '@type': 'SportsOrganization', name: 'Blackball Master' },
 };
 ---
-<Base title={nc ? `${name} — Nouveau au Blackball Master ${nc.mastersLabel}` : `${name} — Fiche carrière · Blackball Master`} description={nc ? `${name} accède au Blackball Master ${nc.mastersLabel}, promu du Mixte National ${nc.feederLabel}.` : `Fiche carrière de ${name} au Blackball Master : palmarès, statistiques et confrontations sur ${bySeason.length} saison${bySeason.length > 1 ? 's' : ''}.`} image={`/og/joueur/${Astro.params.id}.jpg`} active="disciplines">
+<Base title={nc ? `${name} — Nouveau au Blackball Master ${nc.mastersLabel}` : `${name} — Fiche carrière · Blackball Master`} description={nc ? `${name} accède au Blackball Master ${nc.mastersLabel}, promu du Mixte National ${nc.feederLabel}.` : `Fiche carrière de ${name} au Blackball Master : palmarès, statistiques et confrontations sur ${bySeason.length} saison${bySeason.length > 1 ? 's' : ''}.`} image={`/og/joueur/${Astro.params.id}.jpg`} canonical={`/billard/joueur/${slug}`} active="disciplines">
   <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
   <HubNav season={nc ? nc.mastersSlug : latest.slug} active="joueurs" archivesHref="/billard/archives" />
   <section class="section jfiche">
