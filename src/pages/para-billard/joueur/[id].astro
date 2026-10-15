@@ -15,12 +15,15 @@ export function getStaticPaths() {
   const paths: any[] = [];
   for (const { id, slug } of entries) {
     paths.push({ params: { id: slug }, props: { pid: id, slug } });
-    paths.push({ params: { id: String(id) }, props: { pid: id, slug } });
+    // Ancienne adresse numérique (/joueur/6524989) : redirection vers l'adresse au nom (liens Google / anciens partages).
+    if (slug !== String(id)) paths.push({ params: { id: String(id) }, props: { pid: id, slug, redirect: true } });
   }
   return paths;
 }
 
-const { pid, slug } = Astro.props as { pid: number; slug: string };
+const { pid, slug, redirect } = Astro.props as { pid: number; slug: string; redirect?: boolean };
+// Site statique : Astro génère une page de redirection immédiate (meta refresh 0 + noindex + canonical).
+if (redirect) return Astro.redirect(`/para-billard/joueur/${slug}`, 301);
 const { slugOf } = playerSlugs(getParaSeasons());
 const seasons = getParaSeasons().filter((s) => s.results);
 

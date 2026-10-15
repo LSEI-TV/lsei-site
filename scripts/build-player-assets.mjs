@@ -104,18 +104,24 @@ for (const cat of Object.keys(CATROSTER)) {
     for (const p of R.players || []) { if (p.id == null || seen.has(p.id)) continue; seen.add(p.id); rost.push({ id: p.id, slug: p.slug || nk(p.name).replace(/ /g, '-'), t: toks(p.name) }); }
   }
   const base = join(HS, cat); if (!existsSync(base)) continue;
-  const latest = new Map();
+  // Photo la plus RÉCENTE par JOUEUR (et non par nom de fichier) : un même joueur peut changer
+  // de nom de fichier selon les saisons (« CHRISTOPHE FAURIE » jusqu'en 2021-2022, puis « FAURIE ») ;
+  // avant, la première clé rencontrée l'emportait et l'ancienne photo restait affichée.
+  const best = new Map();                           // id -> { season, path, cand }
   for (const season of readdirSync(base).sort()) {
     const sd = join(base, season); if (!statSync(sd).isDirectory()) continue;
-    for (const file of readdirSync(sd)) { if (!IMG.test(file)) continue; latest.set(nk(file.replace(/\.[^.]+$/, '')), join(sd, file)); }
+    for (const file of readdirSync(sd)) {
+      if (!IMG.test(file)) continue;
+      const key = nk(file.replace(/\.[^.]+$/, '')), ht = toks(key);
+      const cand = rost.filter((p) => subset(ht, p.t) && sharedLong(ht, p.t));
+      if (cand.length !== 1) { if (cand.length > 1 && !ambig.includes(`${cat}:${key}`)) ambig.push(`${cat}:${key}`); continue; }
+      const id = String(cand[0].id), cur = best.get(id);
+      if (!cur || season >= cur.season) best.set(id, { season, path: join(sd, file), cand: cand[0] });   // saisons triées : la plus récente gagne
+    }
   }
-  for (const [key, path] of latest) {
-    const ht = toks(key);
-    const cand = rost.filter((p) => subset(ht, p.t) && sharedLong(ht, p.t));
-    if (cand.length !== 1) { if (cand.length > 1) ambig.push(`${cat}:${key}`); continue; }
-    const id = String(cand[0].id);
+  for (const [id, { path, cand }] of best) {
     if (cutouts[id]) continue;                      // déjà couvert par le roster
-    let slug = cand[0].slug; if (usedSlugs.has(slug)) slug = `${slug}-${id}`;
+    let slug = cand.slug; if (usedSlugs.has(slug)) slug = `${slug}-${id}`;
     try { await addCutout(id, slug, path); usedSlugs.add(slug); okExtra++; } catch {}
   }
 }

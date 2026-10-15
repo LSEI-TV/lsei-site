@@ -23,7 +23,8 @@ export function getStaticPaths() {
   for (const { id, slug } of entries) {
     used.add(slug);
     paths.push({ params: { id: slug }, props: { pid: id, slug } });
-    paths.push({ params: { id: String(id) }, props: { pid: id, slug } });
+    // Ancienne adresse numérique (/joueur/6524989) : redirection vers l'adresse au nom (liens Google / anciens partages).
+    if (slug !== String(id)) paths.push({ params: { id: String(id) }, props: { pid: id, slug, redirect: true } });
   }
 
   // --- PROMUS d'une saison À VENIR (top 8 du Mixte National), pas encore au Masters. ---
@@ -52,13 +53,15 @@ export function getStaticPaths() {
       while (used.has(slug)) slug = `${base}-${k++}`;
       used.add(slug);
       paths.push({ params: { id: slug }, props: { pid: p.id, nc, slug } });
-      paths.push({ params: { id: String(p.id) }, props: { pid: p.id, nc, slug } });
+      if (slug !== String(p.id)) paths.push({ params: { id: String(p.id) }, props: { pid: p.id, nc, slug, redirect: true } });
     }
   }
   return paths;
 }
 
-const { pid, nc, slug } = Astro.props as { pid: number; nc?: any; slug: string };
+const { pid, nc, slug, redirect } = Astro.props as { pid: number; nc?: any; slug: string; redirect?: boolean };
+// Site statique : Astro génère une page de redirection immédiate (meta refresh 0 + noindex + canonical).
+if (redirect) return Astro.redirect(`/billard/joueur/${slug}`, 301);
 const { slugOf } = playerSlugs(getSeasons());
 const seasons = getSeasons().filter((s) => s.results); // récent d'abord
 
