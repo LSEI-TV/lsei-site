@@ -1829,6 +1829,13 @@ th, td, figcaption, .chip, .badge {
   text-align: initial;
   hyphens: manual;
 }
+/* Les titres placés dans un bloc justifié ne sont jamais justifiés ni coupés (ex. titre de la page replay).
+   :where() = aucune priorité : un titre centré ou aligné par sa propre règle le reste. */
+:where(.lead, .lead-p, .hub-lead, .body, .nlist-body, .prose, .article-body, .bh-card-desc, .bchoose-desc,
+       .champ-body, .newc-body, .car-palm-body, .chero-last-body) :where(h1, h2, h3, h4, h5, h6, .kicker, .byline) {
+  text-align: start;
+  hyphens: manual;
+}
 
 /* ============ ACCUEIL — « une » cinématique (Variante C) ============ */
 .mhero { position: relative; overflow: hidden; background: #0A0E1A; }

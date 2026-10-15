@@ -6,6 +6,12 @@ import ShareLinks from '../../components/ShareLinks.astro';
 import { getDiscipline } from '../../data/site';
 import { getReplays } from '../../lib/youtube';
 import channelBillard from '../../data/billard/channel-billard.json';
+import { getSeasons } from '../../data/billard/seasons';
+import { getFemmesSeasons } from '../../data/billard/seasonsFemmes';
+import { getParaSeasons } from '../../data/billard/seasonsPara';
+import { getParaMvSeasons } from '../../data/billard/seasonsParaMalvoyants';
+import { playerSlugs } from '../../lib/billardStats';
+import { titleMatchesPlayer, nameTokens } from '../../lib/videoMatch';
 
 export async function getStaticPaths() {
   const videos = await getReplays();
@@ -25,6 +31,34 @@ export async function getStaticPaths() {
 const { video } = Astro.props;
 const d = getDiscipline(video.discipline);
 const shareUrl = new URL(`/replay/${video.id}`, Astro.site).href;
+
+// Fiches des joueurs cités dans le titre (billard) → liens « Fiche joueur » sous le titre.
+// Même reconnaissance par NOM DE FAMILLE que « Ses matchs en vidéo » des fiches (sens inverse).
+// Catégorie déduite du titre ; à nom de famille égal, le joueur de la saison la plus récente l'emporte.
+function titlePlayers(title: string): { name: string; href: string }[] {
+  if (video.discipline !== 'billard' || !title || /snooker|chinese|\bpool\b|8\s*pool|am[eé]ricain/i.test(title)) return [];
+  const [list, base] = /malvoyant/i.test(title) ? [getParaMvSeasons(), '/para-billard-malvoyants/joueur/']
+    : /para.?billard|fauteuil/i.test(title) ? [getParaSeasons(), '/para-billard/joueur/']
+    : /femme/i.test(title) ? [getFemmesSeasons(), '/femmes/joueur/']
+    : [getSeasons(), '/billard/joueur/'];
+  const { slugOf } = playerSlugs(list);
+  const toks = nameTokens(title);
+  const bySurname = new Map<string, { id: number; name: string; pos: number }>();
+  for (const s of list) {                      // saisons de la plus récente à la plus ancienne
+    if (!s.results) continue;
+    for (const p of s.results.players as { id: number; name: string }[]) {
+      if (!titleMatchesPlayer(title, p.name)) continue;
+      const sur = nameTokens(p.name).filter((w) => w.length >= 3).pop() || '';
+      if (!sur || bySurname.has(sur)) continue;
+      const pos = toks.findIndex((w) => w === sur || (Math.min(w.length, sur.length) >= 5 && (w.includes(sur) || sur.includes(w))));
+      bySurname.set(sur, { id: p.id, name: p.name, pos: pos < 0 ? 99 : pos });
+    }
+  }
+  // Écriture homogène « Prénom NOM » (les données mélangent « Damien Joly » et « Kevin LEFRANCOIS »).
+  const pretty = (n: string) => { const w = n.trim().split(/\s+/); return [w[0].charAt(0).toUpperCase() + w[0].slice(1).toLowerCase(), ...w.slice(1).map((x) => x.toUpperCase())].join(' '); };
+  return [...bySurname.values()].sort((a, b) => a.pos - b.pos).slice(0, 4).map((p) => ({ name: pretty(p.name), href: base + slugOf(p.id) }));
+}
+const fiches = titlePlayers(video.title);
 
 const all = await getReplays({ discipline: video.discipline });
 const related = all.filter((v) => v.id !== video.id).slice(0, 3);
@@ -66,6 +100,12 @@ const videoLd = {
           <span>{video.when}</span>
           {video.views && <Fragment><span class="sep"></span><span class="mono">{video.views} vues</span></Fragment>}
         </div>
+        {fiches.length > 0 && (
+          <nav class="rp-fiches" aria-label="Fiches des joueurs">
+            <span class="rp-fiches-k">{fiches.length > 1 ? 'Fiches joueurs' : 'Fiche joueur'}</span>
+            {fiches.map((f) => <a class="rp-fiche" href={f.href} style={`--c:${d.colorVar}`}>{f.name}<span aria-hidden="true">→</span></a>)}
+          </nav>
+        )}
         <p class="dek">{video.excerpt}</p>
         <p style="margin-top:18px">
           <a class="btn ghost" href={`https://www.youtube.com/watch?v=${video.id}`} rel="noopener">Voir sur YouTube ↗</a>
@@ -89,3 +129,14 @@ const videoLd = {
     </div>
   </section>
 </Base>
+
+<style>
+  /* Liens vers les fiches des joueurs cités dans le titre */
+  .rp-fiches { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; }
+  .rp-fiches-k { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); margin-right: 2px; }
+  .rp-fiche { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--surface, #fff); color: var(--ink, #111); font-weight: 700; font-size: 14px; text-decoration: none; transition: border-color .15s, color .15s; }
+  .rp-fiche span { color: var(--c); transition: transform .15s; }
+  .rp-fiche:hover, .rp-fiche:focus-visible { border-color: var(--c); color: var(--c); }
+  .rp-fiche:hover span { transform: translateX(3px); }
+</style>

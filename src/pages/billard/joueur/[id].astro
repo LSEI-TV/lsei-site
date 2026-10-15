@@ -91,6 +91,17 @@ const seasonInfo = bySeason.map((x) => {
     (ptsByLevel.get(e.level) || ptsByLevel.set(e.level, []).get(e.level)!).push(e.points);
   }
   const selfEv = new Map(((x.p.events || []) as any[]).map((e) => [e.level, e]));
+  // Étapes remportées (fiable) : tournois où le joueur a gagné le dernier tour —
+  // indépendant du champ « winner » du tournoi, souvent non renseigné en cours de saison.
+  const _wonTids = new Set<number>();
+  { const _mr = (x.R.matches as any[]).filter((m) => (m.aId === pid || m.bId === pid) && m.roundNo != null);
+    for (const _tid of [...new Set(_mr.map((m) => m.tid))]) {
+      const _all = (x.R.matches as any[]).filter((m) => m.tid === _tid && m.roundNo != null);
+      if (!_all.length) continue;
+      const _max = Math.max(..._all.map((m) => m.roundNo));
+      const _fin = _mr.find((m) => m.tid === _tid && m.roundNo === _max);
+      if (_fin && (_fin.aId === pid ? _fin.sA > _fin.sB : _fin.sB > _fin.sA)) _wonTids.add(_tid);
+    } }
   const parcours = (x.R.tournaments as any[])
     .map((t) => {
       const tms = res.filter((r) => r.tid === t.id).sort((a, b) => (a.date < b.date ? -1 : 1));
@@ -99,7 +110,7 @@ const seasonInfo = bySeason.map((x) => {
       const place = pev ? 1 + (ptsByLevel.get(t.level) || []).filter((v) => v > pev.points).length : null;
       return {
         level: t.level, city: t.city, points: pev ? pev.points : null, place,
-        won: !!(t.winner && t.winner.id === pid),
+        won: _wonTids.has(t.id) || !!(t.winner && t.winner.id === pid),
         w: tms.filter((r) => r.win).length, l: tms.filter((r) => !r.win).length, ms: tms,
       };
     })
@@ -236,6 +247,9 @@ const _statusTxt = leftAfter ? `parti après ${leftAfter}` : (latest.p.rank ? `a
 const _nm = name.trim().split(/\s+/);
 const heroFirst = _nm.length > 1 ? _nm[0] : '';
 const heroLast = _nm.length > 1 ? _nm.slice(1).join(' ') : name;
+// Plus long mot du prénom / du nom : le nom se réduit pour ne jamais déborder de sa colonne (cf. .jh-name).
+const _longest = (t: string) => Math.max(1, ...String(t || '').split(/[\s-]+/).map((w) => w.length));
+const heroFit = `--fw:${_longest(heroFirst)};--lw:${_longest(heroLast)}`;
 const _clubKey = (clubLogos as Record<string, string>)[String(pid)];
 const clubLogo = _clubKey ? `/billard/clubs/${_clubKey}.png` : null;
 const _cutoutKey = (playerCutouts as Record<string, string>)[String(pid)];
@@ -243,6 +257,21 @@ const cutout = _cutoutKey ? `/billard/cutouts/${_cutoutKey}.png` : null;   // ph
 // Couleur du bandeau = couleur du polo du joueur (extraite de sa photo), sinon bleu par défaut.
 const _pc = (playerColors as Record<string, { band: string; band2: string }>)[String(pid)];
 const heroBand = _pc ? { c1: _pc.band, c2: _pc.band2, eband: _pc.band2 } : { c1: '#1d5176', c2: '#103349', eband: '#0d2c49' };
+
+// Étapes gagnées sur la saison la plus récente — déterminées par le dernier tour
+// remporté (fiable même si le champ « winner » du tournoi n'est pas renseigné).
+let stageWinsLatest = 0;
+if (bySeason.length) {
+  const _xr = bySeason[0].R;
+  const _mr = (_xr.matches as any[]).filter((m) => (m.aId === pid || m.bId === pid) && m.roundNo != null);
+  for (const _tid of [...new Set(_mr.map((m) => m.tid))]) {
+    const _all = (_xr.matches as any[]).filter((m) => m.tid === _tid && m.roundNo != null);
+    if (!_all.length) continue;
+    const _max = Math.max(..._all.map((m) => m.roundNo));
+    const _fin = _mr.find((m) => m.tid === _tid && m.roundNo === _max);
+    if (_fin && (_fin.aId === pid ? _fin.sA > _fin.sB : _fin.sB > _fin.sA)) stageWinsLatest++;
+  }
+}
 // Courbe du classement en SVG, rendue côté serveur (bon pour le SEO, aucun JS client).
 const _rkMax = rankSeries.length ? Math.max(...rankSeries.map((r) => r.rank), 2) : 2;
 const _rkW = 600, _rkH = 132, _rkPX = 16, _rkPT = 24, _rkPB = 26;
@@ -304,7 +333,7 @@ const personLd = {
           <div class="jh-txt">
             {clubLogo && <img class="jh-crest" src={clubLogo} alt="Club du joueur" />}
             <div class="jh-eye">Blackball Master · {bySeason.length} saison{bySeason.length > 1 ? 's' : ''} · {_statusTxt}{cdfCount || bestRank === 1 || seasonChampCount ? <> · <span class="g">🏆 {epithet.split(' · ')[0]}</span></> : null}</div>
-            <h1 class="jh-name">{heroFirst}<b>{heroLast}</b></h1>
+            <h1 class="jh-name" style={heroFit}>{heroFirst}<b>{heroLast}</b></h1>
             <span class="jh-key">{epithet}</span>
           </div>
         </div>
@@ -324,6 +353,7 @@ const personLd = {
           <div class="eg"><div class="k">Finales</div><div class="v">{finalesCount}</div></div>
           {cdfCount > 0 && <div class="eg"><div class="k">Titres de France</div><div class="v g">{cdfCount}</div></div>}
           <div class="eg"><div class="k">Actuel</div><div class="v">{latest.p.rank ? <>N°{latest.p.rank}</> : '—'}</div></div>
+          {cdfCount === 0 && <div class="eg"><div class="k">Étapes gagnées {shortSeason(latest.label)}</div><div class="v">{stageWinsLatest}</div></div>}
         </div>
       </div></section>
       <nav class="jtabs"><div class="jtabs-in">
@@ -760,19 +790,19 @@ const personLd = {
   .jh-txt { flex: 1; min-width: 0; padding-bottom: 42px; }
   .jh-eye { font-size: 13px; letter-spacing: .07em; text-transform: uppercase; color: #bcd3ea; font-weight: 700; }
   .jh-eye .g { color: var(--jh-gold); font-weight: 800; }
-  .jh-name { font-size: clamp(40px, 7vw, 84px); line-height: .88; letter-spacing: -.01em; margin: 14px 0 0; text-transform: uppercase; font-weight: 200; color: #fff; }
+  .jh-name { --jn: clamp(40px, 7vw, 84px); font-size: var(--jn); line-height: .88; letter-spacing: -.01em; margin: 14px 0 0; text-transform: uppercase; font-weight: 200; color: #fff; }
   .jh-name b { display: block; font-weight: 800; }
   .jh-key { display: inline-block; margin-top: 18px; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--jh-gold); font-weight: 800; border-top: 2px solid var(--jh-gold); padding-top: 8px; }
   /* bande de stats éditoriale (claire, pleine largeur) */
   .eband { background: var(--jh-eband, #0d2c49); background: color-mix(in srgb, var(--jh-eband, #0d2c49) 62%, #000); border-top: 1px solid rgba(0,0,0,.3); border-bottom: 1px solid rgba(0,0,0,.3); box-shadow: inset 0 6px 14px rgba(0,0,0,.28); }
-  .eband-in { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr; }
-  .eband-head { display: flex; border-right: 1px solid rgba(255,255,255,.12); }
-  .eh { padding: 17px 28px; text-align: center; border-left: 1px solid rgba(255,255,255,.12); }
+  .eband-in { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr; outline: 1px solid rgba(255,255,255,.12); outline-offset: -1px; }
+  .eband-head { display: flex; }
+  .eh { padding: 17px 28px; text-align: center; outline: 1px solid rgba(255,255,255,.14); outline-offset: -1px; display: flex; flex-direction: column; justify-content: center; }
   .eh:first-child { border-left: 0; }
   .eh .v { font-size: 31px; font-weight: 300; line-height: 1; color: #fff; } .eh .v b { font-weight: 800; } .eh .v.g b { color: #e9c45a; }
   .eh .k { font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: #9fb6d6; margin-top: 6px; }
   .egrid { display: grid; grid-template-columns: repeat(4, 1fr); align-content: center; }
-  .eg { padding: 11px 12px; text-align: center; border-left: 1px solid rgba(255,255,255,.1); border-top: 1px solid rgba(255,255,255,.1); }
+  .eg { padding: 11px 12px; text-align: center; outline: 1px solid rgba(255,255,255,.12); outline-offset: -1px; }
   .eg:nth-child(-n+4) { border-top: 0; } .eg:nth-child(4n+1) { border-left: 0; }
   .eg .k { font-size: 9.5px; letter-spacing: .05em; text-transform: uppercase; color: #8fa6c6; } .eg .v { font-size: 15px; font-weight: 800; margin-top: 2px; color: #fff; } .eg .v.g { color: #e9c45a; }
   /* onglets pleine largeur */
@@ -792,30 +822,36 @@ const personLd = {
   /* ---- Grand mobile / tablette portrait ---- */
   @media (max-width: 760px) {
     .jh-in { align-items: flex-end; gap: 16px; min-height: 0; padding: 22px 16px 0; }
-    .jh-ph.cut { width: 150px; height: 150px; }
-    .jh-ph.framed { width: 120px; height: 150px; }
+    .jh-ph.cut { width: 185px; height: 225px; }
+    .jh-ph.cut .jh-cut { object-fit: cover; }   /* recadre les marges transparentes de l'image carrée */
+    .jh-ph.framed { width: 150px; height: 190px; }
     .jh-txt { padding-bottom: 16px; }
     .jh-crest { height: 38px; margin-bottom: 8px; }
-    .jh-name { font-size: clamp(27px, 8.5vw, 46px); margin-top: 8px; }
+    .jh-name { --jn: clamp(27px, 8.5vw, 46px); margin-top: 8px; }
     .jh-eye { font-size: 11px; letter-spacing: .04em; }
     .jh-key { margin-top: 11px; font-size: 11px; }
     .jh-club-wm { height: 280px; left: 32%; }
     .eband-in { grid-template-columns: 1fr; }
-    .eband-head { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.12); }
+    .eband-head { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; } /* 3 cases de même largeur sur toute la ligne */
     .eh { padding: 13px 14px; } .eh .v { font-size: 25px; }
     .egrid { grid-template-columns: repeat(2, 1fr); }
-    .eg:nth-child(3), .eg:nth-child(4) { border-top: 1px solid rgba(255,255,255,.1); }
-    .eg:nth-child(odd) { border-left: 0; } .eg:nth-child(even) { border-left: 1px solid rgba(255,255,255,.1); }
+    .eg:nth-child(3), .eg:nth-child(4) { }
+    .eg:nth-child(odd) { } .eg:nth-child(even) { }
     .jtabs-in { padding: 0 16px; gap: 16px; }
     .jtab-last { display: none; }
   }
   /* ---- Petit mobile ---- */
   @media (max-width: 440px) {
     .jh-in { gap: 13px; padding: 18px 14px 0; }
-    .jh-ph.cut { width: 130px; height: 130px; }
-    .jh-name { font-size: clamp(22px, 9.5vw, 34px); }
+    .jh-ph.cut { width: 44vw; height: 56vw; }
+    .jh-ph.framed { width: 38vw; height: 48vw; }
+    .jh-name { --jn: clamp(22px, 9.5vw, 34px); }
     .jh-crest { height: 32px; margin-bottom: 6px; }
     .eh { padding: 11px 9px; } .eh .v { font-size: 21px; } .eh .k { font-size: 9px; }
     .eg { padding: 9px 8px; }
+  }
+  .jh-txt { container-type: inline-size; }
+  @supports (width: 1cqi) {
+    .jh-name { font-size: min(var(--jn), calc(100cqi / (var(--lw, 6) * .8)), calc(100cqi / (var(--fw, 6) * .74))); }
   }
 </style>
