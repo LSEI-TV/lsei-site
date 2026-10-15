@@ -2275,3 +2275,126 @@ a.nbh-row:hover { background: var(--surface-2); }
 /* Logos des fédérations en noir et blanc, couleur au survol (validé par Marc) */
 .ffb-logo, .nbh-nm1 { filter: grayscale(1); transition: filter .25s; }
 .fed-link:hover .ffb-logo, .fed-link:hover .nbh-nm1, .fed-link:focus-visible .ffb-logo, .fed-link:focus-visible .nbh-nm1 { filter: none; }
+
+  /* ============ PAGES SAISON BILLARD (Masters, Femmes, Para) — en-tête SeasonHero + habillage (limité à .sz) ============ */
+  .sz { background-image: radial-gradient(rgba(20, 30, 50, .055) 1px, transparent 1.4px); background-size: 22px 22px; }
+  .sz .sec-head h2 em, .sz .hub-h1 em { font-style: normal; background: linear-gradient(90deg, var(--b-blue, #009FE3), var(--b-pink, #E6007E)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* En-tête sombre */
+  .sz-hero { position: relative; overflow: hidden; color: #fff; background: #070c16; }
+  .sz-hero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--brand-bars, var(--c-billard)); z-index: 2; }
+  .sz-hero-media { position: absolute; inset: 0;
+    background: linear-gradient(90deg, #070c16 0%, #070c16 30%, rgba(7,10,20,.8) 50%, rgba(7,10,20,.4) 75%, rgba(7,10,20,.65) 100%),
+      linear-gradient(0deg, rgba(7,10,20,.75) 0%, transparent 50%), url('/billard/blackball-hero.webp');
+    background-size: cover; background-position: right center; }
+  .sz-hero-in { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .95fr); gap: 40px; align-items: end; padding-top: 44px; padding-bottom: 42px; }
+  .sz-crumb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  .sz-crumb a { color: #6fb0ff; text-decoration: none; }
+  .sz-crumb a:hover { text-decoration: underline; }
+  .sz-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.02em; font-size: clamp(40px, 5.6vw, 76px); line-height: .92; margin: 12px 0 0; color: #fff; }
+  .sz-h span { display: block; font-size: .42em; letter-spacing: .03em; margin-top: 8px; color: #6fb0ff; }
+  .sz-p { color: rgba(255,255,255,.8); font-size: 15.5px; line-height: 1.5; margin: 14px 0 0; max-width: 56ch; text-align: start; }
+  .sz-pick { margin-top: 18px; }
+  .sz-pick .season-bar { margin: 0; }
+  .sz-pick .season-lab { color: rgba(255,255,255,.6); }
+  .sz-pick .season-pick { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(255,255,255,.35); }
+  .sz-pick .season-pick option { color: #0A0E1A; }
+  .sz-kpis { display: flex; flex-wrap: wrap; gap: 12px 32px; margin-top: 22px; }
+  .sz-kpis div { display: flex; flex-direction: column; }
+  .sz-kpis b { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; color: #fff; }
+  .sz-kpis b i { font-style: normal; font-size: .55em; color: rgba(255,255,255,.5); }
+  .sz-kpis span { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-top: 4px; }
+  .sz-next { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 18px; padding: 8px 14px 8px 8px; border-radius: 999px;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); font-size: 13px; color: rgba(255,255,255,.8); }
+  .sz-next b { color: #fff; }
+  .sz-next-jx { font-size: 11px; font-weight: 800; letter-spacing: .04em; color: #fff; background: var(--c-billard); padding: 3px 10px; border-radius: 999px; }
+  .sz-lead { display: flex; flex-direction: column; gap: 14px; padding: 18px 20px; border-radius: 16px; text-decoration: none; color: #fff;
+    background: rgba(10,14,26,.62); border: 1px solid rgba(255,255,255,.16); border-top: 4px solid #E4B23C; box-shadow: 0 24px 50px -24px rgba(0,0,0,.85);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: transform .25s cubic-bezier(.2,.7,.2,1), border-color .2s; }
+  .sz-lead:hover { transform: translateY(-4px); }
+  .sz-lead-k { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #E4B23C; }
+  .sz-lead-k b { flex: none; white-space: nowrap; color: #0A0E1A; background: #E4B23C; padding: 3px 10px; border-radius: 999px; letter-spacing: .02em; }
+  .sz-lead-main { display: flex; align-items: center; gap: 16px; }
+  .sz-lead-ph { position: relative; flex: none; width: 92px; height: 92px; border-radius: 50%; overflow: hidden; display: grid; place-items: center;
+    background: radial-gradient(ellipse at 50% 30%, #2b5f99 0%, #0d2c49 75%); border: 3px solid #E4B23C; }
+  .sz-lead-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .sz-lead-ph .bavatar { font-family: var(--display); font-weight: 800; font-size: 30px; color: rgba(255,255,255,.7); }
+  .sz-lead-id { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .sz-lead-n { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 28px; line-height: 1; }
+  .sz-lead-s { font-size: 13.5px; color: rgba(255,255,255,.75); }
+  .sz-lead-s b { color: #fff; }
+  .sz-lead-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+  .sz-lead-cta { font-size: 13px; font-weight: 800; color: rgba(255,255,255,.85); }
+
+  /* Colonne principale + cartes de côté */
+  .sz .hub-top { padding-top: 34px; }
+  .sz .hub-h1 { font-size: clamp(20px, 2.2vw, 28px); font-weight: 800; }
+  .sz .hub-card { border-radius: 14px; border-color: var(--line); box-shadow: 0 1px 2px rgba(16,24,40,.05), 0 10px 26px -14px rgba(16,24,40,.18); padding: 18px 20px; }
+  .sz .hub-card-h > span { position: relative; padding-left: 12px; color: var(--ink); }
+  .sz .hub-card-h > span::before { content: ""; position: absolute; left: 0; top: 1px; bottom: 1px; width: 4px; border-radius: 2px; background: var(--brand-bars, var(--c-billard)); }
+  .sz .pod-row { border-radius: 8px; padding: 9px 6px; transition: background .15s; }
+  .sz .pod-row:hover { background: color-mix(in srgb, var(--c-billard) 6%, var(--surface)); }
+  .sz .pod-rank { font-family: var(--display); font-weight: 800; }
+
+  /* Calendrier : cartes d'étape */
+  .sz .parcours-box { background: transparent; border: 0; padding: 0; box-shadow: none; }
+  .sz .parcours-box .parcours-h, .sz .parcours-h { color: var(--ink-faint); font-size: 12px; letter-spacing: .08em; margin-bottom: 14px; }
+  .sz .parcours-h span { font-family: var(--display); font-size: 22px; letter-spacing: 0; text-transform: uppercase; color: var(--ink); margin-right: 8px; }
+  .sz .parcours-grid { grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 10px; }
+  .sz .etape { position: relative; border: 1px solid var(--line); border-top: 4px solid var(--line-strong); border-radius: 12px; background: var(--surface); padding: 12px 12px 12px;
+    box-shadow: 0 1px 2px rgba(16,24,40,.05), 0 8px 20px -14px rgba(16,24,40,.2); }
+  .sz .etape .et-num { font-size: 17px; font-weight: 800; color: var(--ink); display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .sz .etape.is-past { border-top-color: var(--c-billard); }
+  .sz .etape.is-past .et-num { color: var(--c-billard); }
+  .sz .etape.is-next { border-color: var(--c-billard); border-top-color: var(--c-billard); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-billard) 18%, transparent), 0 12px 26px -14px rgba(16,24,40,.3); }
+  .sz .etape.k-mondial, .sz .etape.k-coupe, .sz .etape.k-france { border-top-color: #C79A1E; }
+  .sz .etape.k-mondial .et-num, .sz .etape.k-france .et-num, .sz .etape.k-coupe .et-num { color: #B0860F; }
+  .sz .et-jx { font-style: normal; font-family: var(--body, inherit); font-size: 10px; font-weight: 800; letter-spacing: .04em; color: #fff; background: var(--c-billard); padding: 2px 7px; border-radius: 999px; }
+  .sz .et-winner { color: #A97F0A; }
+
+  /* Podium / invités */
+  .sz .hub-podium { margin-top: 26px; }
+  .sz .hub-pod-h { font-family: var(--display); font-size: 20px; letter-spacing: 0; color: var(--ink); margin-bottom: 12px; }
+  .sz .hub-pod-card { border-radius: 14px; box-shadow: 0 1px 2px rgba(16,24,40,.05), 0 10px 24px -14px rgba(16,24,40,.2); padding: 16px 8px 14px; }
+  .sz .hub-pod-card.r1 { background: linear-gradient(180deg, color-mix(in srgb, #E4B23C 16%, var(--surface)), var(--surface) 60%); border-color: color-mix(in srgb, #E4B23C 50%, var(--line)); }
+  .sz .hub-pod-ph { width: 66px; height: 66px; border-width: 3px; }
+  .sz .hub-pod-name { font-size: 13.5px; }
+
+  /* Nouveaux / permanents */
+  .sz .newc-card { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--c-billard); border-radius: 14px; padding: 14px 16px;
+    box-shadow: 0 1px 2px rgba(16,24,40,.05), 0 10px 24px -14px rgba(16,24,40,.18); transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s; }
+  .sz a.newc-card:hover { transform: translateY(-3px); box-shadow: 0 20px 36px -18px rgba(16,24,40,.32); }
+  .sz .newc-ph { width: 66px; height: 66px; background: radial-gradient(ellipse at 50% 30%, #2b5f99 0%, #0d2c49 75%); }
+  .sz .newc-name { font-size: 17px; font-weight: 800; }
+  .sz .guests-row { border-radius: 14px; box-shadow: 0 1px 2px rgba(16,24,40,.05), 0 8px 20px -14px rgba(16,24,40,.16); }
+
+  /* Faits marquants : bandeau sombre */
+  .sz-facts-sec { background: #0A0E1A; color: #fff; position: relative; margin: 10px 0 40px; }
+  .sz-facts-sec::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--brand-bars, var(--c-billard)); }
+  .sz-facts-sec .sec-head h2 { color: #fff; }
+  .sz-facts-sec .eyebrow { color: #6fb0ff !important; }
+  .sz-facts-sec .fact { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.12); border-radius: 14px; }
+  .sz-facts-sec .fact-lab { color: rgba(255,255,255,.6); }
+  .sz-facts-sec .fact-val { color: #fff; font-size: 30px; }
+  .sz-facts-sec .fact-sub { color: rgba(255,255,255,.75); }
+  .sz-facts-sec .fact-sub a { color: #6fb0ff; }
+  .sz-facts-sec .fact-totals { color: rgba(255,255,255,.7); }
+  .sz-facts-sec .fact-totals b { color: #fff; }
+
+  /* Palmarès */
+  .sz .palm-card { border-radius: 12px; border-left-width: 4px; box-shadow: 0 1px 2px rgba(16,24,40,.05), 0 8px 20px -14px rgba(16,24,40,.18); transition: transform .2s; }
+  .sz a.palm-card:hover { transform: translateY(-2px); }
+  .sz .palm-name { font-family: var(--display); text-transform: uppercase; font-weight: 800; font-size: 18px; }
+  .sz .palm-season { font-size: 24px; font-weight: 800; }
+  .sz .moves-col { border-radius: 14px; box-shadow: 0 1px 2px rgba(16,24,40,.05), 0 8px 20px -14px rgba(16,24,40,.16); }
+
+  @media (max-width: 900px) {
+    .sz-hero-in { grid-template-columns: 1fr; gap: 24px; padding-top: 30px; padding-bottom: 30px; }
+  }
+  @media (max-width: 560px) {
+    .sz-hero-media { background-position: 70% center; }
+    .sz-kpis b { font-size: 28px; }
+    .sz-lead-ph { width: 72px; height: 72px; }
+    .sz-lead-n { font-size: 22px; }
+    .sz .parcours-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }

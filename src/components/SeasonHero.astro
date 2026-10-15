@@ -1,0 +1,67 @@
+---
+// En-tête sombre des pages SAISON billard (Masters, Femmes, Para fauteuil, Para malvoyants) :
+// titre + saison, sélecteur de saison, chiffres clés, prochaine étape, carte du leader
+// (ou du/de la champion·ne quand la saison est terminée). Styles : bloc « PAGES SAISON » de global.css.
+import SeasonPicker from './SeasonPicker.astro';
+import { seasonNext } from '../lib/seasonNext';
+import type { Season } from '../data/billard/seasons';
+
+interface Props {
+  season: Season;
+  title: string;            // « Blackball Master »
+  crumb: { label: string; href?: string }[]; // fil d'Ariane après « Disciplines › Billard »
+  desc: string;
+  pickerRoot?: string;      // racine du sélecteur (« /femmes »…)
+  pickerSeasons?: Season[];
+  nRanked?: number;
+  rankedLabel?: string;     // « joueurs classés » / « joueuses classées »
+  nMatches?: number;
+  spot?: any;               // leader du classement
+  spotPhoto?: string | null;
+  spotResults?: { win: boolean; my: number; opp: number }[];
+  spotHref?: string;
+  feminine?: boolean;       // « Championne de la saison »
+}
+const { season, title, crumb, desc, pickerRoot, pickerSeasons, nRanked = 0, rankedLabel = 'joueurs classés', nMatches = 0,
+  spot, spotPhoto, spotResults = [], spotHref, feminine = false } = Astro.props;
+const R: any = season.results;
+const nCal = season.calendar.length;
+const nPlayed = R ? (R.tournaments as any[]).length : 0;
+const { nextEv, nextJx } = seasonNext(season.calendar);
+const complete = season.status === 'past' || (R && (R.tournaments as any[]).some((t: any) => t.kind === 'france'));
+const leadLabel = complete ? (feminine ? 'Championne de la saison' : 'Champion de la saison') : 'En tête du classement';
+---
+<section class="sz-hero">
+  <div class="sz-hero-media" aria-hidden="true"></div>
+  <div class="wrap sz-hero-in">
+    <div class="sz-hero-txt">
+      <div class="sz-crumb">
+        <a href="/disciplines/">Disciplines</a><span aria-hidden="true">›</span><a href="/billard/hub">Billard</a><span aria-hidden="true">›</span><a href="/billard/blackball">Blackball</a>
+        {crumb.map((c) => <Fragment><span aria-hidden="true">›</span>{c.href ? <a href={c.href}>{c.label}</a> : c.label}</Fragment>)}
+      </div>
+      <h1 class="sz-h">{title}<span>Saison {season.label}</span></h1>
+      <p class="sz-p">{desc}</p>
+      <div class="sz-pick"><SeasonPicker current={season.slug} sub="" root={pickerRoot} seasons={pickerSeasons} /></div>
+      <div class="sz-kpis">
+        <div><b>{nPlayed}<i>/{nCal}</i></b><span>étapes jouées</span></div>
+        {R && <div><b>{nRanked}</b><span>{rankedLabel}</span></div>}
+        {R && <div><b>{nMatches}</b><span>matchs disputés</span></div>}
+      </div>
+      {nextEv && <div class="sz-next"><span class="sz-next-jx">{nextJx}</span>Prochaine étape : <b>{(nextEv as any).name}</b> · {(nextEv as any).date} · {(nextEv as any).place}</div>}
+    </div>
+    {spot && (
+      <a class="sz-lead" href={spotHref}>
+        <span class="sz-lead-k"><span>{leadLabel}</span><b>{spot.points} pts</b></span>
+        <span class="sz-lead-main">
+          <span class="sz-lead-ph"><span class="bavatar">{spot.name.slice(0, 1)}</span>{spotPhoto && <img src={spotPhoto} alt="" onerror="this.remove()" />}</span>
+          <span class="sz-lead-id">
+            <span class="sz-lead-n">{spot.name}</span>
+            <span class="sz-lead-s"><b>{spot.wins}-{spot.losses}</b> · {spot.winPct}% de victoires · diff. <b>{spot.diff >= 0 ? '+' : ''}{spot.diff}</b></span>
+            <span class="sz-lead-chips">{spotResults.map((r) => <span class={`spot-chip ${r.win ? 'w' : 'l'}`}>{r.win ? 'V' : 'D'} {r.my}-{r.opp}</span>)}</span>
+          </span>
+        </span>
+        <span class="sz-lead-cta">Voir sa fiche →</span>
+      </a>
+    )}
+  </div>
+</section>

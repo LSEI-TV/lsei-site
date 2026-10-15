@@ -1,7 +1,8 @@
 ---
 import Base from '../../../../layouts/Base.astro';
 import HubNav from '../../../../components/HubNav.astro';
-import SeasonPicker from '../../../../components/SeasonPicker.astro';
+import SeasonHero from '../../../../components/SeasonHero.astro';
+import { seasonNext } from '../../../../lib/seasonNext';
 import PlayerSearch from '../../../../components/PlayerSearch.astro';
 import AffichesTournois from '../../../../components/AffichesTournois.astro';
 import PodiumTournoi from '../../../../components/PodiumTournoi.astro';
@@ -48,6 +49,8 @@ const bracketHref = (e: any): string | null => {
 };
 const top5 = players.slice(0, 5);
 const spot = players[0];
+const nCal = calSeason.calendar.length;
+const { nextIdx, nextJx } = seasonNext(calSeason.calendar);
 const spotPhoto = spot ? photoOf(spot, season.slug) : null;
 const spotResults = spot ? matches.filter((m) => m.aId === spot.id || m.bId === spot.id).sort((a, b) => (a.date < b.date ? 1 : -1)).map((m) => fromPov(m, spot.id)).slice(0, 4) : [];
 const recent = hasData ? [...matches].sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 5) : [];
@@ -67,39 +70,44 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
 ---
 <Base title={`Billard Femmes — Blackball Femmes ${season.label}`} description={`L'univers Billard Femmes de LSEI : classement, joueuses et statistiques du Blackball Femmes, saison ${season.label}.`} active="disciplines">
   <HubNav season={season.slug} dataSeason={hasData ? season.slug : FEMMES_DEFAULT_SEASON} active="accueil" root="/femmes" brand="Billard Femmes" sub="· Blackball Femmes" joueursLabel="Joueuses" videosHref="/disciplines/billard/categorie/femmes" />
+  <div class="sz">
+  <SeasonHero season={season} title="Blackball Femmes" crumb={[{ label: 'Femmes' }]}
+    desc={`Le circuit national féminin de la FFB : ${nCal} rendez-vous, des Tournois Nationaux au Championnat de France. Classement, joueuses, tableaux et vidéos de la saison.`}
+    pickerRoot="/femmes" pickerSeasons={getFemmesSeasons()} rankedLabel="joueuses classées" feminine={true}
+    nRanked={players.length} nMatches={matches.length} spot={spot} spotPhoto={spotPhoto} spotResults={spotResults} spotHref={spot ? `/femmes/joueur/${slugOf(spot.id)}` : undefined} />
 
   <section class="section hub-top" style="--dc:var(--c-billard)">
     <div class="wrap hub-hero">
       <div class="hub-lead">
-        <SeasonPicker current={season.slug} sub="" root="/femmes" seasons={getFemmesSeasons()} />
         {featured ? (
           <>
             <VideoPlayer id={featured.id} from={d.from} to={d.to} caption={featured.caption} title={featured.title} image={featured.thumb} />
             <div class="hub-kick">À la une · Dernière vidéo</div>
-            <h1 class="hub-h1">{featured.title}</h1>
+            <h2 class="hub-h1">{featured.title}</h2>
           </>
         ) : hasData ? (
           <>
             <div class="hub-kick">Blackball Femmes · {season.label}</div>
-            <h1 class="hub-h1">Le circuit national féminin</h1>
+            <h2 class="hub-h1">Le circuit national féminin</h2>
             <p class="dek" style="margin-top:8px">{cnt!.players} joueuses classées, {cnt!.tourns} étapes, {cnt!.matches} matchs. Classement officiel FFB, fiches carrière et confrontations — cliquez sur une joueuse pour tout savoir d'elle.</p>
           </>
         ) : (
           <>
             <div class="hub-kick">Blackball Femmes · {season.label}</div>
-            <h1 class="hub-h1">Saison à venir</h1>
+            <h2 class="hub-h1">Saison à venir</h2>
             <p class="dek" style="margin-top:8px">La saison {season.label} démarre bientôt. Voici le calendrier officiel — classement, joueuses et statistiques s'afficheront au fil des étapes.</p>
           </>
         )}
 
         <div class="parcours parcours-box">
-          <div class="parcours-h">Calendrier · Saison {calSeason.label} · {calSeason.calendar.length} rendez-vous</div>
+          <div class="parcours-h"><span>Le calendrier</span> {calSeason.label} · {calSeason.calendar.length} rendez-vous</div>
           <div class="parcours-grid">
-            {calSeason.calendar.map((e) => {
+            {calSeason.calendar.map((e, i) => {
               const href = bracketHref(e);
+              const st = nextIdx < 0 || i < nextIdx ? ' is-past' : i === nextIdx ? ' is-next' : '';
               const inner = (
                 <>
-                  <span class="et-num">{e.short}</span>
+                  <span class="et-num">{e.short}{i === nextIdx && <em class="et-jx">{nextJx}</em>}</span>
                   <span class="et-city">{e.place}</span>
                   <span class="et-date">{evDate(e.date)}</span>
                   {e.winner && (href
@@ -109,8 +117,8 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
                 </>
               );
               return href
-                ? <a class={`etape k-${e.kind} etape--link`} href={href} title={`${e.name} — voir le tableau`}>{inner}</a>
-                : <div class={`etape k-${e.kind}`} title={e.name}>{inner}</div>;
+                ? <a class={`etape k-${e.kind} etape--link${st}`} href={href} title={`${e.name} — voir le tableau`}>{inner}</a>
+                : <div class={`etape k-${e.kind}${st}`} title={e.name}>{inner}</div>;
             })}
           </div>
         </div>
@@ -139,27 +147,6 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
             );
           })}
           <a href={`${base}/comparateur`} class="hub-card-cta">⚔ Comparer deux joueuses</a>
-        </div>
-
-        <div class="hub-card hub-spot">
-          <div class="hub-card-h"><span>Joueuse à la une</span></div>
-          <a href={`/femmes/joueur/${slugOf(spot.id)}`} class="spot-head">
-            <span class="bphoto spot-ph"><span class="bavatar">{spot.name.slice(0, 1)}</span>{spotPhoto && <img src={spotPhoto} alt="" onerror="this.remove()" />}</span>
-            <span>
-              <span class="spot-name">{spot.name}</span>
-              <span class="spot-rank"><b style="color:var(--c-billard)">{spot.rank}<sup>re</sup></b> · {spot.points} pts</span>
-            </span>
-          </a>
-          <div class="spot-stats">
-            <div><b>{spot.wins}-{spot.losses}</b><span>Bilan</span></div>
-            <div><b>{spot.winPct}%</b><span>Victoires</span></div>
-            <div><b>{spot.diff >= 0 ? '+' : ''}{spot.diff}</b><span>Diff.</span></div>
-          </div>
-          <div class="spot-last">
-            {spotResults.map((r) => (
-              <span class={`spot-chip ${r.win ? 'w' : 'l'}`}>{r.win ? 'V' : 'D'} {r.my}-{r.opp}</span>
-            ))}
-          </div>
         </div>
 
         <div class="hub-card">
@@ -193,9 +180,9 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
   </section>
 
   {hi && (
-    <section class="section" style="padding-top:0">
+    <section class="section sz-facts-sec">
       <div class="wrap">
-        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">En chiffres</div><h2>Faits marquants de la saison</h2></div></div>
+        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">En chiffres</div><h2>Les <em>faits marquants</em> de la saison</h2></div></div>
         <div class="facts">
           <div class="fact">
             <div class="fact-ic">🎯</div>
@@ -242,7 +229,7 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
   {palmares.length > 0 && (
     <section class="section" style="padding-top:0">
       <div class="wrap">
-        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Histoire</div><h2>Palmarès du Blackball Femmes</h2></div></div>
+        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Histoire</div><h2>Le <em>palmarès</em> du Blackball Femmes</h2></div></div>
         <div class="palmares">
           {palmares.map((p) => (
             <div class="palm-row">
@@ -269,6 +256,7 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
       </div>
     </section>
   )}
+  </div>
 </Base>
 
 <style>
