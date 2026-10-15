@@ -107,12 +107,12 @@ const lastWin = pfbLast ? ((pfbLast.homeSlug === 'fougeres') === (pfbLast.homeSc
               </span>
               <span class="nb-club-name">{c.name}</span>
               <span class="nb-club-city">{c.city}</span>
-              {href ? <span class="nb-club-cta" style={`color:${c.color}`}>Voir le club →</span> : <span class="nb-club-soon">Bientôt</span>}
+              {href ? <span class="nb-club-cta">Voir le club →</span> : <span class="nb-club-soon">Bientôt</span>}
             </Fragment>
           );
           return href
-            ? <a href={href} class="nb-club is-active" style={`--cc:${c.color}`}>{inner}</a>
-            : <div class="nb-club" style={`--cc:${c.color}`}>{inner}</div>;
+            ? <a href={href} class="nb-club is-active" style={`--cc:${c.color};--cc2:${c.color2 ?? c.color}`}>{inner}</a>
+            : <div class="nb-club" style={`--cc:${c.color};--cc2:${c.color2 ?? c.color}`}>{inner}</div>;
         })}
       </div>
 
@@ -327,7 +327,9 @@ const lastWin = pfbLast ? ((pfbLast.homeSlug === 'fougeres') === (pfbLast.homeSc
   .nb-club { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 0 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); text-decoration: none; color: inherit;
     box-shadow: 0 1px 2px rgba(16,24,40,.05), 0 10px 26px -14px rgba(16,24,40,.16); transition: border-color .2s, transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s; }
   .nb-club.is-active:hover { border-color: var(--cc); transform: translateY(-4px); box-shadow: 0 22px 40px -18px color-mix(in srgb, var(--cc) 55%, rgba(16,24,40,.4)); }
-  .nb-club-band { align-self: stretch; height: 46px; margin: 0 -14px; background: linear-gradient(135deg, var(--cc), color-mix(in srgb, var(--cc) 55%, #0A0E1A)); }
+  /* Bandeau aux 2 couleurs du logo, façon maillot (couleur principale + liseré de la 2e) */
+  .nb-club-band { align-self: stretch; height: 46px; margin: 0 -14px;
+    background: linear-gradient(115deg, var(--cc) 0 58%, var(--cc2) 58% 70%, color-mix(in srgb, var(--cc) 80%, #0A0E1A) 70%); }
   .nb-logo { width: 78px; height: 78px; margin-top: -39px; border-radius: 50%; display: grid; place-items: center; overflow: hidden; background: #fff; border: 3px solid var(--surface); box-shadow: 0 8px 18px -8px rgba(0,0,0,.45); transition: transform .3s; }
   .nb-club.is-active:hover .nb-logo { transform: scale(1.08); }
   .nb-logo img { width: 86% !important; height: 86% !important; }
@@ -335,7 +337,7 @@ const lastWin = pfbLast ? ((pfbLast.homeSlug === 'fougeres') === (pfbLast.homeSc
   .nb-logo-txt { font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--cc); }
   .nb-club-name { font-weight: 700; font-size: 14px; color: var(--ink); line-height: 1.2; margin-top: 4px; }
   .nb-club-city { font-size: 12px; color: var(--ink-faint); }
-  .nb-club-cta { font-size: 12px; font-weight: 700; margin-top: 4px; }
+  .nb-club-cta { font-size: 12px; font-weight: 700; margin-top: 4px; color: color-mix(in srgb, var(--cc) 72%, #0A0E1A); }
   .nb-club-soon { font-size: 11px; font-weight: 700; color: var(--ink-faint); background: var(--surface-2); border-radius: 100px; padding: 2px 10px; margin-top: 4px; }
 
   /* Calendrier + classement */

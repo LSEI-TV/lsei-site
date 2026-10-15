@@ -17,7 +17,9 @@ interface Props {
   showIntro?: boolean; // présentation détaillée (page d'accueil du club uniquement)
 }
 const { club, matchs, saisons, showIntro = true } = Astro.props;
-const dc = getDiscipline(club.discipline).colorVar;
+// Couleur de la page = celle du LOGO du club (automatique) quand le club est dans le championnat suivi.
+const dc = nmClubBy(club.slug)?.color ?? getDiscipline(club.discipline).colorVar;
+const dc2 = nmClubBy(club.slug)?.color2 ?? dc;
 
 // Championnat (basket NM1) : prochain match, dernier résultat, rang.
 const inLeague = club.discipline === 'basket' && !!nmClubBy(club.slug);
@@ -37,7 +39,7 @@ const teamFx = (sl: string) => ({ n: nameOf(sl), s: nmClubBy(sl)?.short ?? '', l
 const fx = games.filter((m) => m.homeScore == null).map((m) => ({ d: m.date, r: m.round ?? null, dom: m.homeSlug === club.slug, h: teamFx(m.homeSlug), a: teamFx(m.awaySlug) }));
 const miniSite = inLeague && clubHasSite(club.slug) ? `/clubs/${club.slug}` : null;
 ---
-<section class="club-hero" style={`--dc:${dc}`}>
+<section class="club-hero" style={`--dc:${dc};--dc2:${dc2}`}>
   <div class="club-hero-media" style={`background-image:url('${club.hero}')`} aria-hidden="true"></div>
   <div class="wrap club-hero-in">
     <div class="club-hero-txt">
@@ -92,7 +94,7 @@ const miniSite = inLeague && clubHasSite(club.slug) ? `/clubs/${club.slug}` : nu
 {next && <NextMatchScript />}
 
 {showIntro && (
-  <section class="section club-intro-sec" style={`--dc:${dc}`}>
+  <section class="section club-intro-sec" style={`--dc:${dc};--dc2:${dc2}`}>
     <div class="wrap">
       <div class="club-intro">
         <div class="club-txt">
@@ -130,7 +132,7 @@ const miniSite = inLeague && clubHasSite(club.slug) ? `/clubs/${club.slug}` : nu
                 linear-gradient(0deg, rgba(10,14,23,.85) 0%, transparent 55%); }
   .club-hero-in { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .9fr); gap: 40px; align-items: end; padding-top: 46px; padding-bottom: 50px; }
   .club-crumb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); }
-  .club-crumb a { color: var(--dc); text-decoration: none; }
+  .club-crumb a { color: color-mix(in srgb, var(--dc) 55%, #fff); text-decoration: none; }
   .club-crumb a:hover { text-decoration: underline; }
   .club-id { display: flex; align-items: center; gap: 14px; margin-top: 26px; }
   .club-id-logo { flex: none; width: 64px; height: 64px; border-radius: 50%; background-color: #fff; background-position: center; background-size: 82%; background-repeat: no-repeat; box-shadow: 0 10px 26px -8px rgba(0,0,0,.6); }
@@ -175,7 +177,7 @@ const miniSite = inLeague && clubHasSite(club.slug) ? `/clubs/${club.slug}` : nu
   .club-txt p:first-of-type::first-letter { float: left; font-family: var(--display); font-weight: 800; font-size: 64px; line-height: .85; margin: 6px 10px 0 0; color: var(--dc); }
   .club-txt p :global(b) { color: var(--ink); font-weight: 700; }
   .club-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(16,24,40,.05), 0 14px 32px -16px rgba(16,24,40,.22); }
-  .club-card-band { position: relative; height: 92px; background: linear-gradient(135deg, var(--dc), color-mix(in srgb, var(--dc) 45%, #0a0e17)); }
+  .club-card-band { position: relative; height: 92px; background: linear-gradient(115deg, var(--dc) 0 60%, var(--dc2) 60% 72%, color-mix(in srgb, var(--dc) 75%, #0a0e17) 72%); }
   .club-card-band::after { content: ""; position: absolute; right: -30px; top: -30px; width: 120px; height: 120px; border-radius: 50%; border: 16px solid rgba(255,255,255,.14); }
   .club-card-logo { position: absolute; left: 22px; bottom: -40px; z-index: 1; display: block; width: 84px; height: 84px; border-radius: 50%; background-color: #fff; background-position: center; background-size: 80%; background-repeat: no-repeat; border: 4px solid var(--surface); box-shadow: 0 10px 22px -10px rgba(0,0,0,.5); }
   .club-card-body { padding: 52px 22px 22px; display: flex; flex-direction: column; }

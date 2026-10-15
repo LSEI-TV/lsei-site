@@ -69,7 +69,7 @@ const daysToNext = nextMatch ? Math.round((Date.parse(nextMatch.date + 'T12:00:0
 const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' : "Aujourd'hui";
 ---
 <Base chrome="bare" title={`${club.name} — Basket ${NM1_LABEL} (NM1)`} description={fiche?.blurb ?? `${club.name} (${club.city}) — ${NM1_LABEL} ${NM1_POOL} ${SEASON} : effectif, classement et vidéos du club, filmés par LSEI.`} active="disciplines" preloadImage={heroImg ?? undefined}>
-  <div class="cs" style={`--cc:${cc}`} id="top">
+  <div class="cs" style={`--cc:${cc};--cc2:${club.color2 ?? cc}`} id="top">
 
     <!-- EN-TÊTE CLUB (chrome propre) -->
     <header class="ch" id="chead">
@@ -355,7 +355,9 @@ const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' 
 
 <style>
   /* ============ SITE DANS LE SITE — club pro immersif (sombre) ============ */
-  .cs { position: relative; background: #0b0d12; color: #fff; min-height: 100vh; --ink2: rgba(255,255,255,.62); }
+  .cs { position: relative; background: #0b0d12; color: #fff; min-height: 100vh; --ink2: rgba(255,255,255,.62);
+    /* version éclaircie de la couleur du club : lisible en texte sur fond sombre, quelle que soit la couleur du logo */
+    --cc-txt: color-mix(in srgb, var(--cc) 62%, #fff); }
   .cs::before { content: ""; position: fixed; left: 0; right: 0; top: 0; height: 3px; z-index: 60; background: var(--brand-bars, var(--cc)); }
   .cs-wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
 
@@ -370,7 +372,7 @@ const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' 
   .ch-name { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 15px; letter-spacing: .01em; }
   .ch-nav { margin-left: auto; display: flex; gap: 22px; }
   .ch-nav a { font-size: 13.5px; font-weight: 600; color: rgba(255,255,255,.8); text-decoration: none; transition: color .15s; }
-  .ch-nav a:hover { color: var(--cc); }
+  .ch-nav a:hover { color: var(--cc-txt); }
   .ch-lsei { font-size: 11.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.55);
     border: 1px solid rgba(255,255,255,.2); border-radius: 100px; padding: 6px 12px; text-decoration: none; transition: .15s; }
   .ch-lsei:hover { color: #fff; border-color: rgba(255,255,255,.5); }
@@ -378,7 +380,8 @@ const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' 
   /* HERO plein écran */
   .hero { position: relative; min-height: 92vh; display: flex; align-items: flex-end; overflow: hidden;
     background: #0b0d12; }
-  .hero--grad { background: radial-gradient(120% 120% at 80% 0%, color-mix(in srgb, var(--cc) 55%, #0b0d12), #0b0d12 70%); }
+  .hero--grad { background: radial-gradient(70% 90% at 85% 10%, color-mix(in srgb, var(--cc) 60%, #0b0d12), transparent 70%),
+    radial-gradient(50% 70% at 10% 100%, color-mix(in srgb, var(--cc2) 30%, #0b0d12), transparent 70%), #0b0d12; }
   .hero--photo::before { content: ''; position: absolute; inset: 0; background-image: var(--hero); background-size: cover; background-position: center; }
   .hero::after { content: ''; position: absolute; inset: 0; background:
     linear-gradient(180deg, rgba(11,13,18,.55) 0%, rgba(11,13,18,.15) 30%, rgba(11,13,18,.75) 78%, #0b0d12 100%),
@@ -435,11 +438,11 @@ const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' 
   [data-n]::before { content: attr(data-n); position: absolute; left: -6px; top: -34px; z-index: 0; font-family: var(--display); font-weight: 800; font-size: 96px; line-height: 1;
     color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.09); pointer-events: none; }
   [data-n] > * { position: relative; z-index: 1; }
-  .sec-h h2 em, .sec-h-in h2 em { font-style: normal; color: var(--cc); filter: brightness(1.35); }
+  .sec-h h2 em, .sec-h-in h2 em { font-style: normal; color: var(--cc-txt); }
   .sec-h h2::after, .sec-h-in h2::after { content: ""; display: block; width: 72px; height: 4px; border-radius: 2px; margin-top: 12px; background: var(--brand-bars, var(--cc)); }
   .sec-more { font-size: 13.5px; font-weight: 800; color: #fff; text-decoration: none; border: 1px solid rgba(255,255,255,.25); border-radius: 999px; padding: 8px 14px; transition: border-color .15s; }
   .sec-more:hover { border-color: var(--cc); }
-  .sec-eye { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--cc); }
+  .sec-eye { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--cc-txt); }
   .sec-h h2 { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(28px, 4.4vw, 44px); line-height: 1; margin: 6px 0 0; color: #fff; text-align: start; }
   .cs-note { max-width: 1120px; margin: 0 auto; margin-top: 22px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
     border-radius: 12px; padding: 12px 18px; font-size: 13.5px; color: rgba(255,255,255,.86); }
@@ -459,7 +462,8 @@ const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' 
   .pcard-img img { position: relative; z-index: 1; }
   .pcard-num { position: absolute; top: 10px; left: 12px; z-index: 2; font-family: var(--display); font-weight: 800; font-size: 30px;
     line-height: 1; color: #fff; opacity: .9; text-shadow: 0 2px 10px rgba(0,0,0,.5); }
-  .pcard-txt { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px 14px; border-top: 2px solid var(--cc); }
+  .pcard-txt { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px 14px; border-top: 3px solid var(--cc);
+    border-image: linear-gradient(90deg, var(--cc) 0 75%, var(--cc2) 75%) 1; }
   .pcard-n { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 17px; line-height: 1.05; }
   .pcard-p { font-size: 12.5px; color: var(--ink2); }
 
@@ -474,7 +478,7 @@ const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' 
   .scard-av img { width: 100%; height: 100%; object-fit: cover; }
   .scard-i { font-family: var(--display); font-weight: 800; font-size: 26px; color: #fff; }
   .scard-n { font-weight: 800; font-size: 14px; }
-  .scard-r { font-size: 12px; color: var(--cc); font-weight: 700; }
+  .scard-r { font-size: 12px; color: var(--cc-txt); font-weight: 700; }
 
   /* Classement */
   .rank-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid rgba(255,255,255,.10); background: #12151d; box-shadow: 0 24px 50px -30px rgba(0,0,0,.9); }
@@ -519,7 +523,7 @@ const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' 
   .cal-tn { font-weight: 700; font-size: 12.5px; line-height: 1.2; color: #fff; text-decoration: none; text-transform: uppercase; }
   a.cal-tn:hover { color: var(--cc); text-decoration: underline; }
   .cal-team.th .cal-tn { text-align: right; }
-  .cal-team.me .cal-tn { color: var(--cc); }
+  .cal-team.me .cal-tn { color: var(--cc-txt); }
   .cal-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
   .cal-badge { flex: none; width: 26px; height: 26px; display: grid; place-items: center; background: #fff; border-radius: 6px; padding: 2px; box-sizing: border-box; }
   .cal-badge img { max-width: 100%; max-height: 100%; object-fit: contain; }
@@ -556,7 +560,7 @@ const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' 
   .cl-intro p { color: rgba(255,255,255,.8); font-size: 16px; line-height: 1.7; margin: 0 0 12px; text-align: start; }
   .cl-intro p:first-child::first-letter { float: left; font-family: var(--display); font-weight: 800; font-size: 64px; line-height: .85; margin: 6px 10px 0 0; color: var(--cc); filter: brightness(1.35); }
   .cl-intro :global(b) { color: #fff; }
-  .cl-official { display: inline-block; margin-top: 8px; font-size: 14px; font-weight: 800; color: var(--cc); text-decoration: none; }
+  .cl-official { display: inline-block; margin-top: 8px; font-size: 14px; font-weight: 800; color: var(--cc-txt); text-decoration: none; }
   .cl-official:hover { text-decoration: underline; }
   .cl-hl { align-self: start; display: flex; flex-direction: column; gap: 4px; padding: 26px 28px; border-radius: 16px;
     background: radial-gradient(120% 120% at 50% 0%, color-mix(in srgb, var(--cc) 40%, #12151d), #12151d 75%); border: 1px solid rgba(255,255,255,.1); }
