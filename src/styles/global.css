@@ -2272,3 +2272,6 @@ a.nbh-row:hover { background: var(--surface-2); }
 .nbh-nm1 { height: 38px; width: calc(38px * 239 / 125); }
 .nbh-head-l { gap: 12px; }
 @media (max-width: 520px) { .ffb-logo { height: 32px; width: calc(32px * 400 / 250); } .nbh-nm1 { height: 32px; width: calc(32px * 239 / 125); } }
+/* TEST : logos des fédérations en noir et blanc (couleur au survol) */
+.ffb-logo, .nbh-nm1 { filter: grayscale(1); transition: filter .25s; }
+.fed-link:hover .ffb-logo, .fed-link:hover .nbh-nm1, .fed-link:focus-visible .ffb-logo, .fed-link:focus-visible .nbh-nm1 { filter: none; }
