@@ -11,6 +11,8 @@ import type { GetStaticPaths, Page } from 'astro';
 import { assetExists } from '../../../lib/publicAssets';
 import ClubShowcase from '../../../components/ClubShowcase.astro';
 import { clubForDiscipline } from '../../../data/clubs';
+import SportIcon from '../../../components/SportIcon.astro';
+import { parseProgTitle } from '../../../lib/programmeTitle';
 
 export const getStaticPaths = (async ({ paginate }) => {
   const routes = [];
@@ -27,6 +29,13 @@ const videos = page.data;
 // Vitrine « club » (ex. basket → Pays de Fougères Basket). Remplace le hero générique
 // par une page éditoriale club, tout en gardant la vidéothèque par saison ci-dessous.
 const club = clubForDiscipline(disc.slug);
+
+// En-tête : dernière vidéo du sport (grande carte) + chiffres clés.
+const allVids = await getReplays({ discipline: disc.slug });
+const last = allVids[0];
+const lastMain = last ? (parseProgTitle(last.title).main || last.title) : '';
+const lastDate = last?.date ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${last.date.slice(0, 10)}T12:00:00Z`)) : '';
+const heroImg = assetExists(disc.hero) ? disc.hero : null;
 
 const seasonCounts = await getSeasonCounts(disc.slug);
 const seasonOptions = [
@@ -48,12 +57,33 @@ const categoryOptions = [
     <ClubShowcase club={club} matchs={page.total} saisons={seasonCounts.length} showIntro={page.currentPage === 1} />
   ) : (
     <Fragment>
-      <section class={`disc-hero${disc.hero ? ' disc-hero--banner' : ''}`}>
-        <div class="wrap" style={`--dc:${disc.colorVar}${disc.hero ? `;--hero-img:url('${disc.hero}')` : ''}`}>
-          <div class="kick">{disc.label} · {disc.sub}</div>
-          <h1>{disc.name}</h1>
-          <p>{disc.blurb}</p>
-          <div class="bar"></div>
+      <section class="dh-hero" style={`--dc:${disc.colorVar}`}>
+        {heroImg && <div class="dh-hero-media" aria-hidden="true" style={`background-image:url('${heroImg}')`}></div>}
+        <div class="wrap dh-hero-in">
+          <div class="dh-txt">
+            <div class="dh-crumb"><a href="/disciplines/">Disciplines</a><span aria-hidden="true">›</span>{disc.label}</div>
+            <div class="dh-ico"><SportIcon slug={disc.slug} /></div>
+            <h1 class="dh-h">{disc.name}</h1>
+            <div class="dh-sub">{disc.sub}</div>
+            <p class="dh-p">{disc.blurb}</p>
+            <div class="dh-kpis">
+              <div><b>{page.total}</b><span>vidéo{page.total > 1 ? 's' : ''}</span></div>
+              {seasonCounts.length > 0 && <div><b>{seasonCounts.length}</b><span>saison{seasonCounts.length > 1 ? 's' : ''}</span></div>}
+              {lastDate && <div><b class="dh-kpi-sm">{lastDate}</b><span>dernière mise en ligne</span></div>}
+            </div>
+          </div>
+          {last && page.currentPage === 1 && (
+            <a class="dh-last" href={`/replay/${last.id}/`}>
+              <span class="dh-last-img">
+                <img src={`https://i.ytimg.com/vi/${last.id}/maxresdefault.jpg`} alt="" loading="eager" onerror={`if(!this.dataset.f){this.dataset.f=1;this.src='https://i.ytimg.com/vi/${last.id}/hqdefault.jpg'}`} />
+                <span class="dh-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M8 5v14l11-7z" fill="#fff"/></svg></span>
+              </span>
+              <span class="dh-last-body">
+                <span class="dh-last-k">Dernière vidéo</span>
+                <span class="dh-last-t">{lastMain}</span>
+              </span>
+            </a>
+          )}
         </div>
       </section>
 
@@ -74,7 +104,7 @@ const categoryOptions = [
     </Fragment>
   )}
 
-  <section class="section">
+  <section class="section dh-body">
     <div class="wrap" style={`--dc:${disc.colorVar}`}>
       {(seasonCounts.length > 0 || catCounts.length > 0) && (
         <div class="filter-bar">
@@ -93,3 +123,43 @@ const categoryOptions = [
     </div>
   </section>
 </Base>
+
+<style is:global>
+  /* ---------- En-tête discipline (maquette) ---------- */
+  .dh-hero { position: relative; overflow: hidden; color: #fff;
+    background: radial-gradient(70% 140% at 85% 0%, color-mix(in srgb, var(--dc) 40%, #0A0E1A) 0%, #0A0E1A 64%), #0A0E1A; }
+  .dh-hero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--brand-bars, var(--dc)); z-index: 2; }
+  .dh-hero-media { position: absolute; inset: 0; background-size: cover; background-position: right center; opacity: .55; }
+  .dh-hero-media::after { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, #0A0E1A 0%, rgba(10,14,26,.92) 38%, rgba(10,14,26,.55) 70%, rgba(10,14,26,.75) 100%), linear-gradient(0deg, rgba(10,14,26,.8), transparent 50%); }
+  .dh-hero-in { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 44px; align-items: center; padding-top: 50px; padding-bottom: 48px; }
+  .dh-crumb { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  .dh-crumb a { color: var(--dc); text-decoration: none; }
+  .dh-ico { width: 46px; height: 46px; border-radius: 50%; background: var(--dc); display: grid; place-items: center; margin-top: 20px; color: #fff; box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--dc) 70%, transparent); }
+  .dh-ico svg { width: 24px; height: 24px; }
+  .dh-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.02em; font-size: clamp(42px, 6.4vw, 84px); line-height: .92; margin: 14px 0 0; color: #fff; }
+  .dh-sub { margin-top: 10px; font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--dc); filter: brightness(1.25); }
+  .dh-p { color: rgba(255,255,255,.8); font-size: 16px; line-height: 1.55; margin: 14px 0 0; max-width: 54ch; text-align: start; }
+  .dh-kpis { display: flex; flex-wrap: wrap; gap: 12px 34px; margin-top: 24px; }
+  .dh-kpis div { display: flex; flex-direction: column; }
+  .dh-kpis b { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; color: #fff; }
+  .dh-kpis b.dh-kpi-sm { font-size: 22px; line-height: 1.55; }
+  .dh-kpis span { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-top: 4px; }
+  .dh-last { display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; text-decoration: none; color: #fff; background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.14); box-shadow: 0 26px 56px -24px rgba(0,0,0,.85); transition: transform .3s cubic-bezier(.2,.7,.2,1), border-color .2s; }
+  .dh-last:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--dc) 70%, transparent); }
+  .dh-last-img { position: relative; display: block; aspect-ratio: 16 / 9; background: #000; overflow: hidden; }
+  .dh-last-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s; }
+  .dh-last:hover .dh-last-img img { transform: scale(1.04); }
+  .dh-play { position: absolute; inset: 0; margin: auto; width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center; padding-left: 3px;
+    background: rgba(10,14,26,.55); border: 2px solid rgba(255,255,255,.9); transition: background .2s, transform .2s; }
+  .dh-last:hover .dh-play { background: var(--dc); border-color: transparent; transform: scale(1.06); }
+  .dh-last-body { display: flex; flex-direction: column; gap: 6px; padding: 14px 18px 16px; border-top: 3px solid var(--dc); }
+  .dh-last-k { align-self: flex-start; font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: var(--dc); padding: 3px 9px; border-radius: 4px; }
+  .dh-last-t { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 20px; line-height: 1.05; }
+  .dh-body { background-image: radial-gradient(rgba(20, 30, 50, .055) 1px, transparent 1.4px); background-size: 22px 22px; }
+  @media (max-width: 900px) {
+    .dh-hero-in { grid-template-columns: 1fr; gap: 26px; padding-top: 34px; padding-bottom: 32px; }
+    .dh-last-t { font-size: 17px; }
+  }
+</style>
