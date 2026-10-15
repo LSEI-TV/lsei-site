@@ -12,7 +12,16 @@ import { femmesShowcaseSeason, getFemmesPalmares, getFemmesSeasons } from '../..
 import { paraShowcaseSeason, getParaPalmares, getParaSeasons } from '../../data/billard/seasonsPara';
 import { paraMvShowcaseSeason, getParaMvPalmares, getParaMvSeasons } from '../../data/billard/seasonsParaMalvoyants';
 
-const vidCount = (await getReplays({ discipline: 'billard' })).length;
+const bilVids = await getReplays({ discipline: 'billard' });
+const vidCount = bilVids.length;
+const lastVid = bilVids.find((v) => /blackball/i.test(v.title)) ?? bilVids[0];
+
+// Calendrier de la saison : étapes passées / prochaine étape.
+const todayIso = new Date().toISOString().slice(0, 10);
+const nextIdx = cal2627.findIndex((e) => (e.start ?? '') >= todayIso);
+const nextEv = nextIdx >= 0 ? cal2627[nextIdx] : null;
+const daysTo = (iso: string) => Math.round((Date.parse(iso + 'T12:00:00Z') - Date.parse(todayIso + 'T12:00:00Z')) / 86400000);
+const nextJx = nextEv?.start ? (daysTo(nextEv.start) > 0 ? `J-${daysTo(nextEv.start)}` : 'En cours') : '';
 // Chaque carte montre la saison « vitrine » de sa compétition = la plus récente qui a
 // des résultats. Masters → 2026-2027 dès le 1er TN ; les autres restent sur leur dernière
 // saison jouée tant que la nouvelle n'a pas démarré. Le palmarès (champion) n'existe que
@@ -109,31 +118,43 @@ const nbActive = arbitres.filter((a) => a.active).length;
 <Base title="Billard — Le hub Blackball" description="Le hub Blackball de LSEI : choisissez la compétition Masters (hommes), Femmes, Para-billard fauteuil ou Para-billard malvoyants." preloadImage="/billard/blackball-hero.webp" active="disciplines">
   <HubSwitch />
 
-  <section class="disc-hero disc-hero--banner" style="--dc:var(--c-billard)">
-    <div class="wrap" style="--hero-img:url('/billard/blackball-hero.webp')">
-      <a href="/billard/hub" class="link" style="display:inline-block;margin-bottom:14px">← Hub Billard</a>
-      <div class="kick" style="color:var(--c-billard)">LSEI · Billard · Blackball</div>
-      <h1>Le hub Blackball</h1>
-      <p>Trois compétitions, un même univers. Choisissez le circuit national que vous voulez suivre — classements, joueurs, fiches carrière et confrontations.</p>
-      <div class="bar" style="background:var(--c-billard)"></div>
+  <section class="bb-hero">
+    <div class="bb-hero-media" aria-hidden="true"></div>
+    <div class="wrap bb-hero-in">
+      <div>
+        <div class="bb-crumb"><a href="/disciplines/">Disciplines</a><span aria-hidden="true">›</span><a href="/billard/hub">Billard</a><span aria-hidden="true">›</span>Blackball</div>
+        <h1 class="bb-h">Blackball<span>Le hub des compétitions</span></h1>
+        <p class="bb-p">Quatre circuits nationaux de la FFB, un même univers. Choisissez celui que vous voulez suivre : classements, joueurs, fiches carrière et confrontations.</p>
+        <div class="bb-kpis">
+          <div><b>{comps.length}</b><span>compétitions</span></div>
+          <div><b>{cal2627.length}</b><span>rendez-vous en 26/27</span></div>
+          <div><b>{vidCount}</b><span>vidéos billard</span></div>
+        </div>
+      </div>
+      {nextEv && (
+        <a class="bb-next" href={`/billard/saison/${m.slug}`}>
+          <span class="bb-next-k"><span>Prochaine étape</span><b>{nextJx}</b></span>
+          <span class="bb-next-t">{nextEv.name}</span>
+          <span class="bb-next-d">{nextEv.date}</span>
+          <span class="bb-next-p">📍 {nextEv.place}</span>
+          <span class="bb-next-cta">Classement Masters →</span>
+        </a>
+      )}
     </div>
   </section>
 
-  <section class="section" style="padding-top:0">
+  <section class="section bb-body">
     <div class="wrap">
-      <a href="/disciplines/billard" class="bchoose-video">
-        <span class="bchoose-video-ic">🎬</span>
-        <span class="bchoose-video-txt">
-          <span class="bchoose-video-t">Vidéothèque billard</span>
-          <span class="bchoose-video-s">Toutes les vidéos billard, toutes compétitions confondues · {vidCount} vidéos</span>
-        </span>
-        <span class="bchoose-video-cta">Voir toutes les vidéos →</span>
-      </a>
-
+      <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Circuits nationaux FFB</div><h2>Choisissez votre <em>compétition</em></h2></div></div>
       <div class="bchoose">
         {comps.map((c) => (
-          <div class="bchoose-card" style={`--cc:${c.accent};--cc-ink:${c.accentInk}`}>
-            <a href={c.href} class="bchoose-title-link"><h2 class="bchoose-title"><span class="bt-arrow" aria-hidden="true">→</span><span class="bt-cat">{c.eyebrow}</span> {c.title}</h2></a>
+          <div class="bchoose-card bb-card" style={`--cc:${c.accent};--cc-ink:${c.accentInk}`}>
+            <a href={c.href} class="bb-card-head">
+              <span class="bb-card-k">{c.eyebrow}</span>
+              <h3 class="bb-card-t">{c.title}<span aria-hidden="true">→</span></h3>
+              <span class="bb-card-n">{c.players} {c.noun} · {c.tourns} tournoi{c.tourns > 1 ? 's' : ''}</span>
+            </a>
+            <div class="bb-card-body">
             <p class="bchoose-desc">{c.desc}</p>
 
             {c.feat && (
@@ -160,29 +181,31 @@ const nbActive = arbitres.filter((a) => a.active).length;
             </div>
 
             <a href={c.href} class="bchoose-cta">Entrer dans le hub →</a>
+            </div>
           </div>
         ))}
       </div>
 
       {cal2627.length > 0 && (
-        <div class="parcours parcours-box bch-cal">
-          <div class="parcours-h">Calendrier des compétitions · 2026 / 2027 · {cal2627.length} rendez-vous</div>
-          <div class="parcours-grid">
-            {cal2627.map((e) => (
-              <div class={`etape k-${e.kind}`} title={e.name}>
-                <span class="et-num">{e.short}</span>
-                <span class="et-city">{e.place}</span>
-                <span class="et-date">{e.date}</span>
-              </div>
+        <Fragment>
+          <div class="sec-head bb-sec"><div><div class="eyebrow" style="color:var(--c-billard)">Saison 2026 / 2027 · {cal2627.length} rendez-vous</div><h2>Le <em>calendrier</em></h2></div></div>
+          <ol class="bb-circuit">
+            {cal2627.map((e, i) => (
+              <li class={`k-${e.kind} ${nextIdx < 0 || i < nextIdx ? 'is-past' : i === nextIdx ? 'is-next' : ''}`} title={e.name}>
+                <span class="bb-c-dot" aria-hidden="true"></span>
+                <span class="bb-c-s">{e.short}</span>
+                <span class="bb-c-d">{e.date}</span>
+                <span class="bb-c-p">{e.place}</span>
+              </li>
             ))}
-          </div>
-        </div>
+          </ol>
+        </Fragment>
       )}
 
       {arbitres.length > 0 && (
         <section class="refs" aria-labelledby="refs-h">
+          <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Sur les tables du circuit</div><h2 id="refs-h">Les <em>arbitres</em></h2></div></div>
           <div class="refs-head">
-            <h2 id="refs-h" class="refs-title">Les arbitres</h2>
             <p class="refs-sub">Ils officient sur les tables du circuit national{nbActive ? <> · <b>{nbActive} en activité en {shortSeason(LANDING_SEASON)}</b></> : null}</p>
           </div>
           <div class="refs-grid">
@@ -200,11 +223,110 @@ const nbActive = arbitres.filter((a) => a.active).length;
           </div>
         </section>
       )}
+
+      <a href="/disciplines/billard" class="bb-vlib">
+        {lastVid && <span class="bb-vlib-img" aria-hidden="true"><img src={`https://i.ytimg.com/vi/${lastVid.id}/mqdefault.jpg`} alt="" loading="lazy" /></span>}
+        <span class="bb-vlib-txt">
+          <span class="bb-vlib-k">Vidéothèque billard</span>
+          <span class="bb-vlib-t">{vidCount} vidéos à revoir</span>
+          <span class="bb-vlib-s">Finales, matchs, interviews : toutes les vidéos billard, toutes compétitions confondues.</span>
+        </span>
+        <span class="bb-vlib-cta">Voir toutes les vidéos <span aria-hidden="true">→</span></span>
+      </a>
     </div>
   </section>
 </Base>
 
 <style>
+  /* ---------- En-tête ---------- */
+  .bb-hero { position: relative; overflow: hidden; color: #fff; background: #070c16; }
+  .bb-hero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--brand-bars, var(--c-billard)); z-index: 2; }
+  .bb-hero-media { position: absolute; inset: 0;
+    background:
+      linear-gradient(90deg, #070c16 0%, #070c16 28%, rgba(7,10,20,.78) 46%, rgba(7,10,20,.3) 70%, rgba(7,10,20,.55) 100%),
+      linear-gradient(0deg, rgba(7,10,20,.7) 0%, transparent 45%),
+      url('/billard/blackball-hero.webp');
+    background-size: cover; background-position: right center; }
+  .bb-hero-in { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .9fr); gap: 40px; align-items: end; padding-top: 54px; padding-bottom: 50px; }
+  .bb-crumb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  .bb-crumb a { color: var(--c-billard); text-decoration: none; }
+  .bb-crumb a:hover { text-decoration: underline; }
+  .bb-h { font-family: var(--display); font-weight: 800; letter-spacing: -.02em; font-size: clamp(48px, 7vw, 92px); line-height: .9; margin: 12px 0 0; color: #fff; text-transform: uppercase; }
+  .bb-h span { display: block; font-size: .34em; letter-spacing: .04em; margin-top: 8px; color: var(--c-billard); }
+  .bb-p { color: rgba(255,255,255,.82); font-size: 16px; line-height: 1.5; margin: 16px 0 0; max-width: 56ch; text-align: start; }
+  .bb-kpis { display: flex; flex-wrap: wrap; gap: 12px 34px; margin-top: 24px; }
+  .bb-kpis div { display: flex; flex-direction: column; }
+  .bb-kpis b { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; color: #fff; }
+  .bb-kpis span { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-top: 4px; }
+  .bb-next { display: flex; flex-direction: column; gap: 4px; padding: 20px 22px; border-radius: 16px; text-decoration: none; color: #fff;
+    background: rgba(10,14,26,.6); border: 1px solid rgba(255,255,255,.16); border-top: 4px solid var(--c-billard); box-shadow: 0 24px 50px -24px rgba(0,0,0,.8);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: transform .25s cubic-bezier(.2,.7,.2,1), border-color .2s; }
+  .bb-next:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--c-billard) 60%, transparent); }
+  .bb-next-k { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.65); margin-bottom: 8px; }
+  .bb-next-k b { flex: none; white-space: nowrap; color: #fff; background: var(--c-billard); padding: 3px 10px; border-radius: 999px; letter-spacing: .04em; }
+  .bb-next-t { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 28px; line-height: 1; }
+  .bb-next-d { font-size: 15px; font-weight: 700; color: var(--c-billard); margin-top: 4px; }
+  .bb-next-p { font-size: 13.5px; color: rgba(255,255,255,.75); }
+  .bb-next-cta { margin-top: 12px; font-size: 13px; font-weight: 800; }
+
+  /* ---------- Corps ---------- */
+  .bb-body { background-image: radial-gradient(rgba(20, 30, 50, .055) 1px, transparent 1.4px); background-size: 22px 22px; }
+  .bb-body .sec-head h2 em { font-style: normal; background: linear-gradient(90deg, var(--b-blue, #009FE3), var(--b-pink, #E6007E)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .bb-sec { margin-top: 50px; }
+
+  /* ---------- Cartes compétitions ---------- */
+  .bb-card { padding: 0; border-color: var(--line); box-shadow: 0 1px 2px rgba(16,24,40,.05), 0 10px 26px -14px rgba(16,24,40,.16); transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s, border-color .2s; }
+  .bb-card::before { display: none; }
+  .bb-card:hover { transform: translateY(-4px); box-shadow: 0 24px 44px -20px color-mix(in srgb, var(--cc) 55%, rgba(16,24,40,.4)); }
+  .bb-card-head { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 2px; padding: 16px 16px 14px; text-decoration: none; color: var(--cc-ink);
+    background: linear-gradient(135deg, var(--cc), color-mix(in srgb, var(--cc) 62%, #0A0E1A)); }
+  .bb-card-head::after { content: ""; position: absolute; right: -26px; top: -26px; width: 96px; height: 96px; border-radius: 50%; border: 14px solid color-mix(in srgb, #fff 16%, transparent); }
+  .bb-card-k { font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; opacity: .85; }
+  .bb-card-t { margin: 0; font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 30px; line-height: 1; color: inherit; }
+  .bb-card-t span { display: inline-block; margin-left: 8px; font-size: .6em; vertical-align: .2em; transition: transform .2s; }
+  .bb-card-head:hover .bb-card-t span { transform: translateX(4px); }
+  .bb-card-n { font-size: 12px; font-weight: 700; opacity: .85; margin-top: 4px; }
+  .bb-card-body { display: flex; flex-direction: column; flex: 1; padding: 12px 15px 15px; }
+  .bb-card-body .bchoose-desc { margin-top: 0; }
+
+  /* ---------- Frise du calendrier ---------- */
+  .bb-circuit { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); position: relative; }
+  .bb-circuit::before { content: ""; position: absolute; left: 0; right: 0; top: 9px; height: 3px; border-radius: 2px; background: var(--line-strong); }
+  .bb-circuit li { position: relative; display: flex; flex-direction: column; gap: 3px; padding-right: 6px; min-width: 0; }
+  .bb-c-dot { width: 21px; height: 21px; border-radius: 50%; background: var(--surface); border: 3px solid var(--line-strong); position: relative; z-index: 1; margin-bottom: 10px; }
+  .bb-c-s { font-family: var(--display); font-weight: 800; font-size: 16px; text-transform: uppercase; color: var(--ink); }
+  .bb-c-d { font-size: 12px; font-weight: 700; color: var(--ink-soft); }
+  .bb-c-p { font-size: 11.5px; color: var(--ink-faint); line-height: 1.25; }
+  .bb-circuit li.k-mondial .bb-c-s, .bb-circuit li.k-france .bb-c-s, .bb-circuit li.k-coupe .bb-c-s { color: #C8102E; }
+  .bb-circuit li.is-past { opacity: .55; }
+  .bb-circuit li.is-past .bb-c-dot { background: var(--c-billard); border-color: var(--c-billard); }
+  .bb-circuit li.is-next .bb-c-dot { border-color: var(--c-billard); box-shadow: 0 0 0 5px color-mix(in srgb, var(--c-billard) 22%, transparent); }
+  .bb-circuit li.is-next .bb-c-s, .bb-circuit li.is-next .bb-c-d { color: var(--c-billard); }
+
+  /* ---------- Vidéothèque (bandeau sombre) ---------- */
+  .bb-vlib { position: relative; overflow: hidden; display: flex; align-items: center; gap: 22px; margin-top: 50px; padding: 18px 26px 18px 18px; border-radius: 16px; background: #0A0E1A; color: #fff; text-decoration: none;
+    box-shadow: 0 22px 44px -24px rgba(12,14,19,.7); transition: transform .25s cubic-bezier(.2,.7,.2,1); }
+  .bb-vlib::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--brand-bars, var(--c-billard)); }
+  .bb-vlib:hover { transform: translateY(-3px); }
+  .bb-vlib-img { flex: none; width: 210px; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #111; }
+  .bb-vlib-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .bb-vlib-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .bb-vlib-k { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #7fb2ff; }
+  .bb-vlib-t { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 26px; line-height: 1; }
+  .bb-vlib-s { font-size: 14px; color: rgba(255,255,255,.75); line-height: 1.45; }
+  .bb-vlib-cta { flex: none; font-size: 14px; font-weight: 800; color: #0A0E1A; background: #fff; padding: 11px 18px; border-radius: 999px; white-space: nowrap; transition: background .2s, color .2s; }
+  .bb-vlib:hover .bb-vlib-cta { background: var(--c-billard); color: #fff; }
+
+  @media (max-width: 940px) {
+    .bb-hero-in { grid-template-columns: 1fr; gap: 26px; padding-top: 36px; padding-bottom: 32px; }
+    .bb-circuit { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 128px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: thin; }
+  }
+  @media (max-width: 620px) {
+    .bb-hero-media { background-position: 70% center; }
+    .bb-vlib { flex-wrap: wrap; padding: 16px; }
+    .bb-vlib-img { width: 100%; }
+    .bb-vlib-cta { flex-basis: 100%; text-align: center; }
+  }
   .bch-cal { margin-top: 24px; }
   /* Photo du joueur dans le podium des cartes */
   .bchoose-pod-ph { position: relative; flex: none; width: 30px; height: 30px; border-radius: 50%; overflow: hidden; background: var(--surface-2); border: 1px solid var(--line-strong); display: grid; place-items: center; }
@@ -212,7 +334,7 @@ const nbActive = arbitres.filter((a) => a.active).length;
   .bchoose-pod-ph .bavatar { font-family: var(--display); font-weight: 800; font-size: 13px; color: var(--ink-faint); }
 
   /* ---- Les arbitres ---- */
-  .refs { margin-top: 40px; }
+  .refs { margin-top: 50px; }
   .refs-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin-bottom: 16px; }
   .refs-title { font-family: var(--display); font-size: clamp(22px, 3vw, 30px); font-weight: 800; margin: 0; text-align: start; }
   .refs-sub { margin: 0; color: var(--ink-soft); font-size: 14px; text-align: start; }
