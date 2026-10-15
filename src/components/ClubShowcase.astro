@@ -8,6 +8,7 @@ import type { Club } from '../data/clubs';
 import { getDiscipline } from '../data/site';
 import { nmClubBy, nm1Standings, poolCalendar, seasonStarted, clubHasSite, NM1_POOL } from '../data/basket';
 import { assetExists, assetUrl } from '../lib/publicAssets';
+import NextMatchScript from './NextMatchScript.astro';
 
 interface Props {
   club: Club;
@@ -31,6 +32,9 @@ const jx = (iso: string) => { const n = daysTo(iso); return n > 1 ? `J-${n}` : n
 const fmtDay = (iso: string) => { const s = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date(iso + 'T12:00:00')); return s.charAt(0).toUpperCase() + s.slice(1); };
 const logoOf = (slug: string) => { const c = nmClubBy(slug); return c && assetExists(c.logo) ? assetUrl(c.logo!) : null; };
 const nameOf = (slug: string) => (slug === club.slug ? club.name.replace(/ Basket$/, '') : nmClubBy(slug)?.name ?? slug);
+// Matchs encore à jouer → recalcul du « prochain match » chez le visiteur.
+const teamFx = (sl: string) => ({ n: nameOf(sl), s: nmClubBy(sl)?.short ?? '', l: logoOf(sl) });
+const fx = games.filter((m) => m.homeScore == null).map((m) => ({ d: m.date, r: m.round ?? null, dom: m.homeSlug === club.slug, h: teamFx(m.homeSlug), a: teamFx(m.awaySlug) }));
 const miniSite = inLeague && clubHasSite(club.slug) ? `/clubs/${club.slug}` : null;
 ---
 <section class="club-hero" style={`--dc:${dc}`}>
@@ -57,20 +61,21 @@ const miniSite = inLeague && clubHasSite(club.slug) ? `/clubs/${club.slug}` : nu
     {(next || last) && (
       <div class="club-mc">
         {next && (
-          <div class="club-mc-next">
-            <div class="club-mc-k"><span>Prochain match</span><b>{jx(next.date)}</b></div>
+          <div class="club-mc-next" data-nextmatch>
+            <script type="application/json" data-fx set:html={JSON.stringify(fx)}></script>
+            <div class="club-mc-k"><span>Prochain match</span><b data-jx>{jx(next.date)}</b></div>
             <div class="club-mc-teams">
               {[next.homeSlug, next.awaySlug].map((sl, i) => (
                 <Fragment>
                   {i === 1 && <span class="club-mc-vs">VS</span>}
-                  <span class="club-mc-team">
-                    <span class="club-mc-logo">{logoOf(sl) ? <img src={logoOf(sl)!} alt="" /> : <span>{nmClubBy(sl)?.short}</span>}</span>
-                    <span class="club-mc-name">{nameOf(sl)}</span>
+                  <span class="club-mc-team" data-slot={i}>
+                    <span class="club-mc-logo" data-logo>{logoOf(sl) ? <img src={logoOf(sl)!} alt="" /> : <span>{nmClubBy(sl)?.short}</span>}</span>
+                    <span class="club-mc-name" data-name>{nameOf(sl)}</span>
                   </span>
                 </Fragment>
               ))}
             </div>
-            <div class="club-mc-when">{fmtDay(next.date)}{next.round ? ` · J${next.round}` : ''} · {next.homeSlug === club.slug ? 'à domicile' : "à l'extérieur"}</div>
+            <div class="club-mc-when" data-when>{fmtDay(next.date)}{next.round ? ` · J${next.round}` : ''} · {next.homeSlug === club.slug ? 'à domicile' : "à l'extérieur"}</div>
           </div>
         )}
         {last && (
@@ -83,6 +88,8 @@ const miniSite = inLeague && clubHasSite(club.slug) ? `/clubs/${club.slug}` : nu
     )}
   </div>
 </section>
+
+{next && <NextMatchScript />}
 
 {showIntro && (
   <section class="section club-intro-sec" style={`--dc:${dc}`}>

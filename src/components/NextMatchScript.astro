@@ -1,0 +1,52 @@
+---
+// Carte « Prochain match » recalculée CÔTÉ VISITEUR (vraie date du jour, locale) :
+// elle passe toute seule au match suivant, sans attendre la reconstruction du site.
+// Balisage attendu dans la page :
+//   [data-nextmatch]            conteneur (masqué s'il n'y a plus de match)
+//     script[type=application/json][data-fx]  liste des matchs À JOUER :
+//        { d:'AAAA-MM-JJ', r:n° de journée|null, dom:bool (le club suivi reçoit),
+//          h:{n,s,l}, a:{n,s,l} }  (n = nom, s = sigle, l = logo|null)
+//     [data-slot="0"] / [data-slot="1"]  équipe à domicile / à l'extérieur,
+//        avec [data-logo] et [data-name]
+//     [data-jx]  pastille J-x      [data-when]  date · journée · lieu
+//   attribut data-round-prefix sur le conteneur : « Journée » ou « J » (défaut).
+---
+<script is:inline>
+  (function () {
+    try {
+      var d = new Date();
+      var today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      var t0 = new Date(today + 'T00:00:00');
+      document.querySelectorAll('[data-nextmatch]').forEach(function (box) {
+        var raw = box.querySelector('script[data-fx]');
+        if (!raw) return;
+        var fx = JSON.parse(raw.textContent || '[]');
+        var next = null;
+        for (var i = 0; i < fx.length; i++) { if (fx[i].d >= today) { next = fx[i]; break; } }
+        if (!next) { box.hidden = true; return; }
+        [next.h, next.a].forEach(function (t, k) {
+          var slot = box.querySelector('[data-slot="' + k + '"]');
+          if (!slot) return;
+          var lg = slot.querySelector('[data-logo]');
+          if (lg) {
+            lg.textContent = '';
+            if (t.l) { var im = document.createElement('img'); im.src = t.l; im.alt = ''; lg.appendChild(im); }
+            else { var sp = document.createElement('span'); sp.textContent = t.s || ''; lg.appendChild(sp); }
+          }
+          var nm = slot.querySelector('[data-name]');
+          if (nm) nm.textContent = t.n || '';
+        });
+        var dt = new Date(next.d + 'T00:00:00');
+        var when = dt.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+        var pre = box.getAttribute('data-round-prefix') || 'J';
+        var w = box.querySelector('[data-when]');
+        if (w) w.textContent = when.charAt(0).toUpperCase() + when.slice(1)
+          + (next.r ? ' · ' + pre + (pre.length > 1 ? ' ' : '') + next.r : '') + ' · ' + (next.dom ? 'à domicile' : "à l'extérieur");
+        var n = Math.round((dt - t0) / 86400000);
+        var jx = box.querySelector('[data-jx]');
+        if (jx) jx.textContent = n > 1 ? 'J-' + n : n === 1 ? 'Demain' : "Aujourd'hui";
+        box.hidden = false;
+      });
+    } catch (e) {}
+  })();
+</script>

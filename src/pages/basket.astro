@@ -5,6 +5,7 @@ import Base from '../layouts/Base.astro';
 import { getDiscipline } from '../data/site';
 import { NM1_LABEL, NM1_POOL, SEASON, SEASON_START, nmClubs, nmClubBy, nm1Standings, seasonStarted, standingsUpdated, standingsIsOfficial, clubHasSite, poolCalendar } from '../data/basket';
 import { assetExists, assetUrl } from '../lib/publicAssets';
+import NextMatchScript from '../components/NextMatchScript.astro';
 
 const d = getDiscipline('basket');
 const standings = nm1Standings();
@@ -38,6 +39,9 @@ const playedDays = calDates.filter((dt) => byDate[dt].some((m) => m.homeScore !=
 const daysTo = (iso: string) => Math.round((Date.parse(iso + 'T12:00:00Z') - Date.parse(todayIso + 'T12:00:00Z')) / 86400000);
 const jx = (iso: string) => { const n = daysTo(iso); return n <= 0 ? "Aujourd'hui" : n === 1 ? 'Demain' : `J-${n}`; };
 const logoOf = (slug: string) => { const c = nmClubBy(slug); return c && assetExists(c.logo) ? assetUrl(c.logo!) : null; };
+// Matchs de Fougères encore à jouer → recalcul du « prochain match » chez le visiteur.
+const teamFx = (sl: string) => ({ n: nmClubBy(sl)?.name ?? sl, s: nmClubBy(sl)?.short ?? '', l: logoOf(sl) });
+const pfbFx = pfbGames.filter((m) => m.homeScore == null).map((m) => ({ d: m.date, r: m.round ?? null, dom: m.homeSlug === 'fougeres', h: teamFx(m.homeSlug), a: teamFx(m.awaySlug) }));
 const lastWin = pfbLast ? ((pfbLast.homeSlug === 'fougeres') === (pfbLast.homeScore! > pfbLast.awayScore!)) : null;
 ---
 <Base title={`Basketball ${NM1_LABEL} (NM1) — ${NM1_POOL}`} description={`${NM1_LABEL} (NM1) ${NM1_POOL} ${SEASON} sur LSEI : les clubs, le calendrier, le classement et les vidéos — du Pays de Fougères Basket à toute la poule.`} active="disciplines">
@@ -56,20 +60,21 @@ const lastWin = pfbLast ? ((pfbLast.homeSlug === 'fougeres') === (pfbLast.homeSc
       {(pfbNext || pfbLast) && (
         <div class="nb-match-card">
           {pfbNext && (
-            <div class="nb-mc-next">
-              <div class="nb-mc-k"><span>Prochain match · Pays de Fougères</span><b>{jx(pfbNext.date)}</b></div>
+            <div class="nb-mc-next" data-nextmatch data-round-prefix="Journée">
+              <script type="application/json" data-fx set:html={JSON.stringify(pfbFx)}></script>
+              <div class="nb-mc-k"><span>Prochain match · Pays de Fougères</span><b data-jx>{jx(pfbNext.date)}</b></div>
               <div class="nb-mc-teams">
                 {[pfbNext.homeSlug, pfbNext.awaySlug].map((sl, i) => (
                   <Fragment>
                     {i === 1 && <span class="nb-mc-vs">VS</span>}
-                    <span class="nb-mc-team">
-                      <span class="nb-mc-logo">{logoOf(sl) ? <img src={logoOf(sl)!} alt="" /> : <span>{nmClubBy(sl)?.short}</span>}</span>
-                      <span class="nb-mc-name">{nmClubBy(sl)?.name}</span>
+                    <span class="nb-mc-team" data-slot={i}>
+                      <span class="nb-mc-logo" data-logo>{logoOf(sl) ? <img src={logoOf(sl)!} alt="" /> : <span>{nmClubBy(sl)?.short}</span>}</span>
+                      <span class="nb-mc-name" data-name>{nmClubBy(sl)?.name}</span>
                     </span>
                   </Fragment>
                 ))}
               </div>
-              <div class="nb-mc-when">{fmtCalDate(pfbNext.date)}{pfbNext.round ? ` · Journée ${pfbNext.round}` : ''} · {pfbNext.homeSlug === 'fougeres' ? 'à domicile' : 'à l\'extérieur'}</div>
+              <div class="nb-mc-when" data-when>{fmtCalDate(pfbNext.date)}{pfbNext.round ? ` · Journée ${pfbNext.round}` : ''} · {pfbNext.homeSlug === 'fougeres' ? 'à domicile' : 'à l\'extérieur'}</div>
             </div>
           )}
           {pfbLast && (
@@ -188,6 +193,8 @@ const lastWin = pfbLast ? ((pfbLast.homeSlug === 'fougeres') === (pfbLast.homeSc
       </div>
     </div>
   </section>
+
+  <NextMatchScript />
 
   <script is:inline>
     // Calendrier : filtre par équipe + par mois, grisage des passés et mise en
