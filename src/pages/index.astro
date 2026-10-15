@@ -573,7 +573,7 @@ const slides = programme
           <div class="hcol bspot-sec" style="--dc:var(--c-billard)">
         <div class="sec-head">
           <div class="nbh-head-l">
-            {assetExists('/partenaires/ffbillard.webp') && <img class="ffb-logo" src={assetUrl('/partenaires/ffbillard.webp')} alt="Fédération Française de Billard" width="400" height="250" loading="lazy" />}
+            {assetExists('/partenaires/ffbillard.webp') && <a class="fed-link" href="https://www.ffbillard.com" target="_blank" rel="noopener" title="Fédération Française de Billard (nouvel onglet)"><img class="ffb-logo" src={assetUrl('/partenaires/ffbillard.webp')} alt="Fédération Française de Billard" width="400" height="250" loading="lazy" /></a>}
             <div>
               <div class="eyebrow" style="color:var(--c-billard)">Blackball Masters</div>
               <h2>{bilInProgress ? `Classement provisoire · ${bilSeason.label}` : `Le podium · ${bilSeason.label}`}</h2>
@@ -605,7 +605,7 @@ const slides = programme
           <>
             <div class="sec-head" style="margin-top:24px">
               <div class="nbh-head-l">
-                {assetExists('/partenaires/ffbillard.webp') && <img class="ffb-logo" src={assetUrl('/partenaires/ffbillard.webp')} alt="Fédération Française de Billard" width="400" height="250" loading="lazy" />}
+                {assetExists('/partenaires/ffbillard.webp') && <a class="fed-link" href="https://www.ffbillard.com" target="_blank" rel="noopener" title="Fédération Française de Billard (nouvel onglet)"><img class="ffb-logo" src={assetUrl('/partenaires/ffbillard.webp')} alt="Fédération Française de Billard" width="400" height="250" loading="lazy" /></a>}
                 <div>
                   <div class="eyebrow" style="color:var(--c-billard)">Blackball Femmes</div>
                   <h2>{femInProgress ? `Classement provisoire · ${femSeason.label}` : `Le podium · ${femSeason.label}`}</h2>
@@ -705,7 +705,7 @@ const slides = programme
         <div class="nbh-card">
           <div class="sec-head">
             <div class="nbh-head-l">
-              {assetExists('/basket/nm1-logo.webp') && <img class="nbh-nm1" src={assetUrl('/basket/nm1-logo.webp')} alt="Championnat NM1 · FFBB" width="400" height="125" loading="lazy" />}
+              {assetExists('/basket/nm1-logo.webp') && <a class="fed-link" href="https://nm1.ffbb.com" target="_blank" rel="noopener" title="Nationale Masculine 1 · FFBB (nouvel onglet)"><img class="nbh-nm1" src={assetUrl('/basket/nm1-logo.webp')} alt="Championnat NM1 · FFBB" width="400" height="125" loading="lazy" /></a>}
               <div>
                 <div class="eyebrow" style={`color:${nbClub.colorVar}`}>Basketball · Nationale 1</div>
                 <h2>Classement · {NM1_POOL}</h2>
