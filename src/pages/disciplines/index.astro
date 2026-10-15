@@ -1,31 +1,174 @@
 ---
+// ============================================================
+//  DISCIPLINES (maquette) — une VITRINE par sport : grande image (dernière vidéo),
+//  nom, description, chiffres du sport (vidéos, dernière mise en ligne, prochain
+//  rendez-vous connu), 3 dernières vidéos, accès vidéothèque / hub.
+//  Bandes en alternance image à gauche / à droite. Tout se met à jour seul.
+// ============================================================
 import Base from '../../layouts/Base.astro';
 import { disciplines } from '../../data/site';
 import SportIcon from '../../components/SportIcon.astro';
+import { getReplays } from '../../lib/youtube';
+import { parseProgTitle } from '../../lib/programmeTitle';
+import { cal2627 } from '../../data/billard/seasons';
+import { nm1Calendar, nmClubBy } from '../../data/basket';
+
+const all = await getReplays();
+const todayIso = new Date().toISOString().slice(0, 10);
+const frDay = (iso: string) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${iso.slice(0, 10)}T12:00:00Z`));
+const short = (iso: string) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(`${iso}T12:00:00Z`)).replace('.', '');
+
+// Prochain rendez-vous connu (calendriers du site) : billard = circuit Blackball, basket = Fougères à domicile.
+const nextOf: Record<string, string> = {};
+const tn = cal2627.find((e) => e.start && e.start >= todayIso && e.kind !== 'mondial');
+if (tn) nextOf.billard = `${tn.name} · ${tn.date} · ${tn.place}`;
+const pfb = nm1Calendar.find((m) => m.homeSlug === 'fougeres' && m.date >= todayIso && m.homeScore == null);
+if (pfb) nextOf.basket = `Pays de Fougères – ${nmClubBy(pfb.awaySlug)?.name ?? pfb.awaySlug} · ${short(pfb.date)}`;
+
+const zones = disciplines.map((d, i) => {
+  const vids = all.filter((v) => v.discipline === d.slug);
+  const top = vids[0];
+  const latest = vids.slice(top ? 1 : 0, 4).map((v) => ({ ...v, main: parseProgTitle(v.title).main || v.title }));
+  return {
+    d, n: String(i + 1).padStart(2, '0'), count: vids.length,
+    lastDate: top?.date ? frDay(top.date) : '',
+    hero: top ? { id: top.id, main: parseProgTitle(top.title).main || top.title, big: `https://i.ytimg.com/vi/${top.id}/maxresdefault.jpg`, hq: `https://i.ytimg.com/vi/${top.id}/hqdefault.jpg` } : null,
+    latest, next: nextOf[d.slug] || '',
+    hub: d.hub || d.statsHub || null,
+  };
+});
+const total = zones.reduce((a, z) => a + z.count, 0);
 ---
-<Base title="Disciplines" description="Les sept disciplines couvertes par LSEI." active="disciplines">
-  <section class="disc-hero">
+<Base title="Disciplines" description="Les sept disciplines filmées par LSEI : basket, billard, palets bretons, football, beach-volley, bowling et subbuteo — en direct comme en replay." active="disciplines">
+  <!-- EN-TÊTE : titre + accès direct aux 7 sports -->
+  <section class="dz-hero">
     <div class="wrap">
-      <div class="kick" style="color:var(--accent)">Nos antennes</div>
-      <h1>7 disciplines, une même passion</h1>
-      <p>Du parquet à la planche, LSEI met en image les sports authentiques du territoire — en direct comme en replay. Choisissez une discipline pour retrouver ses matchs et ses vidéos.</p>
-      <div class="bar" style="background:var(--accent)"></div>
+      <div class="dz-kick">Nos antennes</div>
+      <h1 class="dz-h">7 disciplines, une même <em>passion</em></h1>
+      <p class="dz-p">Du parquet à la planche, LSEI met en image les sports authentiques du territoire — en direct comme en replay. <b>{total.toLocaleString('fr-FR')} vidéos</b> à revoir.</p>
+      <nav class="dz-jump" aria-label="Aller à une discipline">
+        {zones.map((z) => (
+          <a href={`#${z.d.slug}`} style={`--dc:${z.d.colorVar}`}><span class="dz-jump-ico"><SportIcon slug={z.d.slug} /></span>{z.d.label}<b>{z.count}</b></a>
+        ))}
+      </nav>
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap">
-      <div class="discs">
-        {disciplines.map((d, i) => (
-          <a href={d.hub ?? `/disciplines/${d.slug}`} class="disc-card" style={`--dc:${d.colorVar}`}>
-            <div class="n">{String(i + 1).padStart(2, '0')}</div>
-            <SportIcon slug={d.slug} />
-            <div class="name">{d.name}</div>
-            <div class="sub">{d.sub}</div>
-            {d.statsHub && <div class="disc-stats-badge">＋ Classements &amp; stats</div>}
-          </a>
-        ))}
+  <!-- UNE VITRINE PAR SPORT (image à gauche / à droite en alternance) -->
+  {zones.map((z, i) => (
+    <section class={`dz ${i % 2 ? 'dz--rev' : ''}`} id={z.d.slug} style={`--dc:${z.d.colorVar}`}>
+      <div class="wrap dz-in">
+        <a class="dz-media" href={z.hero ? `/replay/${z.hero.id}/` : (z.hub ?? `/disciplines/${z.d.slug}/`)} aria-label={z.hero ? `Revoir : ${z.hero.main}` : z.d.name}>
+          {z.hero
+            ? <img src={z.hero.big} alt="" loading={i < 2 ? 'eager' : 'lazy'} onerror={`if(!this.dataset.f){this.dataset.f=1;this.src='${z.hero.hq}'}`} />
+            : <span class="dz-media-ico"><SportIcon slug={z.d.slug} /></span>}
+          <span class="dz-media-shade" aria-hidden="true"></span>
+          {z.hero && <span class="dz-media-cap"><span class="dz-media-k">Dernière vidéo</span><span class="dz-media-t">{z.hero.main}</span></span>}
+          {z.hero && <span class="dz-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><path d="M8 5v14l11-7z" fill="#fff"/></svg></span>}
+        </a>
+        <div class="dz-txt">
+          <div class="dz-num"><span>{z.n}</span><span class="dz-ico"><SportIcon slug={z.d.slug} /></span></div>
+          <h2 class="dz-name"><a href={z.d.hub ?? `/disciplines/${z.d.slug}/`}>{z.d.name}<span class="dz-name-go" aria-hidden="true">→</span></a></h2>
+          <div class="dz-sub">{z.d.sub}</div>
+          <p class="dz-blurb">{z.d.blurb}</p>
+          <dl class="dz-facts">
+            <div><dt>Vidéos</dt><dd>{z.count.toLocaleString('fr-FR')}</dd></div>
+            {z.lastDate && <div><dt>Dernière mise en ligne</dt><dd>{z.lastDate}</dd></div>}
+            {z.next && <div class="dz-next"><dt>Prochain rendez-vous</dt><dd>{z.next}</dd></div>}
+          </dl>
+          {z.latest.length > 0 && (
+            <div class="dz-vids">
+              {z.latest.map((v) => (
+                <a class="dz-vid" href={`/replay/${v.id}/`}>
+                  <span class="dz-vid-img"><img src={`https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`} alt="" loading="lazy" width="320" height="180" /></span>
+                  <span class="dz-vid-t">{v.main}</span>
+                </a>
+              ))}
+            </div>
+          )}
+          <div class="dz-actions">
+            <a class="dz-btn dz-btn--main" href={`/disciplines/${z.d.slug}/`}>▸ Toutes les vidéos</a>
+            {z.hub && <a class="dz-btn" href={z.hub}>{z.d.statsHub ? 'Classements & stats' : 'Le hub ' + z.d.label} →</a>}
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  ))}
+
+  <style is:global>
+    /* ---------- En-tête ---------- */
+    .dz-hero { position: relative; color: #fff; overflow: hidden;
+      background: radial-gradient(80% 150% at 85% 0%, color-mix(in srgb, var(--c-billard, #1E7BE0) 32%, #0A0E1A) 0%, #0A0E1A 62%), #0A0E1A; }
+    .dz-hero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--brand-bars, var(--accent)); }
+    .dz-hero .wrap { padding-top: 54px; padding-bottom: 40px; }
+    .dz-kick { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #7fb2ff; }
+    .dz-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.02em; font-size: clamp(36px, 5.6vw, 70px); line-height: .95; margin: 10px 0 0; color: #fff; }
+    .dz-h em { font-style: normal; background: linear-gradient(90deg, var(--b-blue, #009FE3), var(--b-pink, #E6007E)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .dz-p { color: rgba(255,255,255,.8); font-size: 16.5px; line-height: 1.5; margin: 16px 0 0; max-width: 44em; text-align: start; }
+    .dz-p b { color: #fff; }
+    .dz-jump { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+    .dz-jump a { display: inline-flex; align-items: center; gap: 9px; padding: 8px 14px 8px 8px; border-radius: 999px; color: #fff; text-decoration: none; font-weight: 700; font-size: 14px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); transition: background .2s, border-color .2s, transform .2s; }
+    .dz-jump a:hover { background: color-mix(in srgb, var(--dc) 30%, transparent); border-color: var(--dc); transform: translateY(-2px); }
+    .dz-jump-ico { width: 28px; height: 28px; border-radius: 50%; background: var(--dc); display: grid; place-items: center; }
+    .dz-jump-ico svg { width: 16px; height: 16px; color: #fff; }
+    .dz-jump b { font-size: 11px; font-weight: 800; background: rgba(255,255,255,.14); padding: 1px 7px; border-radius: 999px; }
+
+    /* ---------- Une vitrine par sport ---------- */
+    .dz { scroll-margin-top: 90px; padding: 44px 0; background-image: radial-gradient(rgba(20, 30, 50, .055) 1px, transparent 1.4px); background-size: 22px 22px; }
+    .dz + .dz { border-top: 1px solid var(--line); }
+    .dz-in { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 44px; align-items: center; }
+    .dz--rev .dz-media { order: 2; }
+    .dz-media { position: relative; display: block; aspect-ratio: 16 / 10; border-radius: 16px; overflow: hidden; background: linear-gradient(150deg, color-mix(in srgb, var(--dc) 75%, #0A0E1A), color-mix(in srgb, var(--dc) 25%, #0A0E1A));
+      box-shadow: 0 24px 54px -22px color-mix(in srgb, var(--dc) 55%, rgba(12,14,19,.6)); transition: transform .35s cubic-bezier(.2,.7,.2,1); }
+    .dz-media:hover { transform: translateY(-4px); }
+    .dz-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+    .dz-media:hover img { transform: scale(1.04); }
+    .dz-media::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px; background: var(--dc); z-index: 2; }
+    .dz-media-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(8,12,22,.9) 0%, rgba(8,12,22,.35) 32%, transparent 58%); }
+    .dz-media-ico { position: absolute; inset: 0; margin: auto; width: 34%; aspect-ratio: 1; color: #fff; opacity: .9; }
+    .dz-media-ico svg { width: 100%; height: 100%; }
+    .dz-media-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; color: #fff; }
+    .dz-media-k { align-self: flex-start; font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: var(--dc); padding: 3px 9px; border-radius: 4px; }
+    .dz-media-t { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(17px, 1.8vw, 22px); line-height: 1.05; }
+    .dz-play { position: absolute; top: 18px; right: 18px; width: 56px; height: 56px; border-radius: 50%; background: rgba(10,14,26,.55); border: 2px solid rgba(255,255,255,.9); display: grid; place-items: center; padding-left: 3px; transition: background .2s, transform .2s; }
+    .dz-media:hover .dz-play { background: var(--dc); border-color: transparent; transform: scale(1.06); }
+    .dz-txt { min-width: 0; }
+    .dz-num { display: flex; align-items: center; gap: 12px; font-family: var(--display); font-weight: 800; font-size: 15px; color: var(--dc); letter-spacing: .06em; }
+    .dz-ico { width: 34px; height: 34px; border-radius: 50%; background: color-mix(in srgb, var(--dc) 15%, var(--surface)); display: grid; place-items: center; color: var(--dc); }
+    .dz-ico svg { width: 19px; height: 19px; }
+    .dz-name { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(34px, 4.4vw, 56px); line-height: .95; letter-spacing: -.01em; margin: 10px 0 0; position: relative; padding-bottom: 14px; text-align: start; }
+    .dz-name::after { content: ""; position: absolute; left: 0; bottom: 0; width: 72px; height: 4px; border-radius: 2px; background: var(--brand-bars, var(--dc)); }
+    .dz-name a { color: inherit; text-decoration: none; transition: color .2s; }
+    .dz-name a:hover { color: var(--dc); }
+    .dz-name-go { display: inline-block; margin-left: .25em; font-size: .55em; vertical-align: .25em; color: var(--dc); opacity: 0; transform: translateX(-8px); transition: opacity .2s, transform .2s; }
+    .dz-name a:hover .dz-name-go { opacity: 1; transform: none; }
+    @media (hover: none) { .dz-name-go { opacity: 1; transform: none; } }
+    .dz-sub { margin-top: 12px; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--dc); }
+    .dz-blurb { margin: 10px 0 0; color: var(--ink-soft); font-size: 15.5px; line-height: 1.6; text-align: start; hyphens: manual; }
+    .dz-facts { display: flex; flex-wrap: wrap; gap: 10px 26px; margin: 18px 0 0; }
+    .dz-facts dt { font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+    .dz-facts dd { margin: 2px 0 0; font-family: var(--display); font-weight: 800; font-size: 22px; color: var(--ink); }
+    .dz-facts .dz-next dd { font-family: inherit; font-size: 14px; font-weight: 700; color: var(--dc); max-width: 26em; }
+    .dz-vids { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 20px; }
+    .dz-vid { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: var(--ink); }
+    .dz-vid-img { aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: #111; display: block; box-shadow: 0 8px 18px -12px rgba(16,24,40,.4); }
+    .dz-vid-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s; }
+    .dz-vid:hover .dz-vid-img img { transform: scale(1.06); }
+    .dz-vid-t { font-size: 12.5px; font-weight: 700; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .dz-vid:hover .dz-vid-t { color: var(--dc); }
+    .dz-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .dz-btn { display: inline-flex; align-items: center; padding: 11px 18px; border-radius: 10px; font-weight: 800; font-size: 14px; text-decoration: none; border: 1px solid var(--line-strong); color: var(--ink); background: var(--surface); transition: border-color .15s, color .15s, filter .15s; }
+    .dz-btn:hover { border-color: var(--dc); color: var(--dc); }
+    .dz-btn--main { background: var(--dc); border-color: var(--dc); color: #fff; }
+    .dz-btn--main:hover { color: #fff; filter: brightness(1.08); }
+
+    @media (max-width: 900px) {
+      .dz { padding: 30px 0; }
+      .dz-in { grid-template-columns: 1fr; gap: 22px; }
+      .dz--rev .dz-media { order: 0; }
+      .dz-vids { gap: 8px; }
+      .dz-vid-t { font-size: 11.5px; }
+    }
+  </style>
 </Base>

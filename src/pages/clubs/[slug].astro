@@ -39,7 +39,11 @@ const nextHome = nextMatch ? nextMatch.homeSlug === slug : false;
 const fixtures = myMatches
   .slice()
   .sort((a, b) => (a.date < b.date ? -1 : 1))
-  .map((m) => ({ d: m.date, o: (nmClubBy(m.homeSlug === slug ? m.awaySlug : m.homeSlug)?.name ?? ''), h: m.homeSlug === slug }));
+  .map((m) => {
+    const opp = nmClubBy(m.homeSlug === slug ? m.awaySlug : m.homeSlug);
+    return { d: m.date, o: opp?.name ?? '', h: m.homeSlug === slug, r: m.round ?? null,
+      l: opp && assetExists(opp.logo) ? assetUrl(opp.logo!) : null, s: opp?.short ?? '' };
+  });
 // Calendrier complet du club (dates + scores) pour la section « Calendrier ».
 const calMatches = myMatches.slice().sort((a, b) => (a.date < b.date ? -1 : 1));
 const fmtShort = (iso: string) => new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Paris' }).format(new Date(iso));
@@ -52,9 +56,20 @@ const cityKey = _n(club.city);
 const clubVideos = (await getReplays({ discipline: 'basket' })).filter((v) => _n(v.title || '').includes(cityKey)).slice(0, 6);
 
 const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
+
+// Forme : les 5 derniers matchs joués (V/D), du plus ancien au plus récent.
+const form = calMatches.filter((m) => m.homeScore != null && m.awayScore != null).slice(-5).map((m) => {
+  const home = m.homeSlug === slug;
+  const won = home ? m.homeScore! > m.awayScore! : m.awayScore! > m.homeScore!;
+  return { won, opp: nmClubBy(home ? m.awaySlug : m.homeSlug)?.name ?? '', sc: `${m.homeScore}-${m.awayScore}` };
+});
+const logoOf = (s2: string) => { const c = nmClubBy(s2); return c && assetExists(c.logo) ? assetUrl(c.logo!) : null; };
+const nextOppLogo = nextOpp ? logoOf(nextOpp.slug) : null;
+const daysToNext = nextMatch ? Math.round((Date.parse(nextMatch.date + 'T12:00:00Z') - Date.parse(todayISO + 'T12:00:00Z')) / 86400000) : 0;
+const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' : "Aujourd'hui";
 ---
 <Base chrome="bare" title={`${club.name} — Basket ${NM1_LABEL} (NM1)`} description={fiche?.blurb ?? `${club.name} (${club.city}) — ${NM1_LABEL} ${NM1_POOL} ${SEASON} : effectif, classement et vidéos du club, filmés par LSEI.`} active="disciplines" preloadImage={heroImg ?? undefined}>
-  <div class="cs" style={`--cc:${cc}`} id="top">
+  <div class="cs" style={`--cc:${cc};--cc2:${club.color2 ?? cc}`} id="top">
 
     <!-- EN-TÊTE CLUB (chrome propre) -->
     <header class="ch" id="chead">
@@ -75,26 +90,52 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
     <!-- HERO plein écran -->
     <section class:list={['hero', heroImg ? 'hero--photo' : 'hero--grad']} style={heroImg ? `--hero:url('${heroImg}')` : ''}>
       <div class="hero-in">
+      <div class="hero-txt">
         <span class="hero-logo">{logoSrc ? <img src={logoSrc} alt={club.name} /> : <b>{club.short}</b>}</span>
         <div class="hero-kick">{fiche?.kicker ?? `${NM1_LABEL} · ${NM1_POOL}`}</div>
         <h1 class="hero-h">{club.name}</h1>
         {fiche?.blurb && <p class="hero-blurb">{fiche.blurb}</p>}
-        <div class="hero-badges">
-          <span class="hb">NM1 · {NM1_POOL}</span>
-          {started && myRow && <span class="hb hb--on">{rank + 1}<sup>e</sup> · {myRow.w}-{myRow.l}</span>}
-          <span class="hb">{roster.length} joueurs</span>
+        <div class="hero-stats">
+          {started && myRow && <div class="hs"><b>{rank + 1}<sup>{rank === 0 ? 'er' : 'e'}</sup></b><span>{NM1_POOL}</span></div>}
+          {started && myRow && <div class="hs"><b>{myRow.w}<i>-</i>{myRow.l}</b><span>Bilan V-D</span></div>}
+          {started && myRow && <div class="hs"><b>{myRow.pts}</b><span>Points</span></div>}
+          <div class="hs"><b>{roster.length}</b><span>Joueurs</span></div>
         </div>
+        {form.length > 0 && (
+          <div class="hero-form" aria-label="Forme : 5 derniers matchs">
+            <span class="hf-lab">Forme</span>
+            {form.map((f) => <span class:list={['hf', f.won ? 'w' : 'l']} title={`${f.won ? 'Victoire' : 'Défaite'} · ${f.opp} · ${f.sc}`}>{f.won ? 'V' : 'D'}</span>)}
+          </div>
+        )}
         <div class="hero-cta-row">
-          {fixtures.length > 0 && (
-            <div class="hero-next" id="hero-next" hidden={!nextMatch}>
-              <span class="hn-lab">Prochain match</span>
-              <span class="hn-main">{nextMatch && nextOpp ? `${nextHome ? 'vs' : '@'} ${nextOpp.name}` : ''}</span>
-              <span class="hn-when">{nextMatch ? cap(fmtMatch(nextMatch.date)) : ''}</span>
-            </div>
-          )}
           <a class="hero-cta" href="#effectif">Découvrir l'équipe ↓</a>
+          {calMatches.length > 0 && <a class="hero-cta hero-cta--ghost" href="#calendrier">Le calendrier</a>}
         </div>
+      </div>
+      {fixtures.length > 0 && (
+        <div class="hero-next" id="hero-next" hidden={!(nextMatch && nextOpp)} data-me-name={club.name} data-me-short={club.short} data-me-logo={logoSrc ?? ''}>
+          <span class="hn-top"><span class="hn-lab">Prochain match</span><b class="hn-jx">{nextJx}</b></span>
+          <span class="hn-teams">
+            {[0, 1].map((i) => {
+              const isMe = nextOpp ? (i === 0) === nextHome : i === 0;
+              const lg = isMe ? logoSrc : nextOppLogo;
+              return (
+                <Fragment>
+                  {i === 1 && <span class="hn-vs">VS</span>}
+                  <span class="hn-t" data-slot={i}>
+                    <span class="hn-logo">{lg ? <img src={lg} alt="" /> : <b>{isMe ? club.short : nextOpp?.short}</b>}</span>
+                    <span class="hn-n">{isMe ? club.name : nextOpp?.name}</span>
+                  </span>
+                </Fragment>
+              );
+            })}
+          </span>
+          <span class="hn-when">{nextMatch ? `${cap(fmtMatch(nextMatch.date))}${nextMatch.round ? ` · J${nextMatch.round}` : ''} · ${nextHome ? 'à domicile' : "à l'extérieur"}` : ''}</span>
+        </div>
+      )}
+      <div hidden>
         {fixtures.length > 0 && <script type="application/json" id="cl-fixtures" set:html={JSON.stringify(fixtures)}></script>}
+      </div>
       </div>
     </section>
 
@@ -103,11 +144,12 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
     <!-- EFFECTIF -->
     <section class="sec" id="effectif">
       <div class="cs-wrap">
-        <div class="sec-h"><span class="sec-eye">L'équipe</span><h2>Effectif · {SEASON}</h2></div>
+        <div class="sec-h" data-n="01"><span class="sec-eye">L'équipe</span><h2>Effectif <em>{SEASON}</em></h2></div>
         <div class="squad">
           {roster.map((p) => (
             <div class="pcard">
               <div class="pcard-img">
+                {p.number != null && <span class="pcard-ghost" aria-hidden="true">{p.number}</span>}
                 {p.number != null && <span class="pcard-num">{p.number}</span>}
                 {p.photo
                   ? <img src={p.photo} alt={p.name} loading="lazy" onerror="this.closest('.pcard-img').classList.add('is-noimg')" />
@@ -142,7 +184,7 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
     {calMatches.length > 0 && (
       <section class="sec" id="calendrier">
         <div class="cs-wrap">
-          <div class="sec-h"><span class="sec-eye">La saison</span><h2>Calendrier · {SEASON}</h2></div>
+          <div class="sec-h" data-n="02"><span class="sec-eye">La saison</span><h2>Calendrier <em>{SEASON}</em></h2></div>
           <div class="cal" id="cal">
             {calMatches.map((m) => {
               const h = nmClubBy(m.homeSlug), a = nmClubBy(m.awaySlug);
@@ -175,7 +217,7 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
     <section class="sec sec--alt" id="classement">
       <div class="cs-wrap">
         <div class="sec-h sec-h--row">
-          <div><span class="sec-eye">La poule</span><h2>Classement · {NM1_POOL}</h2></div>
+          <div class="sec-h-in" data-n="03"><span class="sec-eye">La poule</span><h2>Classement <em>{NM1_POOL}</em></h2></div>
           {assetExists('/basket/nm1-logo.webp') && (
             <a class="nm1-badge" href="https://nm1.ffbb.com/saison-reguliere" target="_blank" rel="noopener" title="Classement officiel NM1 sur ffbb.com">
               <img src={assetUrl('/basket/nm1-logo.webp')} alt="Championnat NM1 · FFBB" />
@@ -189,9 +231,9 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
               {standings.map((r, i) => {
                 const c = nmClubBy(r.slug);
                 return (
-                  <tr class={r.slug === slug ? 'is-me' : ''}>
+                  <tr class:list={[r.slug === slug && 'is-me', i < 3 && 'is-top']}>
                     <td class="rk">{i + 1}</td>
-                    <td class="rc"><span class="rdot" style={`background:${c?.color}`}></span>{clubHref(r.slug) ? <a class="rc-link" href={clubHref(r.slug)}>{c?.name ?? r.slug}</a> : <span>{c?.name ?? r.slug}</span>}</td>
+                    <td class="rc"><span class="rlogo">{logoOf(r.slug) ? <img src={logoOf(r.slug)!} alt="" loading="lazy" /> : <span class="rdot" style={`background:${c?.color}`}></span>}</span>{clubHref(r.slug) ? <a class="rc-link" href={clubHref(r.slug)}>{c?.name ?? r.slug}</a> : <span>{c?.name ?? r.slug}</span>}</td>
                     <td>{r.played}</td><td>{r.w}</td><td>{r.l}</td><td class="rpts">{r.pts}</td>
                   </tr>
                 );
@@ -209,11 +251,11 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
     {clubVideos.length > 0 && (
       <section class="sec" id="videos">
         <div class="cs-wrap">
-          <div class="sec-h"><span class="sec-eye">La web TV</span><h2>Les matchs filmés par LSEI</h2></div>
+          <div class="sec-h sec-h--row"><div class="sec-h-in" data-n="04"><span class="sec-eye">La web TV</span><h2>Les matchs filmés <em>par LSEI</em></h2></div><a class="sec-more" href="/disciplines/basket/">Toutes les vidéos →</a></div>
           <div class="vids">
             {clubVideos.map((v) => (
               <a class="vid" href={`/replay/${v.id}`}>
-                <span class="vid-th">{v.thumb && <img src={v.thumb} alt="" loading="lazy" onerror="this.remove()" />}<span class="vid-play">▶</span></span>
+                <span class="vid-th">{v.thumb && <img src={v.thumb} alt="" loading="lazy" onerror="this.remove()" />}<span class="vid-play" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M8 5v14l11-7z" fill="#fff"/></svg></span></span>
                 <span class="vid-t">{v.title}</span>
               </a>
             ))}
@@ -227,7 +269,7 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
       <section class="sec sec--alt" id="club">
         <div class="cs-wrap cl-grid">
           <div>
-            <div class="sec-h"><span class="sec-eye">Le club</span><h2>{club.name}</h2></div>
+            <div class="sec-h" data-n="05"><span class="sec-eye">Le club</span><h2>{club.name}</h2></div>
             {fiche?.intro?.length ? <div class="cl-intro">{fiche.intro.map((p) => <p set:html={p}></p>)}</div> : null}
             {fiche?.url && <a href={fiche.url} target="_blank" rel="noopener" class="cl-official">Site officiel du club ↗</a>}
           </div>
@@ -272,10 +314,25 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
           if (!next) {
             box.hidden = true; // saison terminée
           } else {
+            var me = { n: box.getAttribute('data-me-name'), s: box.getAttribute('data-me-short'), l: box.getAttribute('data-me-logo') };
+            var opp = { n: next.o, s: next.s, l: next.l };
+            var sides = next.h ? [me, opp] : [opp, me];
+            sides.forEach(function (t, k) {
+              var slot = box.querySelector('[data-slot="' + k + '"]');
+              if (!slot) return;
+              var lg = slot.querySelector('.hn-logo');
+              lg.textContent = '';
+              if (t.l) { var im = document.createElement('img'); im.src = t.l; im.alt = ''; lg.appendChild(im); }
+              else { var bb = document.createElement('b'); bb.textContent = t.s || ''; lg.appendChild(bb); }
+              slot.querySelector('.hn-n').textContent = t.n || '';
+            });
             var dt = new Date(next.d + 'T00:00:00');
             var when = dt.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-            box.querySelector('.hn-main').textContent = (next.h ? 'vs ' : '@ ') + next.o;
-            box.querySelector('.hn-when').textContent = when.charAt(0).toUpperCase() + when.slice(1);
+            box.querySelector('.hn-when').textContent = when.charAt(0).toUpperCase() + when.slice(1)
+              + (next.r ? ' · J' + next.r : '') + ' · ' + (next.h ? 'à domicile' : "à l'extérieur");
+            var t0 = new Date(today + 'T00:00:00');
+            var n = Math.round((dt - t0) / 86400000);
+            box.querySelector('.hn-jx').textContent = n > 1 ? 'J-' + n : n === 1 ? 'Demain' : "Aujourd'hui";
             box.hidden = false;
           }
         }
@@ -298,7 +355,10 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
 
 <style>
   /* ============ SITE DANS LE SITE — club pro immersif (sombre) ============ */
-  .cs { background: #0b0d12; color: #fff; min-height: 100vh; --ink2: rgba(255,255,255,.62); }
+  .cs { position: relative; background: #0b0d12; color: #fff; min-height: 100vh; --ink2: rgba(255,255,255,.62);
+    /* version éclaircie de la couleur du club : lisible en texte sur fond sombre, quelle que soit la couleur du logo */
+    --cc-txt: color-mix(in srgb, var(--cc) 62%, #fff); }
+  .cs::before { content: ""; position: fixed; left: 0; right: 0; top: 0; height: 3px; z-index: 60; background: var(--brand-bars, var(--cc)); }
   .cs-wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
 
   /* En-tête club : transparent sur le hero, solide au défilement */
@@ -312,7 +372,7 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
   .ch-name { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 15px; letter-spacing: .01em; }
   .ch-nav { margin-left: auto; display: flex; gap: 22px; }
   .ch-nav a { font-size: 13.5px; font-weight: 600; color: rgba(255,255,255,.8); text-decoration: none; transition: color .15s; }
-  .ch-nav a:hover { color: var(--cc); }
+  .ch-nav a:hover { color: var(--cc-txt); }
   .ch-lsei { font-size: 11.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.55);
     border: 1px solid rgba(255,255,255,.2); border-radius: 100px; padding: 6px 12px; text-decoration: none; transition: .15s; }
   .ch-lsei:hover { color: #fff; border-color: rgba(255,255,255,.5); }
@@ -320,12 +380,24 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
   /* HERO plein écran */
   .hero { position: relative; min-height: 92vh; display: flex; align-items: flex-end; overflow: hidden;
     background: #0b0d12; }
-  .hero--grad { background: radial-gradient(120% 120% at 80% 0%, color-mix(in srgb, var(--cc) 55%, #0b0d12), #0b0d12 70%); }
+  .hero--grad { background: radial-gradient(70% 90% at 85% 10%, color-mix(in srgb, var(--cc) 60%, #0b0d12), transparent 70%),
+    radial-gradient(50% 70% at 10% 100%, color-mix(in srgb, var(--cc2) 30%, #0b0d12), transparent 70%), #0b0d12; }
   .hero--photo::before { content: ''; position: absolute; inset: 0; background-image: var(--hero); background-size: cover; background-position: center; }
   .hero::after { content: ''; position: absolute; inset: 0; background:
     linear-gradient(180deg, rgba(11,13,18,.55) 0%, rgba(11,13,18,.15) 30%, rgba(11,13,18,.75) 78%, #0b0d12 100%),
     linear-gradient(90deg, rgba(11,13,18,.65), transparent 60%); }
-  .hero-in { position: relative; z-index: 2; width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 24px 60px; }
+  .hero-in { position: relative; z-index: 2; width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 24px 60px;
+    display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, .85fr); gap: 40px; align-items: end; }
+  .hero-stats { display: flex; flex-wrap: wrap; gap: 14px 34px; margin-top: 24px; }
+  .hs { display: flex; flex-direction: column; }
+  .hs b { font-family: var(--display); font-weight: 800; font-size: 40px; line-height: 1; color: #fff; }
+  .hs b i { font-style: normal; color: var(--cc); margin: 0 2px; }
+  .hs sup { font-size: .45em; }
+  .hs span { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink2); margin-top: 5px; }
+  .hero-form { display: flex; align-items: center; gap: 6px; margin-top: 18px; }
+  .hf-lab { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink2); margin-right: 6px; }
+  .hf { width: 26px; height: 26px; border-radius: 6px; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: #fff; }
+  .hf.w { background: #2e9e52; } .hf.l { background: #d0433a; }
   .hero-logo { display: inline-grid; place-items: center; width: 92px; height: 92px; border-radius: 18px; overflow: hidden;
     background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.18); margin-bottom: 18px; }
   .hero-logo img { width: 82%; height: 82%; object-fit: contain; }
@@ -333,27 +405,45 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
   .hero-kick { font-size: 12.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--cc) 62%, #fff); }
   .hero-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(40px, 8vw, 86px);
     line-height: .96; letter-spacing: -.01em; margin: 10px 0 0; text-shadow: 0 4px 30px rgba(0,0,0,.4); }
-  .hero-blurb { color: rgba(255,255,255,.86); font-size: 16px; line-height: 1.5; margin: 16px 0 0; max-width: 620px; }
+  .hero-blurb { color: rgba(255,255,255,.86); font-size: 16px; line-height: 1.5; margin: 16px 0 0; max-width: 620px; text-align: start; }
   .hero-badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
   .hb { font-size: 12.5px; font-weight: 700; color: #fff; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18);
     -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); border-radius: 100px; padding: 7px 14px; }
   .hb--on { background: var(--cc); border-color: var(--cc); }
   .hb sup { font-size: .7em; }
   .hero-cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 26px; }
-  .hero-next { display: flex; flex-direction: column; gap: 1px; padding: 10px 18px; border-radius: 12px;
-    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); }
-  .hn-lab { font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink2); }
-  .hn-main { font-size: 15px; font-weight: 800; }
-  .hn-when { font-size: 12px; color: var(--ink2); }
+  .hero-next { display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; padding: 18px 20px; background: rgba(11,13,18,.62);
+    border: 1px solid rgba(255,255,255,.16); border-top: 4px solid var(--cc); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 24px 50px -24px rgba(0,0,0,.85); }
+  .hn-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .hn-lab { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink2); }
+  .hn-jx { flex: none; white-space: nowrap; font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; background: var(--cc); color: #fff; padding: 3px 10px; border-radius: 999px; }
+  .hn-teams { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; margin-top: 16px; }
+  .hn-t { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; min-width: 0; }
+  .hn-logo { width: 74px; height: 74px; border-radius: 50%; background: #fff; display: grid; place-items: center; overflow: hidden; box-shadow: 0 10px 24px -10px rgba(0,0,0,.6); }
+  .hn-logo img { width: 84%; height: 84%; object-fit: contain; }
+  .hn-logo b { font-family: var(--display); font-weight: 800; color: #0b0d12; font-size: 20px; }
+  .hn-n { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 14px; line-height: 1.05; }
+  .hn-vs { font-family: var(--display); font-weight: 800; font-size: 24px; color: var(--cc); }
+  .hn-when { margin-top: 14px; text-align: center; font-size: 13px; font-weight: 700; color: rgba(255,255,255,.8); }
   .hero-cta { font-size: 14px; font-weight: 800; color: #0b0d12; background: #fff; border-radius: 100px; padding: 13px 22px; text-decoration: none; transition: transform .15s; }
   .hero-cta:hover { transform: translateY(-2px); }
+  .hero-cta--ghost { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.35); }
+  .hero-cta--ghost:hover { border-color: #fff; }
 
   /* Sections */
   .sec { padding: 64px 0; }
   .sec--alt { background: #0e1119; }
-  .sec-h { margin-bottom: 28px; }
-  .sec-eye { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--cc); }
-  .sec-h h2 { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(24px, 4vw, 36px); margin: 6px 0 0; color: #fff; }
+  .sec-h { margin-bottom: 30px; position: relative; }
+  [data-n] { position: relative; }
+  [data-n]::before { content: attr(data-n); position: absolute; left: -6px; top: -34px; z-index: 0; font-family: var(--display); font-weight: 800; font-size: 96px; line-height: 1;
+    color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.09); pointer-events: none; }
+  [data-n] > * { position: relative; z-index: 1; }
+  .sec-h h2 em, .sec-h-in h2 em { font-style: normal; color: var(--cc-txt); }
+  .sec-h h2::after, .sec-h-in h2::after { content: ""; display: block; width: 72px; height: 4px; border-radius: 2px; margin-top: 12px; background: var(--brand-bars, var(--cc)); }
+  .sec-more { font-size: 13.5px; font-weight: 800; color: #fff; text-decoration: none; border: 1px solid rgba(255,255,255,.25); border-radius: 999px; padding: 8px 14px; transition: border-color .15s; }
+  .sec-more:hover { border-color: var(--cc); }
+  .sec-eye { font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--cc-txt); }
+  .sec-h h2 { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(28px, 4.4vw, 44px); line-height: 1; margin: 6px 0 0; color: #fff; text-align: start; }
   .cs-note { max-width: 1120px; margin: 0 auto; margin-top: 22px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
     border-radius: 12px; padding: 12px 18px; font-size: 13.5px; color: rgba(255,255,255,.86); }
 
@@ -367,10 +457,14 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
   .pcard-img img { width: 100%; height: 100%; object-fit: contain; object-position: bottom center; transition: transform .3s; filter: drop-shadow(0 8px 16px rgba(0,0,0,.35)); }
   .pcard:hover .pcard-img img { transform: scale(1.06); }
   .pcard-i { font-family: var(--display); font-weight: 800; font-size: 40px; color: rgba(255,255,255,.8); }
+  .pcard-ghost { position: absolute; right: -6px; top: -14px; z-index: 0; font-family: var(--display); font-weight: 800; font-size: 150px; line-height: 1;
+    color: transparent; -webkit-text-stroke: 2px color-mix(in srgb, #fff 18%, transparent); pointer-events: none; }
+  .pcard-img img { position: relative; z-index: 1; }
   .pcard-num { position: absolute; top: 10px; left: 12px; z-index: 2; font-family: var(--display); font-weight: 800; font-size: 30px;
     line-height: 1; color: #fff; opacity: .9; text-shadow: 0 2px 10px rgba(0,0,0,.5); }
-  .pcard-txt { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px 14px; border-top: 2px solid var(--cc); }
-  .pcard-n { font-weight: 800; font-size: 15px; }
+  .pcard-txt { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px 14px; border-top: 3px solid var(--cc);
+    border-image: linear-gradient(90deg, var(--cc) 0 75%, var(--cc2) 75%) 1; }
+  .pcard-n { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 17px; line-height: 1.05; }
   .pcard-p { font-size: 12.5px; color: var(--ink2); }
 
   /* Staff */
@@ -384,10 +478,10 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
   .scard-av img { width: 100%; height: 100%; object-fit: cover; }
   .scard-i { font-family: var(--display); font-weight: 800; font-size: 26px; color: #fff; }
   .scard-n { font-weight: 800; font-size: 14px; }
-  .scard-r { font-size: 12px; color: var(--cc); font-weight: 700; }
+  .scard-r { font-size: 12px; color: var(--cc-txt); font-weight: 700; }
 
   /* Classement */
-  .rank-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(255,255,255,.10); }
+  .rank-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid rgba(255,255,255,.10); background: #12151d; box-shadow: 0 24px 50px -30px rgba(0,0,0,.9); }
   .rank { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 460px; }
   .rank th { text-align: center; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink2);
     padding: 12px 8px; border-bottom: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03); }
@@ -395,6 +489,10 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
   .rank .rk { font-weight: 800; color: #fff; width: 40px; }
   .rank .rc { text-align: left; display: flex; align-items: center; gap: 10px; font-weight: 700; color: #fff; }
   .rdot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .rlogo { flex: none; width: 28px; height: 28px; border-radius: 7px; background: #fff; display: grid; place-items: center; padding: 2px; box-sizing: border-box; }
+  .rlogo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .rank tr.is-top .rk { color: var(--cc); filter: brightness(1.35); }
+  .rank tr.is-me td:first-child { box-shadow: inset 4px 0 0 var(--cc); }
   .rank .rpts { font-weight: 800; color: #fff; }
   .rank .rc-link { color: inherit; text-decoration: none; }
   .rank .rc-link:hover { color: var(--cc); text-decoration: underline; }
@@ -425,7 +523,7 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
   .cal-tn { font-weight: 700; font-size: 12.5px; line-height: 1.2; color: #fff; text-decoration: none; text-transform: uppercase; }
   a.cal-tn:hover { color: var(--cc); text-decoration: underline; }
   .cal-team.th .cal-tn { text-align: right; }
-  .cal-team.me .cal-tn { color: var(--cc); }
+  .cal-team.me .cal-tn { color: var(--cc-txt); }
   .cal-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
   .cal-badge { flex: none; width: 26px; height: 26px; display: grid; place-items: center; background: #fff; border-radius: 6px; padding: 2px; box-sizing: border-box; }
   .cal-badge img { max-width: 100%; max-height: 100%; object-fit: contain; }
@@ -446,22 +544,27 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
 
   /* Vidéos */
   .vids { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-  .vid { text-decoration: none; color: #fff; }
-  .vid-th { position: relative; display: block; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid rgba(255,255,255,.1); }
-  .vid-th img { width: 100%; height: 100%; object-fit: cover; }
-  .vid-play { position: absolute; inset: 0; margin: auto; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
-    background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.6); color: #fff; font-size: 15px; }
-  .vid-t { display: block; margin-top: 10px; font-size: 14px; font-weight: 700; line-height: 1.35; }
+  .vid { text-decoration: none; color: #fff; display: flex; flex-direction: column; background: #12151d; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; overflow: hidden;
+    transition: transform .25s cubic-bezier(.2,.7,.2,1), border-color .2s, box-shadow .25s; }
+  .vid:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--cc) 60%, transparent); box-shadow: 0 18px 40px -20px rgba(0,0,0,.8); }
+  .vid-th { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; background: #000; border-bottom: 3px solid var(--cc); }
+  .vid-th img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+  .vid:hover .vid-th img { transform: scale(1.05); }
+  .vid-play { position: absolute; inset: 0; margin: auto; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; padding-left: 3px;
+    background: rgba(0,0,0,.5); border: 2px solid rgba(255,255,255,.9); transition: background .2s, transform .2s; }
+  .vid:hover .vid-play { background: var(--cc); border-color: transparent; transform: scale(1.06); }
+  .vid-t { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; padding: 12px 14px 14px; font-size: 14px; font-weight: 700; line-height: 1.35; }
 
   /* Le club */
   .cl-grid { display: grid; grid-template-columns: 1fr; gap: 26px; }
-  .cl-intro p { color: rgba(255,255,255,.8); font-size: 15.5px; line-height: 1.65; margin: 0 0 12px; }
+  .cl-intro p { color: rgba(255,255,255,.8); font-size: 16px; line-height: 1.7; margin: 0 0 12px; text-align: start; }
+  .cl-intro p:first-child::first-letter { float: left; font-family: var(--display); font-weight: 800; font-size: 64px; line-height: .85; margin: 6px 10px 0 0; color: var(--cc); filter: brightness(1.35); }
   .cl-intro :global(b) { color: #fff; }
-  .cl-official { display: inline-block; margin-top: 8px; font-size: 14px; font-weight: 800; color: var(--cc); text-decoration: none; }
+  .cl-official { display: inline-block; margin-top: 8px; font-size: 14px; font-weight: 800; color: var(--cc-txt); text-decoration: none; }
   .cl-official:hover { text-decoration: underline; }
   .cl-hl { align-self: start; display: flex; flex-direction: column; gap: 4px; padding: 26px 28px; border-radius: 16px;
     background: radial-gradient(120% 120% at 50% 0%, color-mix(in srgb, var(--cc) 40%, #12151d), #12151d 75%); border: 1px solid rgba(255,255,255,.1); }
-  .cl-hl-num { font-family: var(--display); font-weight: 800; font-size: 64px; line-height: 1; color: #fff; }
+  .cl-hl-num { font-family: var(--display); font-weight: 800; font-size: 96px; line-height: 1; color: #fff; }
   .cl-hl-lab { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.82); text-transform: uppercase; letter-spacing: .05em; }
 
   /* Footer club */
@@ -478,7 +581,15 @@ const hasClub = !!(fiche?.intro?.length || fiche?.highlight);
   @media (min-width: 860px) {
     .cl-grid { grid-template-columns: 1fr 300px; }
   }
+  @media (max-width: 900px) {
+    .hero-in { grid-template-columns: 1fr; gap: 24px; }
+    .hero { min-height: 0; padding-top: 120px; }
+  }
   @media (max-width: 560px) {
+    .hs b { font-size: 32px; }
+    .hn-logo { width: 60px; height: 60px; }
+    [data-n]::before { font-size: 72px; top: -24px; }
+    .pcard-ghost { font-size: 110px; }
     .ch-nav { display: none; }
     .hero-in { padding-bottom: 42px; }
     .sec { padding: 48px 0; }

@@ -10,6 +10,7 @@
 import standingsCache from './cache/basket-standings.json';
 import calendarCache from './cache/basket-calendar.json';
 import { readdirSync } from 'node:fs';
+import { logoPalette } from '../lib/logoPalette.mjs';
 
 /** false = données réelles (plus de bandeau « exemple »). */
 export const SAMPLE = false;
@@ -25,7 +26,9 @@ export interface NmClub {
   short: string;      // sigle court affiché dans le calendrier/classement
   city: string;
   logo?: string;      // /partenaires/… ou /clubs/<slug>/logo.webp ; sinon pastille initiales
-  color: string;      // couleur d'accent (approximative pour les clubs sans logo)
+  color: string;      // couleur d'accent — REMPLACÉE automatiquement par celle du logo (voir plus bas) ;
+                      // la valeur saisie ici ne sert que de repli si le logo manque
+  color2?: string;    // 2e couleur du logo (dégradés, bandeaux) — automatique
   hasSite?: boolean;  // true = mini-site club disponible (clic actif)
 }
 
@@ -48,6 +51,13 @@ export const nmClubs: NmClub[] = [
   { slug: 'tours',       name: 'Tours',                 short: 'TRS',  city: 'Tours',              logo: '/basket/tours/logo.webp',       color: '#14539A' },
   { slug: 'vitre',       name: 'Vitré',                 short: 'VIT',  city: 'Vitré',              logo: '/basket/vitre/logo.webp',       color: '#E4A400' },
 ];
+
+// Couleurs des clubs tirées AUTOMATIQUEMENT de leur logo, à chaque construction du site :
+// nouveau club ou nouveau logo (saison suivante) → les couleurs suivent sans rien saisir.
+for (const c of nmClubs) {
+  const pal = c.logo ? await logoPalette(c.logo) : null;
+  if (pal) { c.color = pal.color; c.color2 = pal.color2; }
+}
 
 export const nmClubBy = (slug: string) => nmClubs.find((c) => c.slug === slug);
 

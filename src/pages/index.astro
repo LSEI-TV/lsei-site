@@ -10,10 +10,10 @@ import { parseProgTitle } from '../lib/programmeTitle';
 import { getCollection } from 'astro:content';
 import { PLATFORMS } from '../lib/social';
 import { assetExists, assetUrl, imgOk } from '../lib/publicAssets';
-import { showcaseSeason, getSeasons } from '../data/billard/seasons';
+import { showcaseSeason, getSeasons, cal2627 } from '../data/billard/seasons';
 import { femmesShowcaseSeason, getFemmesSeasons } from '../data/billard/seasonsFemmes';
 import { photoOf, playerSlugs } from '../lib/billardStats';
-import { nm1Standings, nmClubBy, NM1_POOL, clubHasSite } from '../data/basket';
+import { nm1Standings, nmClubBy, NM1_POOL, clubHasSite, nm1Calendar } from '../data/basket';
 
 // Chiffres-clés : tirés en direct de l'API YouTube (abonnés, vues, vidéos) + nb de
 // disciplines. Toujours à jour, aucun chiffre saisi à la main. Repli sur les chiffres
@@ -239,6 +239,29 @@ const nextPt = nextLive && !nextLive.category ? parseProgTitle(nextLive.title) :
 const nextMain = nextLive ? (nextLive.category || nextPt?.main || nextLive.title) : '';
 const nextSub = nextLive ? [railDay.format(nextLive.date).replace('.', ''), railTime.format(nextLive.date).replace(':', 'h')].join(' · ') : '';
 
+// Image de la « une » : la miniature YouTube de la vidéo à la une (grande taille, repli auto en hqdefault).
+const heroShot = live?.id ? `https://i.ytimg.com/vi/${live.id}/maxresdefault.jpg` : (live?.thumb || '');
+const heroShotFallback = live?.id ? `https://i.ytimg.com/vi/${live.id}/hqdefault.jpg` : '';
+
+// « Prochains rendez-vous » (bandeau sous la une) : le direct YouTube programmé (heure exacte, décompte)
+// + les prochaines dates CONNUES des calendriers du site : étape du circuit Blackball, match à domicile
+// de Pays de Fougères (NM1). Toujours quelque chose à annoncer, même sans direct programmé sur YouTube.
+const _todayIso = new Date(_now).toISOString().slice(0, 10);
+const _dLong = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Paris' });
+type Rdv = { sport: string; kicker: string; title: string; when: string; place?: string; iso: string; day: string; exact: boolean; href: string };
+const rdv: Rdv[] = [];
+if (nextLive) rdv.push({ sport: nextLive.sport, kicker: 'Direct programmé', title: nextMain, when: nextSub, iso: nextLive.date.toISOString(), day: nextLive.date.toISOString().slice(0, 10), exact: true, href: nextLive.href });
+const _tn = cal2627.find((e) => e.start && e.start >= _todayIso && e.kind !== 'mondial');
+if (_tn && !rdv.some((r) => r.sport === 'billard')) rdv.push({ sport: 'billard', kicker: 'Blackball · circuit national', title: _tn.name, when: _tn.date, place: _tn.place, iso: '', day: _tn.start!, exact: false, href: '/billard/blackball/' });
+const _pfb = nm1Calendar.find((m) => m.homeSlug === 'fougeres' && m.date >= _todayIso && m.homeScore == null);
+if (_pfb && !rdv.some((r) => r.sport === 'basket')) rdv.push({ sport: 'basket', kicker: 'Basket · Nationale 1', title: `Pays de Fougères – ${nmClubBy(_pfb.awaySlug)?.name ?? _pfb.awaySlug}`, when: (() => { const s = _dLong.format(new Date(`${_pfb.date}T12:00:00Z`)).replace('.', ''); return s.charAt(0).toUpperCase() + s.slice(1); })(), place: 'Fougères · à domicile', iso: '', day: _pfb.date, exact: false, href: '/basket/' });
+rdv.sort((a, b) => (a.day < b.day ? -1 : 1));
+const rdvShow = rdv.slice(0, 3);
+
+// Cartes des disciplines : fond = miniature de la dernière vidéo du sport (mqdefault = vrai 16:9, sans bandes noires).
+const discThumb: Record<string, string> = {};
+for (const v of _allReplays) if (!discThumb[v.discipline]) discThumb[v.discipline] = `https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;
+
 // Carrousel « prochains directs » : tous les directs À VENIR, défilement 10 s, chacun
 // avec son propre décompte (et bascule « en direct » quand l'heure est atteinte).
 const slides = programme
@@ -258,7 +281,7 @@ const slides = programme
 
   <!-- HERO — « une » cinématique (Variante C : corps clair, une sombre) -->
   {live && liveDisc && (
-    <section class="mhero" data-sport={live.discipline} style={`--hero-accent:${liveDisc.colorVar};--h-from:${liveDisc.from};--h-to:${liveDisc.to}`}>
+    <section class:list={['mhero', { 'has-shot': !!heroShot }]} data-sport={live.discipline} style={`--hero-accent:${liveDisc.colorVar};--h-from:${liveDisc.from};--h-to:${liveDisc.to}`}>
       <div class="mhero-media" aria-hidden="true">
         <svg class="mhero-poly" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMid slice">
           {POLY.map((t) => <polygon points={t.pts} style={`fill:${t.col}`} fill-opacity={t.op} stroke="#ffffff" stroke-opacity="0.03" stroke-width="1" />)}
@@ -279,6 +302,7 @@ const slides = programme
       </div>
       <script type="application/json" id="hero-colors" set:html={JSON.stringify(heroColors)}></script>
       <div class="wrap mhero-in">
+        <div class="mhero-txt">
         <span class={`hero-pill${live.isLive ? ' is-live' : ' is-soon'}`}>{live.isLive ? '● En direct' : (live.status === 'upcoming' ? 'En direct bientôt' : 'À revoir')}{heroCat ? ` · ${heroCat}` : ''}</span>
         <h1 class="mhero-h">{heroTitle}</h1>
         <div class="mhero-sub" style={heroSub ? '' : 'display:none'}>{heroSub}</div>
@@ -302,6 +326,14 @@ const slides = programme
           {!live.isLive && gcalUrl && <a class="btn ghost hero-cal" href={gcalUrl} target="_blank" rel="noopener">＋ Ajouter au calendrier</a>}
         </div>
         <a class="mhero-more" href="/direct" style="display:none"><span class="pulse"></span><b data-n>2</b>&nbsp;directs en cours · voir tout →</a>
+        </div>
+        {heroShot && (
+          <a class="mhero-shot" href={heroBtnHref} target="_blank" rel="noopener" aria-label={`Regarder : ${heroTitle}`}>
+            <img src={heroShot} alt="" width="1280" height="720" fetchpriority="high" onerror={`if(!this.dataset.f){this.dataset.f=1;this.src='${heroShotFallback}'}`} />
+            <span class:list={['mhero-shot-tag', { 'is-live': live.isLive }]} style={live.isLive || live.status === 'upcoming' ? '' : 'display:none'}>{live.isLive ? '● En direct' : 'Bientôt en direct'}</span>
+            <span class="mhero-shot-play" aria-hidden="true"><span><svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="#fff"/></svg></span></span>
+          </a>
+        )}
       </div>
       <!-- Contenu DOUBLE (2 directs simultanés) — rempli/affiché par le script. -->
       <div class="wrap mhero-dual" style="display:none">
@@ -313,8 +345,60 @@ const slides = programme
         </div>
         <a class="btn mhero-dual-btn" href="/direct">▸ Voir les deux directs</a>
       </div>
+      <!-- PLUSIEURS DIRECTS (2 et plus, même sport ou non) : une carte image + bouton par direct — rempli par le script. -->
+      <div class="wrap mhero-multi" style="display:none">
+        <div class="mhero-multi-head"><span class="hero-pill is-live">● <b data-n>2</b> directs en cours</span><a class="mhero-multi-all" href="/direct/">Tous les directs →</a></div>
+        <div class="mhero-multi-grid"></div>
+      </div>
     </section>
   )}
+
+  {rdvShow.length > 0 && (
+    <section class="rdv-band" aria-label="Prochains rendez-vous">
+      <div class="wrap rdv-in">
+        <div class="rdv-label"><svg class="rdv-cal" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>Prochains<br />rendez-vous</div>
+        {rdvShow.map((r) => {
+          const dsc = getDiscipline(r.sport as any);
+          return (
+            <a class="rdv-card" href={r.href} style={`--dc:${dsc.colorVar}`} target={r.href.startsWith('http') ? '_blank' : undefined} rel={r.href.startsWith('http') ? 'noopener' : undefined}>
+              <span class="rdv-ico" aria-hidden="true"><SportIcon slug={r.sport} /></span>
+              <span class="rdv-body">
+                <span class="rdv-k">{r.kicker}</span>
+                <span class="rdv-t">{r.title}</span>
+                <span class="rdv-w">{r.when}{r.place && <> · {r.place}</>}</span>
+              </span>
+              {r.exact
+                ? <span class="rdv-cd" data-rdv-iso={r.iso}><b data-h>—</b><i>h</i><b data-m>—</b><i>min</i></span>
+                : <span class="rdv-cd" data-rdv-day={r.day}><small>J-</small><b data-j>—</b></span>}
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  )}
+
+  <script is:inline>
+    // Décomptes du bandeau « Prochains rendez-vous » (J-x au jour près ; heures/minutes pour un direct programmé).
+    (function () {
+      var p = function (n) { return (n < 10 ? '0' : '') + n; };
+      function tick() {
+        var now = Date.now();
+        document.querySelectorAll('[data-rdv-day]').forEach(function (el) {
+          var d = el.getAttribute('data-rdv-day'), t = new Date(d + 'T00:00:00'), today = new Date(); today.setHours(0, 0, 0, 0);
+          var j = Math.round((t - today) / 864e5), b = el.querySelector('[data-j]');
+          if (j <= 0) { el.innerHTML = '<b class="rdv-now">' + (j === 0 ? "Aujourd'hui" : 'En cours') + '</b>'; return; }
+          if (b) b.textContent = j;
+        });
+        document.querySelectorAll('[data-rdv-iso]').forEach(function (el) {
+          var t = new Date(el.getAttribute('data-rdv-iso')).getTime() - now; if (t < 0) t = 0;
+          var h = Math.floor(t / 36e5), m = Math.floor((t % 36e5) / 6e4);
+          var hb = el.querySelector('[data-h]'), mb = el.querySelector('[data-m]');
+          if (hb) hb.textContent = p(h); if (mb) mb.textContent = p(m);
+        });
+      }
+      tick(); setInterval(tick, 30000);
+    })();
+  </script>
 
   <script is:inline>
     (function () {
@@ -383,7 +467,42 @@ const slides = programme
         if (dualMedia) dualMedia.style.display = '';
         if (dual) dual.style.display = '';
       }
+      // Mode PLUSIEURS DIRECTS : une carte par direct (image, sport, compétition, match, lieu, bouton).
+      var multi = hero.querySelector('.mhero-multi');
+      function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt) e.textContent = txt; return e; }
+      function showMulti(list) {
+        if (!multi) return;
+        var grid = multi.querySelector('.mhero-multi-grid'), nb = multi.querySelector('[data-n]');
+        if (nb) nb.textContent = list.length;
+        grid.innerHTML = ''; grid.setAttribute('data-count', Math.min(list.length, 4));
+        list.slice(0, 4).forEach(function (l) {
+          var c = heroColors[l.discipline] || {};
+          var a = el('a', 'mm-card'); a.href = 'https://www.youtube.com/watch?v=' + l.id; a.target = '_blank'; a.rel = 'noopener';
+          a.style.setProperty('--dc', 'var(--c-' + (l.discipline || 'billard') + ')');
+          var shot = el('span', 'mm-shot'), img = document.createElement('img');
+          img.alt = ''; img.onerror = function () { if (!this.dataset.f) { this.dataset.f = 1; this.src = 'https://i.ytimg.com/vi/' + l.id + '/hqdefault.jpg'; } };
+          img.src = 'https://i.ytimg.com/vi/' + l.id + '/maxresdefault_live.jpg';
+          shot.appendChild(img); shot.appendChild(el('span', 'mm-live', '● En direct'));
+          var play = el('span', 'mm-play'); play.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M8 5v14l11-7z" fill="#fff"/></svg>'; shot.appendChild(play);
+          var meta = el('span', 'mm-meta');
+          meta.appendChild(el('span', 'mm-tag', c.label || l.discipline || 'Direct'));
+          if (l.context) meta.appendChild(el('span', 'mm-ctx', l.context));
+          meta.appendChild(el('span', 'mm-h', l.match || clean(l.title)));
+          if (l.place) meta.appendChild(el('span', 'mm-place', '📍 ' + l.place));
+          meta.appendChild(el('span', 'mm-btn', '▸ Regarder'));
+          a.appendChild(shot); a.appendChild(meta); grid.appendChild(a);
+        });
+        if (list[0] && list[0].discipline) setSport(list[0].discipline);
+        if (singleIn) singleIn.style.display = 'none';
+        if (dualMedia) dualMedia.style.display = 'none';
+        if (dual) dual.style.display = 'none';
+        if (singleMedia) singleMedia.style.display = '';
+        hero.classList.add('is-multi');
+        multi.style.display = '';
+      }
       function showSingle() {
+        if (multi) multi.style.display = 'none';
+        hero.classList.remove('is-multi');
         if (dualMedia) dualMedia.style.display = 'none';
         if (dual) dual.style.display = 'none';
         if (singleMedia) singleMedia.style.display = '';
@@ -394,11 +513,10 @@ const slides = programme
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (d) {
             var lives = (d && d.lives) ? d.lives : (d && d.live && d.id ? [{ id: d.id, title: d.title || 'Direct' }] : []);
-            // 2 directs de sports DIFFÉRENTS en même temps → hero « mélange ».
-            if (lives.length >= 2 && lives[0].discipline && lives[1].discipline && lives[0].discipline !== lives[1].discipline) { showDual(lives[0], lives[1]); return; }
+            // 2 directs ou plus (même sport ou non) → une carte image + bouton par direct.
+            if (lives.length >= 2) { if (more) more.style.display = 'none'; showMulti(lives); return; }
             showSingle();
-            // Plusieurs directs du même sport → pastille « voir tout ».
-            if (more) { if (lives.length > 1) { var nb = more.querySelector('[data-n]'); if (nb) nb.textContent = lives.length; more.style.display = ''; } else { more.style.display = 'none'; } }
+            if (more) more.style.display = 'none';
             if (!lives.length) return; // pas de direct : on garde la une construite (à venir / à revoir)
             var l = lives[0];
             if (l.discipline) setSport(l.discipline);
@@ -408,6 +526,12 @@ const slides = programme
             if (pill) { pill.textContent = '● En direct'; pill.classList.add('is-live'); pill.classList.remove('is-soon'); }
             if (h1) h1.textContent = l.match || clean(l.title);
             if (playBtn) { playBtn.setAttribute('href', 'https://www.youtube.com/watch?v=' + l.id); playBtn.setAttribute('target', '_blank'); playBtn.textContent = '▸ Regarder le direct'; }
+            var shot = hero.querySelector('.mhero-shot');
+            if (shot) {
+              shot.setAttribute('href', 'https://www.youtube.com/watch?v=' + l.id);
+              var im = shot.querySelector('img'); if (im) { im.dataset.f = ''; im.onerror = function () { if (!this.dataset.f) { this.dataset.f = 1; this.src = 'https://i.ytimg.com/vi/' + l.id + '/hqdefault.jpg'; } }; im.src = 'https://i.ytimg.com/vi/' + l.id + '/maxresdefault_live.jpg'; }
+              var tg = shot.querySelector('.mhero-shot-tag'); if (tg) { tg.textContent = '● En direct'; tg.classList.add('is-live'); tg.style.display = ''; }
+            }
             if (count) count.style.display = 'none';
             if (when) when.style.display = 'none';
             if (sub) { if (ctx) { sub.textContent = ctx; sub.style.display = ''; } else { sub.style.display = 'none'; } }
@@ -419,18 +543,19 @@ const slides = programme
   </script>
 
   <!-- DISCIPLINES -->
-  <section class="section" id="disciplines">
+  <section class="section sec-tight" id="disciplines">
     <div class="wrap">
       <div class="sec-head">
         <div>
           <div class="eyebrow">Nos antennes</div>
-          <h2>7 disciplines, une même passion</h2>
+          <h2>7 disciplines, une même <em>passion</em></h2>
         </div>
         <a href="/videotheque" class="link">Toute la vidéothèque →</a>
       </div>
       <div class="discs">
         {disciplines.map((d, i) => (
-          <a href={d.hub ?? `/disciplines/${d.slug}`} class="disc-card" style={`--dc:${d.colorVar}`}>
+          <a href={d.hub ?? `/disciplines/${d.slug}`} class:list={['disc-card', { 'has-bg': !!discThumb[d.slug] }]} style={`--dc:${d.colorVar}`}>
+            {discThumb[d.slug] && <img class="disc-bg" src={discThumb[d.slug]} alt="" loading="lazy" width="320" height="180" />}
             <span class="disc-ico"><SportIcon slug={d.slug} /></span>
             <div class="name">{d.name}</div>
             <div class="disc-cta">Voir les événements <span aria-hidden="true">→</span></div>
@@ -441,15 +566,18 @@ const slides = programme
   </section>
 
   {(bilTop.length > 0 || beltReplays.length > 0) && (
-    <section class="section">
+    <section class="section sec-tight">
       <div class="wrap">
         <div class="home-2col home-2col--media">
           {bilTop.length > 0 && (
           <div class="hcol bspot-sec" style="--dc:var(--c-billard)">
         <div class="sec-head">
-          <div>
-            <div class="eyebrow" style="color:var(--c-billard)">Blackball Masters</div>
-            <h2>{bilInProgress ? `Classement provisoire · ${bilSeason.label}` : `Le podium · ${bilSeason.label}`}</h2>
+          <div class="nbh-head-l">
+            {assetExists('/partenaires/ffbillard.webp') && <a class="fed-link" href="https://www.ffbillard.com" target="_blank" rel="noopener" title="Fédération Française de Billard (nouvel onglet)"><img class="ffb-logo" src={assetUrl('/partenaires/ffbillard.webp')} alt="Fédération Française de Billard" width="400" height="250" loading="lazy" /></a>}
+            <div>
+              <div class="eyebrow" style="color:var(--c-billard)">Blackball Masters</div>
+              <h2>{bilInProgress ? `Classement provisoire · ${bilSeason.label}` : `Le podium · ${bilSeason.label}`}</h2>
+            </div>
           </div>
           <a href={`/billard/saison/${bilSeason.slug}/classement`} class="link">Classement complet →</a>
         </div>
@@ -476,9 +604,12 @@ const slides = programme
         {femTop.length > 0 && (
           <>
             <div class="sec-head" style="margin-top:24px">
-              <div>
-                <div class="eyebrow" style="color:var(--c-billard)">Blackball Femmes</div>
-                <h2>{femInProgress ? `Classement provisoire · ${femSeason.label}` : `Le podium · ${femSeason.label}`}</h2>
+              <div class="nbh-head-l">
+                {assetExists('/partenaires/ffbillard.webp') && <a class="fed-link" href="https://www.ffbillard.com" target="_blank" rel="noopener" title="Fédération Française de Billard (nouvel onglet)"><img class="ffb-logo" src={assetUrl('/partenaires/ffbillard.webp')} alt="Fédération Française de Billard" width="400" height="250" loading="lazy" /></a>}
+                <div>
+                  <div class="eyebrow" style="color:var(--c-billard)">Blackball Femmes</div>
+                  <h2>{femInProgress ? `Classement provisoire · ${femSeason.label}` : `Le podium · ${femSeason.label}`}</h2>
+                </div>
               </div>
               <a href={`/femmes/saison/${femSeason.slug}/classement`} class="link">Classement complet →</a>
             </div>
@@ -573,9 +704,12 @@ const slides = programme
       <div class="wrap">
         <div class="nbh-card">
           <div class="sec-head">
-            <div>
-              <div class="eyebrow" style={`color:${nbClub.colorVar}`}>Basketball · Nationale 1</div>
-              <h2>Classement · {NM1_POOL}</h2>
+            <div class="nbh-head-l">
+              {assetExists('/basket/nm1-logo.webp') && <a class="fed-link" href="https://nm1.ffbb.com" target="_blank" rel="noopener" title="Nationale Masculine 1 · FFBB (nouvel onglet)"><img class="nbh-nm1" src={assetUrl('/basket/nm1-logo.webp')} alt="Championnat NM1 · FFBB" width="400" height="125" loading="lazy" /></a>}
+              <div>
+                <div class="eyebrow" style={`color:${nbClub.colorVar}`}>Basketball · Nationale 1</div>
+                <h2>Classement · {NM1_POOL}</h2>
+              </div>
             </div>
             <a href="/basket" class="link">Classement complet →</a>
           </div>
@@ -603,7 +737,7 @@ const slides = programme
 
   <!-- ACTUALITÉS (pleine largeur) -->
   {latestPosts.length > 0 && (
-    <section class="section">
+    <section class="section sec-tight">
       <div class="wrap">
         <div class="sec-head">
           <div>
@@ -612,7 +746,7 @@ const slides = programme
           </div>
           <a href="/actualites" class="link">Toutes les actualités →</a>
         </div>
-        <div class="cards">
+        <div class="cards cards--feat">
           {latestPosts.map((p) => {
             const pf = PLATFORMS[p.data.platform];
             return (
@@ -636,9 +770,10 @@ const slides = programme
   )}
 
   <!-- CHIFFRES-CLÉS (panneau dédié) -->
-  <section class="stats-sec" id="club">
+  <section class="stats-sec stats-sec--dark" id="club">
     <div class="wrap">
       <div class="stats-panel">
+        <div class="stats-head"><span class="eyebrow">LSEI en chiffres</span><span class="stats-tag">La web TV du sport associatif depuis 2005</span></div>
         <div class="stats">
           {liveStats.map((s) => (
             <div class="stat">
@@ -673,7 +808,7 @@ const slides = programme
   <!-- GOODIES — les outils LSEI en libre accès.
        Cadre clair volontairement : le CTA qui suit est sur fond encre, et deux
        blocs sombres d'affilée casseraient le rythme de la page. -->
-  <section class="section goodies-sec">
+  <section class="section sec-tight goodies-sec">
     <div class="wrap">
       <div class="goodies">
         <div class="goodies-head">
@@ -708,7 +843,7 @@ const slides = programme
   </section>
 
   <!-- CTA -->
-  <section class="section">
+  <section class="section sec-tight">
     <div class="wrap">
       <div class="cta">
         <div class="txt">
