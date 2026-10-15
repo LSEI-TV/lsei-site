@@ -2,8 +2,12 @@
 // Vitrine « club » réutilisable : hero cinématique (photo du club) + présentation
 // éditoriale + carte club (logo, compétition, lien, chiffres). Piloté par une fiche
 // de src/data/clubs.ts. La vidéothèque par saison est rendue séparément par la page.
+// Si le club est dans le championnat suivi (NM1), le hero affiche aussi son prochain
+// match, son dernier résultat et son rang — mis à jour tout seuls.
 import type { Club } from '../data/clubs';
 import { getDiscipline } from '../data/site';
+import { nmClubBy, nm1Standings, poolCalendar, seasonStarted, clubHasSite, NM1_POOL } from '../data/basket';
+import { assetExists, assetUrl } from '../lib/publicAssets';
 
 interface Props {
   club: Club;
@@ -13,35 +17,95 @@ interface Props {
 }
 const { club, matchs, saisons, showIntro = true } = Astro.props;
 const dc = getDiscipline(club.discipline).colorVar;
+
+// Championnat (basket NM1) : prochain match, dernier résultat, rang.
+const inLeague = club.discipline === 'basket' && !!nmClubBy(club.slug);
+const todayIso = new Date().toISOString().slice(0, 10);
+const games = inLeague ? poolCalendar().filter((m) => m.homeSlug === club.slug || m.awaySlug === club.slug) : [];
+const next = games.find((m) => m.date >= todayIso && m.homeScore == null);
+const last = [...games].reverse().find((m) => m.homeScore != null && m.awayScore != null);
+const rank = inLeague && seasonStarted() ? nm1Standings().findIndex((r) => r.slug === club.slug) + 1 : 0;
+const lastWin = last ? ((last.homeSlug === club.slug) === (last.homeScore! > last.awayScore!)) : null;
+const daysTo = (iso: string) => Math.round((Date.parse(iso + 'T12:00:00Z') - Date.parse(todayIso + 'T12:00:00Z')) / 86400000);
+const jx = (iso: string) => { const n = daysTo(iso); return n > 1 ? `J-${n}` : n === 1 ? 'Demain' : "Aujourd'hui"; };
+const fmtDay = (iso: string) => { const s = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date(iso + 'T12:00:00')); return s.charAt(0).toUpperCase() + s.slice(1); };
+const logoOf = (slug: string) => { const c = nmClubBy(slug); return c && assetExists(c.logo) ? assetUrl(c.logo!) : null; };
+const nameOf = (slug: string) => (slug === club.slug ? club.name.replace(/ Basket$/, '') : nmClubBy(slug)?.name ?? slug);
+const miniSite = inLeague && clubHasSite(club.slug) ? `/clubs/${club.slug}` : null;
 ---
 <section class="club-hero" style={`--dc:${dc}`}>
   <div class="club-hero-media" style={`background-image:url('${club.hero}')`} aria-hidden="true"></div>
   <div class="wrap club-hero-in">
-    <div class="club-crumb"><a href="/disciplines">LSEI</a><span aria-hidden="true">›</span>{club.kicker}</div>
-    <div class="club-k">{club.kicker}</div>
-    <h1 class="club-h">{club.name}</h1>
-    <p class="club-blurb">{club.blurb}</p>
+    <div class="club-hero-txt">
+      <div class="club-crumb"><a href="/disciplines/">Disciplines</a><span aria-hidden="true">›</span>{club.discipline === 'basket' ? <a href="/basket">Basketball</a> : club.kicker}<span aria-hidden="true">›</span>{nameOf(club.slug)}</div>
+      <div class="club-id">
+        <span class="club-id-logo" style={`background-image:url('${club.logo}')`} aria-hidden="true"></span>
+        <div class="club-k">{club.kicker}</div>
+      </div>
+      <h1 class="club-h">{club.name}</h1>
+      <p class="club-blurb">{club.blurb}</p>
+      <div class="club-kpis">
+        {rank > 0 && <div><b>{rank}<sup>{rank === 1 ? 'er' : 'e'}</sup></b><span>{NM1_POOL}</span></div>}
+        <div><b>{matchs}</b><span>matchs en ligne</span></div>
+        <div><b>{saisons}</b><span>saisons filmées</span></div>
+      </div>
+      <div class="club-btns">
+        {miniSite && <a class="club-btn club-btn--main" href={miniSite}>Effectif, calendrier &amp; stats →</a>}
+        <a class="club-btn" href={club.url} target="_blank" rel="noopener">Site officiel du club ↗</a>
+      </div>
+    </div>
+    {(next || last) && (
+      <div class="club-mc">
+        {next && (
+          <div class="club-mc-next">
+            <div class="club-mc-k"><span>Prochain match</span><b>{jx(next.date)}</b></div>
+            <div class="club-mc-teams">
+              {[next.homeSlug, next.awaySlug].map((sl, i) => (
+                <Fragment>
+                  {i === 1 && <span class="club-mc-vs">VS</span>}
+                  <span class="club-mc-team">
+                    <span class="club-mc-logo">{logoOf(sl) ? <img src={logoOf(sl)!} alt="" /> : <span>{nmClubBy(sl)?.short}</span>}</span>
+                    <span class="club-mc-name">{nameOf(sl)}</span>
+                  </span>
+                </Fragment>
+              ))}
+            </div>
+            <div class="club-mc-when">{fmtDay(next.date)}{next.round ? ` · J${next.round}` : ''} · {next.homeSlug === club.slug ? 'à domicile' : "à l'extérieur"}</div>
+          </div>
+        )}
+        {last && (
+          <div class={`club-mc-last ${lastWin ? 'is-win' : 'is-loss'}`}>
+            <span class="club-mc-res">{lastWin ? 'V' : 'D'}</span>
+            <span>Dernier match : <b>{nameOf(last.homeSlug)} {last.homeScore} – {last.awayScore} {nameOf(last.awaySlug)}</b></span>
+          </div>
+        )}
+      </div>
+    )}
   </div>
 </section>
 
 {showIntro && (
   <section class="section club-intro-sec" style={`--dc:${dc}`}>
     <div class="wrap">
-      <div class="eyebrow" style={`color:${dc}`}>Le club</div>
-      <h2 class="club-sec-h">Un pilier du basket breton</h2>
       <div class="club-intro">
         <div class="club-txt">
+          <div class="sec-head"><div><div class="eyebrow" style={`color:${dc}`}>Le club</div><h2>Un pilier du <em>basket breton</em></h2></div></div>
           {club.intro.map((p) => <p set:html={p} />)}
         </div>
         <aside class="club-card">
-          <span class="club-card-logo" style={`background-image:url('${club.logo}')`}></span>
-          <h3>{club.name}</h3>
-          <div class="club-card-comp" style={`color:${dc}`}>{club.competition}</div>
-          <a class="club-card-site" href={club.url} target="_blank" rel="noopener" style={`color:${dc}`}>Site officiel du club →</a>
-          <div class="club-stats">
-            <div class="club-stat"><b>{saisons}</b><i>Saisons filmées</i></div>
-            <div class="club-stat"><b>{matchs}</b><i>Matchs en ligne</i></div>
-            <div class="club-stat"><b>{club.highlight.num}</b><i>{club.highlight.label}</i></div>
+          <div class="club-card-band">
+            <span class="club-card-logo" style={`background-image:url('${club.logo}')`}></span>
+          </div>
+          <div class="club-card-body">
+            <h3>{club.name}</h3>
+            <div class="club-card-comp" style={`color:${dc}`}>{club.competition}</div>
+            <div class="club-stats">
+              <div class="club-stat"><b>{saisons}</b><i>Saisons filmées</i></div>
+              <div class="club-stat"><b>{matchs}</b><i>Matchs en ligne</i></div>
+              <div class="club-stat"><b>{club.highlight.num}</b><i>{club.highlight.label}</i></div>
+            </div>
+            {miniSite && <a class="club-card-site club-card-site--main" href={miniSite}>L'espace du club →</a>}
+            <a class="club-card-site" href={club.url} target="_blank" rel="noopener">Site officiel du club ↗</a>
           </div>
         </aside>
       </div>
@@ -50,38 +114,81 @@ const dc = getDiscipline(club.discipline).colorVar;
 )}
 
 <style>
-  /* ---------- Hero cinématique du club (plein cadre, corps clair du site) ---------- */
-  .club-hero { position: relative; overflow: hidden; background: #0a0e17; }
+  /* ---------- Hero cinématique du club ---------- */
+  .club-hero { position: relative; overflow: hidden; background: #0a0e17; color: #fff; }
+  .club-hero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--brand-bars, var(--dc)); z-index: 2; }
   .club-hero-media { position: absolute; inset: 0; background-size: cover; background-position: right center; background-color: #0a0e17; }
   .club-hero-media::after { content: ""; position: absolute; inset: 0;
-    background: linear-gradient(90deg, #0a0e17 4%, rgba(10,14,23,.6) 46%, rgba(10,14,23,.2) 78%, rgba(10,14,23,.5) 100%),
-                linear-gradient(0deg, rgba(10,14,23,.7) 0%, transparent 55%); }
-  .club-hero-in { position: relative; padding-top: 22px; padding-bottom: 54px; }
-  .club-crumb { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.55); }
-  .club-crumb a { color: rgba(255,255,255,.8); text-decoration: none; }
-  .club-k { margin-top: 20px; font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in srgb, var(--dc) 55%, #fff); }
-  .club-h { color: #fff; font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.02em; font-size: clamp(32px, 5.2vw, 56px); line-height: .96; margin: 10px 0 8px; max-width: 16ch; }
-  .club-blurb { color: rgba(255,255,255,.86); font-size: 16px; line-height: 1.5; max-width: 46ch; }
+    background: linear-gradient(90deg, #0a0e17 6%, rgba(10,14,23,.78) 42%, rgba(10,14,23,.35) 70%, rgba(10,14,23,.6) 100%),
+                linear-gradient(0deg, rgba(10,14,23,.85) 0%, transparent 55%); }
+  .club-hero-in { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .9fr); gap: 40px; align-items: end; padding-top: 46px; padding-bottom: 50px; }
+  .club-crumb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  .club-crumb a { color: var(--dc); text-decoration: none; }
+  .club-crumb a:hover { text-decoration: underline; }
+  .club-id { display: flex; align-items: center; gap: 14px; margin-top: 26px; }
+  .club-id-logo { flex: none; width: 64px; height: 64px; border-radius: 50%; background-color: #fff; background-position: center; background-size: 82%; background-repeat: no-repeat; box-shadow: 0 10px 26px -8px rgba(0,0,0,.6); }
+  .club-k { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in srgb, var(--dc) 55%, #fff); }
+  .club-h { color: #fff; font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.02em; font-size: clamp(40px, 6.4vw, 82px); line-height: .9; margin: 14px 0 0; max-width: 14ch; }
+  .club-blurb { color: rgba(255,255,255,.84); font-size: 16px; line-height: 1.5; max-width: 46ch; margin: 14px 0 0; text-align: start; }
+  .club-kpis { display: flex; flex-wrap: wrap; gap: 12px 34px; margin-top: 22px; }
+  .club-kpis div { display: flex; flex-direction: column; }
+  .club-kpis b { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; color: #fff; }
+  .club-kpis sup { font-size: .45em; }
+  .club-kpis span { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-top: 4px; }
+  .club-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .club-btn { display: inline-flex; align-items: center; padding: 11px 18px; border-radius: 999px; font-weight: 800; font-size: 14px; text-decoration: none; color: #fff; border: 1px solid rgba(255,255,255,.35); transition: background .2s, border-color .2s, color .2s; }
+  .club-btn:hover { border-color: #fff; background: rgba(255,255,255,.08); }
+  .club-btn--main { background: #fff; color: #0a0e17; border-color: #fff; }
+  .club-btn--main:hover { background: var(--dc); border-color: var(--dc); color: #fff; }
+
+  /* Prochain match / dernier résultat */
+  .club-mc { border-radius: 16px; overflow: hidden; background: rgba(10,14,23,.6); border: 1px solid rgba(255,255,255,.16); box-shadow: 0 24px 50px -24px rgba(0,0,0,.85); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  .club-mc-next { padding: 20px 22px 18px; border-top: 4px solid var(--dc); }
+  .club-mc-k { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.65); }
+  .club-mc-k b { flex: none; white-space: nowrap; color: #fff; background: var(--dc); padding: 3px 10px; border-radius: 999px; letter-spacing: .04em; }
+  .club-mc-teams { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; margin-top: 18px; }
+  .club-mc-team { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; min-width: 0; }
+  .club-mc-logo { width: 78px; height: 78px; border-radius: 50%; background: #fff; display: grid; place-items: center; overflow: hidden; box-shadow: 0 10px 24px -10px rgba(0,0,0,.6); }
+  .club-mc-logo img { width: 86%; height: 86%; object-fit: contain; }
+  .club-mc-logo span { font-family: var(--display); font-weight: 800; color: #0a0e17; font-size: 22px; }
+  .club-mc-name { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 15px; line-height: 1.05; }
+  .club-mc-vs { font-family: var(--display); font-weight: 800; font-size: 26px; color: var(--dc); }
+  .club-mc-when { margin-top: 16px; text-align: center; font-size: 13.5px; font-weight: 700; color: rgba(255,255,255,.8); }
+  .club-mc-last { display: flex; align-items: center; gap: 12px; padding: 12px 22px; background: rgba(0,0,0,.3); border-top: 1px solid rgba(255,255,255,.1); font-size: 13px; color: rgba(255,255,255,.75); }
+  .club-mc-last b { color: #fff; }
+  .club-mc-res { flex: none; width: 26px; height: 26px; border-radius: 6px; display: grid; place-items: center; font-weight: 800; font-size: 13px; color: #fff; }
+  .club-mc-last.is-win .club-mc-res { background: #2e9e52; }
+  .club-mc-last.is-loss .club-mc-res { background: #d0433a; }
 
   /* ---------- Présentation éditoriale ---------- */
-  .club-sec-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.01em; font-size: clamp(22px, 3vw, 28px); color: var(--ink); margin: 4px 0 20px; }
-  .club-intro { display: grid; grid-template-columns: 1.55fr 1fr; gap: 24px; align-items: start; }
-  .club-txt p { font-size: 15.5px; line-height: 1.65; color: var(--ink-soft); margin-bottom: 14px; }
+  .club-intro-sec { background-image: radial-gradient(rgba(20, 30, 50, .055) 1px, transparent 1.4px); background-size: 22px 22px; }
+  .club-intro-sec :global(.sec-head h2 em) { font-style: normal; background: linear-gradient(90deg, var(--b-blue, #009FE3), var(--b-pink, #E6007E)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .club-intro { display: grid; grid-template-columns: 1.55fr 1fr; gap: 40px; align-items: start; }
+  .club-txt p { font-size: 16px; line-height: 1.7; color: var(--ink-soft); margin: 0 0 14px; text-align: start; }
+  .club-txt p:first-of-type::first-letter { float: left; font-family: var(--display); font-weight: 800; font-size: 64px; line-height: .85; margin: 6px 10px 0 0; color: var(--dc); }
   .club-txt p :global(b) { color: var(--ink); font-weight: 700; }
-  .club-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
-  .club-card-logo { display: block; width: 76px; height: 76px; border-radius: 14px; background-color: #fff; background-position: center; background-size: contain; background-repeat: no-repeat; border: 1px solid var(--line); }
-  .club-card h3 { font-family: var(--display); text-transform: uppercase; font-weight: 800; font-size: 18px; margin: 14px 0 2px; color: var(--ink); }
+  .club-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(16,24,40,.05), 0 14px 32px -16px rgba(16,24,40,.22); }
+  .club-card-band { position: relative; height: 92px; background: linear-gradient(135deg, var(--dc), color-mix(in srgb, var(--dc) 45%, #0a0e17)); }
+  .club-card-band::after { content: ""; position: absolute; right: -30px; top: -30px; width: 120px; height: 120px; border-radius: 50%; border: 16px solid rgba(255,255,255,.14); }
+  .club-card-logo { position: absolute; left: 22px; bottom: -40px; z-index: 1; display: block; width: 84px; height: 84px; border-radius: 50%; background-color: #fff; background-position: center; background-size: 80%; background-repeat: no-repeat; border: 4px solid var(--surface); box-shadow: 0 10px 22px -10px rgba(0,0,0,.5); }
+  .club-card-body { padding: 52px 22px 22px; display: flex; flex-direction: column; }
+  .club-card h3 { font-family: var(--display); text-transform: uppercase; font-weight: 800; font-size: 22px; margin: 0 0 2px; color: var(--ink); }
   .club-card-comp { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
-  .club-card-site { display: inline-flex; margin-top: 14px; font-size: 13.5px; font-weight: 700; text-decoration: none; }
-  .club-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; border-top: 1px solid var(--line); padding-top: 16px; }
-  .club-stat b { display: block; font-size: 22px; font-weight: 800; color: var(--ink); font-family: var(--display); }
+  .club-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 16px 0; }
+  .club-stat b { display: block; font-size: 28px; font-weight: 800; color: var(--ink); font-family: var(--display); line-height: 1.1; }
   .club-stat i { font-style: normal; font-size: 10.5px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .04em; }
+  .club-card-site { display: flex; justify-content: center; margin-top: 12px; padding: 11px 16px; border-radius: 10px; font-size: 14px; font-weight: 800; text-decoration: none; color: var(--ink); border: 1px solid var(--line-strong); transition: border-color .15s, color .15s, filter .15s; }
+  .club-card-site:hover { border-color: var(--dc); color: var(--dc); }
+  .club-card-site--main { margin-top: 18px; background: var(--dc); border-color: var(--dc); color: #fff; }
+  .club-card-site--main:hover { color: #fff; filter: brightness(1.08); }
 
-  @media (max-width: 820px) {
-    .club-intro { grid-template-columns: 1fr; }
+  @media (max-width: 900px) {
+    .club-hero-in { grid-template-columns: 1fr; gap: 26px; padding-top: 30px; padding-bottom: 34px; }
+    .club-intro { grid-template-columns: 1fr; gap: 26px; }
   }
   @media (max-width: 620px) {
-    .club-hero-in { padding-top: 16px; padding-bottom: 34px; }
-    .club-hero-media::after { background: linear-gradient(0deg, #0a0e17 34%, rgba(10,14,23,.4) 100%); }
+    .club-hero-media::after { background: linear-gradient(0deg, #0a0e17 40%, rgba(10,14,23,.45) 100%); }
+    .club-mc-logo { width: 62px; height: 62px; }
+    .club-mc-name { font-size: 13px; }
   }
 </style>
