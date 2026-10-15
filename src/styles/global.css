@@ -2171,3 +2171,49 @@ a.nbh-row:hover { background: var(--surface-2); }
 .sec-tight { padding: 30px 0; }
 .stats-sec--dark { margin-top: 18px; }
 .rdv-band + .sec-tight { padding-top: 36px; }
+
+
+/* ============ SIGNATURE GRAPHIQUE LSEI (maquette A) ============
+   Les 4 barres du logo (vert, bleu, rose, orange) deviennent le fil conducteur du design. */
+:root {
+  --b-green: #3AAA35; --b-blue: #009FE3; --b-pink: #E6007E; --b-orange: #F39200;
+  --brand-bars: linear-gradient(90deg, var(--b-green) 0 25%, var(--b-blue) 25% 50%, var(--b-pink) 50% 75%, var(--b-orange) 75% 100%);
+  --brand-ticks: linear-gradient(90deg, var(--b-green) 0 3px, transparent 3px 5px, var(--b-blue) 5px 8px, transparent 8px 10px, var(--b-pink) 10px 13px, transparent 13px 15px, var(--b-orange) 15px 18px);
+  --cut: 28px;
+}
+
+/* 1) Les 4 barres du logo : liseré du haut de page, sous chaque titre, devant chaque surtitre, au survol des cartes */
+.mhero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--brand-bars); z-index: 3; }
+.sec-head h2 { position: relative; padding-bottom: 14px; }
+.sec-head h2::after { content: ""; position: absolute; left: 0; bottom: 0; width: 72px; height: 4px; border-radius: 2px; background: var(--brand-bars); }
+.sec-head .eyebrow::before, .stats-head .eyebrow::before, .goodies-head .eyebrow::before, .partners .pl::before {
+  content: ""; display: inline-block; width: 18px; height: 10px; margin-right: 9px; vertical-align: -1px; background: var(--brand-ticks); }
+.bpod-card, .card, .nbh-card, .goodie, .ptile { position: relative; }
+.bpod-card::before, .nbh-card::before, .goodie::before, .card .frame::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--brand-bars); z-index: 3;
+  transform: scaleX(0); transform-origin: left; transition: transform .35s cubic-bezier(.2,.7,.2,1); }
+.bpod-card:hover::before, .nbh-card:hover::before, .goodie:hover::before, .card:hover .frame::before { transform: scaleX(1); }
+.bpod-card, .nbh-card, .goodie { overflow: hidden; }
+
+/* 2) Transitions en diagonale entre zones sombres et claires (coupe inclinée, façon habillage TV) */
+.rdv-band { clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), 0 100%); padding-bottom: var(--cut); }
+.stats-sec--dark { clip-path: polygon(0 var(--cut), 100% 0, 100% calc(100% - var(--cut)), 0 100%); padding: var(--cut) 0; margin-top: 4px; }
+.stats-sec--dark .stats-panel { padding-top: 34px; padding-bottom: 30px; }
+.stats-sec--dark::after { content: ""; display: block; height: 0; }
+@media (max-width: 700px) { :root { --cut: 16px; } }
+
+/* 3) Titres de section affirmés : plus grands, un mot en couleur */
+.sec-head h2 { font-size: clamp(24px, 2.7vw, 33px); line-height: 1.05; }
+.sec-head h2 em { font-style: normal; background: linear-gradient(90deg, var(--b-blue), var(--b-pink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.sec-head { margin-bottom: 26px; }
+
+/* 4) Matière et profondeur : trame de points très légère sur les zones claires, cartes en relief */
+.sec-tight, .partners-sec { background-image: radial-gradient(rgba(20, 30, 50, .055) 1px, transparent 1.4px); background-size: 22px 22px; }
+.bpod-card, .card, .nbh-card, .goodie, .goodies, .ptile {
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .05), 0 10px 26px -14px rgba(16, 24, 40, .16); }
+.bpod-card, .card, .nbh-card, .goodie { transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s, border-color .2s; }
+.bpod-card:hover, .card:hover, .goodie:hover { transform: translateY(-4px); box-shadow: 0 2px 4px rgba(16, 24, 40, .06), 0 22px 40px -18px rgba(16, 24, 40, .32); }
+.disc-card { box-shadow: 0 10px 24px -14px rgba(12, 14, 19, .5); }
+.disc-card:hover { transform: translateY(-5px) rotate(-.4deg); box-shadow: 0 22px 40px -16px color-mix(in srgb, var(--dc) 60%, rgba(12,14,19,.6)); }
+.home-2col .sec-head, .nbh-card .sec-head { flex-wrap: wrap; row-gap: 8px; }
+.home-2col .sec-head h2, .nbh-card .sec-head h2 { font-size: clamp(20px, 1.8vw, 24px); white-space: nowrap; }
