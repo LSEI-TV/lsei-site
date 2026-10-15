@@ -258,6 +258,10 @@ if (_pfb && !rdv.some((r) => r.sport === 'basket')) rdv.push({ sport: 'basket', 
 rdv.sort((a, b) => (a.day < b.day ? -1 : 1));
 const rdvShow = rdv.slice(0, 3);
 
+// Cartes des disciplines : fond = miniature de la dernière vidéo du sport (mqdefault = vrai 16:9, sans bandes noires).
+const discThumb: Record<string, string> = {};
+for (const v of _allReplays) if (!discThumb[v.discipline]) discThumb[v.discipline] = `https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;
+
 // Carrousel « prochains directs » : tous les directs À VENIR, défilement 10 s, chacun
 // avec son propre décompte (et bascule « en direct » quand l'heure est atteinte).
 const slides = programme
@@ -500,7 +504,7 @@ const slides = programme
   </script>
 
   <!-- DISCIPLINES -->
-  <section class="section" id="disciplines">
+  <section class="section sec-tight" id="disciplines">
     <div class="wrap">
       <div class="sec-head">
         <div>
@@ -511,7 +515,8 @@ const slides = programme
       </div>
       <div class="discs">
         {disciplines.map((d, i) => (
-          <a href={d.hub ?? `/disciplines/${d.slug}`} class="disc-card" style={`--dc:${d.colorVar}`}>
+          <a href={d.hub ?? `/disciplines/${d.slug}`} class:list={['disc-card', { 'has-bg': !!discThumb[d.slug] }]} style={`--dc:${d.colorVar}`}>
+            {discThumb[d.slug] && <img class="disc-bg" src={discThumb[d.slug]} alt="" loading="lazy" width="320" height="180" />}
             <span class="disc-ico"><SportIcon slug={d.slug} /></span>
             <div class="name">{d.name}</div>
             <div class="disc-cta">Voir les événements <span aria-hidden="true">→</span></div>
@@ -522,7 +527,7 @@ const slides = programme
   </section>
 
   {(bilTop.length > 0 || beltReplays.length > 0) && (
-    <section class="section">
+    <section class="section sec-tight">
       <div class="wrap">
         <div class="home-2col home-2col--media">
           {bilTop.length > 0 && (
@@ -684,7 +689,7 @@ const slides = programme
 
   <!-- ACTUALITÉS (pleine largeur) -->
   {latestPosts.length > 0 && (
-    <section class="section">
+    <section class="section sec-tight">
       <div class="wrap">
         <div class="sec-head">
           <div>
@@ -693,7 +698,7 @@ const slides = programme
           </div>
           <a href="/actualites" class="link">Toutes les actualités →</a>
         </div>
-        <div class="cards">
+        <div class="cards cards--feat">
           {latestPosts.map((p) => {
             const pf = PLATFORMS[p.data.platform];
             return (
@@ -755,7 +760,7 @@ const slides = programme
   <!-- GOODIES — les outils LSEI en libre accès.
        Cadre clair volontairement : le CTA qui suit est sur fond encre, et deux
        blocs sombres d'affilée casseraient le rythme de la page. -->
-  <section class="section goodies-sec">
+  <section class="section sec-tight goodies-sec">
     <div class="wrap">
       <div class="goodies">
         <div class="goodies-head">
@@ -790,7 +795,7 @@ const slides = programme
   </section>
 
   <!-- CTA -->
-  <section class="section">
+  <section class="section sec-tight">
     <div class="wrap">
       <div class="cta">
         <div class="txt">
