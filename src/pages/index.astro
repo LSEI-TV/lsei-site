@@ -698,9 +698,12 @@ const slides = programme
       <div class="wrap">
         <div class="nbh-card">
           <div class="sec-head">
-            <div>
-              <div class="eyebrow" style={`color:${nbClub.colorVar}`}>Basketball · Nationale 1</div>
-              <h2>Classement · {NM1_POOL}</h2>
+            <div class="nbh-head-l">
+              {assetExists('/basket/nm1-logo.webp') && <img class="nbh-nm1" src={assetUrl('/basket/nm1-logo.webp')} alt="Championnat NM1 · FFBB" width="400" height="125" loading="lazy" />}
+              <div>
+                <div class="eyebrow" style={`color:${nbClub.colorVar}`}>Basketball · Nationale 1</div>
+                <h2>Classement · {NM1_POOL}</h2>
+              </div>
             </div>
             <a href="/basket" class="link">Classement complet →</a>
           </div>

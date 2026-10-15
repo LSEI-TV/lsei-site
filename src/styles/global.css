@@ -2256,3 +2256,7 @@ a.nbh-row:hover { background: var(--surface-2); }
 }
 /* Motif du logo LSEI devant les surtitres « LSEI en chiffres » et « Goodies » (les seuls qui le gardent) */
 .stats-head .eyebrow::before, .goodies-head .eyebrow::before { content: ""; display: inline-block; width: 18px; height: 10px; margin-right: 9px; vertical-align: -1px; background: var(--brand-ticks); }
+/* Logo FFBB NM1 devant le titre du classement basket (partie utile de l image : 239 px sur 400) */
+.nbh-head-l { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.nbh-nm1 { flex: none; height: 56px; width: calc(56px * 239 / 125); object-fit: cover; object-position: left center; }
+@media (max-width: 520px) { .nbh-nm1 { height: 42px; width: calc(42px * 239 / 125); } .nbh-head-l { gap: 12px; } }
