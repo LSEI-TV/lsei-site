@@ -1,4 +1,12 @@
 ---
+// ============================================================
+//  PROGRAMME (maquette) — un agenda TOUJOURS rempli :
+//   1) les directs déjà programmés sur YouTube (heure exacte, image, lien) → « En direct sur LSEI » ;
+//   2) les annonces saisies via /admin (collection « programme ») ;
+//   3) les dates CONNUES des calendriers du site : étapes du circuit Blackball (Masters & Femmes),
+//      matchs à domicile de Pays de Fougères (NM1) → « Au calendrier » (diffusion pas encore annoncée).
+//  Un direct YouTube du même sport le même jour « confirme » la date du calendrier (pas de doublon).
+// ============================================================
 import Base from '../layouts/Base.astro';
 import ShareLinks from '../components/ShareLinks.astro';
 import SportIcon from '../components/SportIcon.astro';
@@ -6,382 +14,339 @@ import { disciplines, getDiscipline } from '../data/site';
 import { getBroadcasts } from '../lib/youtube';
 import { parseProgTitle } from '../lib/programmeTitle';
 import { getCollection } from 'astro:content';
+import { cal2627 } from '../data/billard/seasons';
+import { nm1Calendar, nmClubBy } from '../data/basket';
 
 const now = Date.now();
 const TZ = 'Europe/Paris';
-const programmeUrl = new URL('/programme', Astro.site).href;
+const programmeUrl = new URL('/programme/', Astro.site).href;
 const siteRoot = new URL('/', Astro.site).href;
+const todayIso = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: TZ }).format(new Date(now));
 
-// 1) Programme saisi manuellement via /admin.
-const manual = (await getCollection('programme', ({ data }) => !data.draft)).map((p) => ({
-  sport: p.data.sport, category: p.data.category || '', title: p.data.title || '',
-  date: p.data.date, thumb: p.data.image, link: p.data.link, live: false,
-}));
-// 2) Directs YouTube détectés automatiquement (en cours + programmés).
-const auto = (await getBroadcasts()).map((b) => ({
-  sport: b.discipline, category: '', title: b.title, date: new Date(b.date),
-  thumb: `https://i.ytimg.com/vi/${b.id}/maxresdefault.jpg`, link: `https://www.youtube.com/watch?v=${b.id}`, live: b.live,
-}));
+type Item = {
+  sport: string; kicker: string; title: string; place?: string;
+  day: string;            // AAAA-MM-JJ (jour de début)
+  endDay?: string;        // dernier jour (événements sur plusieurs jours)
+  when?: string;          // libellé de dates lisible (ex. « 20-22 nov. 2026 »)
+  date?: Date;            // heure exacte (directs programmés)
+  thumb?: string; link?: string; live?: boolean;
+  confirmed: boolean;     // diffusion annoncée sur YouTube / programme
+};
+const dayOf = (d: Date) => new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: TZ }).format(d);
+const addDays = (iso: string, n: number) => { const d = new Date(`${iso}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
 
-let items = [...manual, ...auto].filter((it) => it.live || it.date.valueOf() + 3 * 3600 * 1000 >= now);
-items.sort((a, b) => a.date.valueOf() - b.date.valueOf());
+// 1) + 2) diffusions annoncées (YouTube + /admin)
+const manual = (await getCollection('programme', ({ data }) => !data.draft)).map((p): Item => {
+  const pt = p.data.category ? null : parseProgTitle(p.data.title || '');
+  return { sport: p.data.sport, kicker: p.data.category || pt?.kicker || getDiscipline(p.data.sport).name, title: pt?.main || p.data.title || getDiscipline(p.data.sport).name,
+    day: dayOf(p.data.date), date: p.data.date, thumb: p.data.image, link: p.data.link, confirmed: true };
+});
+const auto = (await getBroadcasts()).map((b): Item => {
+  const pt = parseProgTitle(b.title);
+  return { sport: b.discipline, kicker: [pt.kicker, ...pt.badges].filter(Boolean).join(' · ') || getDiscipline(b.discipline).name, title: pt.main || b.title,
+    day: dayOf(new Date(b.date)), date: new Date(b.date), thumb: `https://i.ytimg.com/vi/${b.id}/maxresdefault.jpg`, link: `https://www.youtube.com/watch?v=${b.id}`, live: b.live, confirmed: true };
+});
+const announced = [...manual, ...auto].filter((it) => it.live || (it.date && it.date.valueOf() + 3 * 3600 * 1000 >= now));
 
-const sportsPresent = new Set(items.map((it) => it.sport));
+// 3) calendriers connus du site
+const calendar: Item[] = [];
+for (const e of cal2627) {
+  if (!e.start || e.kind === 'mondial') continue;
+  const m = /^(\d{1,2})\s*-\s*(\d{1,2})\b/.exec(e.date);          // « 20-22 nov. 2026 » → 3 jours
+  const span = m ? Math.max(0, Number(m[2]) - Number(m[1])) : 0;
+  const end = addDays(e.start, span);
+  if (end < todayIso) continue;
+  calendar.push({ sport: 'billard', kicker: 'Blackball · Masters & Femmes', title: e.name, place: e.place, day: e.start, endDay: end, when: e.date, confirmed: false });
+}
+for (const mt of nm1Calendar) {
+  if (mt.homeSlug !== 'fougeres' || mt.homeScore != null || mt.date < todayIso) continue;
+  calendar.push({ sport: 'basket', kicker: `Basket · Nationale 1${mt.round ? ` · J${mt.round}` : ''}`, title: `Pays de Fougères – ${nmClubBy(mt.awaySlug)?.name ?? mt.awaySlug}`,
+    place: 'Fougères · à domicile', day: mt.date, confirmed: false });
+}
+// Une diffusion annoncée du même sport, pendant les jours de l'événement, le « confirme » (pas de doublon).
+const items: Item[] = [...announced];
+for (const c of calendar) {
+  const hit = announced.find((a) => a.sport === c.sport && a.day >= c.day && a.day <= (c.endDay || c.day));
+  // titre / compétition / lieu propres du calendrier ; heure, image et lien de la diffusion annoncée
+  if (hit) { hit.title = c.title; hit.kicker = c.kicker; hit.place = c.place; hit.when = hit.when || c.when; hit.endDay = c.endDay; continue; }
+  items.push(c);
+}
+items.sort((a, b) => (a.live === b.live ? (a.day === b.day ? (a.date?.valueOf() ?? 0) - (b.date?.valueOf() ?? 0) : a.day < b.day ? -1 : 1) : a.live ? -1 : 1));
 
-const fmtTime = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: TZ });
-const dayKeyFmt = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: TZ });
-const monthKeyFmt = new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', timeZone: TZ });
-const monthLabelFmt = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric', timeZone: TZ });
-const dowFmt = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', timeZone: TZ });
-const dayNumFmt = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', timeZone: TZ });
-const monShortFmt = new Intl.DateTimeFormat('fr-FR', { month: 'short', timeZone: TZ });
-const yearFmt = new Intl.DateTimeFormat('fr-FR', { year: 'numeric', timeZone: TZ });
-const dayFullFmt = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: TZ });
+// ---- mise en forme ----
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-const heure = (d: Date) => fmtTime.format(d).replace(':', 'h');
-const gcalFmt = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+const fmt = (o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('fr-FR', { ...o, timeZone: 'UTC' });
+const dNum = fmt({ day: 'numeric' }), dMon = fmt({ month: 'short' }), dDow = fmt({ weekday: 'short' }), dLong = fmt({ weekday: 'long', day: 'numeric', month: 'long' });
+const monthLbl = fmt({ month: 'long', year: 'numeric' });
+const heure = (d: Date) => new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: TZ }).format(d).replace(':', 'h');
+const asDate = (iso: string) => new Date(`${iso}T12:00:00Z`);
+const gcalDay = (iso: string) => iso.replace(/-/g, '');
+const gcalTime = (d: Date) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 
-// Enrichit chaque item : titre parsé, horaire, lien Google Agenda, partage.
 const events = items.map((it) => {
-  const disc = getDiscipline(it.sport);
-  const pt = it.category ? null : parseProgTitle(it.title);
-  const main = pt ? (pt.main || disc.name) : (it.category || it.title || disc.name);
-  const sub = pt ? [pt.kicker, ...pt.badges].filter(Boolean).join(' · ') : (it.category ? it.title : '');
-  const shareUrl = it.link && it.link.startsWith('http') ? it.link : programmeUrl;
-  const gcal = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(main + ' — LSEI')}&dates=${gcalFmt(it.date)}/${gcalFmt(new Date(it.date.valueOf() + 2 * 3600 * 1000))}&details=${encodeURIComponent('En direct sur LSEI · https://lsei.tv/direct')}`;
-  return { ...it, disc, main, sub, time: it.live ? 'En direct' : heure(it.date), gcal, shareUrl, shareTitle: `${main}${sub ? ' — ' + sub : ''} · LSEI` };
+  const disc = getDiscipline(it.sport as any);
+  const d0 = asDate(it.day);
+  const whenTxt = it.date ? `${cap(dLong.format(d0))} · ${it.live ? 'en direct' : heure(it.date)}` : (it.when || cap(dLong.format(d0)));
+  const gcal = it.date
+    ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(it.title + ' — LSEI')}&dates=${gcalTime(it.date)}/${gcalTime(new Date(it.date.valueOf() + 2 * 3600 * 1000))}&details=${encodeURIComponent('En direct sur LSEI · https://lsei.tv/direct')}`
+    : `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(it.title)}&dates=${gcalDay(it.day)}/${gcalDay(addDays(it.endDay || it.day, 1))}${it.place ? `&location=${encodeURIComponent(it.place)}` : ''}&details=${encodeURIComponent('Programme LSEI · ' + programmeUrl)}`;
+  const vid = /[?&]v=([\w-]+)/.exec(it.link || '')?.[1] || '';
+  return { ...it, disc, num: dNum.format(d0), mon: dMon.format(d0).replace('.', '').toUpperCase(), dow: dDow.format(d0).replace('.', ''), whenTxt, gcal, vid,
+    month: it.day.slice(0, 7), monthLabel: cap(monthLbl.format(d0)) };
 });
 type Ev = (typeof events)[number];
+const months: { key: string; label: string; list: Ev[] }[] = [];
+for (const e of events) { let m = months.find((x) => x.key === e.month); if (!m) { m = { key: e.month, label: e.monthLabel, list: [] }; months.push(m); } m.list.push(e); }
+const counts = Object.fromEntries(disciplines.map((d) => [d.slug, events.filter((e) => e.sport === d.slug).length]));
+const next = events[0] || null;
 
-// Id vidéo YouTube extrait du lien (pour le dédoublonnage avec le temps réel).
-const vidOf = (link?: string) => { const m = /[?&]v=([\w-]+)/.exec(link || ''); return m ? m[1] : ''; };
-// Carte des disciplines (couleur/libellé/fond de tag) pour le rendu temps réel côté client.
-const discMap = Object.fromEntries(disciplines.map((d) => [d.slug, { label: d.label, color: d.colorVar, tagBg: d.tagBg }]));
-
-// Regroupement : mois → jours → événements.
-const monthOrder: string[] = [];
-const byMonth = new Map<string, Ev[]>();
-for (const e of events) {
-  const mk = monthKeyFmt.format(e.date);
-  if (!byMonth.has(mk)) { byMonth.set(mk, []); monthOrder.push(mk); }
-  byMonth.get(mk)!.push(e);
-}
-const daysOf = (list: Ev[]): Ev[][] => {
-  const order: string[] = [];
-  const map = new Map<string, Ev[]>();
-  for (const e of list) {
-    const k = dayKeyFmt.format(e.date);
-    if (!map.has(k)) { map.set(k, []); order.push(k); }
-    map.get(k)!.push(e);
-  }
-  return order.map((k) => map.get(k)!);
-};
-
-// Données structurées « Événement » (SEO).
+// Données structurées (SEO) : chaque rendez-vous, avec lieu physique quand il est connu.
 const eventsLd = events.map((e) => ({
-  '@context': 'https://schema.org', '@type': 'SportsEvent', name: e.main,
-  startDate: e.date.toISOString(), eventStatus: 'https://schema.org/EventScheduled',
-  eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode',
-  location: { '@type': 'VirtualLocation', url: e.shareUrl },
-  ...(e.thumb ? { image: [e.thumb] } : {}), url: e.shareUrl,
+  '@context': 'https://schema.org', '@type': 'SportsEvent', name: e.title,
+  startDate: e.date ? e.date.toISOString() : e.day, ...(e.endDay ? { endDate: e.endDay } : {}),
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: e.confirmed ? 'https://schema.org/MixedEventAttendanceMode' : 'https://schema.org/OfflineEventAttendanceMode',
+  location: e.place ? { '@type': 'Place', name: e.place, address: e.place } : { '@type': 'VirtualLocation', url: e.link || programmeUrl },
+  ...(e.thumb ? { image: [e.thumb] } : {}), url: e.link || programmeUrl,
   organizer: { '@type': 'Organization', name: 'LSEI — Le Sport en Image', url: siteRoot },
 }));
-
-const onerrorThumb = (t: string) => (t && t.includes('maxresdefault') ? `this.onerror=null;this.src='${t.replace('maxresdefault', 'hqdefault')}'` : undefined);
+const discMap = Object.fromEntries(disciplines.map((d) => [d.slug, { label: d.label, color: d.colorVar }]));
+const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=null;this.src='${t.replace('maxresdefault', 'hqdefault')}'` : undefined);
 ---
-<Base title="Programme" description="Le programme des directs et diffusions LSEI : matchs à venir, en direct et rediffusions, tous sports." active="programme">
+<Base title="Programme" description="Le programme LSEI : tous les prochains rendez-vous (directs annoncés et dates du calendrier) du billard blackball, du basket NM1 et des autres sports." active="programme">
   {eventsLd.length > 0 && <script type="application/ld+json" set:html={JSON.stringify(eventsLd)} />}
 
-  <!-- HERO pleine largeur (image dans public/programme-hero.webp, repli sombre sinon) -->
-  <section class="prog-hero">
-    <div class="prog-hero-media" aria-hidden="true"></div>
-    <div class="wrap prog-hero-in">
-      <div class="prog-hero-kick">Au programme</div>
-      <h1 class="prog-hero-h">Le programme des diffusions</h1>
-      <p class="prog-hero-p">Tous les matchs et événements à venir en direct sur LSEI.<br />Filtrez par sport pour trouver vos rendez-vous.</p>
-      <div class="prog-hero-share">
-        <span class="prog-hero-share-l">Partager</span>
-        <ShareLinks url={programmeUrl} title="Le programme des diffusions LSEI — tous les prochains directs" compact />
+  <!-- EN-TÊTE : titre + prochain rendez-vous en grand -->
+  <section class="pg-hero">
+    <div class="wrap pg-hero-in">
+      <div class="pg-hero-txt">
+        <div class="pg-kick">Au programme</div>
+        <h1 class="pg-h">Le programme</h1>
+        <p class="pg-p">Tous les prochains rendez-vous : les directs annoncés sur LSEI et les dates du calendrier de chaque compétition.</p>
+        <div class="pg-share"><span>Partager</span><ShareLinks url={programmeUrl} title="Le programme LSEI — tous les prochains rendez-vous" compact /></div>
       </div>
+      {next && (
+        <a class="pg-next" href={next.link || '#agenda'} target={next.link ? '_blank' : undefined} rel={next.link ? 'noopener' : undefined} style={`--dc:${next.disc.colorVar}`}>
+          <span class="pg-next-k">Prochain rendez-vous</span>
+          <span class="pg-next-media">
+            {next.thumb ? <img src={next.thumb} alt="" onerror={onerr(next.thumb)} /> : <span class="pg-next-ico"><SportIcon slug={next.sport} /></span>}
+            <span class={`pg-badge ${next.confirmed ? 'is-on' : ''}`}>{next.live ? '● En direct' : next.confirmed ? '● En direct sur LSEI' : 'Au calendrier'}</span>
+          </span>
+          <span class="pg-next-body">
+            <span class="pg-next-sport">{next.kicker}</span>
+            <span class="pg-next-t">{next.title}</span>
+            <span class="pg-next-w">{next.whenTxt}{next.place && <> · {next.place}</>}</span>
+            {next.date && !next.live
+              ? <span class="pg-cd" data-iso={next.date.toISOString()}><b data-d>—</b><i>j</i><b data-h>—</b><i>h</i><b data-m>—</b><i>min</i></span>
+              : !next.live && <span class="pg-cd" data-day={next.day}><i>J-</i><b data-j>—</b></span>}
+          </span>
+        </a>
+      )}
     </div>
   </section>
 
-  <section class="section">
+  <section class="section pg-sec" id="agenda">
     <div class="wrap">
-      <div class="prog-filter" id="prog-filter">
-        <button type="button" class="prog-fbtn active" data-sport="all">
-          <svg class="pf-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Tous
-        </button>
-        {disciplines.filter((d) => sportsPresent.has(d.slug)).map((d) => (
-          <button type="button" class="prog-fbtn" data-sport={d.slug} style={`--dc:${d.colorVar}`}>
-            <SportIcon slug={d.slug} class="pf-ic" />{d.label}
-          </button>
+      <div class="pg-filter" id="pg-filter" role="group" aria-label="Filtrer par sport">
+        <button type="button" class="pg-fbtn active" data-sport="all">Tous <b>{events.length}</b></button>
+        {disciplines.filter((d) => counts[d.slug]).map((d) => (
+          <button type="button" class="pg-fbtn" data-sport={d.slug} style={`--dc:${d.colorVar}`}><SportIcon slug={d.slug} class="pg-fic" />{d.label} <b>{counts[d.slug]}</b></button>
         ))}
+        <span class="pg-legend"><span class="pg-dot is-on"></span>Direct annoncé <span class="pg-dot"></span>Au calendrier</span>
       </div>
 
-      {monthOrder.length > 1 && (
-        <div class="prog-months" id="prog-months" role="group" aria-label="Choisir le mois">
-          {monthOrder.map((mk, i) => (
-            <button type="button" class={`prog-mbtn${i === 0 ? ' is-on' : ''}`} data-month={mk}>{cap(monthLabelFmt.format(byMonth.get(mk)![0].date))}</button>
-          ))}
-        </div>
-      )}
-
-      <div id="prog-rt" class="prog-month" hidden>
-        <h2 class="prog-month-h">En ce moment</h2>
-        <div id="prog-rt-list"></div>
+      <div id="pg-rt" class="pg-month" hidden>
+        <h2 class="pg-month-h"><span>En ce moment</span></h2>
+        <div id="pg-rt-list" class="pg-list"></div>
       </div>
-      <script id="prog-disc" type="application/json" set:html={JSON.stringify(discMap)}></script>
+      <script id="pg-disc" type="application/json" set:html={JSON.stringify(discMap)}></script>
 
-      {monthOrder.length === 0 ? (
-        <p id="prog-empty" class="dek" style="margin-top:26px">Aucune diffusion programmée pour le moment. Revenez bientôt — le programme se met à jour automatiquement dès qu'un direct est annoncé.</p>
-      ) : (
-        monthOrder.map((mk, i) => (
-          <div class="prog-month" data-month={mk} style={i === 0 ? undefined : 'display:none'}>
-            {monthOrder.length === 1 && <h2 class="prog-month-h">{cap(monthLabelFmt.format(byMonth.get(mk)![0].date))}</h2>}
-            {daysOf(byMonth.get(mk)!).map((dayEvents) => {
-              const d0 = dayEvents[0];
-              // Couleur de l'accent du jour : celle du sport si tous les matchs du jour
-              // sont du même sport, sinon l'accent générique.
-              const dayDc = dayEvents.every((e) => e.sport === d0.sport) ? d0.disc.colorVar : 'var(--accent)';
-              return (
-                <div class="pday" style={`--dc:${dayDc}`}>
-                  <div class="pday-head">
-                    <span class="pday-date">{cap(dayFullFmt.format(d0.date))}</span>
-                    <span class="pday-count">{dayEvents.length} diffusion{dayEvents.length > 1 ? 's' : ''}</span>
-                  </div>
-                  <div class="pday-grid">
-                    {dayEvents.map((e) => (
-                      <div class="pmc" data-sport={e.sport} data-vid={vidOf(e.link)} style={`--dc:${e.disc.colorVar}`}>
-                        <a class="pmc-thumb" href={e.link || programmeUrl} target={e.link && e.link.startsWith('http') ? '_blank' : undefined} rel="noopener" aria-label={e.main}>
-                          {e.thumb ? <img src={e.thumb} alt={e.main} loading="lazy" onerror={onerrorThumb(e.thumb)} /> : <span class="pev-duo" style={`background:linear-gradient(135deg,${e.disc.from},${e.disc.to})`}></span>}
-                          <span class="pev-time mono">{e.time}</span>
-                          <span class="pev-tag" style={`background:${e.disc.tagBg};color:${e.disc.colorVar}`}>{e.disc.label}</span>
-                          {e.live && <span class="pev-livebadge">● LIVE</span>}
-                        </a>
-                        <div class="pmc-body">
-                          <div class="pmc-t">{e.main}</div>
-                          {e.sub && <div class="pmc-sub">{e.sub}</div>}
-                          <div class="pmc-actions">
-                            <a class="pev-watch sm" href={e.link || programmeUrl} target={e.link && e.link.startsWith('http') ? '_blank' : undefined} rel="noopener">▸ Regarder</a>
-                            <a class="pev-cal sm" href={e.gcal} target="_blank" rel="noopener">＋ Cal.</a>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+      {months.length === 0 ? (
+        <p id="pg-empty" class="pg-empty">Aucun rendez-vous à venir pour le moment. Le programme se met à jour automatiquement dès qu'un direct est annoncé.</p>
+      ) : months.map((m) => (
+        <div class="pg-month" data-month={m.key}>
+          <h2 class="pg-month-h"><span>{m.label}</span><small>{m.list.length} rendez-vous</small></h2>
+          <div class="pg-list">
+            {m.list.map((e) => (
+              <article class={`pg-ev ${e.confirmed ? 'is-on' : ''}`} data-sport={e.sport} data-vid={e.vid} style={`--dc:${e.disc.colorVar}`}>
+                <div class="pg-date"><span class="pg-dow">{e.dow}</span><b>{e.num}</b><span class="pg-mon">{e.mon}</span></div>
+                {e.thumb && <a class="pg-thumb" href={e.link} target="_blank" rel="noopener" aria-hidden="true" tabindex="-1"><img src={e.thumb} alt="" loading="lazy" onerror={onerr(e.thumb)} /></a>}
+                <div class="pg-body">
+                  <span class="pg-sport"><SportIcon slug={e.sport} class="pg-sic" />{e.kicker}</span>
+                  <h3 class="pg-t">{e.title}</h3>
+                  <span class="pg-w">{e.whenTxt}{e.place && <> · <span class="pg-place">📍 {e.place}</span></>}</span>
                 </div>
-              );
-            })}
+                <div class="pg-side">
+                  <span class={`pg-badge ${e.confirmed ? 'is-on' : ''}`}>{e.live ? '● En direct' : e.confirmed ? '● Direct annoncé' : 'Au calendrier'}</span>
+                  {!e.live && <span class="pg-j" data-day={e.day}>J-<b data-j>—</b></span>}
+                  <span class="pg-actions">
+                    {e.link && <a class="pg-btn pg-btn--go" href={e.link} target="_blank" rel="noopener">▸ {e.live ? 'Regarder' : 'Voir'}</a>}
+                    <a class="pg-btn" href={e.gcal} target="_blank" rel="noopener" title="Ajouter à mon agenda Google">＋ Agenda</a>
+                  </span>
+                </div>
+              </article>
+            ))}
           </div>
-        ))
-      )}
+        </div>
+      ))}
     </div>
   </section>
 
-  <style>
-    /* ---------- HERO pleine largeur ---------- */
-    .prog-hero { position: relative; background: #0a0c11; overflow: hidden; }
-    .prog-hero-media {
-      position: absolute; inset: 0;
-      background:
-        linear-gradient(90deg, rgba(8,10,14,.97) 0%, rgba(8,10,14,.82) 34%, rgba(8,10,14,.35) 66%, rgba(8,10,14,.5) 100%),
-        linear-gradient(0deg, rgba(8,10,14,.55) 0%, transparent 45%),
-        url('/programme-hero.webp');
-      background-size: cover; background-position: right center;
-    }
-    .prog-hero-in { position: relative; padding-top: 60px; padding-bottom: 46px; }
-    .prog-hero-kick { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
-    .prog-hero-h { font-family: var(--display); font-weight: 800; letter-spacing: -.02em; font-size: clamp(28px, 4.4vw, 46px); line-height: 1.02; margin: 12px 0 0; color: #fff; text-transform: uppercase; }
-    .prog-hero-p { color: rgba(255,255,255,.82); font-family: var(--serif); font-size: 16px; line-height: 1.5; margin: 14px 0 0; }
-    .prog-hero-share { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
-    .prog-hero-share-l { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  <style is:global>
+    /* Styles globaux (préfixe pg-) : ils s'appliquent aussi aux directs ajoutés en temps réel par le script. */
+    /* ---------- En-tête sombre (comme la une de l'accueil) ---------- */
+    .pg-hero { position: relative; overflow: hidden; color: #fff;
+      background: radial-gradient(90% 140% at 90% 0%, color-mix(in srgb, var(--c-billard, #1E7BE0) 30%, #0A0E1A) 0%, #0A0E1A 60%), #0A0E1A; }
+    .pg-hero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--brand-bars, var(--accent)); }
+    .pg-hero-in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 40px; align-items: center; padding-top: 52px; padding-bottom: 50px; }
+    .pg-kick { font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #7fb2ff; }
+    .pg-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.02em; font-size: clamp(38px, 5.4vw, 66px); line-height: .95; margin: 10px 0 0; color: #fff; }
+    .pg-p { color: rgba(255,255,255,.8); font-size: 16px; line-height: 1.5; margin: 14px 0 0; max-width: 34em; text-align: start; }
+    .pg-share { display: flex; align-items: center; gap: 12px; margin-top: 22px; }
+    .pg-share > span { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+    .pg-next { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-radius: 16px; overflow: hidden; text-decoration: none; color: #fff;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 24px 56px rgba(0,0,0,.45);
+      position: relative; transition: transform .25s, box-shadow .25s; }
+    .pg-next:hover { transform: translateY(-3px); box-shadow: 0 30px 64px rgba(0,0,0,.55), 0 0 50px color-mix(in srgb, var(--dc) 28%, transparent); }
+    .pg-next-k { position: absolute; left: 0; top: 0; z-index: 2; background: var(--dc); color: #fff; font-size: 10.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 6px 12px; border-bottom-right-radius: 10px; }
+    .pg-next-media { position: relative; min-height: 210px; background: linear-gradient(150deg, color-mix(in srgb, var(--dc) 75%, #0A0E1A), color-mix(in srgb, var(--dc) 25%, #0A0E1A)); display: grid; place-items: center; }
+    .pg-next-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .pg-next-ico { width: 46%; max-width: 120px; aspect-ratio: 1; color: #fff; opacity: .9; }
+    .pg-next-ico svg { width: 100%; height: 100%; }
+    .pg-next-media .pg-badge { position: absolute; left: 12px; bottom: 12px; }
+    .pg-next-body { display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 22px 22px; border-left: 3px solid var(--dc); }
+    .pg-next-sport { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--dc) 55%, #fff); }
+    .pg-next-t { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(22px, 2.3vw, 30px); line-height: 1.02; }
+    .pg-next-w { font-size: 13.5px; color: rgba(255,255,255,.75); }
+    .pg-cd { display: flex; align-items: baseline; gap: 3px; margin-top: 10px; font-family: var(--display); }
+    .pg-cd b { font-size: 34px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+    .pg-cd i { font-style: normal; font-size: 13px; font-weight: 700; color: rgba(255,255,255,.6); margin-right: 6px; }
 
     /* ---------- Filtres ---------- */
-    .prog-filter { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
-    .prog-fbtn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 100px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); font-size: 13px; font-weight: 700; cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
-    .prog-fbtn .pf-ic { width: 16px; height: 16px; flex: none; color: var(--dc, var(--ink-faint)); }
-    .prog-fbtn:hover { border-color: var(--dc, var(--ink-faint)); }
-    .prog-fbtn.active { background: color-mix(in srgb, var(--dc, var(--accent)) 16%, var(--surface)); border-color: var(--dc, var(--accent)); color: var(--ink); }
-    .prog-fbtn.active .pf-ic { color: var(--dc, var(--accent)); }
-    .prog-fbtn[data-sport="all"].active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-    .prog-fbtn[data-sport="all"].active .pf-ic { color: var(--on-accent); }
+    .pg-sec { background-image: radial-gradient(rgba(20, 30, 50, .055) 1px, transparent 1.4px); background-size: 22px 22px; }
+    .pg-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .pg-fbtn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px; border-radius: 100px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
+    .pg-fbtn b { font-size: 11px; font-weight: 800; background: var(--surface-2); color: var(--ink-soft); border-radius: 100px; padding: 1px 7px; }
+    .pg-fbtn svg { width: 16px; height: 16px; flex: none; color: var(--dc, var(--ink-faint)); }
+    .pg-fbtn:hover { border-color: var(--dc, var(--ink-faint)); }
+    .pg-fbtn.active { background: var(--dc, var(--accent)); border-color: var(--dc, var(--accent)); color: #fff; }
+    .pg-fbtn.active svg { color: #fff; } .pg-fbtn.active b { background: rgba(255,255,255,.25); color: #fff; }
+    .pg-legend { margin-left: auto; display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink-soft); }
+    .pg-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line-strong); margin-left: 8px; }
+    .pg-dot.is-on { background: #e5231b; }
 
-    /* ---------- Onglets par mois ---------- */
-    .prog-months { display: flex; flex-wrap: wrap; gap: 8px; margin: -14px 0 28px; }
-    .prog-mbtn { font: inherit; font-family: var(--display); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: .03em; padding: 9px 18px; border-radius: 10px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-soft); cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
-    .prog-mbtn:hover { color: var(--ink); border-color: var(--ink-faint); }
-    .prog-mbtn.is-on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+    /* ---------- Agenda par mois ---------- */
+    .pg-month { margin-top: 30px; }
+    .pg-month-h { display: flex; align-items: baseline; gap: 14px; margin: 0 0 14px; padding-bottom: 12px; position: relative; text-align: start; }
+    .pg-month-h::after { content: ""; position: absolute; left: 0; bottom: 0; width: 72px; height: 4px; border-radius: 2px; background: var(--brand-bars, var(--accent)); }
+    .pg-month-h span { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(22px, 2.4vw, 30px); letter-spacing: -.01em; }
+    .pg-month-h small { font-size: 12.5px; font-weight: 700; color: var(--ink-faint); }
+    .pg-list { display: flex; flex-direction: column; gap: 12px; }
+    .pg-ev { display: grid; grid-template-columns: 74px auto minmax(0, 1fr) auto; align-items: center; gap: 18px; padding: 14px 18px 14px 14px; background: var(--surface);
+      border: 1px solid var(--line); border-left: 4px solid var(--dc); border-radius: 14px; position: relative;
+      box-shadow: 0 1px 2px rgba(16,24,40,.05), 0 10px 26px -16px rgba(16,24,40,.18); transition: transform .2s, box-shadow .2s; }
+    .pg-ev:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(16,24,40,.06), 0 20px 36px -18px rgba(16,24,40,.3); }
+    .pg-date { width: 74px; text-align: center; border-radius: 10px; overflow: hidden; border: 1px solid var(--line-strong); background: var(--surface); line-height: 1; }
+    .pg-dow { display: block; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); padding-top: 7px; }
+    .pg-date b { display: block; font-family: var(--display); font-size: 32px; font-weight: 800; padding: 3px 0 5px; color: var(--ink); }
+    .pg-mon { display: block; font-size: 11px; font-weight: 800; letter-spacing: .08em; color: #fff; background: var(--dc); padding: 4px 0; }
+    .pg-thumb { width: 150px; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: #111; display: block; }
+    .pg-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pg-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .pg-sport { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--dc); }
+    .pg-sport svg { width: 14px; height: 14px; flex: none; }
+    .pg-t { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(18px, 1.9vw, 24px); line-height: 1.05; margin: 0; color: var(--ink); text-align: start; }
+    .pg-w { font-size: 13.5px; color: var(--ink-soft); }
+    .pg-side { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; }
+    .pg-badge { font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line); white-space: nowrap; }
+    .pg-badge.is-on { background: #e5231b; border-color: #e5231b; color: #fff; }
+    .pg-j { font-family: var(--display); font-weight: 800; font-size: 14px; color: var(--ink-faint); }
+    .pg-j b { font-size: 26px; color: var(--ink); }
+    .pg-actions { display: flex; gap: 6px; }
+    .pg-btn { font-size: 12.5px; font-weight: 700; padding: 7px 12px; border-radius: 8px; border: 1px solid var(--line-strong); color: var(--ink); text-decoration: none; background: var(--surface); white-space: nowrap; transition: border-color .15s, background .15s, color .15s; }
+    .pg-btn:hover { border-color: var(--dc); color: var(--dc); }
+    .pg-btn--go { background: var(--dc); border-color: var(--dc); color: #fff; }
+    .pg-btn--go:hover { color: #fff; filter: brightness(1.08); }
+    .pg-empty { margin-top: 26px; color: var(--ink-soft); }
 
-    /* ---------- Mois ---------- */
-    .prog-month { margin-top: 34px; }
-    .prog-month-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: .02em; font-size: 20px; color: var(--ink); margin: 0 0 16px; }
-
-    /* ---------- Jour : en-tête + grille uniforme (toutes les diffusions du jour) ---------- */
-    .pday { margin-bottom: 26px; }
-    .pday-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; margin: 0 0 13px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
-    .pday-date { font-family: var(--display); font-weight: 800; font-size: 15px; text-transform: uppercase; letter-spacing: .03em; color: var(--ink); }
-    .pday-date::before { content: ''; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--dc, var(--accent)); margin-right: 9px; vertical-align: middle; }
-    .pday-count { font-size: 12px; font-weight: 700; color: var(--dc, var(--accent)); background: color-mix(in srgb, var(--dc, var(--accent)) 13%, var(--surface)); padding: 3px 10px; border-radius: 100px; }
-    .pday-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(228px, 1fr)); gap: 14px; }
-
-    /* ---------- Grande ligne (1 événement) ---------- */
-    /* Deux cartes séparées : carte DATE à gauche + carte CONTENU à droite. */
-    .pev, .pev-multi { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 16px; align-items: stretch; margin-bottom: 14px; }
-    .pev-date { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 14px 8px; border-radius: 16px;
-      border: 1px solid color-mix(in srgb, var(--dc, var(--accent)) 62%, var(--line));
-      background: color-mix(in srgb, var(--dc, var(--accent)) 10%, var(--surface)); }
-    .pev-main { display: grid; grid-template-columns: 288px minmax(0, 1fr); gap: 20px; align-items: stretch; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); transition: border-color .15s; }
-    .pev-main:hover { border-color: color-mix(in srgb, var(--dc, var(--accent)) 45%, var(--line)); }
-    .pev-thumb { align-self: center; }
-    .pev-dow { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--dc, var(--accent)); }
-    .pev-num { font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1; color: var(--ink); margin: 3px 0; }
-    .pev-mon { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--dc, var(--accent)); }
-    .pev-yr { font-size: 10.5px; color: var(--ink-faint); margin-top: 1px; }
-    .pev-thumb { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 16 / 9; background: #111; display: block; }
-    .pev-thumb img, .pev-duo { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .pev-time { position: absolute; left: 8px; bottom: 8px; font-size: 12px; font-weight: 800; color: #fff; background: rgba(8,10,14,.72); padding: 3px 8px; border-radius: 6px; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
-    .pev-tag { position: absolute; right: 8px; bottom: 8px; font-size: 9.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: 3px 8px; border-radius: 5px; }
-    .pev-livebadge { position: absolute; top: 8px; left: 8px; font-family: var(--mono); font-size: 10px; font-weight: 800; color: #fff; background: #e5231b; padding: 3px 7px; border-radius: 5px; }
-    .pev-body { display: flex; flex-direction: column; padding: 2px 4px 2px 0; min-width: 0; }
-    .pev-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
-    .pev-t { font-family: var(--display); font-weight: 800; font-size: 20px; line-height: 1.15; color: var(--ink); margin: 0; }
-    .pev-sub { font-size: 13.5px; color: var(--ink-soft); margin-top: 5px; }
-    .pev-share { flex: none; }
-    .pev-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 16px; }
-    .pev-watch { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--dc, var(--accent)); color: var(--dc, var(--accent)); background: transparent; font-weight: 700; font-size: 13px; text-decoration: none; transition: background .15s; }
-    .pev-watch:hover { background: color-mix(in srgb, var(--dc, var(--accent)) 15%, transparent); }
-    .pev-cal { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--line-strong); color: var(--ink); background: transparent; font-weight: 700; font-size: 13px; text-decoration: none; transition: border-color .15s; }
-    .pev-cal:hover { border-color: var(--ink-faint); }
-    .pev-watch.sm, .pev-cal.sm { padding: 7px 11px; font-size: 12px; }
-
-    /* ---------- Jour à plusieurs matchs : carrousel ---------- */
-    .pev-car { position: relative; min-width: 0; }
-    .pev-car-track { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 2px; }
-    .pev-car-track::-webkit-scrollbar { display: none; }
-    .pmc { flex: 0 0 260px; scroll-snap-align: start; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface-2); transition: border-color .15s; }
-    .pmc:hover { border-color: color-mix(in srgb, var(--dc, var(--accent)) 45%, var(--line)); }
-    .pmc-thumb { position: relative; aspect-ratio: 16 / 9; display: block; background: #111; }
-    .pmc-thumb img, .pmc-thumb .pev-duo { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .pmc-body { display: flex; flex-direction: column; gap: 4px; padding: 11px 12px 12px; flex: 1; }
-    .pmc-t { font-family: var(--display); font-weight: 700; font-size: 14.5px; line-height: 1.2; color: var(--ink); }
-    .pmc-sub { font-size: 11px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: .03em; }
-    .pmc-time { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); }
-    .pmc-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 8px; }
-    .pev-car-prev, .pev-car-next { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line-strong); background: var(--surface); background: color-mix(in srgb, var(--surface) 90%, transparent); color: var(--ink); font-size: 22px; line-height: 1; display: grid; place-items: center; cursor: pointer; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
-    .pev-car-prev { left: -6px; }
-    .pev-car-next { right: -6px; }
-    .pev-car-prev:hover, .pev-car-next:hover { border-color: var(--ink-faint); background: var(--surface-2); }
-
-    /* ---------- Mobile ---------- */
-    /* Laptop / tablette : on GARDE les 3 colonnes (fidèle à la maquette), vignette un peu plus petite. */
-    /* Laptop / tablette : la vignette de la carte contenu rétrécit (on garde les 2 cartes). */
     @media (max-width: 900px) {
-      .pev-main { grid-template-columns: 200px minmax(0, 1fr); }
-      .pev-t { font-size: 18px; }
+      .pg-hero-in { grid-template-columns: 1fr; gap: 26px; padding-top: 34px; padding-bottom: 34px; }
+      .pg-legend { margin-left: 0; width: 100%; }
+      .pg-thumb { display: none; }
+      .pg-ev { grid-template-columns: 62px minmax(0, 1fr); gap: 12px; padding: 12px; }
+      .pg-date { width: 62px; } .pg-date b { font-size: 26px; }
+      .pg-side { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 10px; }
     }
-    /* Fenêtre étroite / téléphone : carte date en barre horizontale, vignette + infos empilées. */
-    @media (max-width: 620px) {
-      .pev, .pev-multi { grid-template-columns: 1fr; gap: 10px; }
-      .pev-date { flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; padding: 10px 16px; }
-      .pev-num { font-size: 22px; margin: 0; }
-      .pev-main { grid-template-columns: 1fr; }
-      .pev-car-prev, .pev-car-next { display: none; }
-      .pmc { flex-basis: 84%; }
-    }
-    /* Secours Safari < 15 : sans aspect-ratio, les vignettes s'ecrasent a zero. */
-    @supports not (aspect-ratio: 16 / 9) {
-      .pev-thumb, .pmc-thumb { min-height: 150px; }
+    @media (max-width: 560px) {
+      .pg-next { grid-template-columns: 1fr; }
+      .pg-next-media { min-height: 170px; }
+      .pg-next-body { border-left: 0; border-top: 3px solid var(--dc); }
     }
   </style>
 
   <script is:inline>
-    // Filtres combinés : SPORT (boutons) + MOIS (onglets). On affiche le mois actif
-    // (un onglet à la fois) et, dans ce mois, uniquement le sport choisi.
+    // Décomptes : J-x (au jour près) et heures/minutes pour un direct programmé.
     (function () {
-      var sportBar = document.getElementById('prog-filter');
-      var monthBar = document.getElementById('prog-months');
-      var monthBtns = monthBar ? [].slice.call(monthBar.querySelectorAll('.prog-mbtn')) : [];
-      var activeSport = 'all';
-      var activeMonth = monthBtns.length ? monthBtns[0].getAttribute('data-month') : 'all';
-      function apply() {
-        // Cartes (grille) + lignes temps réel : filtrées par sport.
-        [].slice.call(document.querySelectorAll('.pmc, .pev')).forEach(function (c) {
-          c.style.display = (activeSport === 'all' || c.getAttribute('data-sport') === activeSport) ? '' : 'none';
+      var p = function (n) { return (n < 10 ? '0' : '') + n; };
+      function tick() {
+        var today = new Date(); today.setHours(0, 0, 0, 0);
+        document.querySelectorAll('[data-day]').forEach(function (el) {
+          var j = Math.round((new Date(el.getAttribute('data-day') + 'T00:00:00') - today) / 864e5), b = el.querySelector('[data-j]');
+          if (j <= 0) { el.textContent = j === 0 ? "Aujourd'hui" : 'En cours'; el.classList.add('is-now'); return; }
+          if (b) b.textContent = j;
         });
-        // Jour sans carte visible → masqué.
-        [].slice.call(document.querySelectorAll('.pday')).forEach(function (d) {
-          var any = [].slice.call(d.querySelectorAll('.pmc')).some(function (c) { return c.style.display !== 'none'; });
-          d.style.display = any ? '' : 'none';
-        });
-        // Mois : visible seulement s'il est l'onglet actif ET contient des cartes visibles.
-        // (« En ce moment » — #prog-rt — est géré à part par le temps réel.)
-        [].slice.call(document.querySelectorAll('.prog-month')).forEach(function (mo) {
-          if (mo.id === 'prog-rt') return;
-          var monthOk = (activeMonth === 'all' || mo.getAttribute('data-month') === activeMonth);
-          var any = [].slice.call(mo.querySelectorAll('.pmc')).some(function (x) { return x.style.display !== 'none'; });
-          mo.style.display = (monthOk && any) ? '' : 'none';
+        document.querySelectorAll('.pg-cd[data-iso]').forEach(function (el) {
+          var t = Math.max(0, new Date(el.getAttribute('data-iso')).getTime() - Date.now());
+          var d = Math.floor(t / 864e5), h = Math.floor((t % 864e5) / 36e5), m = Math.floor((t % 36e5) / 6e4);
+          var q = function (s, v) { var x = el.querySelector(s); if (x) x.textContent = v; };
+          q('[data-d]', d); q('[data-h]', p(h)); q('[data-m]', p(m));
         });
       }
-      if (sportBar) sportBar.addEventListener('click', function (e) {
-        var b = e.target.closest('.prog-fbtn');
-        if (!b) return;
-        [].slice.call(sportBar.querySelectorAll('.prog-fbtn')).forEach(function (x) { x.classList.toggle('active', x === b); });
-        activeSport = b.getAttribute('data-sport');
-        apply();
-      });
-      if (monthBar) monthBar.addEventListener('click', function (e) {
-        var b = e.target.closest('.prog-mbtn');
-        if (!b) return;
-        monthBtns.forEach(function (x) { x.classList.toggle('is-on', x === b); });
-        activeMonth = b.getAttribute('data-month');
-        apply();
-      });
-      apply();
+      tick(); setInterval(tick, 30000);
     })();
 
-    // TEMPS RÉEL : injecte les directs (en cours + programmés) présents dans live.json
-    // mais absents de la grille statique (ex. live créé à la dernière minute), toutes les
-    // 60 s. Dédoublonné par id vidéo ; marque aussi « ● LIVE » les lignes déjà présentes.
+    // Filtre par sport (masque aussi les mois devenus vides).
     (function () {
-      var host = document.getElementById('prog-rt');
-      if (!host) return;
-      var list = document.getElementById('prog-rt-list');
-      var empty = document.getElementById('prog-empty');
-      var DISC = {}; try { DISC = JSON.parse((document.getElementById('prog-disc') || {}).textContent || '{}'); } catch (e) {}
-      function esc(s) { return (s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+      var bar = document.getElementById('pg-filter'); if (!bar) return;
+      bar.addEventListener('click', function (e) {
+        var b = e.target.closest('.pg-fbtn'); if (!b) return;
+        bar.querySelectorAll('.pg-fbtn').forEach(function (x) { x.classList.toggle('active', x === b); });
+        var s = b.getAttribute('data-sport');
+        document.querySelectorAll('.pg-ev').forEach(function (ev) { ev.style.display = (s === 'all' || ev.getAttribute('data-sport') === s) ? '' : 'none'; });
+        document.querySelectorAll('.pg-month[data-month]').forEach(function (mo) {
+          var any = [].slice.call(mo.querySelectorAll('.pg-ev')).some(function (x) { return x.style.display !== 'none'; });
+          mo.style.display = any ? '' : 'none';
+        });
+      });
+    })();
+
+    // TEMPS RÉEL (live.json, toutes les 60 s) : marque « ● En direct » les rendez-vous déjà listés
+    // et ajoute en tête les directs créés à la dernière minute. Textes insérés via textContent.
+    (function () {
+      var host = document.getElementById('pg-rt'), list = document.getElementById('pg-rt-list'); if (!host) return;
+      var DISC = {}; try { DISC = JSON.parse(document.getElementById('pg-disc').textContent); } catch (e) {}
+      function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x) e.textContent = x; return e; }
       function clean(t) { var p = (t || '').split('|').map(function (s) { return s.trim(); }).filter(Boolean); return p.length ? p[p.length - 1] : (t || ''); }
-      function fmtWhen(iso) { try { return new Date(iso).toLocaleString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } }
-      function existing() { var m = {}; [].slice.call(document.querySelectorAll('[data-vid]')).forEach(function (el) { var v = el.getAttribute('data-vid'); if (v) m[v] = el; }); return m; }
-      function row(ev, isLive) {
-        var d = DISC[ev.discipline] || { label: '', color: 'var(--accent)', tagBg: 'rgba(0,0,0,.35)' };
-        var href = 'https://www.youtube.com/watch?v=' + ev.id;
-        var when = isLive ? 'En direct maintenant' : fmtWhen(ev.scheduled);
-        return '<div class="pev" data-sport="' + ev.discipline + '" style="--dc:' + d.color + '">'
-          + '<div class="pev-date"><span class="pev-dow">' + (isLive ? 'Live' : 'Bientôt') + '</span><span class="pev-num">●</span></div>'
-          + '<div class="pev-main"><a class="pev-thumb" href="' + href + '" target="_blank" rel="noopener">'
-          + '<img src="https://i.ytimg.com/vi/' + ev.id + '/maxresdefault.jpg" alt="" loading="lazy" onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + ev.id + '/hqdefault.jpg\'" />'
-          + '<span class="pev-tag" style="background:' + d.tagBg + ';color:' + d.color + '">' + esc(d.label) + '</span>'
-          + (isLive ? '<span class="pev-livebadge">● LIVE</span>' : '')
-          + '</a><div class="pev-body"><div class="pev-head"><div class="pev-titles">'
-          + '<h3 class="pev-t">' + esc(clean(ev.title)) + '</h3><div class="pev-sub">' + esc(when) + '</div></div></div>'
-          + '<div class="pev-actions"><a class="pev-watch" href="' + href + '" target="_blank" rel="noopener">▸ ' + (isLive ? 'Regarder le direct' : 'Voir sur YouTube') + '</a></div>'
-          + '</div></div></div>';
-      }
       function sync() {
         fetch('/live.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
           if (!d) return;
-          var ex = existing();
-          var lives = d.lives || [];
-          var ups = d.upcoming || [];
-          lives.forEach(function (l) {
-            if (ex[l.id]) { var t = ex[l.id].querySelector('.pev-thumb'); if (t && !t.querySelector('.pev-livebadge')) { var b = document.createElement('span'); b.className = 'pev-livebadge'; b.textContent = '● LIVE'; t.appendChild(b); } }
+          var known = {}; document.querySelectorAll('.pg-ev[data-vid]').forEach(function (x) { var v = x.getAttribute('data-vid'); if (v) known[v] = x; });
+          list.innerHTML = ''; var added = 0;
+          (d.lives || []).forEach(function (l) {
+            if (known[l.id]) { var bd = known[l.id].querySelector('.pg-badge'); if (bd) { bd.textContent = '● En direct'; bd.classList.add('is-on'); } return; }
+            var c = DISC[l.discipline] || { label: '', color: 'var(--accent)' };
+            var a = el('article', 'pg-ev is-on'); a.style.setProperty('--dc', c.color); a.setAttribute('data-sport', l.discipline || '');
+            var dt = el('div', 'pg-date'); dt.appendChild(el('span', 'pg-dow', 'Live')); dt.appendChild(el('b', '', '●')); dt.appendChild(el('span', 'pg-mon', 'Direct'));
+            var th = el('a', 'pg-thumb'); th.href = 'https://www.youtube.com/watch?v=' + l.id; th.target = '_blank'; th.rel = 'noopener';
+            var im = document.createElement('img'); im.alt = ''; im.src = 'https://i.ytimg.com/vi/' + l.id + '/hqdefault.jpg'; th.appendChild(im);
+            var body = el('div', 'pg-body'); body.appendChild(el('span', 'pg-sport', (c.label || '') + (l.context ? ' · ' + l.context : '')));
+            var h = el('h3', 'pg-t', l.match || clean(l.title)); body.appendChild(h); if (l.place) body.appendChild(el('span', 'pg-w', '📍 ' + l.place));
+            var side = el('div', 'pg-side'); side.appendChild(el('span', 'pg-badge is-on', '● En direct'));
+            var go = el('a', 'pg-btn pg-btn--go', '▸ Regarder'); go.href = 'https://www.youtube.com/watch?v=' + l.id; go.target = '_blank'; go.rel = 'noopener';
+            var ac = el('span', 'pg-actions'); ac.appendChild(go); side.appendChild(ac);
+            a.appendChild(dt); a.appendChild(th); a.appendChild(body); a.appendChild(side); list.appendChild(a); added++;
           });
-          var html = '';
-          lives.forEach(function (l) { if (!ex[l.id]) html += row(l, true); });
-          ups.forEach(function (u) { if (!ex[u.id]) html += row(u, false); });
-          if (html) { list.innerHTML = html; host.hidden = false; if (empty) empty.style.display = 'none'; }
-          else { host.hidden = true; }
+          host.hidden = !added;
         }).catch(function () {});
       }
       sync(); setInterval(sync, 60000);
