@@ -2267,3 +2267,8 @@ a.nbh-row:hover { background: var(--surface-2); }
 .fed-link { flex: none; display: block; line-height: 0; border-radius: 6px; transition: transform .2s, filter .2s; }
 .fed-link:hover { transform: translateY(-2px) scale(1.03); filter: brightness(1.05); }
 .fed-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+/* Logos des fédérations plus discrets (56 px → 38 px de haut) */
+.ffb-logo { height: 38px; width: calc(38px * 400 / 250); border-radius: 4px; }
+.nbh-nm1 { height: 38px; width: calc(38px * 239 / 125); }
+.nbh-head-l { gap: 12px; }
+@media (max-width: 520px) { .ffb-logo { height: 32px; width: calc(32px * 400 / 250); } .nbh-nm1 { height: 32px; width: calc(32px * 239 / 125); } }
