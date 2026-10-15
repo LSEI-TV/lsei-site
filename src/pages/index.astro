@@ -345,6 +345,11 @@ const slides = programme
         </div>
         <a class="btn mhero-dual-btn" href="/direct">▸ Voir les deux directs</a>
       </div>
+      <!-- PLUSIEURS DIRECTS (2 et plus, même sport ou non) : une carte image + bouton par direct — rempli par le script. -->
+      <div class="wrap mhero-multi" style="display:none">
+        <div class="mhero-multi-head"><span class="hero-pill is-live">● <b data-n>2</b> directs en cours</span><a class="mhero-multi-all" href="/direct/">Tous les directs →</a></div>
+        <div class="mhero-multi-grid"></div>
+      </div>
     </section>
   )}
 
@@ -462,7 +467,42 @@ const slides = programme
         if (dualMedia) dualMedia.style.display = '';
         if (dual) dual.style.display = '';
       }
+      // Mode PLUSIEURS DIRECTS : une carte par direct (image, sport, compétition, match, lieu, bouton).
+      var multi = hero.querySelector('.mhero-multi');
+      function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt) e.textContent = txt; return e; }
+      function showMulti(list) {
+        if (!multi) return;
+        var grid = multi.querySelector('.mhero-multi-grid'), nb = multi.querySelector('[data-n]');
+        if (nb) nb.textContent = list.length;
+        grid.innerHTML = ''; grid.setAttribute('data-count', Math.min(list.length, 4));
+        list.slice(0, 4).forEach(function (l) {
+          var c = heroColors[l.discipline] || {};
+          var a = el('a', 'mm-card'); a.href = 'https://www.youtube.com/watch?v=' + l.id; a.target = '_blank'; a.rel = 'noopener';
+          a.style.setProperty('--dc', 'var(--c-' + (l.discipline || 'billard') + ')');
+          var shot = el('span', 'mm-shot'), img = document.createElement('img');
+          img.alt = ''; img.onerror = function () { if (!this.dataset.f) { this.dataset.f = 1; this.src = 'https://i.ytimg.com/vi/' + l.id + '/hqdefault.jpg'; } };
+          img.src = 'https://i.ytimg.com/vi/' + l.id + '/maxresdefault_live.jpg';
+          shot.appendChild(img); shot.appendChild(el('span', 'mm-live', '● En direct'));
+          var play = el('span', 'mm-play'); play.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M8 5v14l11-7z" fill="#fff"/></svg>'; shot.appendChild(play);
+          var meta = el('span', 'mm-meta');
+          meta.appendChild(el('span', 'mm-tag', c.label || l.discipline || 'Direct'));
+          if (l.context) meta.appendChild(el('span', 'mm-ctx', l.context));
+          meta.appendChild(el('span', 'mm-h', l.match || clean(l.title)));
+          if (l.place) meta.appendChild(el('span', 'mm-place', '📍 ' + l.place));
+          meta.appendChild(el('span', 'mm-btn', '▸ Regarder'));
+          a.appendChild(shot); a.appendChild(meta); grid.appendChild(a);
+        });
+        if (list[0] && list[0].discipline) setSport(list[0].discipline);
+        if (singleIn) singleIn.style.display = 'none';
+        if (dualMedia) dualMedia.style.display = 'none';
+        if (dual) dual.style.display = 'none';
+        if (singleMedia) singleMedia.style.display = '';
+        hero.classList.add('is-multi');
+        multi.style.display = '';
+      }
       function showSingle() {
+        if (multi) multi.style.display = 'none';
+        hero.classList.remove('is-multi');
         if (dualMedia) dualMedia.style.display = 'none';
         if (dual) dual.style.display = 'none';
         if (singleMedia) singleMedia.style.display = '';
@@ -473,11 +513,10 @@ const slides = programme
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (d) {
             var lives = (d && d.lives) ? d.lives : (d && d.live && d.id ? [{ id: d.id, title: d.title || 'Direct' }] : []);
-            // 2 directs de sports DIFFÉRENTS en même temps → hero « mélange ».
-            if (lives.length >= 2 && lives[0].discipline && lives[1].discipline && lives[0].discipline !== lives[1].discipline) { showDual(lives[0], lives[1]); return; }
+            // 2 directs ou plus (même sport ou non) → une carte image + bouton par direct.
+            if (lives.length >= 2) { if (more) more.style.display = 'none'; showMulti(lives); return; }
             showSingle();
-            // Plusieurs directs du même sport → pastille « voir tout ».
-            if (more) { if (lives.length > 1) { var nb = more.querySelector('[data-n]'); if (nb) nb.textContent = lives.length; more.style.display = ''; } else { more.style.display = 'none'; } }
+            if (more) more.style.display = 'none';
             if (!lives.length) return; // pas de direct : on garde la une construite (à venir / à revoir)
             var l = lives[0];
             if (l.discipline) setSport(l.discipline);

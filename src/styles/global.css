@@ -2209,3 +2209,48 @@ a.nbh-row:hover { background: var(--surface-2); }
 .disc-card:hover { transform: translateY(-5px) rotate(-.4deg); box-shadow: 0 22px 40px -16px color-mix(in srgb, var(--dc) 60%, rgba(12,14,19,.6)); }
 .home-2col .sec-head, .nbh-card .sec-head { flex-wrap: wrap; row-gap: 8px; }
 .home-2col .sec-head h2, .nbh-card .sec-head h2 { font-size: clamp(20px, 1.8vw, 24px); white-space: nowrap; }
+
+
+/* ============ MAQUETTE A — PLUSIEURS DIRECTS EN MÊME TEMPS ============ */
+.mhero-multi { position: relative; z-index: 2; padding-top: 34px; padding-bottom: 38px; }
+.mhero-multi-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.mhero-multi-all { color: rgba(255,255,255,.8); font-size: 13px; font-weight: 700; text-decoration: none; }
+.mhero-multi-all:hover { color: #fff; text-decoration: underline; }
+.mhero-multi-grid { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mhero-multi-grid[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mm-card { display: flex; flex-direction: column; border-radius: 14px; overflow: hidden; text-decoration: none; color: #fff;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); box-shadow: 0 18px 44px rgba(0,0,0,.45);
+  transition: transform .25s cubic-bezier(.2,.7,.2,1), border-color .2s, box-shadow .25s; }
+.mm-card:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--dc) 70%, transparent); box-shadow: 0 24px 54px rgba(0,0,0,.55), 0 0 40px color-mix(in srgb, var(--dc) 30%, transparent); }
+.mm-shot { position: relative; display: block; aspect-ratio: 16 / 9; background: #000; overflow: hidden; }
+.mm-shot img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s; }
+.mm-card:hover .mm-shot img { transform: scale(1.04); }
+.mm-live { position: absolute; left: 12px; top: 12px; background: #e5231b; color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 999px; animation: rdvPulse 1.6s infinite; }
+.mm-play { position: absolute; inset: 0; margin: auto; width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; padding-left: 3px;
+  background: rgba(10,14,26,.55); border: 2px solid rgba(255,255,255,.9); transition: background .2s, transform .2s; }
+.mm-card:hover .mm-play { background: var(--dc); border-color: transparent; transform: scale(1.06); }
+.mm-meta { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 16px; border-top: 3px solid var(--dc); }
+.mm-tag { align-self: flex-start; background: var(--dc); color: #fff; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 4px; }
+.mm-ctx { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: rgba(255,255,255,.7); margin-top: 4px; }
+.mm-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(20px, 2.1vw, 28px); line-height: 1.02; }
+.mm-place { font-size: 12.5px; color: rgba(255,255,255,.72); }
+.mm-btn { align-self: flex-start; margin-top: 8px; background: #fff; color: #0A0E1A; font-weight: 800; font-size: 14px; padding: 9px 16px; border-radius: 999px; transition: background .2s, color .2s; }
+.mm-card:hover .mm-btn { background: var(--dc); color: #fff; }
+.mhero-multi-grid[data-count="3"] .mm-h { font-size: clamp(17px, 1.6vw, 22px); }
+@media (max-width: 900px) {
+  .mhero-multi { padding-top: 22px; padding-bottom: 26px; }
+  .mhero-multi-grid, .mhero-multi-grid[data-count="3"] { grid-template-columns: 1fr; gap: 10px; }
+  .mhero-multi-all { display: none; }
+  /* téléphone : cartes compactes (image à gauche, infos à droite) pour ne pas repousser toute la page */
+  .mm-card { flex-direction: row; align-items: stretch; }
+  .mm-shot { flex: none; width: 42%; aspect-ratio: auto; min-height: 104px; }
+  .mm-live { left: 6px; top: 6px; font-size: 9px; padding: 3px 7px; }
+  .mm-play { width: 38px; height: 38px; } .mm-play svg { width: 18px; height: 18px; }
+  .mm-meta { border-top: 0; border-left: 3px solid var(--dc); padding: 9px 11px; gap: 2px; min-width: 0; }
+  .mm-ctx { display: none; }
+  .mm-h, .mhero-multi-grid[data-count="3"] .mm-h { font-size: 16px; }
+  .mm-tag { font-size: 9.5px; padding: 2px 7px; }
+  .mm-place { font-size: 11.5px; }
+  .mm-btn { font-size: 12.5px; padding: 6px 12px; margin-top: 5px; }
+}
