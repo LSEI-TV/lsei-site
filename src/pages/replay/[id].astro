@@ -6,12 +6,7 @@ import ShareLinks from '../../components/ShareLinks.astro';
 import { getDiscipline } from '../../data/site';
 import { getReplays } from '../../lib/youtube';
 import channelBillard from '../../data/billard/channel-billard.json';
-import { getSeasons } from '../../data/billard/seasons';
-import { getFemmesSeasons } from '../../data/billard/seasonsFemmes';
-import { getParaSeasons } from '../../data/billard/seasonsPara';
-import { getParaMvSeasons } from '../../data/billard/seasonsParaMalvoyants';
-import { playerSlugs } from '../../lib/billardStats';
-import { titleMatchesPlayer, nameTokens } from '../../lib/videoMatch';
+import { replayInfo, compKeyOf, seasonOf, tournamentHint } from '../../lib/replayMatch';
 
 export async function getStaticPaths() {
   const videos = await getReplays();
@@ -32,36 +27,20 @@ const { video } = Astro.props;
 const d = getDiscipline(video.discipline);
 const shareUrl = new URL(`/replay/${video.id}`, Astro.site).href;
 
-// Fiches des joueurs cités dans le titre (billard) → liens « Fiche joueur » sous le titre.
-// Même reconnaissance par NOM DE FAMILLE que « Ses matchs en vidéo » des fiches (sens inverse).
-// Catégorie déduite du titre ; à nom de famille égal, le joueur de la saison la plus récente l'emporte.
-function titlePlayers(title: string): { name: string; href: string }[] {
-  if (video.discipline !== 'billard' || !title || /snooker|chinese|\bpool\b|8\s*pool|am[eé]ricain/i.test(title)) return [];
-  const [list, base] = /malvoyant/i.test(title) ? [getParaMvSeasons(), '/para-billard-malvoyants/joueur/']
-    : /para.?billard|fauteuil/i.test(title) ? [getParaSeasons(), '/para-billard/joueur/']
-    : /femme/i.test(title) ? [getFemmesSeasons(), '/femmes/joueur/']
-    : [getSeasons(), '/billard/joueur/'];
-  const { slugOf } = playerSlugs(list);
-  const toks = nameTokens(title);
-  const bySurname = new Map<string, { id: number; name: string; pos: number }>();
-  for (const s of list) {                      // saisons de la plus récente à la plus ancienne
-    if (!s.results) continue;
-    for (const p of s.results.players as { id: number; name: string }[]) {
-      if (!titleMatchesPlayer(title, p.name)) continue;
-      const sur = nameTokens(p.name).filter((w) => w.length >= 3).pop() || '';
-      if (!sur || bySurname.has(sur)) continue;
-      const pos = toks.findIndex((w) => w === sur || (Math.min(w.length, sur.length) >= 5 && (w.includes(sur) || sur.includes(w))));
-      bySurname.set(sur, { id: p.id, name: p.name, pos: pos < 0 ? 99 : pos });
-    }
-  }
-  // Écriture homogène « Prénom NOM » (les données mélangent « Damien Joly » et « Kevin LEFRANCOIS »).
-  const pretty = (n: string) => { const w = n.trim().split(/\s+/); return [w[0].charAt(0).toUpperCase() + w[0].slice(1).toLowerCase(), ...w.slice(1).map((x) => x.toUpperCase())].join(' '); };
-  return [...bySurname.values()].sort((a, b) => a.pos - b.pos).slice(0, 4).map((p) => ({ name: pretty(p.name), href: base + slugOf(p.id) + '/' }));
-}
-const fiches = titlePlayers(video.title);
+// Billard : la vidéo reliée à ses données officielles (match, tournoi, score, bilans, confrontations)
+// → texte unique + liens internes pour l'indexation Google (cf. lib/replayMatch.ts). Rien d'inventé.
+const info = video.discipline === 'billard' ? replayInfo(video.title, video.date) : null;
+const fiches = info?.players ?? [];
+const pageDesc = info?.summary || video.excerpt || `${video.title} — ${d.name} en replay intégral sur LSEI, Le Sport en Image.`;
 
 const all = await getReplays({ discipline: video.discipline });
-const related = all.filter((v) => v.id !== video.id).slice(0, 3);
+// « Autres vidéos de ce tournoi » : même catégorie, même saison, même tournoi (TNx / Championnat de France).
+const hint = info ? tournamentHint(video.title) : {};
+const sameEvent = info && info.season && (hint.level || hint.kind)
+  ? all.filter((v) => v.id !== video.id && compKeyOf(v.title) === info.compKey && seasonOf(v.title, v.date) === info.season!.slug
+      && JSON.stringify(tournamentHint(v.title)) === JSON.stringify(hint)).slice(0, 6)
+  : [];
+const related = all.filter((v) => v.id !== video.id && !sameEvent.some((x) => x.id === v.id)).slice(0, 3);
 
 // Données structurées vidéo (SEO) : permet à Google d'afficher la vidéo
 // avec sa miniature dans les résultats de recherche et l'onglet « Vidéos ».
@@ -69,7 +48,8 @@ const videoLd = {
   '@context': 'https://schema.org',
   '@type': 'VideoObject',
   name: video.title,
-  description: video.excerpt || `${video.title} — ${d.name} en replay sur LSEI, Le Sport en Image.`,
+  description: pageDesc,
+  ...(fiches.length ? { about: fiches.map((p) => ({ '@type': 'Person', name: p.name, url: new URL(p.href, Astro.site).href })) } : {}),
   // Plusieurs tailles de miniature → meilleure éligibilité aux rich results vidéo.
   thumbnailUrl: [
     `https://i.ytimg.com/vi/${video.id}/maxresdefault.jpg`,
@@ -87,7 +67,7 @@ const videoLd = {
   },
 };
 ---
-<Base title={video.title} description={video.excerpt} active="replays" ogType="video.other" image={video.thumb}>
+<Base title={video.title} description={pageDesc} active="replays" ogType="video.other" image={video.thumb}>
   <script type="application/ld+json" set:html={JSON.stringify(videoLd)} />
   <section class="section">
     <div class="wrap watch">
@@ -106,7 +86,56 @@ const videoLd = {
             {fiches.map((f) => <a class="rp-fiche" href={f.href} style={`--c:${d.colorVar}`}>{f.name}<span aria-hidden="true">→</span></a>)}
           </nav>
         )}
-        <p class="dek">{video.excerpt}</p>
+        {info?.summary ? <p class="dek rp-sum">{info.summary}</p> : <p class="dek">{video.excerpt}</p>}
+
+        {info?.match && (
+          <section class="rp-card" aria-labelledby="rp-match-h" style={`--c:${d.colorVar}`}>
+            <h2 id="rp-match-h" class="rp-h">Le match</h2>
+            <div class="rp-score">
+              <a class="rp-p win" href={info.match.winner.href}>{info.match.winner.name}</a>
+              <span class="rp-sc"><b>{info.match.sW}</b><i>–</i>{info.match.sL}</span>
+              <a class="rp-p" href={info.match.loser.href}>{info.match.loser.name}</a>
+            </div>
+            <dl class="rp-facts">
+              <div><dt>Compétition</dt><dd>{info.compLabel}{info.season && <> · <a href={info.season.href}>saison {info.season.label}</a></>}</dd></div>
+              <div><dt>Tournoi</dt><dd><a href={info.match.tHref}>{info.match.tournament}</a>{info.match.phase && <> · {info.match.phase}</>}</dd></div>
+              <div><dt>Date et lieu</dt><dd>{info.match.dateFr}{info.match.city && <> · {info.match.city}</>}</dd></div>
+            </dl>
+            {info.players.some((p) => p.rank && !p.invite) && info.season && (
+              <table class="rp-table">
+                <caption>Classement {info.compLabel} {info.season.label}</caption>
+                <thead><tr><th scope="col">Joueur</th><th scope="col">Rang</th><th scope="col">Victoires</th><th scope="col">Défaites</th><th scope="col">Points</th></tr></thead>
+                <tbody>{info.players.map((p) => (
+                  <tr><th scope="row"><a href={p.href}>{p.name}</a></th><td>{p.invite ? 'invité' : p.rank ? `n°${p.rank}` : '—'}</td><td>{p.wins ?? '—'}</td><td>{p.losses ?? '—'}</td><td>{p.points ?? '—'}</td></tr>
+                ))}</tbody>
+              </table>
+            )}
+          </section>
+        )}
+
+        {info?.event && (
+          <section class="rp-card" aria-labelledby="rp-event-h" style={`--c:${d.colorVar}`}>
+            <h2 id="rp-event-h" class="rp-h">Le tournoi</h2>
+            <dl class="rp-facts">
+              <div><dt>Compétition</dt><dd>{info.compLabel}{info.season && <> · <a href={info.season.href}>saison {info.season.label}</a></>}</dd></div>
+              <div><dt>Tournoi</dt><dd><a href={info.event.tHref}>{info.event.tournament}</a>{info.event.phase && <> · {info.event.phase}</>}</dd></div>
+              <div><dt>Date et lieu</dt><dd>{info.event.dateFr}{info.event.city && <> · {info.event.city}</>}</dd></div>
+              {info.event.winner && <div><dt>Vainqueur</dt><dd><a href={info.event.winner.href}>{info.event.winner.name}</a> · {info.event.score} en finale face à <a href={info.event.finalist!.href}>{info.event.finalist!.name}</a></dd></div>}
+            </dl>
+          </section>
+        )}
+
+        {info?.h2h && info.h2h.list.length > 0 && (
+          <section class="rp-card" aria-labelledby="rp-h2h-h" style={`--c:${d.colorVar}`}>
+            <h2 id="rp-h2h-h" class="rp-h">Leurs confrontations</h2>
+            <p class="rp-h2h-sum"><a href={info.h2h.a.href}>{info.h2h.a.name}</a> <b>{info.h2h.aw}</b> – <b>{info.h2h.bw}</b> <a href={info.h2h.b.href}>{info.h2h.b.name}</a></p>
+            <ul class="rp-h2h">
+              {info.h2h.list.map((m) => (
+                <li class={m.current ? 'cur' : ''}><span class="rp-h2h-d">{m.dateFr}</span><span class="rp-h2h-t">{m.tournament}{m.phase && ` · ${m.phase}`}</span><span class="rp-h2h-w">{m.winner} <b>{m.score}</b></span></li>
+              ))}
+            </ul>
+          </section>
+        )}
         <p style="margin-top:18px">
           <a class="btn ghost" href={`https://www.youtube.com/watch?v=${video.id}`} rel="noopener">Voir sur YouTube ↗</a>
         </p>
@@ -114,6 +143,14 @@ const videoLd = {
       </div>
 
       <aside class="watch-side">
+        {sameEvent.length > 0 && (info?.match || info?.event) && (
+          <Fragment>
+            <h2>Autres vidéos de ce tournoi</h2>
+            <ul class="rp-event">
+              {sameEvent.map((v) => <li><a href={`/replay/${v.id}`}>{v.title.replace(/^\S*\s*\d{2}-\d{2}\s*\|\s*/, '')}</a></li>)}
+            </ul>
+          </Fragment>
+        )}
         <h2>Dans la même discipline</h2>
         <div class="related">
           {related.map((v) => (
@@ -139,4 +176,36 @@ const videoLd = {
   .rp-fiche span { color: var(--c); transition: transform .15s; }
   .rp-fiche:hover, .rp-fiche:focus-visible { border-color: var(--c); color: var(--c); }
   .rp-fiche:hover span { transform: translateX(3px); }
+  /* Fiche du match, classement et confrontations (contenu issu des résultats officiels) */
+  .rp-sum { margin-top: 14px; }
+  .rp-card { text-align: start; hyphens: manual; margin-top: 22px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+  .rp-h { font-family: var(--display); font-size: 18px; font-weight: 800; margin: 0 0 12px; text-align: start; }
+  .rp-score { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 10px 0 14px; border-bottom: 1px solid var(--line); }
+  .rp-p { font-weight: 800; font-size: 16px; color: var(--ink-soft); text-decoration: none; }
+  .rp-p:first-child { text-align: end; } .rp-p.win { color: var(--ink); }
+  .rp-p:hover { color: var(--c); }
+  .rp-sc { font-family: var(--display); font-size: 30px; font-weight: 800; color: var(--ink-soft); white-space: nowrap; }
+  .rp-sc b { color: var(--c); } .rp-sc i { font-style: normal; margin: 0 6px; color: var(--ink-faint); }
+  .rp-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 18px; margin: 14px 0 0; }
+  .rp-facts dt { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); }
+  .rp-facts dd { margin: 2px 0 0; font-weight: 600; font-size: 14px; }
+  .rp-facts a, .rp-table a, .rp-h2h-sum a, .rp-event a { color: var(--c, inherit); text-decoration: none; }
+  .rp-facts a:hover, .rp-table a:hover, .rp-h2h-sum a:hover, .rp-event a:hover { text-decoration: underline; }
+  .rp-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
+  .rp-table caption { text-align: start; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); padding-bottom: 6px; }
+  .rp-table th, .rp-table td { padding: 7px 8px; border-top: 1px solid var(--line); text-align: start; }
+  .rp-table thead th { font-size: 12px; color: var(--ink-faint); font-weight: 700; border-top: 0; }
+  .rp-table td { font-variant-numeric: tabular-nums; }
+  .rp-h2h-sum { font-size: 16px; font-weight: 700; margin: 0 0 10px; text-align: start; }
+  .rp-h2h-sum b { font-family: var(--display); font-size: 22px; }
+  .rp-h2h { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+  .rp-h2h li { display: grid; grid-template-columns: 130px 1fr auto; gap: 10px; padding: 7px 0; border-top: 1px solid var(--line); }
+  .rp-h2h li.cur { font-weight: 700; } .rp-h2h li.cur .rp-h2h-t::after { content: ' · cette vidéo'; color: var(--c); }
+  .rp-h2h-d { color: var(--ink-faint); } .rp-h2h-w b { font-variant-numeric: tabular-nums; margin-left: 4px; }
+  .rp-event { list-style: none; margin: 0 0 22px; padding: 0; font-size: 14px; font-weight: 600; }
+  .rp-event li { padding: 8px 0; border-top: 1px solid var(--line); }
+  @media (max-width: 560px) {
+    .rp-h2h li { grid-template-columns: 1fr auto; } .rp-h2h-d { grid-column: 1 / -1; font-size: 12px; }
+    .rp-sc { font-size: 24px; } .rp-p { font-size: 14px; }
+  }
 </style>
