@@ -39,7 +39,11 @@ const nextHome = nextMatch ? nextMatch.homeSlug === slug : false;
 const fixtures = myMatches
   .slice()
   .sort((a, b) => (a.date < b.date ? -1 : 1))
-  .map((m) => ({ d: m.date, o: (nmClubBy(m.homeSlug === slug ? m.awaySlug : m.homeSlug)?.name ?? ''), h: m.homeSlug === slug }));
+  .map((m) => {
+    const opp = nmClubBy(m.homeSlug === slug ? m.awaySlug : m.homeSlug);
+    return { d: m.date, o: opp?.name ?? '', h: m.homeSlug === slug, r: m.round ?? null,
+      l: opp && assetExists(opp.logo) ? assetUrl(opp.logo!) : null, s: opp?.short ?? '' };
+  });
 // Calendrier complet du club (dates + scores) pour la section « Calendrier ».
 const calMatches = myMatches.slice().sort((a, b) => (a.date < b.date ? -1 : 1));
 const fmtShort = (iso: string) => new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Paris' }).format(new Date(iso));
@@ -108,15 +112,25 @@ const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' 
           {calMatches.length > 0 && <a class="hero-cta hero-cta--ghost" href="#calendrier">Le calendrier</a>}
         </div>
       </div>
-      {nextMatch && nextOpp && (
-        <div class="hero-next" id="hero-next">
+      {fixtures.length > 0 && (
+        <div class="hero-next" id="hero-next" hidden={!(nextMatch && nextOpp)} data-me-name={club.name} data-me-short={club.short} data-me-logo={logoSrc ?? ''}>
           <span class="hn-top"><span class="hn-lab">Prochain match</span><b class="hn-jx">{nextJx}</b></span>
           <span class="hn-teams">
-            <span class="hn-t"><span class="hn-logo">{(nextHome ? logoSrc : nextOppLogo) ? <img src={(nextHome ? logoSrc : nextOppLogo)!} alt="" /> : <b>{nextHome ? club.short : nextOpp.short}</b>}</span><span class="hn-n">{nextHome ? club.name : nextOpp.name}</span></span>
-            <span class="hn-vs">VS</span>
-            <span class="hn-t"><span class="hn-logo">{(nextHome ? nextOppLogo : logoSrc) ? <img src={(nextHome ? nextOppLogo : logoSrc)!} alt="" /> : <b>{nextHome ? nextOpp.short : club.short}</b>}</span><span class="hn-n">{nextHome ? nextOpp.name : club.name}</span></span>
+            {[0, 1].map((i) => {
+              const isMe = nextOpp ? (i === 0) === nextHome : i === 0;
+              const lg = isMe ? logoSrc : nextOppLogo;
+              return (
+                <Fragment>
+                  {i === 1 && <span class="hn-vs">VS</span>}
+                  <span class="hn-t" data-slot={i}>
+                    <span class="hn-logo">{lg ? <img src={lg} alt="" /> : <b>{isMe ? club.short : nextOpp?.short}</b>}</span>
+                    <span class="hn-n">{isMe ? club.name : nextOpp?.name}</span>
+                  </span>
+                </Fragment>
+              );
+            })}
           </span>
-          <span class="hn-when">{cap(fmtMatch(nextMatch.date))}{nextMatch.round ? ` · J${nextMatch.round}` : ''} · {nextHome ? 'à domicile' : "à l'extérieur"}</span>
+          <span class="hn-when">{nextMatch ? `${cap(fmtMatch(nextMatch.date))}${nextMatch.round ? ` · J${nextMatch.round}` : ''} · ${nextHome ? 'à domicile' : "à l'extérieur"}` : ''}</span>
         </div>
       )}
       <div hidden>
@@ -289,7 +303,7 @@ const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' 
       // « Prochain match » recalculé avec la VRAIE date du jour (local) → avance
       // tout seul dès qu'un match est passé, sans reconstruire le site.
       try {
-        var box = document.getElementById('hero-next-legacy');
+        var box = document.getElementById('hero-next');
         var raw = document.getElementById('cl-fixtures');
         if (box && raw) {
           var fx = JSON.parse(raw.textContent || '[]');
@@ -300,10 +314,25 @@ const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' 
           if (!next) {
             box.hidden = true; // saison terminée
           } else {
+            var me = { n: box.getAttribute('data-me-name'), s: box.getAttribute('data-me-short'), l: box.getAttribute('data-me-logo') };
+            var opp = { n: next.o, s: next.s, l: next.l };
+            var sides = next.h ? [me, opp] : [opp, me];
+            sides.forEach(function (t, k) {
+              var slot = box.querySelector('[data-slot="' + k + '"]');
+              if (!slot) return;
+              var lg = slot.querySelector('.hn-logo');
+              lg.textContent = '';
+              if (t.l) { var im = document.createElement('img'); im.src = t.l; im.alt = ''; lg.appendChild(im); }
+              else { var bb = document.createElement('b'); bb.textContent = t.s || ''; lg.appendChild(bb); }
+              slot.querySelector('.hn-n').textContent = t.n || '';
+            });
             var dt = new Date(next.d + 'T00:00:00');
             var when = dt.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-            box.querySelector('.hn-main').textContent = (next.h ? 'vs ' : '@ ') + next.o;
-            box.querySelector('.hn-when').textContent = when.charAt(0).toUpperCase() + when.slice(1);
+            box.querySelector('.hn-when').textContent = when.charAt(0).toUpperCase() + when.slice(1)
+              + (next.r ? ' · J' + next.r : '') + ' · ' + (next.h ? 'à domicile' : "à l'extérieur");
+            var t0 = new Date(today + 'T00:00:00');
+            var n = Math.round((dt - t0) / 86400000);
+            box.querySelector('.hn-jx').textContent = n > 1 ? 'J-' + n : n === 1 ? 'Demain' : "Aujourd'hui";
             box.hidden = false;
           }
         }
