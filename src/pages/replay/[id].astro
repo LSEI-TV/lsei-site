@@ -56,7 +56,7 @@ function titlePlayers(title: string): { name: string; href: string }[] {
   }
   // Écriture homogène « Prénom NOM » (les données mélangent « Damien Joly » et « Kevin LEFRANCOIS »).
   const pretty = (n: string) => { const w = n.trim().split(/\s+/); return [w[0].charAt(0).toUpperCase() + w[0].slice(1).toLowerCase(), ...w.slice(1).map((x) => x.toUpperCase())].join(' '); };
-  return [...bySurname.values()].sort((a, b) => a.pos - b.pos).slice(0, 4).map((p) => ({ name: pretty(p.name), href: base + slugOf(p.id) }));
+  return [...bySurname.values()].sort((a, b) => a.pos - b.pos).slice(0, 4).map((p) => ({ name: pretty(p.name), href: base + slugOf(p.id) + '/' }));
 }
 const fiches = titlePlayers(video.title);
 

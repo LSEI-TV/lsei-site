@@ -4,11 +4,13 @@
 import Base from '../../layouts/Base.astro';
 import HubSwitch from '../../components/HubSwitch.astro';
 import { getReplays } from '../../lib/youtube';
-import { showcaseSeason, getPalmares, cal2627 } from '../../data/billard/seasons';
-import { photoOf } from '../../lib/billardStats';
-import { femmesShowcaseSeason, getFemmesPalmares } from '../../data/billard/seasonsFemmes';
-import { paraShowcaseSeason, getParaPalmares } from '../../data/billard/seasonsPara';
-import { paraMvShowcaseSeason, getParaMvPalmares } from '../../data/billard/seasonsParaMalvoyants';
+import { showcaseSeason, getPalmares, cal2627, LANDING_SEASON, getSeasons } from '../../data/billard/seasons';
+import arbitresData from '../../data/billard/arbitres.json';
+import { assetUrl } from '../../lib/publicAssets';
+import { photoOf, playerSlugs } from '../../lib/billardStats';
+import { femmesShowcaseSeason, getFemmesPalmares, getFemmesSeasons } from '../../data/billard/seasonsFemmes';
+import { paraShowcaseSeason, getParaPalmares, getParaSeasons } from '../../data/billard/seasonsPara';
+import { paraMvShowcaseSeason, getParaMvPalmares, getParaMvSeasons } from '../../data/billard/seasonsParaMalvoyants';
 
 const vidCount = (await getReplays({ discipline: 'billard' })).length;
 // Chaque carte montre la saison « vitrine » de sa compétition = la plus récente qui a
@@ -27,7 +29,7 @@ const pamvPalm = getParaMvPalmares().find((p) => p.slug === pamv.slug);
 const comps = [
   {
     href: `/billard/saison/${m.slug}`,
-    ficheBase: '/billard/joueur/',
+    ficheBase: '/billard/joueur/', slugs: playerSlugs(getSeasons()),
     accent: '#7C4DD6', accentInk: '#ffffff', // violet (Masters)
     eyebrow: 'Compétition',
     title: 'Masters',
@@ -39,7 +41,7 @@ const comps = [
   },
   {
     href: `/femmes`,
-    ficheBase: '/femmes/joueur/',
+    ficheBase: '/femmes/joueur/', slugs: playerSlugs(getFemmesSeasons()),
     accent: '#F2B90A', accentInk: '#2a2205', // jaune (Femmes) — distingue la compétition
     eyebrow: 'Compétition',
     title: 'Femmes',
@@ -51,7 +53,7 @@ const comps = [
   },
   {
     href: `/para-billard`,
-    ficheBase: '/para-billard/joueur/',
+    ficheBase: '/para-billard/joueur/', slugs: playerSlugs(getParaSeasons()),
     accent: '#14A38B', accentInk: '#ffffff', // turquoise (Para-billard fauteuil)
     eyebrow: 'Para-billard',
     title: 'Fauteuil',
@@ -63,7 +65,7 @@ const comps = [
   },
   {
     href: `/para-billard-malvoyants`,
-    ficheBase: '/para-billard-malvoyants/joueur/',
+    ficheBase: '/para-billard-malvoyants/joueur/', slugs: playerSlugs(getParaMvSeasons()),
     accent: '#E0563B', accentInk: '#ffffff', // corail (Para-billard malvoyants)
     eyebrow: 'Para-billard',
     title: 'Malvoyants',
@@ -89,6 +91,20 @@ const comps = [
   const inProgress = !(c.R.tournaments as any[]).some((t) => t.kind === 'france');
   return { ...c, players: players.length, tourns: c.R.tournaments.length, matches: c.R.matches.length, top3, feat, inProgress };
 });
+
+// ---- Arbitres : photos rangées par saison dans public/billard/blackball/ARBITRES/<25-26>/ ----
+// (allégées + listées par scripts/build-player-assets.mjs → src/data/billard/arbitres.json)
+// Nom affiché « Prénom NOM » ; les noms de fichiers n'ont pas d'accents → prénoms courants rétablis.
+const ACCENTS: Record<string, string> = { aurelie: 'Aurélie', nadege: 'Nadège', valerie: 'Valérie', jerome: 'Jérôme', helene: 'Hélène', stephane: 'Stéphane', frederic: 'Frédéric', sebastien: 'Sébastien', gerard: 'Gérard', remi: 'Rémi', cedric: 'Cédric', angelique: 'Angélique', melanie: 'Mélanie', regis: 'Régis', jeremy: 'Jérémy', emilie: 'Émilie' };
+const refName = (raw: string) => {
+  const w = raw.trim().split(/\s+/), first = w[0].toLowerCase();
+  return [ACCENTS[first] || first.charAt(0).toUpperCase() + first.slice(1), ...w.slice(1).map((x) => x.toUpperCase())].join(' ');
+};
+const shortSeason = (s: string) => s.replace(/^20(\d\d)-20(\d\d)$/, '$1-$2');
+const arbitres = (arbitresData as { slug: string; file: string; seasons: string[]; photo: string }[])
+  .map((a) => ({ ...a, name: refName(a.file), active: a.seasons.includes(LANDING_SEASON), photo: assetUrl(a.photo) }))
+  .sort((a, b) => Number(b.active) - Number(a.active) || a.name.localeCompare(b.name, 'fr'));
+const nbActive = arbitres.filter((a) => a.active).length;
 ---
 <Base title="Billard — Le hub Blackball" description="Le hub Blackball de LSEI : choisissez la compétition Masters (hommes), Femmes, Para-billard fauteuil ou Para-billard malvoyants." preloadImage="/billard/blackball-hero.webp" active="disciplines">
   <HubSwitch />
@@ -121,7 +137,7 @@ const comps = [
             <p class="bchoose-desc">{c.desc}</p>
 
             {c.feat && (
-              <a href={`${c.ficheBase}${c.feat.id}`} class="champ-feature">
+              <a href={`${c.ficheBase}${c.slugs.slugOf(c.feat.id)}/`} class="champ-feature">
                 <span class="champ-trophy">{c.feat.icon}</span>
                 <span class="champ-body">
                   <span class="champ-lab">{c.feat.label} en titre</span>
@@ -134,7 +150,7 @@ const comps = [
             <div class="bchoose-sublab">{c.inProgress ? `Classement provisoire · ${c.season}` : `Podium de la saison ${c.season}`}</div>
             <div class="bchoose-podium">
               {c.top3.map((p) => (
-                <a href={`${c.ficheBase}${p.id}`} class="bchoose-pod">
+                <a href={`${c.ficheBase}${c.slugs.slugOf(p.id)}/`} class="bchoose-pod">
                   <span class={`bchoose-pod-r r${p.rank}`}>{p.rank}</span>
                   <span class="bchoose-pod-ph"><span class="bavatar">{p.name.slice(0, 1)}</span>{p.photo && <img src={p.photo} alt="" loading="lazy" onerror="this.remove()" />}</span>
                   <span class="bchoose-pod-n"><span class="pod-name">{p.name}</span>{p.rank === 1 && <em class="pod-tag">{c.inProgress ? 'En tête' : c.champSeasonLabel}</em>}</span>
@@ -162,6 +178,28 @@ const comps = [
           </div>
         </div>
       )}
+
+      {arbitres.length > 0 && (
+        <section class="refs" aria-labelledby="refs-h">
+          <div class="refs-head">
+            <h2 id="refs-h" class="refs-title">Les arbitres</h2>
+            <p class="refs-sub">Ils officient sur les tables du circuit national{nbActive ? <> · <b>{nbActive} en activité en {shortSeason(LANDING_SEASON)}</b></> : null}</p>
+          </div>
+          <div class="refs-grid">
+            {arbitres.map((a) => (
+              <figure class={`ref-card ${a.active ? 'on' : ''}`}>
+                <div class="ref-ph"><img src={a.photo} alt={`${a.name}, arbitre`} loading="lazy" width="480" height="480" /></div>
+                <figcaption>
+                  <span class="ref-name">{a.name}</span>
+                  <span class="ref-seasons">
+                    {a.seasons.map((s) => <span class={`ref-s ${s === LANDING_SEASON ? 'cur' : ''}`}>{shortSeason(s)}</span>)}
+                  </span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   </section>
 </Base>
@@ -172,4 +210,24 @@ const comps = [
   .bchoose-pod-ph { position: relative; flex: none; width: 30px; height: 30px; border-radius: 50%; overflow: hidden; background: var(--surface-2); border: 1px solid var(--line-strong); display: grid; place-items: center; }
   .bchoose-pod-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
   .bchoose-pod-ph .bavatar { font-family: var(--display); font-weight: 800; font-size: 13px; color: var(--ink-faint); }
+
+  /* ---- Les arbitres ---- */
+  .refs { margin-top: 40px; }
+  .refs-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin-bottom: 16px; }
+  .refs-title { font-family: var(--display); font-size: clamp(22px, 3vw, 30px); font-weight: 800; margin: 0; text-align: start; }
+  .refs-sub { margin: 0; color: var(--ink-soft); font-size: 14px; text-align: start; }
+  .refs-sub b { color: var(--c-billard); }
+  .refs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
+  .ref-card { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; transition: transform .2s, box-shadow .2s; }
+  .ref-card:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(10, 30, 60, .14); }
+  /* photo détourée sur fond « tapis » bleu, comme le haut des fiches joueurs */
+  .ref-ph { aspect-ratio: 1 / 1; background: radial-gradient(ellipse at 50% 30%, #2b5f99 0%, #0d2c49 70%); display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
+  .ref-ph img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+  .ref-card:not(.on) .ref-ph img { filter: grayscale(.35); opacity: .9; }
+  .ref-card figcaption { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 6px; }
+  .ref-name { font-weight: 800; font-size: 15px; line-height: 1.2; }
+  .ref-seasons { display: flex; flex-wrap: wrap; gap: 5px; }
+  .ref-s { font-size: 11px; font-weight: 700; letter-spacing: .03em; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line); }
+  .ref-s.cur { background: var(--c-billard); border-color: var(--c-billard); color: #fff; }
+  @media (max-width: 440px) { .refs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .ref-name { font-size: 14px; } }
 </style>

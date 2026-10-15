@@ -29,7 +29,7 @@ const json = JSON.stringify(players).replace(/</g, '\\u003c');
       var hits = data.filter(function (p) { return norm(p.name).indexOf(q) !== -1; }).slice(0, 8);
       if (!hits.length) { results.innerHTML = '<div class="psearch-empty">Aucun joueur trouvé</div>'; results.hidden = false; return; }
       results.innerHTML = hits.map(function (p) {
-        return '<a href="' + hrefBase + (p.slug || p.id) + '" class="psearch-item">' + esc(p.name) + '</a>';
+        return '<a href="' + hrefBase + (p.slug || p.id) + '/" class="psearch-item">' + esc(p.name) + '</a>';
       }).join('');
       results.hidden = false;
     }

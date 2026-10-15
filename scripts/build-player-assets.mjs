@@ -146,6 +146,37 @@ w('player-cutouts.json', cutouts);
 w('club-logos.json', clubs);
 w('player-colors.json', colors);
 
+// --- ARBITRES : public/billard/blackball/ARBITRES/<saison>/<Prénom NOM>.(png|webp) ---
+// Saison au format « 25-26 » ou « 2025-2026 ». Sortie : public/billard/arbitres/<slug>.webp
+// (allégée, photo de la saison la plus récente) + src/data/billard/arbitres.json (saisons par arbitre).
+const REF_SRC = join(HS, 'ARBITRES'), REF_OUT = join(ROOT, 'public', 'billard', 'arbitres');
+const refs = new Map();                             // slug -> { name, seasons:Set, last, path }
+const fullSeason = (d) => { const m = d.match(/^(\d{2}|\d{4})-(\d{2}|\d{4})$/); if (!m) return null;
+  const y = (s) => (s.length === 2 ? 2000 + Number(s) : Number(s)); return `${y(m[1])}-${y(m[2])}`; };
+if (existsSync(REF_SRC)) {
+  mkdirSync(REF_OUT, { recursive: true });
+  for (const dir of readdirSync(REF_SRC)) {
+    const season = fullSeason(dir), sd = join(REF_SRC, dir);
+    if (!season || !statSync(sd).isDirectory()) continue;
+    for (const file of readdirSync(sd)) {
+      if (!IMG.test(file)) continue;
+      const raw = file.replace(/\.[^.]+$/, '').trim(), slug = nk(raw).replace(/ /g, '-');
+      const r = refs.get(slug) || { name: raw, seasons: new Set(), last: '', path: '' };
+      r.seasons.add(season);
+      if (season >= r.last) { r.last = season; r.path = join(sd, file); }
+      refs.set(slug, r);
+    }
+  }
+}
+const arbitres = [];
+for (const [slug, r] of refs) {
+  try { await sharp(r.path).resize({ width: 480, height: 480, fit: 'inside' }).webp({ quality: 82 }).toFile(join(REF_OUT, `${slug}.webp`)); }
+  catch { continue; }
+  arbitres.push({ slug, file: r.name, seasons: [...r.seasons].sort().reverse(), photo: `/billard/arbitres/${slug}.webp` });
+}
+w('arbitres.json', arbitres);
+
+console.log(`Arbitres: ${arbitres.length}${arbitres.length ? ' — ' + arbitres.map((a) => `${a.file} (${a.seasons.join(', ')})`).join(', ') : ''}`);
 console.log(`Cutouts: ${okCut} (roster ${okCut - okExtra} + 2e passe ${okExtra}) · Couleurs: ${Object.keys(colors).length} · Logos: ${okLogo}${okOvr ? ` · Overrides: ${okOvr}` : ''}`);
 console.log(`Homonymes ignorés: ${ambig.length}${ambig.length ? ' — ' + ambig.join(', ') : ''}`);
 console.log(`Roster sans match résultats (${noMatch.length}): ${noMatch.join(', ') || '—'}`);
