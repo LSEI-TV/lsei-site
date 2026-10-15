@@ -10,10 +10,10 @@ import { parseProgTitle } from '../lib/programmeTitle';
 import { getCollection } from 'astro:content';
 import { PLATFORMS } from '../lib/social';
 import { assetExists, assetUrl, imgOk } from '../lib/publicAssets';
-import { showcaseSeason, getSeasons } from '../data/billard/seasons';
+import { showcaseSeason, getSeasons, cal2627 } from '../data/billard/seasons';
 import { femmesShowcaseSeason, getFemmesSeasons } from '../data/billard/seasonsFemmes';
 import { photoOf, playerSlugs } from '../lib/billardStats';
-import { nm1Standings, nmClubBy, NM1_POOL, clubHasSite } from '../data/basket';
+import { nm1Standings, nmClubBy, NM1_POOL, clubHasSite, nm1Calendar } from '../data/basket';
 
 // Chiffres-clés : tirés en direct de l'API YouTube (abonnés, vues, vidéos) + nb de
 // disciplines. Toujours à jour, aucun chiffre saisi à la main. Repli sur les chiffres
@@ -239,6 +239,25 @@ const nextPt = nextLive && !nextLive.category ? parseProgTitle(nextLive.title) :
 const nextMain = nextLive ? (nextLive.category || nextPt?.main || nextLive.title) : '';
 const nextSub = nextLive ? [railDay.format(nextLive.date).replace('.', ''), railTime.format(nextLive.date).replace(':', 'h')].join(' · ') : '';
 
+// Image de la « une » : la miniature YouTube de la vidéo à la une (grande taille, repli auto en hqdefault).
+const heroShot = live?.id ? `https://i.ytimg.com/vi/${live.id}/maxresdefault.jpg` : (live?.thumb || '');
+const heroShotFallback = live?.id ? `https://i.ytimg.com/vi/${live.id}/hqdefault.jpg` : '';
+
+// « Prochains rendez-vous » (bandeau sous la une) : le direct YouTube programmé (heure exacte, décompte)
+// + les prochaines dates CONNUES des calendriers du site : étape du circuit Blackball, match à domicile
+// de Pays de Fougères (NM1). Toujours quelque chose à annoncer, même sans direct programmé sur YouTube.
+const _todayIso = new Date(_now).toISOString().slice(0, 10);
+const _dLong = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Paris' });
+type Rdv = { sport: string; kicker: string; title: string; when: string; place?: string; iso: string; day: string; exact: boolean; href: string };
+const rdv: Rdv[] = [];
+if (nextLive) rdv.push({ sport: nextLive.sport, kicker: 'Direct programmé', title: nextMain, when: nextSub, iso: nextLive.date.toISOString(), day: nextLive.date.toISOString().slice(0, 10), exact: true, href: nextLive.href });
+const _tn = cal2627.find((e) => e.start && e.start >= _todayIso && e.kind !== 'mondial');
+if (_tn && !rdv.some((r) => r.sport === 'billard')) rdv.push({ sport: 'billard', kicker: 'Blackball · circuit national', title: _tn.name, when: _tn.date, place: _tn.place, iso: '', day: _tn.start!, exact: false, href: '/billard/blackball/' });
+const _pfb = nm1Calendar.find((m) => m.homeSlug === 'fougeres' && m.date >= _todayIso && m.homeScore == null);
+if (_pfb && !rdv.some((r) => r.sport === 'basket')) rdv.push({ sport: 'basket', kicker: 'Basket · Nationale 1', title: `Pays de Fougères – ${nmClubBy(_pfb.awaySlug)?.name ?? _pfb.awaySlug}`, when: (() => { const s = _dLong.format(new Date(`${_pfb.date}T12:00:00Z`)).replace('.', ''); return s.charAt(0).toUpperCase() + s.slice(1); })(), place: 'Fougères · à domicile', iso: '', day: _pfb.date, exact: false, href: '/basket/' });
+rdv.sort((a, b) => (a.day < b.day ? -1 : 1));
+const rdvShow = rdv.slice(0, 3);
+
 // Carrousel « prochains directs » : tous les directs À VENIR, défilement 10 s, chacun
 // avec son propre décompte (et bascule « en direct » quand l'heure est atteinte).
 const slides = programme
@@ -258,7 +277,7 @@ const slides = programme
 
   <!-- HERO — « une » cinématique (Variante C : corps clair, une sombre) -->
   {live && liveDisc && (
-    <section class="mhero" data-sport={live.discipline} style={`--hero-accent:${liveDisc.colorVar};--h-from:${liveDisc.from};--h-to:${liveDisc.to}`}>
+    <section class:list={['mhero', { 'has-shot': !!heroShot }]} data-sport={live.discipline} style={`--hero-accent:${liveDisc.colorVar};--h-from:${liveDisc.from};--h-to:${liveDisc.to}`}>
       <div class="mhero-media" aria-hidden="true">
         <svg class="mhero-poly" viewBox="0 0 1200 420" preserveAspectRatio="xMidYMid slice">
           {POLY.map((t) => <polygon points={t.pts} style={`fill:${t.col}`} fill-opacity={t.op} stroke="#ffffff" stroke-opacity="0.03" stroke-width="1" />)}
@@ -279,6 +298,7 @@ const slides = programme
       </div>
       <script type="application/json" id="hero-colors" set:html={JSON.stringify(heroColors)}></script>
       <div class="wrap mhero-in">
+        <div class="mhero-txt">
         <span class={`hero-pill${live.isLive ? ' is-live' : ' is-soon'}`}>{live.isLive ? '● En direct' : (live.status === 'upcoming' ? 'En direct bientôt' : 'À revoir')}{heroCat ? ` · ${heroCat}` : ''}</span>
         <h1 class="mhero-h">{heroTitle}</h1>
         <div class="mhero-sub" style={heroSub ? '' : 'display:none'}>{heroSub}</div>
@@ -302,6 +322,14 @@ const slides = programme
           {!live.isLive && gcalUrl && <a class="btn ghost hero-cal" href={gcalUrl} target="_blank" rel="noopener">＋ Ajouter au calendrier</a>}
         </div>
         <a class="mhero-more" href="/direct" style="display:none"><span class="pulse"></span><b data-n>2</b>&nbsp;directs en cours · voir tout →</a>
+        </div>
+        {heroShot && (
+          <a class="mhero-shot" href={heroBtnHref} target="_blank" rel="noopener" aria-label={`Regarder : ${heroTitle}`}>
+            <img src={heroShot} alt="" width="1280" height="720" fetchpriority="high" onerror={`if(!this.dataset.f){this.dataset.f=1;this.src='${heroShotFallback}'}`} />
+            <span class:list={['mhero-shot-tag', { 'is-live': live.isLive }]} style={live.isLive || live.status === 'upcoming' ? '' : 'display:none'}>{live.isLive ? '● En direct' : 'Bientôt en direct'}</span>
+            <span class="mhero-shot-play" aria-hidden="true"><span><svg viewBox="0 0 24 24" width="30" height="30"><path d="M8 5v14l11-7z" fill="#fff"/></svg></span></span>
+          </a>
+        )}
       </div>
       <!-- Contenu DOUBLE (2 directs simultanés) — rempli/affiché par le script. -->
       <div class="wrap mhero-dual" style="display:none">
@@ -315,6 +343,53 @@ const slides = programme
       </div>
     </section>
   )}
+
+  {rdvShow.length > 0 && (
+    <section class="rdv-band" aria-label="Prochains rendez-vous">
+      <div class="wrap rdv-in">
+        <div class="rdv-label"><svg class="rdv-cal" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>Prochains<br />rendez-vous</div>
+        {rdvShow.map((r) => {
+          const dsc = getDiscipline(r.sport as any);
+          return (
+            <a class="rdv-card" href={r.href} style={`--dc:${dsc.colorVar}`} target={r.href.startsWith('http') ? '_blank' : undefined} rel={r.href.startsWith('http') ? 'noopener' : undefined}>
+              <span class="rdv-ico" aria-hidden="true"><SportIcon slug={r.sport} /></span>
+              <span class="rdv-body">
+                <span class="rdv-k">{r.kicker}</span>
+                <span class="rdv-t">{r.title}</span>
+                <span class="rdv-w">{r.when}{r.place && <> · {r.place}</>}</span>
+              </span>
+              {r.exact
+                ? <span class="rdv-cd" data-rdv-iso={r.iso}><b data-h>—</b><i>h</i><b data-m>—</b><i>min</i></span>
+                : <span class="rdv-cd" data-rdv-day={r.day}><small>J-</small><b data-j>—</b></span>}
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  )}
+
+  <script is:inline>
+    // Décomptes du bandeau « Prochains rendez-vous » (J-x au jour près ; heures/minutes pour un direct programmé).
+    (function () {
+      var p = function (n) { return (n < 10 ? '0' : '') + n; };
+      function tick() {
+        var now = Date.now();
+        document.querySelectorAll('[data-rdv-day]').forEach(function (el) {
+          var d = el.getAttribute('data-rdv-day'), t = new Date(d + 'T00:00:00'), today = new Date(); today.setHours(0, 0, 0, 0);
+          var j = Math.round((t - today) / 864e5), b = el.querySelector('[data-j]');
+          if (j <= 0) { el.innerHTML = '<b class="rdv-now">' + (j === 0 ? "Aujourd'hui" : 'En cours') + '</b>'; return; }
+          if (b) b.textContent = j;
+        });
+        document.querySelectorAll('[data-rdv-iso]').forEach(function (el) {
+          var t = new Date(el.getAttribute('data-rdv-iso')).getTime() - now; if (t < 0) t = 0;
+          var h = Math.floor(t / 36e5), m = Math.floor((t % 36e5) / 6e4);
+          var hb = el.querySelector('[data-h]'), mb = el.querySelector('[data-m]');
+          if (hb) hb.textContent = p(h); if (mb) mb.textContent = p(m);
+        });
+      }
+      tick(); setInterval(tick, 30000);
+    })();
+  </script>
 
   <script is:inline>
     (function () {
@@ -408,6 +483,12 @@ const slides = programme
             if (pill) { pill.textContent = '● En direct'; pill.classList.add('is-live'); pill.classList.remove('is-soon'); }
             if (h1) h1.textContent = l.match || clean(l.title);
             if (playBtn) { playBtn.setAttribute('href', 'https://www.youtube.com/watch?v=' + l.id); playBtn.setAttribute('target', '_blank'); playBtn.textContent = '▸ Regarder le direct'; }
+            var shot = hero.querySelector('.mhero-shot');
+            if (shot) {
+              shot.setAttribute('href', 'https://www.youtube.com/watch?v=' + l.id);
+              var im = shot.querySelector('img'); if (im) { im.dataset.f = ''; im.onerror = function () { if (!this.dataset.f) { this.dataset.f = 1; this.src = 'https://i.ytimg.com/vi/' + l.id + '/hqdefault.jpg'; } }; im.src = 'https://i.ytimg.com/vi/' + l.id + '/maxresdefault_live.jpg'; }
+              var tg = shot.querySelector('.mhero-shot-tag'); if (tg) { tg.textContent = '● En direct'; tg.classList.add('is-live'); tg.style.display = ''; }
+            }
             if (count) count.style.display = 'none';
             if (when) when.style.display = 'none';
             if (sub) { if (ctx) { sub.textContent = ctx; sub.style.display = ''; } else { sub.style.display = 'none'; } }
@@ -636,9 +717,10 @@ const slides = programme
   )}
 
   <!-- CHIFFRES-CLÉS (panneau dédié) -->
-  <section class="stats-sec" id="club">
+  <section class="stats-sec stats-sec--dark" id="club">
     <div class="wrap">
       <div class="stats-panel">
+        <div class="stats-head"><span class="eyebrow">LSEI en chiffres</span><span class="stats-tag">La web TV du sport associatif depuis 2005</span></div>
         <div class="stats">
           {liveStats.map((s) => (
             <div class="stat">
