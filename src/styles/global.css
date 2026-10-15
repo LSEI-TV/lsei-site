@@ -2254,5 +2254,5 @@ a.nbh-row:hover { background: var(--surface-2); }
   .mm-place { font-size: 11.5px; }
   .mm-btn { font-size: 12.5px; padding: 6px 12px; margin-top: 5px; }
 }
-/* Motif du logo LSEI devant le surtitre « LSEI en chiffres » (seul surtitre qui le garde) */
-.stats-head .eyebrow::before { content: ""; display: inline-block; width: 18px; height: 10px; margin-right: 9px; vertical-align: -1px; background: var(--brand-ticks); }
+/* Motif du logo LSEI devant les surtitres « LSEI en chiffres » et « Goodies » (les seuls qui le gardent) */
+.stats-head .eyebrow::before, .goodies-head .eyebrow::before { content: ""; display: inline-block; width: 18px; height: 10px; margin-right: 9px; vertical-align: -1px; background: var(--brand-ticks); }
