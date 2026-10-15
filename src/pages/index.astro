@@ -572,9 +572,12 @@ const slides = programme
           {bilTop.length > 0 && (
           <div class="hcol bspot-sec" style="--dc:var(--c-billard)">
         <div class="sec-head">
-          <div>
-            <div class="eyebrow" style="color:var(--c-billard)">Blackball Masters</div>
-            <h2>{bilInProgress ? `Classement provisoire · ${bilSeason.label}` : `Le podium · ${bilSeason.label}`}</h2>
+          <div class="nbh-head-l">
+            {assetExists('/partenaires/ffbillard.webp') && <img class="ffb-logo" src={assetUrl('/partenaires/ffbillard.webp')} alt="Fédération Française de Billard" width="400" height="250" loading="lazy" />}
+            <div>
+              <div class="eyebrow" style="color:var(--c-billard)">Blackball Masters</div>
+              <h2>{bilInProgress ? `Classement provisoire · ${bilSeason.label}` : `Le podium · ${bilSeason.label}`}</h2>
+            </div>
           </div>
           <a href={`/billard/saison/${bilSeason.slug}/classement`} class="link">Classement complet →</a>
         </div>

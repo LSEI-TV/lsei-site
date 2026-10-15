@@ -2260,3 +2260,6 @@ a.nbh-row:hover { background: var(--surface-2); }
 .nbh-head-l { display: flex; align-items: center; gap: 16px; min-width: 0; }
 .nbh-nm1 { flex: none; height: 56px; width: calc(56px * 239 / 125); object-fit: cover; object-position: left center; }
 @media (max-width: 520px) { .nbh-nm1 { height: 42px; width: calc(42px * 239 / 125); } .nbh-head-l { gap: 12px; } }
+/* Logo FFBillard devant le titre du classement Blackball Masters */
+.ffb-logo { flex: none; height: 56px; width: calc(56px * 400 / 250); object-fit: cover; border-radius: 6px; box-shadow: 0 2px 6px rgba(16,24,40,.12); }
+@media (max-width: 520px) { .ffb-logo { height: 42px; width: calc(42px * 400 / 250); } }
