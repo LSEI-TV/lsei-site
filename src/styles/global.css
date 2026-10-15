@@ -2180,12 +2180,10 @@ a.nbh-row:hover { background: var(--surface-2); }
   --cut: 28px;
 }
 
-/* 1) Les 4 barres du logo : liseré du haut de page, sous chaque titre, devant chaque surtitre, au survol des cartes */
+/* 1) Les 4 barres du logo : liseré du haut de page, sous chaque titre, au survol des cartes (pas devant les surtitres) */
 .mhero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--brand-bars); z-index: 3; }
 .sec-head h2 { position: relative; padding-bottom: 14px; }
 .sec-head h2::after { content: ""; position: absolute; left: 0; bottom: 0; width: 72px; height: 4px; border-radius: 2px; background: var(--brand-bars); }
-.sec-head .eyebrow::before, .stats-head .eyebrow::before, .goodies-head .eyebrow::before, .partners .pl::before {
-  content: ""; display: inline-block; width: 18px; height: 10px; margin-right: 9px; vertical-align: -1px; background: var(--brand-ticks); }
 .bpod-card, .card, .nbh-card, .goodie, .ptile { position: relative; }
 .bpod-card::before, .nbh-card::before, .goodie::before, .card .frame::before {
   content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--brand-bars); z-index: 3;
