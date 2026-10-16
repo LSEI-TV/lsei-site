@@ -105,8 +105,9 @@ const events = items.map((it) => {
     ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(it.title + ' — LSEI')}&dates=${gcalTime(it.date)}/${gcalTime(new Date(it.date.valueOf() + 2 * 3600 * 1000))}&details=${encodeURIComponent('En direct sur LSEI · https://lsei.tv/direct')}`
     : `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(it.title)}&dates=${gcalDay(it.day)}/${gcalDay(addDays(it.endDay || it.day, 1))}${it.place ? `&location=${encodeURIComponent(it.place)}` : ''}&details=${encodeURIComponent('Programme LSEI · ' + programmeUrl)}`;
   const vid = /[?&]v=([\w-]+)/.exec(it.link || '')?.[1] || '';
+  const page = vid ? `/replay/${vid}/` : '';   // page du match (créée dès l'annonce du direct)
   const tm = it.teams?.map((sl) => { const c = nmClubBy(sl); return { name: c?.name ?? sl, short: c?.short ?? '', logo: c && assetExists(c.logo) ? assetUrl(c.logo!) : null }; });
-  return { ...it, disc, tm, num: dNum.format(d0), mon: dMon.format(d0).replace('.', '').toUpperCase(), dow: dDow.format(d0).replace('.', ''), whenTxt, gcal, vid,
+  return { ...it, disc, tm, page, num: dNum.format(d0), mon: dMon.format(d0).replace('.', '').toUpperCase(), dow: dDow.format(d0).replace('.', ''), whenTxt, gcal, vid,
     month: it.day.slice(0, 7), monthLabel: cap(monthLbl.format(d0)) };
 });
 type Ev = (typeof events)[number];
@@ -168,7 +169,7 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
         <div class="pg-share"><span>Partager</span><ShareLinks url={programmeUrl} title="Le programme LSEI — tous les prochains rendez-vous" compact /></div>
       </div>
       {next && (
-        <a class="pg-next" href={next.link || '#agenda'} target={next.link ? '_blank' : undefined} rel={next.link ? 'noopener' : undefined} style={`--dc:${next.disc.colorVar}`}>
+        <a class="pg-next" href={next.page || next.link || '#agenda'} target={!next.page && next.link ? '_blank' : undefined} rel={!next.page && next.link ? 'noopener' : undefined} style={`--dc:${next.disc.colorVar}`}>
           <span class="pg-next-k">Prochain rendez-vous</span>
           <span class="pg-next-media">
             {next.thumb ? <img src={next.thumb} alt="" onerror={onerr(next.thumb)} />
@@ -235,7 +236,8 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
                   <span class={`pg-badge ${e.confirmed ? 'is-on' : ''}`}>{e.live ? '● En direct' : e.confirmed ? '● Direct annoncé' : 'Au calendrier'}</span>
                   {!e.live && <span class="pg-j" data-day={e.day}>J-<b data-j>—</b></span>}
                   <span class="pg-actions">
-                    {e.link && <a class="pg-btn pg-btn--go" href={e.link} target="_blank" rel="noopener">▸ {e.live ? 'Regarder' : 'Voir'}</a>}
+                    {e.page ? <a class="pg-btn pg-btn--go" href={e.page}>▸ {e.live ? 'Regarder' : 'Voir le match'}</a>
+                      : e.link && <a class="pg-btn pg-btn--go" href={e.link} target="_blank" rel="noopener">▸ {e.live ? 'Regarder' : 'Voir'}</a>}
                     <a class="pg-btn" href={e.gcal} target="_blank" rel="noopener" title="Ajouter à mon agenda Google">＋ Agenda</a>
                   </span>
                 </div>
