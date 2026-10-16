@@ -15,7 +15,8 @@ import { getBroadcasts } from '../lib/youtube';
 import { parseProgTitle } from '../lib/programmeTitle';
 import { getCollection } from 'astro:content';
 import { cal2627 } from '../data/billard/seasons';
-import { nm1Calendar, nmClubBy } from '../data/basket';
+import { nm1Calendar, nmClubBy, nmClubs } from '../data/basket';
+import { assetExists, assetUrl } from '../lib/publicAssets';
 
 const now = Date.now();
 const TZ = 'Europe/Paris';
@@ -30,10 +31,21 @@ type Item = {
   when?: string;          // libellé de dates lisible (ex. « 20-22 nov. 2026 »)
   date?: Date;            // heure exacte (directs programmés)
   thumb?: string; link?: string; live?: boolean;
+  teams?: [string, string]; // basket : clubs à domicile / à l'extérieur (slugs) → logos
   confirmed: boolean;     // diffusion annoncée sur YouTube / programme
 };
 const dayOf = (d: Date) => new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: TZ }).format(d);
 const addDays = (iso: string, n: number) => { const d = new Date(`${iso}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+
+// Basket : retrouve les 2 clubs d'un titre (nom ou ville du club, dans l'ordre où ils apparaissent).
+const _n = (t: string) => (t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const teamsFromTitle = (title: string): [string, string] | undefined => {
+  const t = _n(title);
+  const found = nmClubs
+    .map((c) => ({ slug: c.slug, at: Math.min(...[c.name, c.city].map((k) => { const i = t.indexOf(_n(k)); return i < 0 ? Infinity : i; })) }))
+    .filter((x) => x.at !== Infinity).sort((a, b) => a.at - b.at);
+  return found.length >= 2 ? [found[0].slug, found[1].slug] : undefined;
+};
 
 // 1) + 2) diffusions annoncées (YouTube + /admin)
 const manual = (await getCollection('programme', ({ data }) => !data.draft)).map((p): Item => {
@@ -44,7 +56,8 @@ const manual = (await getCollection('programme', ({ data }) => !data.draft)).map
 const auto = (await getBroadcasts()).map((b): Item => {
   const pt = parseProgTitle(b.title);
   return { sport: b.discipline, kicker: [pt.kicker, ...pt.badges].filter(Boolean).join(' · ') || getDiscipline(b.discipline).name, title: pt.main || b.title,
-    day: dayOf(new Date(b.date)), date: new Date(b.date), thumb: `https://i.ytimg.com/vi/${b.id}/maxresdefault.jpg`, link: `https://www.youtube.com/watch?v=${b.id}`, live: b.live, confirmed: true };
+    day: dayOf(new Date(b.date)), date: new Date(b.date), thumb: `https://i.ytimg.com/vi/${b.id}/maxresdefault.jpg`, link: `https://www.youtube.com/watch?v=${b.id}`, live: b.live, confirmed: true,
+    teams: b.discipline === 'basket' ? teamsFromTitle(b.title) : undefined };
 });
 const announced = [...manual, ...auto].filter((it) => it.live || (it.date && it.date.valueOf() + 3 * 3600 * 1000 >= now));
 
@@ -61,14 +74,14 @@ for (const e of cal2627) {
 for (const mt of nm1Calendar) {
   if (mt.homeSlug !== 'fougeres' || mt.homeScore != null || mt.date < todayIso) continue;
   calendar.push({ sport: 'basket', kicker: `Basket · Nationale 1${mt.round ? ` · J${mt.round}` : ''}`, title: `Pays de Fougères – ${nmClubBy(mt.awaySlug)?.name ?? mt.awaySlug}`,
-    place: 'Fougères · à domicile', day: mt.date, confirmed: false });
+    place: 'Fougères · à domicile', day: mt.date, confirmed: false, teams: [mt.homeSlug, mt.awaySlug] });
 }
 // Une diffusion annoncée du même sport, pendant les jours de l'événement, le « confirme » (pas de doublon).
 const items: Item[] = [...announced];
 for (const c of calendar) {
   const hit = announced.find((a) => a.sport === c.sport && a.day >= c.day && a.day <= (c.endDay || c.day));
   // titre / compétition / lieu propres du calendrier ; heure, image et lien de la diffusion annoncée
-  if (hit) { hit.title = c.title; hit.kicker = c.kicker; hit.place = c.place; hit.when = hit.when || c.when; hit.endDay = c.endDay; continue; }
+  if (hit) { hit.title = c.title; hit.kicker = c.kicker; hit.place = c.place; hit.when = hit.when || c.when; hit.endDay = c.endDay; if (c.teams) hit.teams = c.teams; continue; }
   items.push(c);
 }
 items.sort((a, b) => (a.live === b.live ? (a.day === b.day ? (a.date?.valueOf() ?? 0) - (b.date?.valueOf() ?? 0) : a.day < b.day ? -1 : 1) : a.live ? -1 : 1));
@@ -91,7 +104,8 @@ const events = items.map((it) => {
     ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(it.title + ' — LSEI')}&dates=${gcalTime(it.date)}/${gcalTime(new Date(it.date.valueOf() + 2 * 3600 * 1000))}&details=${encodeURIComponent('En direct sur LSEI · https://lsei.tv/direct')}`
     : `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(it.title)}&dates=${gcalDay(it.day)}/${gcalDay(addDays(it.endDay || it.day, 1))}${it.place ? `&location=${encodeURIComponent(it.place)}` : ''}&details=${encodeURIComponent('Programme LSEI · ' + programmeUrl)}`;
   const vid = /[?&]v=([\w-]+)/.exec(it.link || '')?.[1] || '';
-  return { ...it, disc, num: dNum.format(d0), mon: dMon.format(d0).replace('.', '').toUpperCase(), dow: dDow.format(d0).replace('.', ''), whenTxt, gcal, vid,
+  const tm = it.teams?.map((sl) => { const c = nmClubBy(sl); return { name: c?.name ?? sl, short: c?.short ?? '', logo: c && assetExists(c.logo) ? assetUrl(c.logo!) : null }; });
+  return { ...it, disc, tm, num: dNum.format(d0), mon: dMon.format(d0).replace('.', '').toUpperCase(), dow: dDow.format(d0).replace('.', ''), whenTxt, gcal, vid,
     month: it.day.slice(0, 7), monthLabel: cap(monthLbl.format(d0)) };
 });
 type Ev = (typeof events)[number];
@@ -129,12 +143,14 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
         <a class="pg-next" href={next.link || '#agenda'} target={next.link ? '_blank' : undefined} rel={next.link ? 'noopener' : undefined} style={`--dc:${next.disc.colorVar}`}>
           <span class="pg-next-k">Prochain rendez-vous</span>
           <span class="pg-next-media">
-            {next.thumb ? <img src={next.thumb} alt="" onerror={onerr(next.thumb)} /> : <span class="pg-next-ico"><SportIcon slug={next.sport} /></span>}
+            {next.thumb ? <img src={next.thumb} alt="" onerror={onerr(next.thumb)} />
+              : next.tm ? <span class="pg-next-vs">{next.tm.map((t, i) => <Fragment>{i === 1 && <i>VS</i>}<span class="pg-next-lg">{t.logo ? <img src={t.logo} alt="" /> : <b>{t.short}</b>}</span></Fragment>)}</span>
+              : <span class="pg-next-ico"><SportIcon slug={next.sport} /></span>}
             <span class={`pg-badge ${next.confirmed ? 'is-on' : ''}`}>{next.live ? '● En direct' : next.confirmed ? '● En direct sur LSEI' : 'Au calendrier'}</span>
           </span>
           <span class="pg-next-body">
             <span class="pg-next-sport">{next.kicker}</span>
-            <span class="pg-next-t">{next.title}</span>
+            <span class="pg-next-t">{next.tm ? `${next.tm[0].name} – ${next.tm[1].name}` : next.title}</span>
             <span class="pg-next-w">{next.whenTxt}{next.place && <> · {next.place}</>}</span>
             {next.date && !next.live
               ? <span class="pg-cd" data-iso={next.date.toISOString()}><b data-d>—</b><i>j</i><b data-h>—</b><i>h</i><b data-m>—</b><i>min</i></span>
@@ -173,7 +189,13 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
                 {e.thumb && <a class="pg-thumb" href={e.link} target="_blank" rel="noopener" aria-hidden="true" tabindex="-1"><img src={e.thumb} alt="" loading="lazy" onerror={onerr(e.thumb)} /></a>}
                 <div class="pg-body">
                   <span class="pg-sport"><SportIcon slug={e.sport} class="pg-sic" />{e.kicker}</span>
-                  <h3 class="pg-t">{e.title}</h3>
+                  {e.tm ? (
+                    <h3 class="pg-t pg-match">
+                      <span class="pg-tm"><span class="pg-lg">{e.tm[0].logo ? <img src={e.tm[0].logo} alt="" loading="lazy" /> : <b>{e.tm[0].short}</b>}</span>{e.tm[0].name}</span>
+                      <span class="pg-vs">–</span>
+                      <span class="pg-tm"><span class="pg-lg">{e.tm[1].logo ? <img src={e.tm[1].logo} alt="" loading="lazy" /> : <b>{e.tm[1].short}</b>}</span>{e.tm[1].name}</span>
+                    </h3>
+                  ) : <h3 class="pg-t">{e.title}</h3>}
                   <span class="pg-w">{e.whenTxt}{e.place && <> · <span class="pg-place">📍 {e.place}</span></>}</span>
                 </div>
                 <div class="pg-side">
@@ -213,6 +235,11 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
     .pg-next-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .pg-next-ico { width: 46%; max-width: 120px; aspect-ratio: 1; color: #fff; opacity: .9; }
     .pg-next-ico svg { width: 100%; height: 100%; }
+    .pg-next-vs { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 16px; }
+    .pg-next-vs i { font-style: normal; font-family: var(--display); font-weight: 800; font-size: 26px; color: #fff; }
+    .pg-next-lg { width: 30%; max-width: 110px; aspect-ratio: 1; border-radius: 50%; background: #fff; display: grid; place-items: center; overflow: hidden; box-shadow: 0 10px 26px -10px rgba(0,0,0,.6); }
+    .pg-next-lg img { width: 84%; height: 84%; object-fit: contain; }
+    .pg-next-lg b { font-family: var(--display); color: #0A0E1A; font-size: 20px; }
     .pg-next-media .pg-badge { position: absolute; left: 12px; bottom: 12px; }
     .pg-next-body { display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 22px 22px; border-left: 3px solid var(--dc); }
     .pg-next-sport { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--dc) 55%, #fff); }
@@ -255,6 +282,12 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
     .pg-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
     .pg-sport { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--dc); }
     .pg-sport svg { width: 14px; height: 14px; flex: none; }
+    .pg-match { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+    .pg-tm { display: inline-flex; align-items: center; gap: 8px; }
+    .pg-lg { flex: none; width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 1px solid var(--line); display: grid; place-items: center; overflow: hidden; }
+    .pg-lg img { width: 86%; height: 86%; object-fit: contain; }
+    .pg-lg b { font-size: 11px; color: var(--ink); }
+    .pg-vs { color: var(--dc); }
     .pg-t { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(18px, 1.9vw, 24px); line-height: 1.05; margin: 0; color: var(--ink); text-align: start; }
     .pg-w { font-size: 13.5px; color: var(--ink-soft); }
     .pg-side { display: flex; flex-direction: column; align-items: flex-end; gap: 7px; }
