@@ -644,10 +644,10 @@ a.hst:hover svg { color: inherit; }
   background: var(--dc, var(--accent)); /* repli Safari < 16.2 (sans color-mix) : fond plein plutot que texte blanc invisible */
   background: linear-gradient(158deg, color-mix(in srgb, var(--dc, var(--accent)) 52%, #0c0e13) 0%, color-mix(in srgb, var(--dc, var(--accent)) 24%, #0c0e13) 100%);
   border: 1px solid color-mix(in srgb, var(--dc, var(--accent)) 45%, transparent);
-  transition: transform .18s, box-shadow .2s;
+  transition: transform .42s cubic-bezier(.2,.7,.2,1), box-shadow .3s ease;
 }
 .disc-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--dc, var(--accent)) 70%, transparent); }
-.disc-ico { display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,.16); margin-bottom: 14px; }
+.disc-ico { display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,.16); margin-bottom: 14px; transition: transform .22s cubic-bezier(.2,.7,.2,1), background .22s, box-shadow .22s; }
 .disc-ico .sport-ic { width: 26px; height: 26px; color: #fff; }
 .disc-card .name { font-size: 15.5px; font-weight: 800; letter-spacing: .01em; color: #fff; }
 .disc-card .sub { color: rgba(255,255,255,.86); }
@@ -2206,7 +2206,15 @@ a.nbh-row:hover { background: var(--surface-2); }
 .bpod-card, .card, .nbh-card, .goodie { transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s, border-color .2s; }
 .bpod-card:hover, .card:hover, .goodie:hover { transform: translateY(-4px); box-shadow: 0 2px 4px rgba(16, 24, 40, .06), 0 22px 40px -18px rgba(16, 24, 40, .32); }
 .disc-card { box-shadow: 0 10px 24px -14px rgba(12, 14, 19, .5); }
-.disc-card:hover { transform: translateY(-5px) rotate(-.4deg); box-shadow: 0 22px 40px -16px color-mix(in srgb, var(--dc) 60%, rgba(12,14,19,.6)); }
+.disc-card:hover { transform: scale(1.04); box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--dc, var(--accent)) 80%, transparent), 0 16px 34px -18px color-mix(in srgb, var(--dc, var(--accent)) 55%, rgba(12,14,19,.5)); }
+/* Icône : se colore de la teinte de la discipline + petit « pop ». */
+.disc-card:hover .disc-ico { background: var(--dc, var(--accent)); transform: scale(1.14) rotate(-6deg); box-shadow: 0 7px 18px -5px color-mix(in srgb, var(--dc, var(--accent)) 75%, transparent); }
+/* Balayage lumineux qui traverse la carte au survol. */
+.disc-card::before { content: ""; position: absolute; top: 0; left: -80%; width: 55%; height: 100%; z-index: 3; pointer-events: none; transform: skewX(-18deg);
+  background: linear-gradient(100deg, transparent 0%, rgba(255,255,255,.28) 50%, transparent 100%); opacity: 0; }
+.disc-card:hover::before { animation: discShine .75s cubic-bezier(.25,.7,.3,1); }
+@keyframes discShine { 0% { left: -80%; opacity: 0; } 15% { opacity: 1; } 100% { left: 130%; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .disc-card:hover { transform: none; } .disc-card:hover::before { animation: none; } .disc-card:hover .disc-ico { transform: none; } }
 .home-2col .sec-head, .nbh-card .sec-head { flex-wrap: wrap; row-gap: 8px; }
 .home-2col .sec-head h2, .nbh-card .sec-head h2 { font-size: clamp(20px, 1.8vw, 24px); white-space: nowrap; }
 
