@@ -11,7 +11,8 @@ import Base from '../layouts/Base.astro';
 import ShareLinks from '../components/ShareLinks.astro';
 import SportIcon from '../components/SportIcon.astro';
 import { disciplines, getDiscipline } from '../data/site';
-import { getBroadcasts } from '../lib/youtube';
+import { getBroadcasts, getReplays } from '../lib/youtube';
+import { matchAffiche } from '../lib/matchAffiche';
 import { parseProgTitle } from '../lib/programmeTitle';
 import { getCollection } from 'astro:content';
 import { cal2627 } from '../data/billard/seasons';
@@ -111,6 +112,33 @@ const events = items.map((it) => {
 type Ev = (typeof events)[number];
 const months: { key: string; label: string; list: Ev[] }[] = [];
 for (const e of events) { let m = months.find((x) => x.key === e.month); if (!m) { m = { key: e.month, label: e.monthLabel, list: [] }; months.push(m); } m.list.push(e); }
+// ---- DÉJÀ JOUÉS : les matchs de la saison en cours déjà diffusés (vidéos LSEI), du plus récent au plus ancien.
+// Chaque carte ouvre la page du match (/replay/<id>/). Affiche (logos / photos + score) reconnue depuis le titre.
+const _t = new Date(now);
+const seasonStart = `${_t.getUTCMonth() >= 7 ? _t.getUTCFullYear() : _t.getUTCFullYear() - 1}-08-01`;
+const isMatchTitle = (t: string) => /\bvs?\.?\s|\bcontre\b/i.test(t);
+const pastEvents = (await getReplays())
+  .filter((v) => v.date && v.date.slice(0, 10) >= seasonStart && Date.parse(v.date) <= now && isMatchTitle(v.title))
+  .map((v) => {
+    const aff = matchAffiche(v.discipline, v.title, v.date);
+    const pt = parseProgTitle(v.title);
+    const disc = getDiscipline(v.discipline);
+    // date réelle du match quand on la connaît (une vidéo est parfois publiée quelques jours après)
+    const day = aff?.date && /^\d{4}-\d{2}-\d{2}$/.test(aff.date) ? aff.date : dayOf(new Date(v.date!));
+    const d0 = asDate(day);
+    const kicker = aff?.sport === 'billard' && aff.info
+      ? [aff.info.compLabel, aff.info.match ? `${aff.info.match.tournament}${aff.info.match.phase ? ` · ${aff.info.match.phase}` : ''}` : ''].filter(Boolean).join(' · ')
+      : aff?.sport === 'basket' ? `Basket · ${/\bcdf\b|coupe\s+de\s+france/i.test(v.title) ? 'Coupe de France' : `Nationale 1${aff.round ? ` · J${aff.round}` : ''}`}` : ([pt.kicker, ...pt.badges].filter(Boolean).join(' · ') || disc.name);
+    return { id: v.id, sport: v.discipline, disc, aff, kicker, title: pt.main || v.title, day,
+      num: dNum.format(d0), mon: dMon.format(d0).replace('.', '').toUpperCase(), dow: dDow.format(d0).replace('.', ''),
+      whenTxt: cap(dLong.format(d0)), place: aff?.info?.match?.city, thumb: `https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`,
+      month: day.slice(0, 7), monthLabel: cap(monthLbl.format(d0)) };
+  })
+  .sort((a, b) => (a.day < b.day ? 1 : a.day > b.day ? -1 : 0));
+type PEv = (typeof pastEvents)[number];
+const pastMonths: { key: string; label: string; list: PEv[] }[] = [];
+for (const e of pastEvents) { let m = pastMonths.find((x) => x.key === e.month); if (!m) { m = { key: e.month, label: e.monthLabel, list: [] }; pastMonths.push(m); } m.list.push(e); }
+const pastCounts = Object.fromEntries(disciplines.map((d) => [d.slug, pastEvents.filter((e) => e.sport === d.slug).length]));
 const counts = Object.fromEntries(disciplines.map((d) => [d.slug, events.filter((e) => e.sport === d.slug).length]));
 const next = events[0] || null;
 
@@ -163,14 +191,19 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
 
   <section class="section pg-sec" id="agenda">
     <div class="wrap">
+      <div class="pg-tabs" id="pg-tabs" role="tablist" aria-label="Rendez-vous à venir ou déjà joués">
+        <button type="button" role="tab" class="pg-tab on" data-tab="up" aria-selected="true">À venir <b>{events.length}</b></button>
+        <button type="button" role="tab" class="pg-tab" data-tab="past" aria-selected="false">Déjà joués <b>{pastEvents.length}</b></button>
+      </div>
       <div class="pg-filter" id="pg-filter" role="group" aria-label="Filtrer par sport">
-        <button type="button" class="pg-fbtn active" data-sport="all">Tous <b>{events.length}</b></button>
-        {disciplines.filter((d) => counts[d.slug]).map((d) => (
-          <button type="button" class="pg-fbtn" data-sport={d.slug} style={`--dc:${d.colorVar}`}><SportIcon slug={d.slug} class="pg-fic" />{d.label} <b>{counts[d.slug]}</b></button>
+        <button type="button" class="pg-fbtn active" data-sport="all" data-up={events.length} data-past={pastEvents.length}>Tous <b>{events.length}</b></button>
+        {disciplines.filter((d) => counts[d.slug] || pastCounts[d.slug]).map((d) => (
+          <button type="button" class="pg-fbtn" data-sport={d.slug} data-up={counts[d.slug]} data-past={pastCounts[d.slug]} style={`--dc:${d.colorVar}`} hidden={!counts[d.slug]}><SportIcon slug={d.slug} class="pg-fic" />{d.label} <b>{counts[d.slug]}</b></button>
         ))}
         <span class="pg-legend"><span class="pg-dot is-on"></span>Direct annoncé <span class="pg-dot"></span>Au calendrier</span>
       </div>
 
+      <div id="pg-up" data-pane="up">
       <div id="pg-rt" class="pg-month" hidden>
         <h2 class="pg-month-h"><span>En ce moment</span></h2>
         <div id="pg-rt-list" class="pg-list"></div>
@@ -211,6 +244,39 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
           </div>
         </div>
       ))}
+      </div>
+
+      <div id="pg-past" data-pane="past" hidden>
+        {pastMonths.length === 0 ? <p class="pg-empty">Aucun match de la saison n'a encore été diffusé.</p> : pastMonths.map((m) => (
+          <div class="pg-month" data-month={m.key}>
+            <h2 class="pg-month-h"><span>{m.label}</span><small>{m.list.length} match{m.list.length > 1 ? 's' : ''}</small></h2>
+            <div class="pg-list">
+              {m.list.map((e) => (
+                <article class="pg-ev pg-ev--past" data-sport={e.sport} style={`--dc:${e.disc.colorVar}`}>
+                  <div class="pg-date"><span class="pg-dow">{e.dow}</span><b>{e.num}</b><span class="pg-mon">{e.mon}</span></div>
+                  <span class="pg-thumb" aria-hidden="true"><img src={e.thumb} alt="" loading="lazy" /><span class="pg-play">▶</span></span>
+                  <div class="pg-body">
+                    <span class="pg-sport"><SportIcon slug={e.sport} class="pg-sic" />{e.kicker}</span>
+                    {e.aff ? (
+                      <h3 class="pg-t pg-match">
+                        <span class={`pg-tm ${e.aff.sides[0].win ? 'w' : ''}`}><span class={`pg-lg ${e.aff.sport === 'billard' ? 'is-ph' : ''}`}>{e.aff.sides[0].img ? <img src={e.aff.sides[0].img} alt="" loading="lazy" /> : <b>{(e.aff.sides[0].short || e.aff.sides[0].name).slice(0, 3)}</b>}</span>{e.aff.sides[0].name}</span>
+                        {e.aff.score ? <span class="pg-sc">{e.aff.score[0]} – {e.aff.score[1]}</span> : <span class="pg-vs">–</span>}
+                        <span class={`pg-tm ${e.aff.sides[1].win ? 'w' : ''}`}><span class={`pg-lg ${e.aff.sport === 'billard' ? 'is-ph' : ''}`}>{e.aff.sides[1].img ? <img src={e.aff.sides[1].img} alt="" loading="lazy" /> : <b>{(e.aff.sides[1].short || e.aff.sides[1].name).slice(0, 3)}</b>}</span>{e.aff.sides[1].name}</span>
+                      </h3>
+                    ) : <h3 class="pg-t">{e.title}</h3>}
+                    <span class="pg-w">{e.whenTxt}{e.place && <> · <span class="pg-place">📍 {e.place}</span></>}</span>
+                  </div>
+                  <div class="pg-side">
+                    <span class="pg-badge pg-badge--rp">▶ Replay</span>
+                    <span class="pg-actions"><span class="pg-btn pg-btn--go">▸ Voir le match</span></span>
+                  </div>
+                  <a class="pg-stretch" href={`/replay/${e.id}/`} aria-label={`Voir le match : ${e.aff ? `${e.aff.sides[0].name} – ${e.aff.sides[1].name}` : e.title}`}></a>
+                </article>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 
@@ -251,6 +317,23 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
 
     /* ---------- Filtres ---------- */
     .pg-sec { background-image: radial-gradient(rgba(20, 30, 50, .055) 1px, transparent 1.4px); background-size: 22px 22px; }
+    .pg-tabs { display: inline-flex; gap: 4px; padding: 4px; margin-bottom: 16px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); }
+    .pg-tab { font: inherit; font-size: 14px; font-weight: 800; padding: 9px 18px; border-radius: 999px; border: 0; background: transparent; color: var(--ink-soft); cursor: pointer; transition: background .15s, color .15s; }
+    .pg-tab b { font-size: 11px; margin-left: 4px; padding: 1px 7px; border-radius: 999px; background: rgba(0,0,0,.07); }
+    .pg-tab.on { background: #0A0E1A; color: #fff; }
+    .pg-tab.on b { background: rgba(255,255,255,.2); }
+    .pg-fbtn[hidden] { display: none; }
+    .pg-ev--past { position: relative; }
+    .pg-ev--past:hover { transform: translateY(-2px); }
+    .pg-ev--past:hover .pg-btn--go { filter: brightness(1.08); }
+    .pg-stretch { position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+    .pg-ev--past .pg-thumb { position: relative; }
+    .pg-play { position: absolute; inset: 0; margin: auto; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; color: #fff; background: rgba(10,14,26,.6); border: 2px solid rgba(255,255,255,.85); padding-left: 2px; }
+    .pg-badge--rp { background: color-mix(in srgb, var(--dc) 12%, var(--surface)); color: var(--dc); border-color: color-mix(in srgb, var(--dc) 35%, transparent); }
+    .pg-sc { font-family: var(--display); font-weight: 800; color: var(--dc); white-space: nowrap; }
+    .pg-ev--past .pg-tm:not(.w) { color: var(--ink-soft); }
+    .pg-lg.is-ph { background: radial-gradient(ellipse at 50% 30%, #2b5f99 0%, #0d2c49 75%); border-color: transparent; }
+    .pg-lg.is-ph img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
     .pg-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 10px; }
     .pg-fbtn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px; border-radius: 100px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
     .pg-fbtn b { font-size: 11px; font-weight: 800; background: var(--surface-2); color: var(--ink-soft); border-radius: 100px; padding: 1px 7px; }
@@ -336,6 +419,27 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
         });
       }
       tick(); setInterval(tick, 30000);
+    })();
+
+    // Onglets « À venir / Déjà joués » (#deja-joues ouvre directement le 2e) ; compteurs du filtre selon l'onglet.
+    (function () {
+      var tabs = document.getElementById('pg-tabs'); if (!tabs) return;
+      function show(t) {
+        tabs.querySelectorAll('.pg-tab').forEach(function (b) { var on = b.getAttribute('data-tab') === t; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+        document.querySelectorAll('[data-pane]').forEach(function (p) { p.hidden = p.getAttribute('data-pane') !== t; });
+        document.querySelectorAll('#pg-filter .pg-fbtn').forEach(function (b) {
+          var n = Number(b.getAttribute('data-' + t) || 0), c = b.querySelector('b'); if (c) c.textContent = n;
+          b.hidden = !n && b.getAttribute('data-sport') !== 'all';
+        });
+        var all = document.querySelector('#pg-filter .pg-fbtn[data-sport="all"]'); if (all) all.click();
+        var leg = document.querySelector('.pg-legend'); if (leg) leg.style.visibility = t === 'up' ? '' : 'hidden';
+      }
+      tabs.addEventListener('click', function (e) {
+        var b = e.target.closest('.pg-tab'); if (!b) return;
+        var t = b.getAttribute('data-tab'); show(t);
+        history.replaceState(null, '', t === 'past' ? '#deja-joues' : location.pathname);
+      });
+      if (location.hash === '#deja-joues') show('past');
     })();
 
     // Filtre par sport (masque aussi les mois devenus vides).

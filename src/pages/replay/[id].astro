@@ -7,6 +7,8 @@ import { getDiscipline } from '../../data/site';
 import { getReplays } from '../../lib/youtube';
 import channelBillard from '../../data/billard/channel-billard.json';
 import { replayInfo, compKeyOf, seasonOf, tournamentHint } from '../../lib/replayMatch';
+import { matchAffiche } from '../../lib/matchAffiche';
+import MatchAffiche from '../../components/MatchAffiche.astro';
 
 export async function getStaticPaths() {
   const videos = await getReplays();
@@ -31,6 +33,13 @@ const shareUrl = new URL(`/replay/${video.id}`, Astro.site).href;
 // → texte unique + liens internes pour l'indexation Google (cf. lib/replayMatch.ts). Rien d'inventé.
 const info = video.discipline === 'billard' ? replayInfo(video.title, video.date) : null;
 const fiches = info?.players ?? [];
+// Affiche du match (logos des clubs / photos des joueurs), reconnue automatiquement depuis le titre.
+const affiche = matchAffiche(video.discipline, video.title, video.date);
+const afficheKicker = video.discipline === 'basket'
+  ? `Basket · ${/\bcdf\b|coupe\s+de\s+france/i.test(video.title) ? 'Coupe de France' : /\bnm1\b|nationale\s*1/i.test(video.title) ? 'Nationale 1' : 'Match'}${seasonOf(video.title, video.date) ? ` · ${seasonOf(video.title, video.date)!.replace('-', '/')}` : ''}`
+  : info ? `${info.compLabel}${info.season ? ` · ${info.season.label}` : ''}${info.match ? ` · ${info.match.tournament}${info.match.phase ? ` · ${info.match.phase}` : ''}` : ''}` : d.name;
+const afficheWhen = info?.match?.dateFr || video.when;
+const affichePlace = info?.match?.city || undefined;
 const pageDesc = info?.summary || video.excerpt || `${video.title} — ${d.name} en replay intégral sur LSEI, Le Sport en Image.`;
 
 const all = await getReplays({ discipline: video.discipline });
@@ -69,6 +78,7 @@ const videoLd = {
 ---
 <Base title={video.title} description={pageDesc} active="replays" ogType="video.other" image={video.thumb}>
   <script type="application/ld+json" set:html={JSON.stringify(videoLd)} />
+  {affiche && <MatchAffiche a={affiche} kicker={afficheKicker} when={afficheWhen} place={affichePlace} color={d.colorVar} />}
   <section class="section">
     <div class="wrap watch">
       <div class="watch-main lead">
