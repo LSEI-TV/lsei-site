@@ -4,9 +4,12 @@ import VideoPlayer from '../../components/VideoPlayer.astro';
 import Thumb from '../../components/Thumb.astro';
 import ShareLinks from '../../components/ShareLinks.astro';
 import { getDiscipline } from '../../data/site';
-import { getReplays } from '../../lib/youtube';
+import { getReplays, getBroadcasts } from '../../lib/youtube';
+import { parseProgTitle } from '../../lib/programmeTitle';
 import channelBillard from '../../data/billard/channel-billard.json';
 import { replayInfo, compKeyOf, seasonOf, tournamentHint } from '../../lib/replayMatch';
+import { matchAffiche } from '../../lib/matchAffiche';
+import MatchAffiche from '../../components/MatchAffiche.astro';
 
 export async function getStaticPaths() {
   const videos = await getReplays();
@@ -20,10 +23,18 @@ export async function getStaticPaths() {
       const iso = c.date ? (c.date.length === 10 ? `${c.date}T00:00:00Z` : c.date) : '';
       return { id: c.id, discipline: 'billard' as const, title: c.title, kicker: 'Replay', caption: 'Billard', when: frDate(iso), thumb: `https://i.ytimg.com/vi/${c.id}/hqdefault.jpg`, date: iso || undefined };
     });
-  return [...videos, ...extra].map((v) => ({ params: { id: v.id }, props: { video: v } }));
+  // DIRECTS ANNONCÉS (YouTube) : leur page existe dès l'annonce, à l'adresse du futur replay
+  // → indexée avant le match, puis la même page devient le replay (même identifiant YouTube).
+  const known = new Set([...have, ...extra.map((x) => x.id)]);
+  const upcoming = (await getBroadcasts())
+    .filter((b) => !known.has(b.id) && (b.live || Date.parse(b.date) + 6 * 3600 * 1000 >= Date.now()))
+    .map((b) => ({ id: b.id, discipline: b.discipline, title: b.title, kicker: b.live ? 'En direct' : 'Direct à venir', caption: 'Direct',
+      when: frDate(b.date), thumb: `https://i.ytimg.com/vi/${b.id}/hqdefault.jpg`, date: b.date, upcoming: true, live: !!b.live }));
+  return [...videos, ...extra, ...upcoming].map((v) => ({ params: { id: v.id }, props: { video: v } }));
 }
 
-const { video } = Astro.props;
+const { video } = Astro.props as { video: any };
+const upcoming = !!video.upcoming;    // direct annoncé, pas encore (ou en train d'être) diffusé
 const d = getDiscipline(video.discipline);
 const shareUrl = new URL(`/replay/${video.id}`, Astro.site).href;
 
@@ -31,7 +42,21 @@ const shareUrl = new URL(`/replay/${video.id}`, Astro.site).href;
 // → texte unique + liens internes pour l'indexation Google (cf. lib/replayMatch.ts). Rien d'inventé.
 const info = video.discipline === 'billard' ? replayInfo(video.title, video.date) : null;
 const fiches = info?.players ?? [];
-const pageDesc = info?.summary || video.excerpt || `${video.title} — ${d.name} en replay intégral sur LSEI, Le Sport en Image.`;
+// Affiche du match (logos des clubs / photos des joueurs), reconnue automatiquement depuis le titre.
+const affiche = matchAffiche(video.discipline, video.title, video.date);
+const afficheKicker = video.discipline === 'basket'
+  ? `Basket · ${/\bcdf\b|coupe\s+de\s+france/i.test(video.title) ? 'Coupe de France' : /\bnm1\b|nationale\s*1/i.test(video.title) ? 'Nationale 1' : 'Match'}${seasonOf(video.title, video.date) ? ` · ${seasonOf(video.title, video.date)!.replace('-', '/')}` : ''}`
+  : info ? `${info.compLabel}${info.season ? ` · ${info.season.label}` : ''}${info.match ? ` · ${info.match.tournament}${info.match.phase ? ` · ${info.match.phase}` : ''}` : ''}` : d.name;
+const TZ = 'Europe/Paris';
+const startD = upcoming && video.date ? new Date(video.date) : null;
+const startLong = startD ? (() => { const s = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: TZ }).format(startD); return s.charAt(0).toUpperCase() + s.slice(1); })() : '';
+const startHour = startD ? new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: TZ }).format(startD).replace(':', 'h') : '';
+const afficheWhen = upcoming ? `${startLong} · ${startHour}` : (info?.match?.dateFr || video.when);
+const affichePlace = info?.match?.city || undefined;
+const _main = parseProgTitle(video.title).main || video.title;
+const pageDesc = upcoming
+  ? `${affiche ? `${affiche.sides[0].name} – ${affiche.sides[1].name}` : _main} en direct sur LSEI le ${(video.date ? new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' }).format(new Date(video.date)) : '')} — ${d.name}, diffusion gratuite en direct puis en replay intégral.`
+  : info?.summary || video.excerpt || `${video.title} — ${d.name} en replay intégral sur LSEI, Le Sport en Image.`;
 
 const all = await getReplays({ discipline: video.discipline });
 // « Autres vidéos de ce tournoi » : même catégorie, même saison, même tournoi (TNx / Championnat de France).
@@ -40,6 +65,12 @@ const sameEvent = info && info.season && (hint.level || hint.kind)
   ? all.filter((v) => v.id !== video.id && compKeyOf(v.title) === info.compKey && seasonOf(v.title, v.date) === info.season!.slug
       && JSON.stringify(tournamentHint(v.title)) === JSON.stringify(hint)).slice(0, 6)
   : [];
+const pageTitle = upcoming
+  ? `${affiche ? `${affiche.sides[0].name} – ${affiche.sides[1].name}` : _main} en direct · ${startLong}${startHour ? ` à ${startHour}` : ''}`
+  : video.title;
+const gcal = upcoming && startD
+  ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(pageTitle.split(' en direct')[0] + ' — en direct sur LSEI')}&dates=${startD.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}/${new Date(startD.valueOf() + 2 * 3600 * 1000).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}&details=${encodeURIComponent(shareUrl)}`
+  : '';
 const related = all.filter((v) => v.id !== video.id && !sameEvent.some((x) => x.id === v.id)).slice(0, 3);
 
 // Données structurées vidéo (SEO) : permet à Google d'afficher la vidéo
@@ -57,6 +88,7 @@ const videoLd = {
     `https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`,
   ],
   ...(video.date ? { uploadDate: video.date } : {}),
+  ...(upcoming && video.date ? { publication: { '@type': 'BroadcastEvent', isLiveBroadcast: true, startDate: video.date, endDate: new Date(Date.parse(video.date) + 2 * 3600 * 1000).toISOString() } } : {}),
   ...(video.duration ? { duration: video.duration } : {}),
   embedUrl: `https://www.youtube.com/embed/${video.id}`,
   contentUrl: `https://www.youtube.com/watch?v=${video.id}`,
@@ -67,17 +99,31 @@ const videoLd = {
   },
 };
 ---
-<Base title={video.title} description={pageDesc} active="replays" ogType="video.other" image={video.thumb}>
+<Base title={pageTitle} description={pageDesc} active="replays" ogType="video.other" image={video.thumb}>
   <script type="application/ld+json" set:html={JSON.stringify(videoLd)} />
+  {affiche && <MatchAffiche a={affiche} kicker={afficheKicker} when={afficheWhen} place={affichePlace} color={d.colorVar} />}
+  {upcoming && startD && (
+    <section class="up-strip" style={`--c:${d.colorVar}`} data-start={startD.toISOString()} data-vid={video.id}>
+      <div class="wrap up-in">
+        <div class="up-state"><span class="up-dot"></span><span data-up-lab>{video.live ? 'En direct maintenant' : 'Direct à venir'}</span></div>
+        <div class="up-cd" data-up-cd hidden={video.live}><b data-d>—</b><i>j</i><b data-h>—</b><i>h</i><b data-m>—</b><i>min</i></div>
+        <div class="up-when">{startLong} · {startHour} · gratuit sur LSEI</div>
+        <div class="up-btns">
+          <a class="up-btn up-btn--main" href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noopener">{video.live ? '▸ Regarder sur YouTube' : '🔔 Me rappeler (YouTube)'}</a>
+          <a class="up-btn" href={gcal} target="_blank" rel="noopener">＋ Ajouter à mon agenda</a>
+        </div>
+      </div>
+    </section>
+  )}
   <section class="section">
     <div class="wrap watch">
       <div class="watch-main lead">
         <VideoPlayer id={video.id} from={d.from} to={d.to} caption={video.caption} title={video.title} image={video.thumb} />
         <div class="kicker" style={`color:${d.colorVar};margin-top:16px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase`}>{video.kicker}</div>
-        <h1>{video.title}</h1>
+        <h1>{upcoming ? pageTitle : video.title}</h1>
         <div class="byline">
           <a href={`/disciplines/${d.slug}`} class="k" style={`color:${d.colorVar}`}>{d.name}</a><span class="sep"></span>
-          <span>{video.when}</span>
+          <span>{upcoming ? `${startLong} · ${startHour}` : video.when}</span>
           {video.views && <Fragment><span class="sep"></span><span class="mono">{video.views} vues</span></Fragment>}
         </div>
         {fiches.length > 0 && (
@@ -165,9 +211,50 @@ const videoLd = {
       </aside>
     </div>
   </section>
+  {upcoming && (
+    <script is:inline>
+      (function () {
+        var box = document.querySelector('.up-strip'); if (!box) return;
+        var start = new Date(box.getAttribute('data-start')).getTime(), vid = box.getAttribute('data-vid');
+        var lab = box.querySelector('[data-up-lab]'), cd = box.querySelector('[data-up-cd]');
+        var p = function (n) { return (n < 10 ? '0' : '') + n; };
+        function tick() {
+          var t = start - Date.now();
+          if (t <= 0) { if (cd) cd.hidden = true; if (lab && !box.classList.contains('is-live')) lab.textContent = 'Diffusion en cours ou terminée — à voir ci-dessous'; return; }
+          var d = Math.floor(t / 864e5), h = Math.floor((t % 864e5) / 36e5), m = Math.floor((t % 36e5) / 6e4);
+          cd.querySelector('[data-d]').textContent = d; cd.querySelector('[data-h]').textContent = p(h); cd.querySelector('[data-m]').textContent = p(m);
+        }
+        function live() {
+          fetch('/live.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+            var on = !!(j && (j.lives || []).some(function (l) { return l.id === vid; }));
+            box.classList.toggle('is-live', on);
+            if (on) { if (lab) lab.textContent = 'En direct maintenant'; if (cd) cd.hidden = true; var bt = box.querySelector('.up-btn--main'); if (bt) bt.textContent = '▸ Regarder en direct'; }
+          }).catch(function () {});
+        }
+        tick(); setInterval(tick, 30000); live(); setInterval(live, 60000);
+      })();
+    </script>
+  )}
 </Base>
 
 <style>
+  /* Direct annoncé : compte à rebours, rappel YouTube, agenda */
+  .up-strip { background: #0A0E1A; color: #fff; border-top: 1px solid rgba(255,255,255,.08); }
+  .up-in { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 26px; padding-top: 16px; padding-bottom: 18px; text-align: center; }
+  .up-state { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.75); }
+  .up-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+  .up-strip.is-live .up-dot { background: #e5231b; box-shadow: 0 0 0 4px rgba(229,35,27,.3); }
+  .up-strip.is-live .up-state { color: #fff; }
+  .up-cd[hidden] { display: none; }
+  .up-cd { display: inline-flex; align-items: baseline; gap: 4px; font-family: var(--display); }
+  .up-cd b { font-size: 34px; font-weight: 800; line-height: 1; }
+  .up-cd i { font-style: normal; font-size: 13px; color: rgba(255,255,255,.6); margin-right: 8px; }
+  .up-when { font-size: 14px; font-weight: 600; color: rgba(255,255,255,.8); }
+  .up-btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .up-btn { display: inline-flex; align-items: center; padding: 10px 16px; border-radius: 999px; font-size: 13.5px; font-weight: 800; text-decoration: none; color: #fff; border: 1px solid rgba(255,255,255,.3); }
+  .up-btn:hover { border-color: #fff; }
+  .up-btn--main { background: #fff; color: #0A0E1A; border-color: #fff; }
+  .up-btn--main:hover { background: var(--c); border-color: var(--c); color: #fff; }
   /* Liens vers les fiches des joueurs cités dans le titre */
   .rp-fiches { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; }
   .rp-fiches-k { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); margin-right: 2px; }
