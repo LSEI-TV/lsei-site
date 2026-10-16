@@ -648,7 +648,37 @@ export interface Broadcast { id: string; title: string; discipline: DisciplineSl
 function readBroadcastsCache(): Broadcast[] | null {
   try { const v = JSON.parse(readFileSync('src/data/cache/broadcasts.json', 'utf8')); return Array.isArray(v) ? v as Broadcast[] : null; } catch { return null; }
 }
-export async function getBroadcasts(): Promise<Broadcast[]> {
+// Directs EN COURS et PROGRAMMÉS tels que publiés sur lsei.tv/live.json (mis à jour toutes les 5 min
+// par live-status.yml). Aucune requête à l'API YouTube → ne dépend pas du quota (souvent épuisé en fin
+// de journée sur GitHub). null si le fichier est inaccessible ou signale une erreur de détection.
+async function readPublishedLiveJson(): Promise<Broadcast[] | null> {
+  try {
+    const r = await fetch('https://lsei.tv/live.json', { signal: AbortSignal.timeout(10000), headers: { 'cache-control': 'no-cache' } });
+    if (!r.ok) return null;
+    const j = await r.json();
+    if (!j || j.error) return null;
+    const nowIso = new Date().toISOString();
+    const out: Broadcast[] = [];
+    for (const l of j.lives || []) if (l?.id) out.push({ id: l.id, title: l.title || 'Direct LSEI', discipline: (l.discipline || 'billard') as DisciplineSlug, date: l.scheduled || nowIso, live: true });
+    for (const u of j.upcoming || []) if (u?.id && u.scheduled) out.push({ id: u.id, title: u.title || 'Direct LSEI', discipline: (u.discipline || 'billard') as DisciplineSlug, date: u.scheduled, live: false });
+    return out;
+  } catch {
+    return null;
+  }
+}
+function writeBroadcastsCache(v: Broadcast[]) {
+  try { mkdirSync('src/data/cache', { recursive: true }); writeFileSync('src/data/cache/broadcasts.json', JSON.stringify(v)); } catch { /* non bloquant */ }
+}
+let _broadcasts: Promise<Broadcast[]> | undefined;
+export function getBroadcasts(): Promise<Broadcast[]> {
+  // Mémorisé pour tout le build (appelé par plusieurs pages) → une seule récupération.
+  if (!import.meta.env.PROD) return fetchBroadcasts();   // dev : toujours frais
+  return (_broadcasts ??= fetchBroadcasts());
+}
+async function fetchBroadcasts(): Promise<Broadcast[]> {
+  // 1) live.json publié (sans quota) — 2) API YouTube — 3) dernier cache commité.
+  const pub = await readPublishedLiveJson();
+  if (pub) { writeBroadcastsCache(pub); return pub; }
   if (!hasYouTube) return readBroadcastsCache() ?? [];
   try {
     const { live, upcoming } = await fetchLiveState();
@@ -658,7 +688,7 @@ export async function getBroadcasts(): Promise<Broadcast[]> {
     for (const u of upcoming) out.push({ id: u.id, title: u.title, discipline: u.discipline, date: u.scheduled || nowIso, live: false });
     // Cache de secours : /programme et la « une » gardent les directs programmés même
     // si un build n'atteint pas l'API (quota). Les événements passés sont filtrés par date.
-    try { mkdirSync('src/data/cache', { recursive: true }); writeFileSync('src/data/cache/broadcasts.json', JSON.stringify(out)); } catch { /* non bloquant */ }
+    writeBroadcastsCache(out);
     return out;
   } catch (e) {
     console.warn('[YouTube] getBroadcasts → cache/repli :', (e as Error).message);
