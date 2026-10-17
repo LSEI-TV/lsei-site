@@ -1,33 +1,77 @@
 {
-  "updated": "2026-10-16T18:33:47.500Z",
+  "updated": "2026-10-17T12:18:44.706Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/classement",
   "pool": "Poule B",
   "rows": [
     {
       "slug": "challans",
       "rank": 1,
-      "pts": 8,
-      "played": 4,
+      "pts": 9,
+      "played": 5,
       "w": 4,
-      "l": 0,
-      "pf": 348,
-      "pa": 287,
-      "diff": 61
+      "l": 1,
+      "pf": 428,
+      "pa": 368,
+      "diff": 60
+    },
+    {
+      "slug": "tarbes",
+      "rank": 2,
+      "pts": 9,
+      "played": 5,
+      "w": 4,
+      "l": 1,
+      "pf": 414,
+      "pa": 384,
+      "diff": 30
     },
     {
       "slug": "lorient",
-      "rank": 2,
+      "rank": 3,
+      "pts": 9,
+      "played": 6,
+      "w": 3,
+      "l": 3,
+      "pf": 427,
+      "pa": 443,
+      "diff": -16
+    },
+    {
+      "slug": "rennes",
+      "rank": 4,
       "pts": 8,
       "played": 5,
       "w": 3,
       "l": 2,
-      "pf": 370,
-      "pa": 360,
+      "pf": 431,
+      "pa": 421,
       "diff": 10
     },
     {
+      "slug": "angers",
+      "rank": 5,
+      "pts": 8,
+      "played": 5,
+      "w": 3,
+      "l": 2,
+      "pf": 344,
+      "pa": 341,
+      "diff": 3
+    },
+    {
+      "slug": "bordeaux",
+      "rank": 6,
+      "pts": 8,
+      "played": 6,
+      "w": 2,
+      "l": 4,
+      "pf": 439,
+      "pa": 453,
+      "diff": -14
+    },
+    {
       "slug": "fougeres",
-      "rank": 3,
+      "rank": 7,
       "pts": 8,
       "played": 5,
       "w": 3,
@@ -37,114 +81,70 @@
       "diff": -24
     },
     {
-      "slug": "tarbes",
-      "rank": 4,
-      "pts": 7,
-      "played": 4,
-      "w": 3,
-      "l": 1,
-      "pf": 331,
-      "pa": 307,
-      "diff": 24
-    },
-    {
-      "slug": "angers",
-      "rank": 5,
-      "pts": 7,
-      "played": 4,
-      "w": 3,
-      "l": 1,
-      "pf": 282,
-      "pa": 274,
-      "diff": 8
-    },
-    {
-      "slug": "bordeaux",
-      "rank": 6,
-      "pts": 7,
-      "played": 5,
-      "w": 2,
-      "l": 3,
-      "pf": 373,
-      "pa": 370,
-      "diff": 3
-    },
-    {
       "slug": "tours",
-      "rank": 7,
-      "pts": 7,
-      "played": 5,
-      "w": 2,
-      "l": 3,
-      "pf": 389,
-      "pa": 392,
-      "diff": -3
-    },
-    {
-      "slug": "rennes",
       "rank": 8,
-      "pts": 6,
-      "played": 4,
+      "pts": 8,
+      "played": 6,
       "w": 2,
-      "l": 2,
-      "pf": 350,
-      "pa": 341,
-      "diff": 9
+      "l": 4,
+      "pf": 451,
+      "pa": 482,
+      "diff": -31
     },
     {
       "slug": "vitre",
       "rank": 9,
-      "pts": 5,
-      "played": 3,
-      "w": 2,
-      "l": 1,
-      "pf": 208,
-      "pa": 208,
-      "diff": 0
-    },
-    {
-      "slug": "chartres",
-      "rank": 10,
-      "pts": 5,
+      "pts": 7,
       "played": 4,
-      "w": 1,
-      "l": 3,
-      "pf": 325,
-      "pa": 337,
-      "diff": -12
+      "w": 3,
+      "l": 1,
+      "pf": 291,
+      "pa": 274,
+      "diff": 17
     },
     {
       "slug": "sables",
-      "rank": 11,
-      "pts": 5,
-      "played": 4,
-      "w": 1,
+      "rank": 10,
+      "pts": 7,
+      "played": 5,
+      "w": 2,
       "l": 3,
-      "pf": 297,
-      "pa": 316,
-      "diff": -19
+      "pf": 387,
+      "pa": 378,
+      "diff": 9
+    },
+    {
+      "slug": "chartres",
+      "rank": 11,
+      "pts": 7,
+      "played": 5,
+      "w": 2,
+      "l": 3,
+      "pf": 392,
+      "pa": 399,
+      "diff": -7
     },
     {
       "slug": "toulouse",
       "rank": 12,
-      "pts": 4,
-      "played": 3,
-      "w": 1,
+      "pts": 6,
+      "played": 4,
+      "w": 2,
       "l": 2,
-      "pf": 253,
-      "pa": 261,
-      "diff": -8
+      "pf": 336,
+      "pa": 318,
+      "diff": 18
     },
     {
       "slug": "laval",
       "rank": 13,
-      "pts": 4,
-      "played": 4,
+      "pts": 5,
+      "played": 5,
       "w": 0,
-      "l": 4,
-      "pf": 281,
-      "pa": 330,
-      "diff": -49
+      "l": 5,
+      "pf": 358,
+      "pa": 413,
+      "diff": -55
     }
   ]
 }
