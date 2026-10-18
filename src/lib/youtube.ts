@@ -318,6 +318,20 @@ function disciplineLabel(slug: DisciplineSlug): string {
 
 // -------- récupération réelle des replays (avec cache par build) --------
 let _realReplays: Video[] | null = null;
+// Mémoïsation par PROMESSE : pendant un build, Astro rend les pages EN PARALLÈLE et
+// beaucoup appellent getReplays « en même temps ». Avec une simple garde de valeur
+// (posée seulement À LA FIN du fetch), chaque appel concurrent lançait sa PROPRE
+// énumération complète des 81 playlists → des milliers d'appels API et le quota
+// explosé (~5000 appels pour ~89 utiles). On partage une seule énumération en vol.
+// La mémo est portée par globalThis : en build SSR, Vite peut charger CE MODULE
+// plusieurs fois (un exemplaire par chunk/page) → une variable de module ne serait pas
+// partagée et chaque exemplaire relancerait l'énumération. globalThis est unique au
+// processus → une seule énumération pour tout le build.
+const _g = globalThis as any;
+function fetchRealReplays(): Promise<Video[]> {
+  if (_realReplays) return Promise.resolve(_realReplays);
+  return (_g.__lseiReplaysPromise ??= fetchRealReplaysImpl());
+}
 
 // Cache de secours COMMITÉ : si un build ne parvient pas à joindre YouTube
 // (quota dépassé, panne réseau…), on repart de la dernière liste connue au lieu
@@ -333,7 +347,7 @@ function readReplaysCache(): Video[] | null {
 
 interface RawVid { id: string; discipline: DisciplineSlug; title: string; thumb?: string; pub: string; category?: string; plSeason?: string }
 
-async function fetchRealReplays(): Promise<Video[]> {
+async function fetchRealReplaysImpl(): Promise<Video[]> {
   if (_realReplays) return _realReplays;
   try {
   const playlists = await ytPaged(`playlists?part=snippet&channelId=${CHANNEL}`);
@@ -570,8 +584,13 @@ export async function getBillardCategories(): Promise<{ category: string; count:
 //  (≈ 3 unités au total, sur le quota large.)
 interface LiveVid { id: string; title: string; discipline: DisciplineSlug; thumb?: string; scheduled?: string }
 let _liveState: { live: LiveVid[]; upcoming: LiveVid[] } | null = null;
+// Même protection que fetchRealReplays : mémoïsation par promesse (builds concurrents).
+function fetchLiveState(): Promise<{ live: LiveVid[]; upcoming: LiveVid[] }> {
+  if (_liveState) return Promise.resolve(_liveState);
+  return ((globalThis as any).__lseiLiveStatePromise ??= fetchLiveStateImpl());
+}
 
-async function fetchLiveState(): Promise<{ live: LiveVid[]; upcoming: LiveVid[] }> {
+async function fetchLiveStateImpl(): Promise<{ live: LiveVid[]; upcoming: LiveVid[] }> {
   if (_liveState) return _liveState;
   const ch = await yt(`channels?part=contentDetails&id=${CHANNEL}`);
   const uploads = ch.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
@@ -716,9 +735,13 @@ async function fetchBroadcasts(): Promise<Broadcast[]> {
 // Sert au bloc « chiffres-clés » de l'accueil → toujours à jour, aucun chiffre saisi à la main.
 export interface ChannelStats { subscribers: number; views: number; videos: number }
 let _channelStats: ChannelStats | null | undefined;
-export async function getChannelStats(): Promise<ChannelStats | null> {
-  if (!hasYouTube) return null;
-  if (_channelStats !== undefined) return _channelStats;
+// Mémoïsation par promesse (builds concurrents) — cf. fetchRealReplays.
+export function getChannelStats(): Promise<ChannelStats | null> {
+  if (!hasYouTube) return Promise.resolve(null);
+  if (_channelStats !== undefined) return Promise.resolve(_channelStats);
+  return ((globalThis as any).__lseiChannelStatsPromise ??= getChannelStatsImpl());
+}
+async function getChannelStatsImpl(): Promise<ChannelStats | null> {
   try {
     const data = await yt(`channels?part=statistics&id=${CHANNEL}`);
     const s = data.items?.[0]?.statistics || {};
