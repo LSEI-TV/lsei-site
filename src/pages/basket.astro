@@ -21,6 +21,11 @@ const poolCal = poolCalendar();
 const byDate: Record<string, typeof poolCal> = {};
 for (const m of poolCal) (byDate[m.date] ??= []).push(m);
 const calDates = Object.keys(byDate).sort();
+// Journée(s) d'une date : « Journée 2 » (ou « Journées 5-6 » si des matchs reportés se croisent).
+const dayRound = (date: string) => {
+  const rs = [...new Set(byDate[date].map((m) => m.round).filter((r): r is number => r != null))].sort((a, b) => a - b);
+  return rs.length === 0 ? '' : rs.length === 1 ? `Journée ${rs[0]}` : `Journées ${rs.join('-')}`;
+};
 const fmtCalDate = (iso: string) => cap(new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date(iso + 'T00:00:00')));
 // Filtres du calendrier : équipes (triées) + mois présents.
 const clubsSorted = [...nmClubs].sort((a, b) => a.name.localeCompare(b.name, 'fr'));
@@ -162,7 +167,7 @@ const lastWin = pfbLast ? ((pfbLast.homeSlug === 'fougeres') === (pfbLast.homeSc
           <div class="fc-list" id="fc-list">
             {calDates.map((date) => (
               <div class="fc-day" data-date={date} data-month={date.slice(0, 7)}>
-                <div class="fc-date">{fmtCalDate(date)}</div>
+                <div class="fc-date">{fmtCalDate(date)}{dayRound(date) ? <span class="fc-jx"> · {dayRound(date)}</span> : null}</div>
                 <div class="fc-games">
                   {byDate[date].map((m) => {
                     const h = nmClubBy(m.homeSlug), a = nmClubBy(m.awaySlug);
@@ -393,6 +398,7 @@ const lastWin = pfbLast ? ((pfbLast.homeSlug === 'fougeres') === (pfbLast.homeSc
   .fc-day.is-next .fc-date::before { content: '● À venir · '; font-size: 10px; }
   .fc-date { font-size: 12px; font-weight: 800; letter-spacing: .02em; color: var(--ink-soft); background: var(--surface-2);
     padding: 8px 14px; border-bottom: 1px solid var(--line); }
+  .fc-jx { font-weight: 700; opacity: .72; }
   .fc-games { display: flex; flex-direction: column; }
   .fc-game { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 11px 16px; position: relative; }
   .fc-game + .fc-game { border-top: 1px solid var(--line); }

@@ -54,31 +54,45 @@ async function main() {
   const html = await res.text();
 
   // Un <li class="display-games__third-list__entry"> par match (passé OU à venir).
-  const blocks = html.split(/<li class="display-games__third-list__entry/).slice(1);
-  const seen = new Set();
-  const matches = [];
-  for (const b of blocks) {
+  // Les matchs sont regroupés sous des en-têtes « Journée N, Group … » : on garde le
+  // numéro de journée en cours pour l'attacher à chaque match (le n° est fiable même si
+  // l'étiquette Group A/B de la FFBB est incohérente).
+  const parts = html.split(/<li class="display-games__third-list__entry/);
+  const jre = /Journ[ée]+e?\s*(\d+)/gi;
+  const lastJ = (s) => { let m, last = null; jre.lastIndex = 0; while ((m = jre.exec(s))) last = Number(m[1]); return last; };
+  let current = lastJ(parts[0]); // journée précédant le 1er bloc de match
+  const byKey = new Map();
+  for (let k = 1; k < parts.length; k++) {
+    const b = parts[k];
     // Date : « 18/09 20:00 » — le jour peut être sur 1 chiffre (« 2/10 », « 7/10 »).
     const dm = b.match(/class="date">\s*(\d{1,2})\/(\d{2})/);
-    if (!dm) continue;
-    // Équipes : alt=… des 2 logos (présent pour les matchs passés ET à venir).
-    const teams = [...b.matchAll(/<img class="picture"[^>]*alt="([^"]*)"/g)].map((m) => m[1]);
-    if (teams.length < 2) continue;
-    const home = toSlug(teams[0]);
-    const away = toSlug(teams[1]);
-    if (!home || !away) continue; // au moins une équipe hors Poule B → ignoré
-    // Scores : span .team__score (vide tant que le match n'est pas joué), ordre DOM = [dom, ext].
-    const scores = [...b.matchAll(/class="team__score[^"]*">\s*(\d+)\s*</g)].map((m) => Number(m[1]));
-    const day = dm[1].padStart(2, '0'), month = dm[2];
-    const year = Number(month) >= 8 ? '2026' : '2027'; // saison sept 2026 → juin 2027
-    const date = `${year}-${month}-${day}`;
-    const key = `${date}_${home}_${away}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    const rec = { date, homeSlug: home, awaySlug: away };
-    if (scores.length >= 2) { rec.homeScore = scores[0]; rec.awayScore = scores[1]; }
-    matches.push(rec);
+    if (dm) {
+      // Équipes : alt=… des 2 logos (présent pour les matchs passés ET à venir).
+      const teams = [...b.matchAll(/<img class="picture"[^>]*alt="([^"]*)"/g)].map((m) => m[1]);
+      const home = teams[0] ? toSlug(teams[0]) : null;
+      const away = teams[1] ? toSlug(teams[1]) : null;
+      if (home && away) { // les 2 équipes en Poule B
+        // Scores : span .team__score (vide tant que le match n'est pas joué), ordre DOM = [dom, ext].
+        const scores = [...b.matchAll(/class="team__score[^"]*">\s*(\d+)\s*</g)].map((m) => Number(m[1]));
+        const day = dm[1].padStart(2, '0'), month = dm[2];
+        const year = Number(month) >= 8 ? '2026' : '2027'; // saison sept 2026 → juin 2027
+        const date = `${year}-${month}-${day}`;
+        const key = `${date}_${home}_${away}`;
+        const rec = { date, homeSlug: home, awaySlug: away };
+        if (scores.length >= 2) { rec.homeScore = scores[0]; rec.awayScore = scores[1]; }
+        if (current != null) rec.journee = current;
+        const ex = byKey.get(key);
+        if (ex) { // doublon (ex. match « à la une » répété en haut) → la liste principale (plus bas) fait foi
+          if (rec.journee != null) ex.journee = rec.journee;
+          if (rec.homeScore != null) { ex.homeScore = rec.homeScore; ex.awayScore = rec.awayScore; }
+        } else byKey.set(key, rec);
+      }
+    }
+    // Une en-tête « Journée N » en fin de ce bloc annonce le(s) match(s) suivant(s).
+    const j = lastJ(b);
+    if (j != null) current = j;
   }
+  const matches = [...byKey.values()];
   matches.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
   if (matches.length < 20) throw new Error(`Calendrier suspect (${matches.length} matchs) — abandon, cache conservé.`);
 

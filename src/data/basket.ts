@@ -264,7 +264,7 @@ export const seasonStarted = () =>
 //  Les scores ne sont pas récupérables (JS) → overlay MANUEL par affiche,
 //  clé « home_away » (survit aux changements de dates FFBB).
 // ------------------------------------------------------------
-export interface PoolMatch { date: string; homeSlug: string; awaySlug: string; homeScore?: number; awayScore?: number; round?: number }
+export interface PoolMatch { date: string; homeSlug: string; awaySlug: string; homeScore?: number; awayScore?: number; round?: number; journee?: number }
 
 // Pour saisir un score : ajouter 'homeSlug_awaySlug': [scoreDom, scoreExt].
 // La clé suit le sens de l'affiche FFBB (équipe à domicile en 1er).
@@ -275,7 +275,7 @@ export const calendarUpdated: string | null = (calendarCache as any)?.updated ??
 
 /** Tout le calendrier de la Poule B (matchs entre 2 clubs du site), trié par date. */
 export function poolCalendar(): PoolMatch[] {
-  const raw = ((calendarCache as any)?.matches ?? []) as { date: string; homeSlug: string; awaySlug: string; homeScore?: number; awayScore?: number }[];
+  const raw = ((calendarCache as any)?.matches ?? []) as { date: string; homeSlug: string; awaySlug: string; homeScore?: number; awayScore?: number; journee?: number }[];
   return raw
     .filter((m) => nmClubBy(m.homeSlug) && nmClubBy(m.awaySlug))
     .map((m) => {
@@ -283,18 +283,18 @@ export function poolCalendar(): PoolMatch[] {
       const man = MANUAL_SCORES[`${m.homeSlug}_${m.awaySlug}`];
       const homeScore = man ? man[0] : m.homeScore;
       const awayScore = man ? man[1] : m.awayScore;
-      return homeScore != null && awayScore != null
-        ? { date: m.date, homeSlug: m.homeSlug, awaySlug: m.awaySlug, homeScore, awayScore }
-        : { date: m.date, homeSlug: m.homeSlug, awaySlug: m.awaySlug };
+      // round = n° de journée officiel FFBB (fiable même pour les matchs reportés).
+      const base: PoolMatch = { date: m.date, homeSlug: m.homeSlug, awaySlug: m.awaySlug, journee: m.journee, round: m.journee };
+      if (homeScore != null && awayScore != null) { base.homeScore = homeScore; base.awayScore = awayScore; }
+      return base;
     })
     .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 }
 
-/** Calendrier d'un club (ses matchs), avec un n° de journée séquentiel par date. */
+/** Calendrier d'un club (ses matchs), avec le n° de journée officiel FFBB. */
 export function clubCalendar(slug: string): PoolMatch[] {
   return poolCalendar()
-    .filter((m) => m.homeSlug === slug || m.awaySlug === slug)
-    .map((m, i) => ({ ...m, round: i + 1 }));
+    .filter((m) => m.homeSlug === slug || m.awaySlug === slug);
 }
 
 // ------------------------------------------------------------
