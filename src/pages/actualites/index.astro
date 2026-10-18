@@ -80,8 +80,8 @@ for (const p of posts) if (p.disc) counts.set(p.disc, (counts.get(p.disc) ?? 0) 
 const filters = disciplines.filter((d) => counts.has(d.slug));
 const dcol = (slug: string) => discOf(slug)?.colorVar ?? 'var(--accent)';
 
-// Articles éditoriaux masqués pour l'instant. Les .md restent dans src/content/articles/.
-const SHOW_ARTICLES = false;
+// Articles éditoriaux affichés. Les anciens .md non souhaités restent en draft: true.
+const SHOW_ARTICLES = true;
 ---
 <Base title="Actualités" description="Comptes-rendus, portraits et coulisses des disciplines LSEI." active="actualites">
   <!-- EN-TÊTE -->
