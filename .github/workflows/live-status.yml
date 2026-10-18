@@ -20,6 +20,9 @@ jobs:
 
       - name: Détecter le direct → live.json
         env:
+          # Clé DÉDIÉE à la détection live si le secret existe (quota isolé des builds),
+          # sinon repli automatique sur la clé commune dans le script.
+          YOUTUBE_API_KEY_LIVE: ${{ secrets.YOUTUBE_API_KEY_LIVE }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           YOUTUBE_CHANNEL_ID: UCYUOdKr28cOjLzHWv6pTpjQ
         run: node scripts/check-live.mjs

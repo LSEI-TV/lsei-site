@@ -1,6 +1,13 @@
 // Détecte si la chaîne YouTube LSEI est actuellement en direct, et écrit le
-// résultat dans live.json. Appelé par le workflow live-status.yml (toutes les 30 min).
+// résultat dans live.json. Appelé par le workflow live-status.yml (toutes les 5 min).
 // Méthode économe en quota : channel → playlist « uploads » → videos.list.
+//
+// FIABILITÉ : la clé peut être partagée avec les builds (quota 10 000 u/j), qui
+// l'épuisent parfois en soirée → la détection échoue (403). Deux garde-fous :
+//   1) Clé DÉDIÉE optionnelle (YOUTUBE_API_KEY_LIVE) : quota isolé des builds.
+//   2) En cas d'échec transitoire, on CONSERVE le dernier direct connu (≤ 3 h)
+//      au lieu d'écrire un live.json vide — un simple 403 ne fait plus disparaître
+//      le direct de l'accueil.
 import { writeFileSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -46,9 +53,24 @@ function billardPlace(title) {
 
 const enrich = (e) => { const { context, match } = parseTitle(e.title); return { ...e, context, match, place: billardPlace(e.title) }; };
 
-const KEY = process.env.YOUTUBE_API_KEY;
+// Clé DÉDIÉE à la détection live si elle existe (quota propre, non partagé avec les
+// builds), sinon la clé commune. Ajouter le secret YOUTUBE_API_KEY_LIVE suffit à isoler.
+const KEY = process.env.YOUTUBE_API_KEY_LIVE || process.env.YOUTUBE_API_KEY;
 const CHANNEL = process.env.YOUTUBE_CHANNEL_ID;
 const API = 'https://www.googleapis.com/youtube/v3';
+// URL du live.json actuellement en ligne (pour conserver le dernier état en cas d'échec).
+const LIVE_URL = process.env.LIVE_JSON_URL || 'https://lsei.tv/live.json';
+const PRESERVE_MS = 3 * 3600 * 1000; // on garde un direct affiché jusqu'à 3 h après la dernière détection réussie
+
+// Dernier live.json publié (sert de repli si la détection échoue ce coup-ci).
+async function fetchPrevious() {
+  try {
+    const r = await fetch(LIVE_URL, { cache: 'no-store', signal: AbortSignal.timeout(10000) });
+    if (!r.ok) return null;
+    const j = await r.json();
+    return j && typeof j === 'object' ? j : null;
+  } catch { return null; }
+}
 
 async function yt(path) {
   const r = await fetch(`${API}/${path}&key=${KEY}`);
@@ -112,10 +134,30 @@ try {
     upcoming,                                 // directs PROGRAMMÉS (grille /programme, temps réel)
     id: first?.id, title: first?.title,       // 1er direct (compat bandeau « ON AIR »)
     url: first ? `https://www.youtube.com/watch?v=${first.id}` : undefined,
+    confirmedAt: new Date().toISOString(),    // horodatage de la dernière détection RÉUSSIE
   };
 } catch (e) {
   console.error('Erreur détection live :', e.message);
-  out = { live: false, lives: [], upcoming: [], error: true }; // en cas d'erreur, pas de faux direct
+  // Échec transitoire (quota YouTube, réseau…). Plutôt que d'effacer un direct en cours,
+  // on reconduit le dernier état connu s'il est récent (≤ 3 h). error:true reste posé
+  // pour que les BUILDS redétectent eux-mêmes (ils ne se fient pas à un état dégradé) ;
+  // le temps réel de l'accueil, lui, continue d'afficher le direct sans coupure.
+  const prev = await fetchPrevious();
+  const fresh = prev?.confirmedAt && (Date.now() - Date.parse(prev.confirmedAt) < PRESERVE_MS);
+  const keptLives = Array.isArray(prev?.lives) ? prev.lives : [];
+  const keptUp = Array.isArray(prev?.upcoming) ? prev.upcoming : [];
+  if (prev && fresh && (keptLives.length || keptUp.length)) {
+    const first = keptLives[0];
+    out = {
+      live: keptLives.length > 0, lives: keptLives, upcoming: keptUp,
+      id: first?.id, title: first?.title,
+      url: first ? `https://www.youtube.com/watch?v=${first.id}` : undefined,
+      confirmedAt: prev.confirmedAt, stale: true, error: true,
+    };
+    console.error(`→ état conservé (dernière détection réussie : ${prev.confirmedAt}).`);
+  } else {
+    out = { live: false, lives: [], upcoming: [], error: true }; // rien de fiable à conserver
+  }
 }
 out.updated = new Date().toISOString();
 writeFileSync('live.json', JSON.stringify(out));
