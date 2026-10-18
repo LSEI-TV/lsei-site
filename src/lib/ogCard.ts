@@ -7,7 +7,7 @@ import { join } from 'node:path';
 const W = 1200, H = 630;
 const esc = (s: string) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-export async function renderPlayerCard(name: string, photo: string | null): Promise<Buffer> {
+export async function renderPlayerCard(name: string, photo: string | null, subtitle: string = 'Blackball Master · Fiche carrière'): Promise<Buffer> {
   const upper = (name || '').toUpperCase();
   // Taille auto pour que les noms longs tiennent sur une ligne.
   const size = upper.length > 22 ? 54 : upper.length > 16 ? 66 : 82;
@@ -31,7 +31,7 @@ export async function renderPlayerCard(name: string, photo: string | null): Prom
   </linearGradient></defs>
   <rect x="72" y="250" width="56" height="6" rx="3" fill="#1E7BE0"/>
   <text x="72" y="358" font-family="Arial, sans-serif" font-size="${size}" font-weight="800" letter-spacing="-1" fill="#ffffff">${esc(upper)}</text>
-  <text x="72" y="408" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#7E93FF">Blackball Master · Fiche carrière</text>
+  <text x="72" y="408" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#7E93FF">${esc(subtitle)}</text>
   <text x="72" y="556" font-family="Arial, sans-serif" font-size="24" font-weight="800" letter-spacing="2" fill="#ffffff">LSEI<tspan fill="#7E93FF">.TV</tspan></text>
 </svg>`;
 

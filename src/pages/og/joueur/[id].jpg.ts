@@ -8,8 +8,8 @@ export function getStaticPaths() {
 
 export const GET: APIRoute = async ({ props }) => {
   const { pid, nc } = props as { pid: number; nc?: any };
-  const { name, photo } = playerNamePhoto(pid, nc);
-  const jpg = await renderPlayerCard(name, photo);
+  const { name, photo, subtitle } = playerNamePhoto(pid, nc);
+  const jpg = await renderPlayerCard(name, photo, subtitle);
   return new Response(new Uint8Array(jpg), {
     headers: { 'Content-Type': 'image/jpeg', 'Cache-Control': 'public, max-age=31536000, immutable' },
   });
