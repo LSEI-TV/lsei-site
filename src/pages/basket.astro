@@ -3,7 +3,7 @@
 // Clic sur un club (avec mini-site) → /clubs/<slug>. « Site dans le site » façon NBA.
 import Base from '../layouts/Base.astro';
 import { getDiscipline } from '../data/site';
-import { NM1_LABEL, NM1_POOL, SEASON, SEASON_START, nmClubs, nmClubBy, nm1Standings, seasonStarted, standingsUpdated, standingsIsOfficial, clubHasSite, poolCalendar } from '../data/basket';
+import { NM1_LABEL, NM1_POOL, SEASON, SEASON_START, nmClubs, nmClubBy, nm1Standings, seasonStarted, standingsUpdated, standingsIsOfficial, clubHasSite, poolCalendar, cdfCalendar } from '../data/basket';
 import { assetExists, assetUrl } from '../lib/publicAssets';
 import NextMatchScript from '../components/NextMatchScript.astro';
 
@@ -16,14 +16,20 @@ const standingsMaj = standingsUpdated
 const fmtDay = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Paris' });
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-// Calendrier complet de la Poule B, groupé par date.
+// Calendrier complet de la Poule B (classement + stats), groupé plus bas.
 const poolCal = poolCalendar();
-const byDate: Record<string, typeof poolCal> = {};
-for (const m of poolCal) (byDate[m.date] ??= []).push(m);
+// Calendrier AFFICHÉ = championnat NM1 + Coupe de France (hors classement), par date.
+const calMatches = [...poolCal, ...cdfCalendar].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+const byDate: Record<string, typeof calMatches> = {};
+for (const m of calMatches) (byDate[m.date] ??= []).push(m);
 const calDates = Object.keys(byDate).sort();
-// Journée(s) d'une date : « Journée 2 » (ou « Journées 5-6 » si des matchs reportés se croisent).
+// Libellé d'une date : « Journée 2 » (ou « Journées 5-6 » si reports), ou « Coupe de
+// France · <tour> » pour une date de coupe.
 const dayRound = (date: string) => {
-  const rs = [...new Set(byDate[date].map((m) => m.round).filter((r): r is number => r != null))].sort((a, b) => a - b);
+  const games = byDate[date];
+  const cdf = games.find((m) => m.comp === 'cdf');
+  if (cdf) return `Coupe de France${cdf.compLabel ? ` · ${cdf.compLabel}` : ''}`;
+  const rs = [...new Set(games.map((m) => m.round).filter((r): r is number => r != null))].sort((a, b) => a - b);
   return rs.length === 0 ? '' : rs.length === 1 ? `Journée ${rs[0]}` : `Journées ${rs.join('-')}`;
 };
 const fmtCalDate = (iso: string) => cap(new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' }).format(new Date(iso + 'T00:00:00')));
@@ -40,7 +46,7 @@ const pfbGames = poolCal.filter((m) => m.homeSlug === 'fougeres' || m.awaySlug =
 const pfbNext = pfbGames.find((m) => m.date >= todayIso && m.homeScore == null);
 const pfbLast = [...pfbGames].reverse().find((m) => m.homeScore != null && m.awayScore != null);
 const pfbRank = standings.findIndex((r) => r.slug === 'fougeres') + 1;
-const playedDays = calDates.filter((dt) => byDate[dt].some((m) => m.homeScore != null));
+const playedDays = calDates.filter((dt) => byDate[dt].some((m) => m.comp !== 'cdf' && m.homeScore != null));
 const daysTo = (iso: string) => Math.round((Date.parse(iso + 'T12:00:00Z') - Date.parse(todayIso + 'T12:00:00Z')) / 86400000);
 const jx = (iso: string) => { const n = daysTo(iso); return n <= 0 ? "Aujourd'hui" : n === 1 ? 'Demain' : `J-${n}`; };
 const logoOf = (slug: string) => { const c = nmClubBy(slug); return c && assetExists(c.logo) ? assetUrl(c.logo!) : null; };

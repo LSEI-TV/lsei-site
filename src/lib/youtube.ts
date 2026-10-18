@@ -512,6 +512,22 @@ export async function getReplays(opts: { discipline?: DisciplineSlug; limit?: nu
     // (dernière liste connue), et la démo seulement s'il n'existe pas encore de cache.
     others = readReplaysCache() ?? MOCK_REPLAYS;
   }
+  // Exclure les PREMIÈRES / directs PROGRAMMÉS pas encore diffusés. YouTube les range
+  // dans la playlist « uploads » (date = création), si bien qu'une détection
+  // liveStreamingDetails ratée peut les figer à tort dans le cache des replays → elles
+  // apparaîtraient dans « Derniers replays » et auraient une page /replay/ avant même
+  // d'être diffusées. On les retire de façon fiable en croisant la liste des diffusions
+  // à venir (broadcasts, issue de live.json) : en direct, ou programmées dans le futur.
+  try {
+    const _now = Date.now();
+    const _upcoming = new Set(
+      (await getBroadcasts())
+        .filter((b) => b.live || new Date(b.date).getTime() > _now)
+        .map((b) => b.id),
+    );
+    if (_upcoming.size) others = others.filter((v) => !_upcoming.has(v.id));
+  } catch { /* broadcasts indisponibles → on ne filtre pas (comportement d'origine) */ }
+
   // Le football vient TOUJOURS de la liste curatée (chaîne LBF TV), pas de l'API LSEI.
   let items = [...others, ...FOOTBALL_VIDEOS];
   if (opts.discipline) items = items.filter((v) => v.discipline === opts.discipline);

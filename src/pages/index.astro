@@ -84,21 +84,11 @@ const femTop = femRanked.slice(0, 4);
 const { slugOf: femSlug } = playerSlugs(getFemmesSeasons());
 
 const rawLive = await getLiveFeature();
-// Option A — quand rien n'est en direct, le header met en avant le PROCHAIN match de
-// Fougères À DOMICILE (ceux que LSEI filme), tiré du calendrier basket, plutôt qu'un
-// vieux replay. Ne s'active que si le match est proche (≤ 16 jours).
-const _todayHero = new Date().toISOString().slice(0, 10);
-const _nextHome = poolCalendar().find((m) => m.homeSlug === 'fougeres' && m.homeScore == null && m.date >= _todayHero);
-let live = rawLive;
-if (_nextHome && (!rawLive || rawLive.status === 'replay')) {
-  const _md = new Date(`${_nextHome.date}T20:00:00+02:00`);
-  if ((_md.getTime() - Date.now()) / 86400000 <= 16) {
-    const _away = nmClubBy(_nextHome.awaySlug)?.name ?? _nextHome.awaySlug;
-    live = { discipline: 'basket', id: undefined, isLive: false, status: 'upcoming',
-      caption: `Basket · ${NM1_POOL}`, title: `Pays de Fougères vs ${_away}`,
-      href: '/basket', thumb: undefined, date: _md } as any;
-  }
-}
+// `live` (la « une » du header) est finalisé PLUS BAS, une fois `programme` construit :
+// s'il n'y a aucun direct détecté, on met en avant la VIDÉO du prochain rendez-vous
+// programmé (ex. la première YouTube du prochain match), et à défaut seulement une
+// carte vers le calendrier basket. Voir le bloc « une du header » après `programme`.
+let live: any = rawLive;
 
 // « Au programme » : lives YouTube + annonces manuelles (/admin), triés par date.
 // UNE seule ligne par discipline = le PROCHAIN rendez-vous de chaque sport.
@@ -129,6 +119,40 @@ for (const it of _progSorted) {
   programme.push(it);
   if (programme.length >= _MAX_ITEMS) break;
 }
+
+// ── La « une » du header ───────────────────────────────────────────────────
+// Si l'API YouTube détecte un direct (live/upcoming), on le garde tel quel.
+// Sinon (rien en direct, ou juste un vieux replay), on met en avant la VIDÉO du
+// prochain rendez-vous PROGRAMMÉ — la première/affiche YouTube du prochain match,
+// celle qui a un id vidéo + une miniature → le header affiche bien la vidéo + le
+// bouton play, comme prévu. À défaut de vidéo programmée, on retombe sur une simple
+// carte vers le calendrier basket (prochain match de Fougères à domicile, ≤ 16 j).
+if (!rawLive || rawLive.status === 'replay') {
+  const _up = programme.find((it) => it.id && (it.live || it.date.valueOf() >= _now - 2 * 3600 * 1000));
+  if (_up) {
+    live = {
+      discipline: _up.sport, id: _up.id, isLive: !!_up.live,
+      status: _up.live ? 'live' : 'upcoming',
+      caption: _up.sport === 'basket' ? `Basket · ${NM1_POOL}` : (getDiscipline(_up.sport as any)?.label ?? _up.sport),
+      title: _up.title, href: _up.href, thumb: _up.thumb, date: _up.date,
+    };
+  } else {
+    const _todayHero = new Date().toISOString().slice(0, 10);
+    const _nextHome = poolCalendar().find((m) => m.homeSlug === 'fougeres' && m.homeScore == null && m.date >= _todayHero);
+    if (_nextHome) {
+      const _md = new Date(`${_nextHome.date}T20:00:00+02:00`);
+      if ((_md.getTime() - _now) / 86400000 <= 16) {
+        const _away = nmClubBy(_nextHome.awaySlug)?.name ?? _nextHome.awaySlug;
+        live = {
+          discipline: 'basket', id: undefined, isLive: false, status: 'upcoming',
+          caption: `Basket · ${NM1_POOL}`, title: `Pays de Fougères vs ${_away}`,
+          href: '/basket', thumb: undefined, date: _md,
+        };
+      }
+    }
+  }
+}
+
 const railDay = new Intl.DateTimeFormat('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Paris' });
 const railTime = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' });
 

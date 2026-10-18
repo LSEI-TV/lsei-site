@@ -264,7 +264,20 @@ export const seasonStarted = () =>
 //  Les scores ne sont pas récupérables (JS) → overlay MANUEL par affiche,
 //  clé « home_away » (survit aux changements de dates FFBB).
 // ------------------------------------------------------------
-export interface PoolMatch { date: string; homeSlug: string; awaySlug: string; homeScore?: number; awayScore?: number; round?: number; journee?: number }
+export interface PoolMatch { date: string; homeSlug: string; awaySlug: string; homeScore?: number; awayScore?: number; round?: number; journee?: number; comp?: 'nm1' | 'cdf'; compLabel?: string; video?: string }
+
+// ------------------------------------------------------------
+//  COUPE DE FRANCE (coupedefrance.ffbb.com) — matchs de Pays de Fougères.
+//  Compétition à élimination directe, hors Poule B : saisie MANUELLE (le site CDF
+//  n'est pas scrapé, et une coupe à élimination n'a pas de calendrier figé). Ces
+//  matchs s'ajoutent au calendrier affiché mais N'ENTRENT PAS dans le classement NM1.
+//  Fougères : vainqueur de Laval (1er tour, diffusé sur LSEI), puis éliminé à Rennes.
+//  Source : coupedefrance.ffbb.com/masculin/calendrier.
+// ------------------------------------------------------------
+export const cdfCalendar: PoolMatch[] = [
+  { date: '2026-09-15', homeSlug: 'fougeres', awaySlug: 'laval',    homeScore: 93, awayScore: 77, comp: 'cdf', compLabel: '1er tour', video: 'GVS7ttsri0k' },
+  { date: '2026-10-06', homeSlug: 'rennes',   awaySlug: 'fougeres', homeScore: 79, awayScore: 70, comp: 'cdf', compLabel: '2e tour' },
+];
 
 // Pour saisir un score : ajouter 'homeSlug_awaySlug': [scoreDom, scoreExt].
 // La clé suit le sens de l'affiche FFBB (équipe à domicile en 1er).
