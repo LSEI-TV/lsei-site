@@ -96,6 +96,46 @@ const SHOW_ARTICLES = true;
     </div>
   </section>
 
+  <!-- À LA UNE — articles éditoriaux, TOUJOURS en haut, le plus récent d'abord. -->
+  {SHOW_ARTICLES && articles.length > 0 && (
+    <section class="section nw-articles">
+      <div class="wrap">
+        <div class="sec-head"><div><div class="eyebrow">À la une</div><h2>Les <em>articles</em></h2></div></div>
+        <div class="cards">
+          {articles.map((a) => {
+            const d = discOf(a.data.discipline);
+            const cover = articleCover(a);
+            return (
+              <a href={`/actualites/${a.id}`} class="card" style={d ? `--dc:${d.colorVar}` : ''}>
+                <div class="frame">
+                  {cover
+                    ? <img class="photo" src={cover.src} alt={a.data.title} loading="lazy" onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />
+                    : <div class="duo" style={d ? `background:linear-gradient(135deg,${d.from},${d.to})` : 'background:linear-gradient(135deg,#1E40E5,#0a1a6b)'}></div>}
+                  <div class="grad"></div>
+                  {d && <div class="cap"><div class="disc"><SportIcon slug={d.slug} class="disc-tag-ic" />{d.label}</div></div>}
+                </div>
+                <div class="kicker">{fmtDate(a.data.date)}</div>
+                <h3>{a.data.title}</h3>
+                <p class="ex">{a.data.excerpt}</p>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- BANDEAU « NE RATEZ RIEN » — au-dessus des publications réseaux de septembre. -->
+  <section class="nw-cta">
+    <div class="wrap nw-cta-in">
+      <div>
+        <div class="nw-cta-k">Ne ratez rien</div>
+        <p class="nw-cta-t">Les directs, les replays et les coulisses arrivent d'abord sur nos réseaux.</p>
+      </div>
+      <SocialLinks compact />
+    </div>
+  </section>
+
   {posts.length === 0 ? (
     <section class="section"><div class="wrap"><p class="dek">Les actualités arrivent bientôt.</p></div></section>
   ) : (
@@ -182,44 +222,6 @@ const SHOW_ARTICLES = true;
         </section>
       )}
     </>
-  )}
-
-  <!-- BANDEAU « SUIVEZ-NOUS » -->
-  <section class="nw-cta">
-    <div class="wrap nw-cta-in">
-      <div>
-        <div class="nw-cta-k">Ne ratez rien</div>
-        <p class="nw-cta-t">Les directs, les replays et les coulisses arrivent d'abord sur nos réseaux.</p>
-      </div>
-      <SocialLinks compact />
-    </div>
-  </section>
-
-  {SHOW_ARTICLES && articles.length > 0 && (
-    <section class="section">
-      <div class="wrap">
-        <div class="cards">
-          {articles.map((a) => {
-            const d = discOf(a.data.discipline);
-            const cover = articleCover(a);
-            return (
-              <a href={`/actualites/${a.id}`} class="card" style={d ? `--dc:${d.colorVar}` : ''}>
-                <div class="frame">
-                  {cover
-                    ? <img class="photo" src={cover.src} alt={a.data.title} loading="lazy" onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />
-                    : <div class="duo" style={d ? `background:linear-gradient(135deg,${d.from},${d.to})` : 'background:linear-gradient(135deg,#1E40E5,#0a1a6b)'}></div>}
-                  <div class="grad"></div>
-                  {d && <div class="cap"><div class="disc"><SportIcon slug={d.slug} class="disc-tag-ic" />{d.label}</div></div>}
-                </div>
-                <div class="kicker">{fmtDate(a.data.date)}</div>
-                <h3>{a.data.title}</h3>
-                <p class="ex">{a.data.excerpt}</p>
-              </a>
-            );
-          })}
-        </div>
-      </div>
-    </section>
   )}
 
   <script>
