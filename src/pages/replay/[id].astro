@@ -99,7 +99,7 @@ const videoLd = {
   },
 };
 ---
-<Base title={pageTitle} description={pageDesc} active="replays" ogType="video.other" image={video.thumb}>
+<Base title={pageTitle} description={pageDesc} active="replays" ogType="video.other" image={[`https://i.ytimg.com/vi/${video.id}/maxresdefault.jpg`, `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`]}>
   <script type="application/ld+json" set:html={JSON.stringify(videoLd)} />
   {affiche && <MatchAffiche a={affiche} kicker={afficheKicker} when={afficheWhen} place={affichePlace} color={d.colorVar} />}
   {upcoming && startD && (

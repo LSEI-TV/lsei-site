@@ -10,8 +10,10 @@ interface Props {
   title?: string;
   description?: string;
   active?: string;
-  /** image de partage spécifique à la page (ex. miniature d'une vidéo). Défaut : image du site. */
-  image?: string;
+  /** image de partage spécifique à la page (ex. miniature d'une vidéo). Défaut : image du site.
+   *  Un tableau = image préférée + replis : Facebook prend la 1re qui se charge (ex.
+   *  [maxresdefault, hqdefault] → grande image, et repli garanti si la grande n'existe pas). */
+  image?: string | string[];
   /** type Open Graph : « website » (défaut), « article », « video.other »… */
   ogType?: string;
   /** image LCP à précharger (ex. bandeau hero de fond CSS) pour accélérer l'affichage. */
@@ -24,9 +26,14 @@ const { title, description = site.description, active, image, ogType = 'website'
 const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
 // URLs absolues (nécessaires pour le partage réseaux sociaux + le référencement).
 const canonical = new URL(canonicalProp ?? Astro.url.pathname, Astro.site).href;
-const ogImage = image
-  ? (image.startsWith('http') ? image : new URL(image, Astro.site).href)
-  : new URL('/og-image.jpg', Astro.site).href;
+// Image(s) de partage en URL absolue. Une liste = image préférée + replis (Facebook
+// retient la 1re qui se charge). Toujours au moins l'image du site → jamais de partage
+// sans visuel.
+const ogImages = (Array.isArray(image) ? image : image ? [image] : [])
+  .filter(Boolean)
+  .map((u) => (u.startsWith('http') ? u : new URL(u, Astro.site).href));
+if (!ogImages.length) ogImages.push(new URL('/og-image.jpg', Astro.site).href);
+const ogImage = ogImages[0];
 
 // Données structurées sitewide : identité de l'organisation (panneau de connaissance
 // Google, association aux réseaux sociaux) + le site + sa barre de recherche interne
@@ -82,6 +89,7 @@ const websiteLd = {
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="LSEI — Le Sport en Image" />
+    {ogImages.slice(1).map((u) => <meta property="og:image" content={u} />)}
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
