@@ -13,7 +13,7 @@ import { assetExists, assetUrl, imgOk } from '../lib/publicAssets';
 import { showcaseSeason, getSeasons, cal2627 } from '../data/billard/seasons';
 import { femmesShowcaseSeason, getFemmesSeasons } from '../data/billard/seasonsFemmes';
 import { photoOf, playerSlugs } from '../lib/billardStats';
-import { nm1Standings, nmClubBy, NM1_POOL, clubHasSite, nm1Calendar } from '../data/basket';
+import { nm1Standings, nmClubBy, NM1_POOL, clubHasSite, nm1Calendar, poolCalendar } from '../data/basket';
 
 // Chiffres-clés : tirés en direct de l'API YouTube (abonnés, vues, vidéos) + nb de
 // disciplines. Toujours à jour, aucun chiffre saisi à la main. Repli sur les chiffres
@@ -83,7 +83,22 @@ const femInProgress = !((femSeason.results?.tournaments ?? []) as any[]).some((t
 const femTop = femRanked.slice(0, 4);
 const { slugOf: femSlug } = playerSlugs(getFemmesSeasons());
 
-const live = await getLiveFeature();
+const rawLive = await getLiveFeature();
+// Option A — quand rien n'est en direct, le header met en avant le PROCHAIN match de
+// Fougères À DOMICILE (ceux que LSEI filme), tiré du calendrier basket, plutôt qu'un
+// vieux replay. Ne s'active que si le match est proche (≤ 16 jours).
+const _todayHero = new Date().toISOString().slice(0, 10);
+const _nextHome = poolCalendar().find((m) => m.homeSlug === 'fougeres' && m.homeScore == null && m.date >= _todayHero);
+let live = rawLive;
+if (_nextHome && (!rawLive || rawLive.status === 'replay')) {
+  const _md = new Date(`${_nextHome.date}T20:00:00+02:00`);
+  if ((_md.getTime() - Date.now()) / 86400000 <= 16) {
+    const _away = nmClubBy(_nextHome.awaySlug)?.name ?? _nextHome.awaySlug;
+    live = { discipline: 'basket', id: undefined, isLive: false, status: 'upcoming',
+      caption: `Basket · ${NM1_POOL}`, title: `Pays de Fougères vs ${_away}`,
+      href: '/basket', thumb: undefined, date: _md } as any;
+  }
+}
 
 // « Au programme » : lives YouTube + annonces manuelles (/admin), triés par date.
 // UNE seule ligne par discipline = le PROCHAIN rendez-vous de chaque sport.
@@ -210,8 +225,8 @@ const heroStatusLabel = live ? (live.status === 'live' ? 'En direct' : live.stat
 
 // À la une : date de l'événement (croisée avec le programme, même id) → date lisible,
 // décompte et lien « Ajouter au calendrier » (Google Agenda généré depuis la date).
-const heroProg = live ? programme.find((it) => it.id === live.id) : null;
-const heroDate = heroProg?.date ?? null;
+const heroProg = live?.id ? programme.find((it) => it.id === live.id) : null;
+const heroDate = heroProg?.date ?? (live as any)?.date ?? null;
 const _heroFullDate = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Paris' });
 const heroDateLabel = heroDate
   ? (() => { const s = _heroFullDate.format(heroDate); return s.charAt(0).toUpperCase() + s.slice(1) + ' · ' + railTime.format(heroDate).replace(':', 'h'); })()
@@ -229,7 +244,7 @@ const gcalUrl = heroDate
 // - direct EN COURS ou REPLAY → vers la vidéo précise.
 // (Quand un direct démarre, le script temps réel repointe de toute façon le bouton dessus.)
 const heroBtnHref = !live ? site.youtubeUrl
-  : live.status === 'upcoming' ? site.youtubeUrl
+  : live.status === 'upcoming' ? (live.id ? site.youtubeUrl : (live.href || site.youtubeUrl))
   : (live.id ? `https://www.youtube.com/watch?v=${live.id}` : (live.href || site.youtubeUrl));
 
 // Concept 3 « Prochain direct » : le direct programmé le plus proche → carte compte à rebours.
