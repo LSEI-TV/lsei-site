@@ -101,22 +101,25 @@ const SHOW_ARTICLES = true;
     <section class="section nw-articles">
       <div class="wrap">
         <div class="sec-head"><div><div class="eyebrow">À la une</div><h2>Les <em>articles</em></h2></div></div>
-        <div class="cards">
+        <!-- Même carte que le fil (nw-card) : texte avec marges intérieures, liseré couleur sous l'image. -->
+        <div class="nw-grid">
           {articles.map((a) => {
             const d = discOf(a.data.discipline);
             const cover = articleCover(a);
             return (
-              <a href={`/actualites/${a.id}`} class="card" style={d ? `--dc:${d.colorVar}` : ''}>
-                <div class="frame">
+              <a href={`/actualites/${a.id}`} class="nw-card" style={`--dc:${dcol(a.data.discipline ?? "")}`}>
+                <span class="nw-card-img">
                   {cover
-                    ? <img class="photo" src={cover.src} alt={a.data.title} loading="lazy" onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />
-                    : <div class="duo" style={d ? `background:linear-gradient(135deg,${d.from},${d.to})` : 'background:linear-gradient(135deg,#1E40E5,#0a1a6b)'}></div>}
-                  <div class="grad"></div>
-                  {d && <div class="cap"><div class="disc"><SportIcon slug={d.slug} class="disc-tag-ic" />{d.label}</div></div>}
-                </div>
-                <div class="kicker">{fmtDate(a.data.date)}</div>
-                <h3>{a.data.title}</h3>
-                <p class="ex">{a.data.excerpt}</p>
+                    ? <img src={cover.src} alt={a.data.title} loading="lazy" onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />
+                    : <span class="nw-ph" style={d ? `background:linear-gradient(135deg,${d.from},${d.to})` : undefined}></span>}
+                  {d && <span class="nw-tag nw-tag--on">{d.label}</span>}
+                </span>
+                <span class="nw-card-body">
+                  <span class="nw-date">{fmtDate(a.data.date)}</span>
+                  <span class="nw-card-t">{a.data.title}</span>
+                  {a.data.excerpt && <span class="nw-card-ex">{a.data.excerpt}</span>}
+                  <span class="nw-more">Lire l'article →</span>
+                </span>
               </a>
             );
           })}

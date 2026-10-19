@@ -677,6 +677,12 @@ a.hst:hover svg { color: inherit; }
 .card .ex { font-family: var(--serif); font-size: 14.5px; color: var(--ink-soft); margin: 8px 0 0; line-height: 1.45; }
 .card .meta { margin-top: 10px; font-size: 12px; color: var(--ink-faint); display: flex; gap: 10px; align-items: center; }
 .card .meta .sep { width: 3px; height: 3px; border-radius: 50%; background: var(--line-strong); }
+/* Cartes « en relief » : depuis l'ombre portée, la carte est une boîte → fond, coins arrondis
+   et marges intérieures pour que le texte ne colle plus au bord (même rendu que les cartes Actualités). */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; padding-bottom: 16px; }
+.card > .frame { border: 0; border-radius: 0; border-bottom: 3px solid var(--dc, var(--pc, var(--accent))); }
+.card:hover > .frame { box-shadow: none; border-bottom-color: var(--dc, var(--pc, var(--accent))); }
+.card > :not(.frame) { padding-inline: 16px; }
 
 /* ---------- stats + partners band ---------- */
 .stats-sec { padding: 46px 0 6px; }
