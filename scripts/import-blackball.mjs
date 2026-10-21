@@ -64,6 +64,15 @@ const COMPETITIONS = [
     // Barème FFB Femmes (secours) — échelle plus basse que le Masters.
     PTS: { 'Round 1': 44, 'Last sixteen': 60, 'Quarter final': 80, 'Semi final': 104, 'Final': 132 }, CHAMP: 164,
   },
+  {
+    key: 'mixte',
+    tnRe: /-\s*Mixte\s*National\s*-/i,
+    cdfRe: /Championnat\s+de\s+France\s*-\s*Mixte\s*National\s*-/i,
+    out: 'results-mixte-2026-2027.json', competition: 'Mixte National', rankingId: 88637443, hasInvites: false,
+    // Barème de secours (grand circuit, gros tableaux). Les POINTS viennent du classement
+    // officiel Cuescore (rankingId) ; ce barème ne sert qu'à un éventuel joueur absent du classement.
+    PTS: { 'Last thirtytwo': 60, 'Last sixteen': 90, 'Quarter final': 130, 'Semi final': 180, 'Final': 240 }, CHAMP: 320,
+  },
 ];
 
 // Liste des tournois de l'organisation FF Billard (id → nom).

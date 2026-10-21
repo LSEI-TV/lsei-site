@@ -9,6 +9,7 @@ import arbitresData from '../../data/billard/arbitres.json';
 import { assetUrl } from '../../lib/publicAssets';
 import { photoOf, playerSlugs } from '../../lib/billardStats';
 import { femmesShowcaseSeason, getFemmesPalmares, getFemmesSeasons } from '../../data/billard/seasonsFemmes';
+import { mixteShowcaseSeason, getMixtePalmares, getMixteSeasons } from '../../data/billard/seasonsMixte';
 import { paraShowcaseSeason, getParaPalmares, getParaSeasons } from '../../data/billard/seasonsPara';
 import { paraMvShowcaseSeason, getParaMvPalmares, getParaMvSeasons } from '../../data/billard/seasonsParaMalvoyants';
 
@@ -28,10 +29,12 @@ const nextJx = nextEv?.start ? (daysTo(nextEv.start) > 0 ? `J-${daysTo(nextEv.st
 // pour une saison TERMINÉE → une saison en cours n'a pas de champion (feat = null).
 const m = showcaseSeason();
 const f = femmesShowcaseSeason();
+const mx = mixteShowcaseSeason();
 const pa = paraShowcaseSeason();
 const pamv = paraMvShowcaseSeason();
 const mPalm = getPalmares().find((p) => p.slug === m.slug);
 const fPalm = getFemmesPalmares().find((p) => p.slug === f.slug);
+const mxPalm = getMixtePalmares().find((p) => p.slug === mx.slug);
 const paPalm = getParaPalmares().find((p) => p.slug === pa.slug);
 const pamvPalm = getParaMvPalmares().find((p) => p.slug === pamv.slug);
 
@@ -59,6 +62,18 @@ const comps = [
     R: f.results!, season: f.label, slug: f.slug,
     champSeasonLabel: 'Championne de saison', champFranceLabel: 'Championne de France',
     palm: fPalm,
+  },
+  {
+    href: `/mixte`,
+    ficheBase: '/mixte/joueur/', slugs: playerSlugs(getMixteSeasons()),
+    accent: '#D6397E', accentInk: '#ffffff', // rose magenta (Mixte National) — mixte femmes + hommes
+    eyebrow: 'Compétition',
+    title: 'Mixte',
+    noun: 'joueurs',
+    desc: 'Le Mixte National de la FFB : le grand circuit de base ouvert à toutes et tous, des Tournois Nationaux au Championnat de France.',
+    R: mx.results!, season: mx.label, slug: mx.slug,
+    champSeasonLabel: 'Champion de saison', champFranceLabel: 'Champion de France',
+    palm: mxPalm,
   },
   {
     href: `/para-billard`,

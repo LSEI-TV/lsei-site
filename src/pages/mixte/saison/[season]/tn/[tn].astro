@@ -1,0 +1,49 @@
+---
+// Page tableau d'un tournoi MIXTE → composant partagé TournamentBoard.
+import TournamentBoard from '../../../../../components/TournamentBoard.astro';
+import { getMixteSeasons } from '../../../../../data/billard/seasonsMixte';
+import type { Season } from '../../../../../data/billard/seasons';
+import { playerSlugs } from '../../../../../lib/billardStats';
+import { getReplays } from '../../../../../lib/youtube';
+
+const { slugOf } = playerSlugs(getMixteSeasons());
+const videos = await getReplays({ discipline: 'billard' });
+
+export function getStaticPaths() {
+  const tnSlug = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const isCleanBracket = (ms: any[]): boolean => {
+    const sizes: Record<number, number> = {};
+    for (const m of ms) sizes[m.roundNo] = (sizes[m.roundNo] || 0) + 1;
+    const counts = Object.keys(sizes).map(Number).sort((a, b) => a - b).map((n) => sizes[n]);
+    if (counts.length < 2 || counts[counts.length - 1] !== 1) return false;
+    for (let i = 1; i < counts.length - 1; i++) if (counts[i] !== counts[i + 1] * 2) return false;
+    const c1 = counts[1];
+    if ((c1 & (c1 - 1)) !== 0) return false;
+    return counts[0] >= 1 && counts[0] <= c1 * 2;
+  };
+  const paths: any[] = [];
+  for (const s of getMixteSeasons()) {
+    if (!s.results) continue;
+    const R: any = s.results;
+    for (const t of R.tournaments) {
+      const ms = R.matches.filter((m: any) => m.tid === t.id && m.matchno != null && m.roundNo != null);
+      if (!ms.length || !isCleanBracket(ms)) continue;
+      paths.push({ params: { season: s.slug, tn: tnSlug(t.level) }, props: { season: s, tournament: t, matches: ms } });
+    }
+  }
+  return paths;
+}
+
+const { season, tournament, matches } = Astro.props as { season: Season; tournament: any; matches: any[] };
+---
+<TournamentBoard
+  season={season}
+  tournament={tournament}
+  matches={matches}
+  slugOf={slugOf}
+  allSeasons={getMixteSeasons()}
+  base={`/mixte/saison/${season.slug}`}
+  ficheBase="/mixte/joueur/"
+  compLabel="Mixte National"
+  videos={videos}
+/>

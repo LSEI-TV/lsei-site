@@ -2,6 +2,7 @@
 // Sous-navigation d'un hub billard (Masters, Féminin ou Para), liée à une saison.
 import { LANDING_SEASON } from '../data/billard/seasons';
 import { FEMMES_LANDING_SEASON } from '../data/billard/seasonsFemmes';
+import { MIXTE_LANDING_SEASON } from '../data/billard/seasonsMixte';
 import { PARA_LANDING_SEASON } from '../data/billard/seasonsPara';
 import { PARAMV_LANDING_SEASON } from '../data/billard/seasonsParaMalvoyants';
 import HubSwitch from './HubSwitch.astro';
@@ -11,6 +12,7 @@ import HubSwitch from './HubSwitch.astro';
 const LANDING: Record<string, string> = {
   '/billard': LANDING_SEASON,
   '/femmes': FEMMES_LANDING_SEASON,
+  '/mixte': MIXTE_LANDING_SEASON,
   '/para-billard': PARA_LANDING_SEASON,
   '/para-billard-malvoyants': PARAMV_LANDING_SEASON,
 };

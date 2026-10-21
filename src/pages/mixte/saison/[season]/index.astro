@@ -1,0 +1,275 @@
+---
+import Base from '../../../../layouts/Base.astro';
+import HubNav from '../../../../components/HubNav.astro';
+import SeasonHero from '../../../../components/SeasonHero.astro';
+import { seasonNext } from '../../../../lib/seasonNext';
+import PlayerSearch from '../../../../components/PlayerSearch.astro';
+import AffichesTournois from '../../../../components/AffichesTournois.astro';
+import PodiumTournoi from '../../../../components/PodiumTournoi.astro';
+import VideoPlayer from '../../../../components/VideoPlayer.astro';
+import { getReplays } from '../../../../lib/youtube';
+import { getDiscipline } from '../../../../data/site';
+import { photoOf, fromPov, seasonHighlights, playerSlugs } from '../../../../lib/billardStats';
+import { getMixteSeasons, getMixtePalmares, MIXTE_DEFAULT_SEASON } from '../../../../data/billard/seasonsMixte';
+const { slugOf } = playerSlugs(getMixteSeasons());
+import type { Season } from '../../../../data/billard/seasons';
+
+export function getStaticPaths() {
+  return getMixteSeasons().map((s) => ({ params: { season: s.slug }, props: { season: s } }));
+}
+const { season } = Astro.props as { season: Season };
+const base = `/mixte/saison/${season.slug}`;
+const calSeason = season;
+
+const R: any = season.results;
+const hasData = !!R;
+const players: any[] = hasData ? R.players : [];
+const matches: any[] = hasData ? R.matches : [];
+
+// Lien « tableau » (bracket) d'une étape : cliquable si le tournoi est une élimination
+// directe « propre » avec positions de matchs → page /mixte/saison/<s>/tn/<slug>.
+const _tnSlug = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const _cleanBracket = (ms: any[]): boolean => {
+  const sizes: Record<number, number> = {};
+  for (const m of ms) if (m.matchno != null && m.roundNo != null) sizes[m.roundNo] = (sizes[m.roundNo] || 0) + 1;
+  const counts = Object.keys(sizes).map(Number).sort((a, b) => a - b).map((n) => sizes[n]);
+  if (counts.length < 2 || counts[counts.length - 1] !== 1) return false;
+  for (let i = 1; i < counts.length - 1; i++) if (counts[i] !== counts[i + 1] * 2) return false;
+  const c1 = counts[1];
+  if ((c1 & (c1 - 1)) !== 0) return false;
+  return counts[0] >= 1 && counts[0] <= c1 * 2;
+};
+const _byTid = new Map<string, any[]>();
+for (const m of matches) { if (!_byTid.has(m.tid)) _byTid.set(m.tid, []); _byTid.get(m.tid)!.push(m); }
+const _bracketTids = new Set([..._byTid.entries()].filter(([, ms]) => _cleanBracket(ms)).map(([tid]) => tid));
+const bracketHref = (e: any): string | null => {
+  if (!hasData) return null;
+  const tt = (R.tournaments as any[]).find((x) => x.level === e.short || (e.kind === 'france' && x.kind === 'france'));
+  return tt && _bracketTids.has(tt.id) ? `/mixte/saison/${season.slug}/tn/${_tnSlug(tt.level)}` : null;
+};
+const top5 = players.slice(0, 5);
+const spot = players[0];
+const nCal = calSeason.calendar.length;
+const { nextIdx, nextJx } = seasonNext(calSeason.calendar);
+const spotPhoto = spot ? photoOf(spot, season.slug) : null;
+const spotResults = spot ? matches.filter((m) => m.aId === spot.id || m.bId === spot.id).sort((a, b) => (a.date < b.date ? 1 : -1)).map((m) => fromPov(m, spot.id)).slice(0, 4) : [];
+const recent = hasData ? [...matches].sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 5) : [];
+const tourById = (tid: string) => (hasData ? R.tournaments.find((t: any) => t.id === tid) : undefined);
+const hi = hasData ? seasonHighlights(R) : null;
+const palmares = getMixtePalmares();
+const cnt = hasData ? { players: players.length, tourns: R.tournaments.length, matches: matches.length } : null;
+
+// Vidéo à la une : la dernière vidéo MIXTE de cette saison (même système que le Masters).
+const d = getDiscipline('billard');
+const seasonVideoKey = season.slug.replace('-', '/');
+const vids = (await getReplays({ discipline: 'billard' })).filter((v) => v.season === seasonVideoKey && v.category === 'Mixte');
+const featured = vids[0];
+
+const fmtShort = (iso: string) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }).format(new Date(iso));
+const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
+---
+<Base title={`Billard Mixte — Mixte National ${season.label}`} description={`L'univers Billard Mixte de LSEI : classement, joueurs et statistiques du Mixte National, saison ${season.label}.`} active="disciplines">
+  <HubNav season={season.slug} dataSeason={hasData ? season.slug : MIXTE_DEFAULT_SEASON} active="accueil" root="/mixte" brand="Billard Mixte" sub="· Mixte National" joueursLabel="Joueurs" videosHref={null} />
+  <div class="sz">
+  <SeasonHero season={season} title="Mixte National" crumb={[{ label: 'Mixte National' }]}
+    desc={`Le circuit national mixte de la FFB : ${nCal} rendez-vous, des Tournois Nationaux au Championnat de France. Classement, joueurs, tableaux et vidéos de la saison.`}
+    pickerRoot="/mixte" pickerSeasons={getMixteSeasons()} rankedLabel="joueurs classés" feminine={false}
+    nRanked={players.length} nMatches={matches.length} spot={spot} spotPhoto={spotPhoto} spotResults={spotResults} spotHref={spot ? `/mixte/joueur/${slugOf(spot.id)}` : undefined} />
+
+  <section class="section hub-top" style="--dc:var(--c-billard)">
+    <div class="wrap hub-hero">
+      <div class="hub-lead">
+        {featured ? (
+          <>
+            <VideoPlayer id={featured.id} from={d.from} to={d.to} caption={featured.caption} title={featured.title} image={featured.thumb} />
+            <div class="hub-kick">À la une · Dernière vidéo</div>
+            <h2 class="hub-h1">{featured.title}</h2>
+          </>
+        ) : hasData ? (
+          <>
+            <div class="hub-kick">Mixte National · {season.label}</div>
+            <h2 class="hub-h1">Le circuit national mixte</h2>
+            <p class="dek" style="margin-top:8px">{cnt!.players} joueurs classés, {cnt!.tourns} étapes, {cnt!.matches} matchs. Classement officiel FFB, fiches carrière et confrontations — cliquez sur un joueur pour tout savoir de lui.</p>
+          </>
+        ) : (
+          <>
+            <div class="hub-kick">Mixte National · {season.label}</div>
+            <h2 class="hub-h1">Saison à venir</h2>
+            <p class="dek" style="margin-top:8px">La saison {season.label} démarre bientôt. Voici le calendrier officiel — classement, joueurs et statistiques s'afficheront au fil des étapes.</p>
+          </>
+        )}
+
+        <div class="parcours parcours-box">
+          <div class="parcours-h"><span>Le calendrier</span> {calSeason.label} · {calSeason.calendar.length} rendez-vous</div>
+          <div class="parcours-grid">
+            {calSeason.calendar.map((e, i) => {
+              const href = bracketHref(e);
+              const st = nextIdx < 0 || i < nextIdx ? ' is-past' : i === nextIdx ? ' is-next' : '';
+              const inner = (
+                <>
+                  <span class="et-num">{e.short}{i === nextIdx && <em class="et-jx">{nextJx}</em>}</span>
+                  <span class="et-city">{e.place}</span>
+                  <span class="et-date">{evDate(e.date)}</span>
+                  {e.winner && (href
+                    ? <span class="et-winner">🏆 {e.winner.name}</span>
+                    : <a class="et-winner" href={`/mixte/joueur/${slugOf(e.winner.id)}`} title={`Vainqueur : ${e.winner.name}`}>🏆 {e.winner.name}</a>)}
+                  {href && <span class="et-go">Tableau <i class="et-go-ar">→</i></span>}
+                </>
+              );
+              return href
+                ? <a class={`etape k-${e.kind} etape--link${st}`} href={href} title={`${e.name} — voir le tableau`}>{inner}</a>
+                : <div class={`etape k-${e.kind}${st}`} title={e.name}>{inner}</div>;
+            })}
+          </div>
+        </div>
+        <PodiumTournoi results={R} seasonSlug={season.slug} hrefBase="/mixte/joueur/" slugOf={slugOf} />
+      </div>
+
+      <aside class="hub-side">
+        <div class="hub-card hub-search">
+          <div class="hub-card-h"><span>Rechercher un joueur</span></div>
+          <PlayerSearch placeholder="Nom d'un joueur…" seasons={getMixteSeasons()} hrefBase="/mixte/joueur/" />
+        </div>
+
+        {hasData ? (
+        <Fragment>
+        <div class="hub-card">
+          <div class="hub-card-h"><span>Classement · Top 5</span><a href={`${base}/classement`}>Tout →</a></div>
+          {top5.map((p) => {
+            const src = photoOf(p, season.slug);
+            return (
+              <a href={`/mixte/joueur/${slugOf(p.id)}`} class="pod-row">
+                <span class="pod-rank">{p.rank}</span>
+                <span class="bphoto pod-ph"><span class="bavatar">{p.name.slice(0, 1)}</span>{src && <img src={src} alt="" onerror="this.remove()" />}</span>
+                <span class="pod-name">{p.name}</span>
+                <span class="pod-pts">{p.points}<small>pts</small></span>
+              </a>
+            );
+          })}
+          <a href={`${base}/comparateur`} class="hub-card-cta">⚔ Comparer deux joueurs</a>
+        </div>
+
+        <div class="hub-card">
+          <div class="hub-card-h"><span>Derniers résultats</span><a href={`${base}/classement`}>Classement →</a></div>
+          <div class="hub-results">
+            {recent.map((m) => {
+              const t = tourById(m.tid);
+              const aWin = m.sA > m.sB;
+              return (
+                <div class="hr-row">
+                  <a href={`/mixte/joueur/${slugOf(m.aId)}`} class={`hr-p ${aWin ? 'w' : ''}`}>{m.aName}</a>
+                  <span class="hr-sc mono">{m.sA}<i>—</i>{m.sB}</span>
+                  <a href={`/mixte/joueur/${slugOf(m.bId)}`} class={`hr-p r ${!aWin ? 'w' : ''}`}>{m.bName}</a>
+                  <span class="hr-meta">{t?.level} · {evDate(m.date)}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        </Fragment>
+        ) : (
+        <div class="hub-card">
+          <div class="hub-card-h"><span>Classement · Joueurs · Résultats</span></div>
+          <p class="dek" style="margin:6px 0 0">Ils s'afficheront ici au fil de la saison {season.label}, dès les premières étapes disputées.</p>
+        </div>
+        )}
+
+        <AffichesTournois calendar={calSeason.calendar} seasonSlug={calSeason.slug} seasonStatus={season.status} />
+      </aside>
+    </div>
+  </section>
+
+  {hi && (
+    <section class="section sz-facts-sec">
+      <div class="wrap">
+        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">En chiffres</div><h2>Les <em>faits marquants</em> de la saison</h2></div></div>
+        <div class="facts">
+          <div class="fact">
+            <div class="fact-ic">🎯</div>
+            <div class="fact-lab">Plus large victoire</div>
+            <div class="fact-val">{hi.biggest.sw}–{hi.biggest.sl}</div>
+            <div class="fact-sub"><a href={`/mixte/joueur/${slugOf(hi.biggest.winId)}`}>{hi.biggest.winName}</a> contre {hi.biggest.loseName}</div>
+          </div>
+          <div class="fact">
+            <div class="fact-ic">🔥</div>
+            <div class="fact-lab">Plus longue série</div>
+            <div class="fact-val">{hi.streak.n} victoires</div>
+            <div class="fact-sub">d'affilée · <a href={`/mixte/joueur/${slugOf(hi.streak.id)}`}>{hi.streak.name}</a></div>
+          </div>
+          <div class="fact">
+            <div class="fact-ic">🏆</div>
+            <div class="fact-lab">Plus de victoires</div>
+            <div class="fact-val">{hi.topWins.wins} matchs</div>
+            <div class="fact-sub">gagnés · <a href={`/mixte/joueur/${slugOf(hi.topWins.id)}`}>{hi.topWins.name}</a></div>
+          </div>
+          <div class="fact">
+            <div class="fact-ic">📈</div>
+            <div class="fact-lab">Meilleur pourcentage</div>
+            <div class="fact-val">{hi.bestPct.winPct}%</div>
+            <div class="fact-sub">de victoires · <a href={`/mixte/joueur/${slugOf(hi.bestPct.id)}`}>{hi.bestPct.name}</a></div>
+          </div>
+          <div class="fact">
+            <div class="fact-ic">⚡</div>
+            <div class="fact-lab">La plus active</div>
+            <div class="fact-val">{hi.mostActive.played} matchs</div>
+            <div class="fact-sub">disputés · <a href={`/mixte/joueur/${slugOf(hi.mostActive.id)}`}>{hi.mostActive.name}</a></div>
+          </div>
+          <div class="fact">
+            <div class="fact-ic">💡</div>
+            <div class="fact-lab">Le saviez-vous</div>
+            <div class="fact-val">{hi.totalManches} manches</div>
+            <div class="fact-sub">jouées en {hi.totalMatches} matchs cette saison</div>
+          </div>
+        </div>
+        <p class="fact-totals">Bilan de la saison : <b>{hi.tournCount}</b> étapes · <b>{hi.playerCount}</b> joueurs · <b>{hi.totalMatches}</b> matchs disputés.</p>
+      </div>
+    </section>
+  )}
+
+  {palmares.length > 0 && (
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Histoire</div><h2>Le <em>palmarès</em> du Mixte National</h2></div></div>
+        <div class="palmares">
+          {palmares.map((p) => (
+            <div class="palm-row">
+              <div class="palm-season">{p.label}</div>
+              <a href={`/mixte/joueur/${slugOf(p.champ.id)}`} class="palm-card palm-champ">
+                <span class="palm-lab">Champion de saison</span>
+                <span class="palm-name">{p.champ.name}</span>
+                <span class="palm-sub">{p.champ.points} pts</span>
+              </a>
+              {p.cdf ? (
+                <a href={`/mixte/joueur/${slugOf(p.cdf.id)}`} class="palm-card palm-cdf">
+                  <span class="palm-lab">🏆 Champion de France</span>
+                  <span class="palm-name">{p.cdf.name}</span>
+                </a>
+              ) : (
+                <div class="palm-card palm-cdf palm-empty">
+                  <span class="palm-lab">Champion de France</span>
+                  <span class="palm-name">—</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+  </div>
+</Base>
+
+<style>
+  /* Étape du calendrier cliquable → page du tableau (bracket) */
+  a.etape--link { cursor: pointer; text-decoration: none; position: relative; overflow: hidden; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease; }
+  a.etape--link::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1; background: linear-gradient(115deg, transparent 32%, color-mix(in srgb, var(--c-billard) 16%, transparent) 50%, transparent 68%); transform: translateX(-130%); animation: etShimmer 4.8s ease-in-out infinite; }
+  @keyframes etShimmer { 0%, 58% { transform: translateX(-130%); } 82%, 100% { transform: translateX(130%); } }
+  a.etape--link:hover { transform: translateY(-3px); border-color: var(--c-billard); background: color-mix(in srgb, var(--c-billard) 5%, var(--surface)); box-shadow: 0 10px 26px color-mix(in srgb, var(--c-billard) 22%, transparent); }
+  a.etape--link:active { transform: translateY(-1px); box-shadow: 0 4px 12px color-mix(in srgb, var(--c-billard) 18%, transparent); }
+  .et-go { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 5px; align-self: flex-start; margin-top: 7px; padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--c-billard); background: color-mix(in srgb, var(--c-billard) 12%, var(--surface)); border: 1px solid color-mix(in srgb, var(--c-billard) 32%, transparent); transition: background .18s, color .18s, border-color .18s; }
+  .et-go-ar { font-style: normal; display: inline-block; animation: etBob 1.6s ease-in-out infinite; }
+  @keyframes etBob { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+  a.etape--link:hover .et-go { background: var(--c-billard); color: #fff; border-color: var(--c-billard); }
+  a.etape--link:hover .et-go-ar { animation: none; transform: translateX(3px); }
+  @media (prefers-reduced-motion: reduce) { a.etape--link::after, .et-go-ar { animation: none; } }
+</style>

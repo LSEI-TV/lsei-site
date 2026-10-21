@@ -5,6 +5,7 @@
 // (ex. '/billard') ; laisser vide sur une page « parente » (choix des compétitions).
 import { LANDING_SEASON } from '../data/billard/seasons';
 import { FEMMES_LANDING_SEASON } from '../data/billard/seasonsFemmes';
+import { MIXTE_LANDING_SEASON } from '../data/billard/seasonsMixte';
 import { PARA_LANDING_SEASON } from '../data/billard/seasonsPara';
 import { PARAMV_LANDING_SEASON } from '../data/billard/seasonsParaMalvoyants';
 
@@ -14,12 +15,14 @@ const { active } = Astro.props;
 const LANDING: Record<string, string> = {
   '/billard': LANDING_SEASON,
   '/femmes': FEMMES_LANDING_SEASON,
+  '/mixte': MIXTE_LANDING_SEASON,
   '/para-billard': PARA_LANDING_SEASON,
   '/para-billard-malvoyants': PARAMV_LANDING_SEASON,
 };
 const COMPS = [
   { root: '/billard', label: 'Masters' },
   { root: '/femmes', label: 'Femmes' },
+  { root: '/mixte', label: 'Mixte' },
   { root: '/para-billard', label: 'Para Fauteuil' },
   { root: '/para-billard-malvoyants', label: 'Para Malvoyants' },
 ];
