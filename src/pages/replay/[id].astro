@@ -75,6 +75,12 @@ const related = all.filter((v) => v.id !== video.id && !sameEvent.some((x) => x.
 
 // Données structurées vidéo (SEO) : permet à Google d'afficher la vidéo
 // avec sa miniature dans les résultats de recherche et l'onglet « Vidéos ».
+// Date normalisée en ISO 8601 AVEC fuseau (toISOString → suffixe « Z »). On ne
+// met « uploadDate » que pour une vidéo RÉELLEMENT en ligne : un direct à venir
+// n'est pas encore uploadé (sa date est future) → Google rejetterait l'uploadDate.
+// Le direct annoncé est décrit par « publication » (BroadcastEvent) à la place.
+const _vd = video.date ? new Date(video.date) : null;
+const uploadIso = _vd && !isNaN(_vd.valueOf()) ? _vd.toISOString() : null;
 const videoLd = {
   '@context': 'https://schema.org',
   '@type': 'VideoObject',
@@ -87,8 +93,8 @@ const videoLd = {
     `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`,
     `https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`,
   ],
-  ...(video.date ? { uploadDate: video.date } : {}),
-  ...(upcoming && video.date ? { publication: { '@type': 'BroadcastEvent', isLiveBroadcast: true, startDate: video.date, endDate: new Date(Date.parse(video.date) + 2 * 3600 * 1000).toISOString() } } : {}),
+  ...(uploadIso && !upcoming ? { uploadDate: uploadIso } : {}),
+  ...(upcoming && uploadIso ? { publication: { '@type': 'BroadcastEvent', isLiveBroadcast: true, startDate: uploadIso, endDate: new Date(_vd!.valueOf() + 2 * 3600 * 1000).toISOString() } } : {}),
   ...(video.duration ? { duration: video.duration } : {}),
   embedUrl: `https://www.youtube.com/embed/${video.id}`,
   contentUrl: `https://www.youtube.com/watch?v=${video.id}`,
