@@ -9,6 +9,7 @@ import { getLiveFeature, getBroadcasts, getReplays, getChannelStats, tagStyle } 
 import { parseProgTitle } from '../lib/programmeTitle';
 import { getCollection } from 'astro:content';
 import { PLATFORMS } from '../lib/social';
+import { articleCover } from '../lib/articles';
 import { assetExists, assetUrl, imgOk } from '../lib/publicAssets';
 import { showcaseSeason, getSeasons, cal2627 } from '../data/billard/seasons';
 import { femmesShowcaseSeason, getFemmesSeasons } from '../data/billard/seasonsFemmes';
@@ -49,12 +50,32 @@ const STAT_ICONS: Record<string, string> = {
   partners: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 6.6a4.5 4.5 0 0 0-6.4 0L12 9l-2.4-2.4a4.5 4.5 0 1 0-6.4 6.4L12 21.8l8.8-8.8a4.5 4.5 0 0 0 0-6.4z"/></svg>',
 };
 
-// « Le mag » de l'accueil : les 3 derniers posts (content/social) — mêmes actualités
-// que la page /actualites (les posts YouTube tiennent lieu d'articles).
-const latestPosts = (await getCollection('social', ({ data }) => !data.draft))
-  .sort((a, b) => (Number(b.data.featured) - Number(a.data.featured))
-    || (b.data.date.valueOf() - a.data.date.valueOf())
-    || a.id.toLowerCase().localeCompare(b.id.toLowerCase()))
+// « Le mag » de l'accueil : fil UNIFIÉ des 3 dernières actualités — articles
+// éditoriaux ET publications réseaux (mêmes contenus que /actualites), les plus
+// récents d'abord. Avant, l'accueil ne lisait QUE les posts réseaux → les articles
+// publiés (plus récents) n'y apparaissaient pas.
+const _newsArticles = (await getCollection('articles', ({ data }) => !data.draft && data.date.valueOf() <= Date.now()))
+  .map((a) => {
+    const cover = articleCover(a);
+    return {
+      kind: 'article' as const, href: `/actualites/${a.id}`, date: a.data.date,
+      img: cover?.src ?? null, imgFallback: cover?.fallback ?? null, icon: '📰',
+      text: a.data.title, tag: 'Article',
+      color: disciplines.find((d) => d.slug === a.data.discipline)?.colorVar ?? 'var(--accent)',
+      more: "Lire l'article →",
+    };
+  });
+const _newsSocial = (await getCollection('social', ({ data }) => !data.draft))
+  .map((p) => {
+    const pf = PLATFORMS[p.data.platform] ?? PLATFORMS.facebook;
+    return {
+      kind: 'social' as const, href: `/actualites/reseaux/${p.id}`, date: p.data.date,
+      img: imgOk(p.data.image) ? p.data.image! : null, imgFallback: null, icon: pf.icon,
+      text: p.data.caption, tag: pf.label, color: pf.color, more: 'Voir la publication →',
+    };
+  });
+const latestPosts = [..._newsArticles, ..._newsSocial]
+  .sort((a, b) => (b.date.valueOf() - a.date.valueOf()) || (a.href < b.href ? -1 : 1))
   .slice(0, 3);
 const fmtArticleDate = (d: Date) => new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
 
@@ -786,23 +807,20 @@ const slides = programme
           <a href="/actualites" class="link">Toutes les actualités →</a>
         </div>
         <div class="cards cards--feat">
-          {latestPosts.map((p) => {
-            const pf = PLATFORMS[p.data.platform];
-            return (
-              <a href={`/actualites/reseaux/${p.id}`} class="card social-card" style={`--pc:${pf.color}`}>
-                <div class="frame">
-                  {imgOk(p.data.image)
-                    ? <img class="photo" src={p.data.image} alt="" loading="lazy" />
-                    : <div class="duo social-ph"><span class="soc-ph-ico" set:html={pf.icon}></span></div>}
-                  <div class="grad"></div>
-                  <div class="cap"><div class="disc"><span class="plat-ico" set:html={pf.icon}></span>{pf.label}</div></div>
-                </div>
-                <div class="kicker">{fmtArticleDate(p.data.date)}</div>
-                <p class="social-cap">{p.data.caption}</p>
-                <span class="social-more">Voir la publication →</span>
-              </a>
-            );
-          })}
+          {latestPosts.map((p) => (
+            <a href={p.href} class="card social-card" style={`--pc:${p.color}`}>
+              <div class="frame">
+                {p.img
+                  ? <img class="photo" src={p.img} alt="" loading="lazy" onerror={p.imgFallback ? `this.onerror=null;this.src='${p.imgFallback}'` : undefined} />
+                  : <div class="duo social-ph"><span class="soc-ph-ico" set:html={p.icon}></span></div>}
+                <div class="grad"></div>
+                <div class="cap"><div class="disc">{p.kind === 'social' && <span class="plat-ico" set:html={p.icon}></span>}{p.tag}</div></div>
+              </div>
+              <div class="kicker">{fmtArticleDate(p.date)}</div>
+              <p class="social-cap">{p.text}</p>
+              <span class="social-more">{p.more}</span>
+            </a>
+          ))}
         </div>
       </div>
     </section>
