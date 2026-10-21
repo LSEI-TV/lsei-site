@@ -1,0 +1,9 @@
+# ============================================================
+#  LSEI — configuration Apache (OVH). Déployé à la racine du site (/site/).
+# ============================================================
+
+# Ne JAMAIS lister le contenu d'un dossier sans page d'accueil.
+# Sinon Apache affiche une page « Index of /billard », « Index of /uploads »… qui
+# expose l'arborescence et se fait indexer par Google. Un dossier d'assets sans
+# index renvoie désormais 403 (les fichiers eux-mêmes restent accessibles).
+Options -Indexes
