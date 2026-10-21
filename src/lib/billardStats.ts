@@ -3,6 +3,7 @@
 // au build depuis l'API Cuescore ; ici c'est un snapshot figé pour la maquette.
 import { defaultSeason, getSeasons, type Season } from '../data/billard/seasons';
 import { getFemmesSeasons } from '../data/billard/seasonsFemmes';
+import { getMixteSeasons } from '../data/billard/seasonsMixte';
 import { getParaSeasons } from '../data/billard/seasonsPara';
 import { getParaMvSeasons } from '../data/billard/seasonsParaMalvoyants';
 import { readdirSync } from 'node:fs';
@@ -43,7 +44,7 @@ function _listPhotos(): { url: string; key: string; season: string | null }[] {
   } catch { /* dossier absent */ }
   // public/billard/blackball/{MASTERS,FEMMES,PARA-BILLARD,…}/AAAA-AAAA/
   // On indexe par nom + saison : la photo de la bonne saison est privilégiée (maillots).
-  const groups = ['MASTERS', 'FEMMES', 'PARA-BILLARD', 'PARA-BILLARD-MALVOYANTS', 'archives joueurs'];
+  const groups = ['MASTERS', 'FEMMES', 'MIXTE', 'PARA-BILLARD', 'PARA-BILLARD-MALVOYANTS', 'archives joueurs'];
   for (const g of groups) {
     const base = DIR + '/' + g;
     try {
@@ -65,7 +66,7 @@ let _wordIndex: Map<string, Set<number>> | null = null;
 function _wordCount(word: string): number {
   if (!_wordIndex) {
     _wordIndex = new Map();
-    for (const s of [...getSeasons(), ...getFemmesSeasons(), ...getParaSeasons(), ...getParaMvSeasons()]) {
+    for (const s of [...getSeasons(), ...getFemmesSeasons(), ...getMixteSeasons(), ...getParaSeasons(), ...getParaMvSeasons()]) {
       if (!s.results) continue;
       for (const p of s.results.players as Player[]) {
         for (const part of (p.name || '').trim().split(/\s+/)) {
