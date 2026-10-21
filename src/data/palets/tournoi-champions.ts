@@ -49,6 +49,12 @@ export interface TdcEdition {
   color: string;
   /** date ISO du tournoi */
   date: string;
+  /** édition À VENIR : pas encore de résultats → on affiche l'affiche + le compte à
+   *  rebours. Pour la clôturer : passer upcoming à false (ou retirer) et remplir
+   *  pool / quarters / semis / final avec les résultats. */
+  upcoming?: boolean;
+  /** affiche de l'édition (visible tant qu'elle est à venir) */
+  affiche?: string;
   /** vidéo YouTube du live (id) */
   video?: string;
   /** photo de l'édition (groupe, vainqueur…) affichée à côté de la poule */
@@ -56,7 +62,7 @@ export interface TdcEdition {
   pool: TdcPoolRow[];
   quarters: TdcMatch[];
   semis: TdcMatch[];
-  final: TdcMatch;
+  final?: TdcMatch;
 }
 
 /** Club organisateur (logo affiché sur la page du tournoi). */
@@ -66,6 +72,19 @@ export const ORGANIZER = { name: 'Bambis Palets', logo: '/partenaires/bambis-pal
 export const QUALIFIED = 8;
 
 export const editions: TdcEdition[] = [
+  {
+    // ÉDITION À VENIR — préremplie pour gagner du temps. Le jour J passé, remplacer
+    // « upcoming: true » par les résultats : pool (16 lignes), quarters, semis, final,
+    // et éventuellement video (id du live) + photo de groupe.
+    year: 2027,
+    color: '#1F62C9',
+    date: '2027-01-02',
+    upcoming: true,
+    affiche: '/tournoi-des-champions/2027/affiche%202027.jpg',
+    pool: [],
+    quarters: [],
+    semis: [],
+  },
   {
     year: 2026,
     color: '#1F4E9C',
@@ -145,17 +164,19 @@ export const playerName = (id: string) => {
   return p ? `${p.first} ${p.last}` : id;
 };
 
-/** Vainqueur de la dernière édition (bandeau de la page Palets). */
+/** Vainqueur de la dernière édition JOUÉE (bandeau de la page Palets). On saute les
+ *  éditions à venir (pas encore de champion). */
 export function latestChampion() {
-  const e = editions[0];
-  const id = e.final.win;
+  const e = editions.find((x) => x.final) ?? editions[0];
+  const f = e.final!;
+  const id = f.win;
   return {
     id,
     year: e.year,
     name: playerName(id),
     club: players[id]?.club,
-    runnerUp: playerName(e.final.lose),
-    score: `${e.final.sw}-${e.final.sl}`,
+    runnerUp: playerName(f.lose),
+    score: `${f.sw}-${f.sl}`,
     photo: `/tournoi-des-champions/joueurs/${id}.webp`,
     initials: players[id] ? `${players[id].first[0]}${players[id].last[0]}` : '?',
   };
@@ -166,7 +187,7 @@ export function careerOf(id: string) {
   const eds = editions.filter((e) => e.pool.some((r) => r.id === id));
   return {
     played: eds.length,
-    titles: editions.filter((e) => e.final.win === id).length,
-    finals: editions.filter((e) => e.final.win === id || e.final.lose === id).length,
+    titles: editions.filter((e) => e.final?.win === id).length,
+    finals: editions.filter((e) => e.final && (e.final.win === id || e.final.lose === id)).length,
   };
 }

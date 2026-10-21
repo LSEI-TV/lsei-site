@@ -7,9 +7,12 @@ import { editions, players, playerName, careerOf, QUALIFIED, ORGANIZER, type Tdc
 import { assetExists } from '../../lib/publicAssets';
 
 const d = getDiscipline('palets');
-const latest = editions[0];
+// Éditions JOUÉES (avec résultats) vs à venir. Le héros/palmarès portent sur la
+// dernière jouée ; l'édition à venir s'affiche en « prochain rendez-vous ».
+const played = editions.filter((e) => e.final);
+const latest = played[0] ?? editions[0];
 const allIds = new Set(editions.flatMap((e) => e.pool.map((r) => r.id)));
-const champions = new Set(editions.map((e) => e.final.win));
+const champions = new Set(played.map((e) => e.final!.win));
 
 const photo = (id: string) => {
   const p = `/tournoi-des-champions/joueurs/${id}.webp`;
@@ -51,7 +54,7 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
         <h1 class="tdc-h">Tournoi<small>des</small><span>Champions</span></h1>
         <p class="tdc-p">Chaque début janvier, 16 joueurs se retrouvent pour une journée de palet : 3 parties de poule, les 8 meilleurs en quarts de finale, puis une finale en 15 points.</p>
         <div class="tdc-kpis">
-          <div><b>{editions.length}</b><span>édition{editions.length > 1 ? 's' : ''}</span></div>
+          <div><b>{played.length}</b><span>édition{played.length > 1 ? 's' : ''}</span></div>
           <div><b>{allIds.size}</b><span>joueurs</span></div>
           <div><b>{champions.size}</b><span>champion{champions.size > 1 ? 's' : ''}</span></div>
         </div>
@@ -80,14 +83,22 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
       <div class="sec-head"><div><div class="eyebrow">Toutes les éditions</div><h2>Palmarès</h2></div></div>
       <div class="tdc-palm">
         {editions.map((e) => (
-          <a class="tdc-palm-card" href={`#edition-${e.year}`} data-tdc-go={e.year} style={`--dc:${e.color}`}>
-            <span class="tdc-palm-y">{e.year}</span>
-            <span class="tdc-palm-who">
-              <span class="tdc-av">{photo(e.final.win) ? <img src={photo(e.final.win)} alt="" loading="lazy" /> : initials(e.final.win)}</span>
-              <span><b>{playerName(e.final.win)}</b><small>{club(e.final.win)}</small></span>
-            </span>
-            <span class="tdc-palm-f">Finale {e.final.sw}-{e.final.sl} contre {playerName(e.final.lose)}</span>
-          </a>
+          e.upcoming || !e.final ? (
+            <a class="tdc-palm-card is-soon" href={`#edition-${e.year}`} data-tdc-go={e.year} style={`--dc:${e.color}`}>
+              <span class="tdc-palm-y">{e.year}</span>
+              <span class="tdc-palm-soon"><span class="tdc-palm-soon-k">Prochaine édition</span><b>{fmtDate(e.date)}</b></span>
+              <span class="tdc-palm-f">Affiche dévoilée · résultats à venir</span>
+            </a>
+          ) : (
+            <a class="tdc-palm-card" href={`#edition-${e.year}`} data-tdc-go={e.year} style={`--dc:${e.color}`}>
+              <span class="tdc-palm-y">{e.year}</span>
+              <span class="tdc-palm-who">
+                <span class="tdc-av">{photo(e.final.win) ? <img src={photo(e.final.win)} alt="" loading="lazy" /> : initials(e.final.win)}</span>
+                <span><b>{playerName(e.final.win)}</b><small>{club(e.final.win)}</small></span>
+              </span>
+              <span class="tdc-palm-f">Finale {e.final.sw}-{e.final.sl} contre {playerName(e.final.lose)}</span>
+            </a>
+          )
         ))}
       </div>
 
@@ -112,6 +123,26 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
             )}
           </header>
 
+          {e.upcoming || !e.final ? (
+          <div class="tdc-soon">
+            <figure class="tdc-soon-aff">
+              {e.affiche
+                ? <img src={e.affiche} alt={`Affiche du Tournoi des Champions ${e.year}`} loading="lazy" />
+                : <div class="tdc-soon-aff-ph">Affiche à venir</div>}
+            </figure>
+            <div class="tdc-soon-body">
+              <span class="tdc-soon-tag">Prochain rendez-vous</span>
+              <div class="tdc-soon-count" data-tdc-count={e.date}><b data-tdc-days>J-—</b><span>avant le coup d'envoi</span></div>
+              <p class="tdc-soon-p">16 champions, 3 parties de poule, les {QUALIFIED} meilleurs en quarts de finale, puis la finale en 15 points. Le tableau final, le classement de poule et les 16 joueurs s'afficheront ici une fois le tournoi disputé.</p>
+              {assetExists(ORGANIZER.logo) && (
+                <a class="tdc-soon-org" href={ORGANIZER.url} target="_blank" rel="noopener">
+                  <span class="tdc-soon-org-logo"><img src={ORGANIZER.logo} alt={ORGANIZER.name} /></span>
+                  <span><small>Organisé par</small><b>{ORGANIZER.name}</b></span>
+                </a>
+              )}
+            </div>
+          </div>
+          ) : (<>
           <h3 class="tdc-h3">Tableau final</h3>
           <div class="tdc-bracket">
             {rounds(e).map((r) => (
@@ -174,6 +205,7 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
               );
             })}
           </div>
+          </>)}
         </article>
       ))}
     </div>
@@ -201,6 +233,19 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
   const fromHash = () => location.hash.match(/^#edition-(\d{4})$/)?.[1];
   if (fromHash()) show(fromHash(), true);
   addEventListener('hashchange', () => fromHash() && show(fromHash(), true));
+
+  // Compte à rebours de la/les édition(s) à venir (toujours juste, calculé au chargement).
+  document.querySelectorAll<HTMLElement>('[data-tdc-count]').forEach((el) => {
+    const iso = el.dataset.tdcCount;
+    const b = el.querySelector('[data-tdc-days]');
+    if (!iso || !b) return;
+    const target = new Date(iso + 'T00:00:00').getTime();
+    const now = new Date(); now.setHours(0, 0, 0, 0);
+    const days = Math.round((target - now.getTime()) / 86400000);
+    b.textContent = days > 1 ? `J-${days}` : days === 1 ? 'Demain' : days === 0 ? "Aujourd'hui" : 'Bientôt les résultats';
+    const unit = el.querySelector('span');
+    if (unit && days <= 0) unit.textContent = days === 0 ? 'le tournoi a lieu' : 'tournoi disputé';
+  });
 </script>
 
 <style is:global>
@@ -309,6 +354,29 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
   .tdc-pl.s-gold .tdc-badge { background: var(--dc); color: #fff; }
   .tdc-pl.s-silver .tdc-badge { background: #C9CED8; color: #1d2230; }
   .tdc-pl.s-semi .tdc-badge { background: color-mix(in srgb, var(--dc) 22%, transparent); color: var(--ink); }
+
+  /* Carte palmarès « édition à venir » */
+  .tdc-palm-card.is-soon { border-style: dashed; }
+  .tdc-palm-soon { display: flex; flex-direction: column; gap: 2px; }
+  .tdc-palm-soon-k { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--dc); }
+  .tdc-palm-soon b { font-size: 16px; color: var(--ink); text-transform: capitalize; }
+
+  /* Bloc « édition à venir » : affiche + compte à rebours */
+  .tdc-soon { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 32px; align-items: center; margin-top: 10px; }
+  .tdc-soon-aff { margin: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); background: var(--surface-2); }
+  .tdc-soon-aff img { width: 100%; height: auto; display: block; }
+  .tdc-soon-aff-ph { aspect-ratio: 210 / 297; display: grid; place-items: center; color: var(--ink-faint); font-weight: 700; font-size: 14px; }
+  .tdc-soon-tag { display: inline-block; align-self: flex-start; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--dc); padding: 4px 10px; border-radius: 5px; }
+  .tdc-soon-count { margin: 16px 0 8px; display: flex; flex-direction: column; }
+  .tdc-soon-count b { font-family: var(--display); font-weight: 800; font-size: clamp(40px, 7vw, 64px); line-height: 1; color: var(--dc); }
+  .tdc-soon-count span { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-top: 6px; }
+  .tdc-soon-p { font-size: 15px; line-height: 1.6; color: var(--ink-soft); margin: 4px 0 0; max-width: 54ch; }
+  .tdc-soon-org { display: inline-flex; align-items: center; gap: 12px; margin-top: 20px; text-decoration: none; color: var(--ink); }
+  .tdc-soon-org-logo { width: 72px; height: 54px; border-radius: 8px; background: #fff; display: grid; place-items: center; padding: 6px; flex: none; border: 1px solid var(--line); }
+  .tdc-soon-org-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .tdc-soon-org small { display: block; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); }
+  .tdc-soon-org b { font-size: 15px; }
+  @media (max-width: 760px) { .tdc-soon { grid-template-columns: 1fr; gap: 20px; } .tdc-soon-aff { max-width: 280px; } }
 
   @media (max-width: 900px) {
     .tdc-hero-in { grid-template-columns: 1fr; gap: 28px; padding-top: 34px; padding-bottom: 34px; }
