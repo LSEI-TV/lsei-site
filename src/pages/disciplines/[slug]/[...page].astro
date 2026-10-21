@@ -87,6 +87,21 @@ const categoryOptions = [
         </div>
       </section>
 
+      {disc.feature && page.currentPage === 1 && (
+        <section class="section" style="padding-bottom:0">
+          <div class="wrap">
+            <a href={disc.feature.href} class="stats-banner" style={`--dc:${disc.colorVar}`}>
+              <div class="sb-txt">
+                <div class="sb-kick">{disc.feature.kicker}</div>
+                <div class="sb-title">{disc.feature.title}</div>
+                <div class="sb-sub">{disc.feature.sub}</div>
+              </div>
+              <span class="sb-cta">{disc.feature.cta}</span>
+            </a>
+          </div>
+        </section>
+      )}
+
       {disc.statsHub && !disc.hub && (
         <section class="section" style="padding-bottom:0">
           <div class="wrap">

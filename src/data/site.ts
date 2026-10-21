@@ -59,6 +59,8 @@ export interface Discipline {
   hub?: string;
   /** image du bandeau hero (2400×800, sujet à droite). Repli sombre si absente. */
   hero?: string;
+  /** bandeau « à la une » sous le hero de la page discipline (ex. un tournoi phare). */
+  feature?: { href: string; kicker: string; title: string; sub: string; cta: string };
 }
 
 export const disciplines: Discipline[] = [
@@ -105,6 +107,13 @@ export const disciplines: Discipline[] = [
     to: '#6B4E12',
     tagBg: 'rgba(210,165,33,.16)',
     count: '12 tournois',
+    feature: {
+      href: '/palets/tournoi-des-champions',
+      kicker: 'Chaque année en janvier',
+      title: 'Le Tournoi des Champions',
+      sub: 'Le palmarès, le tableau final, le classement de poule et les 16 joueurs de chaque édition.',
+      cta: 'Voir le tournoi →',
+    },
     blurb:
       "Un patrimoine bien vivant : tournois, championnats de Bretagne et portraits de joueurs qui perpétuent un jeu centenaire.",
   },

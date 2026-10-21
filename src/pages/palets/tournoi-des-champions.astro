@@ -1,0 +1,311 @@
+---
+// TOURNOI DES CHAMPIONS (palets) — page annuelle : palmarès + une édition à la fois
+// (onglets, sans changement de page). Données : src/data/palets/tournoi-champions.ts.
+import Base from '../../layouts/Base.astro';
+import { getDiscipline } from '../../data/site';
+import { editions, players, playerName, careerOf, QUALIFIED, type TdcEdition, type TdcMatch } from '../../data/palets/tournoi-champions';
+import { assetExists } from '../../lib/publicAssets';
+
+const d = getDiscipline('palets');
+const latest = editions[0];
+const allIds = new Set(editions.flatMap((e) => e.pool.map((r) => r.id)));
+const champions = new Set(editions.map((e) => e.final.win));
+
+const photo = (id: string) => {
+  const p = `/tournoi-des-champions/joueurs/${id}.webp`;
+  return assetExists(p) ? p : null;
+};
+const initials = (id: string) => { const p = players[id]; return p ? `${p.first[0]}${p.last[0]}` : '?'; };
+const club = (id: string) => players[id]?.club ?? 'Sans club';
+const fmtDate = (iso: string) => new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(iso + 'T12:00:00Z'));
+const signed = (n: number) => (n > 0 ? `+${n}` : `${n}`);
+
+// Parcours d'un joueur dans une édition → badge + ordre d'affichage.
+function stageOf(e: TdcEdition, id: string) {
+  if (e.final.win === id) return { label: 'Champion', cls: 'gold', rank: 0 };
+  if (e.final.lose === id) return { label: 'Finaliste', cls: 'silver', rank: 1 };
+  if (e.semis.some((m) => m.lose === id)) return { label: 'Demi-finale', cls: 'semi', rank: 2 };
+  if (e.quarters.some((m) => m.lose === id)) return { label: 'Quart de finale', cls: 'qf', rank: 3 };
+  return { label: 'Phase de poule', cls: 'pool', rank: 4 };
+}
+const poolPos = (e: TdcEdition, id: string) => e.pool.findIndex((r) => r.id === id) + 1;
+const roster = (e: TdcEdition) =>
+  e.pool.map((r) => ({ id: r.id, stage: stageOf(e, r.id), pos: poolPos(e, r.id) }))
+    .sort((a, b) => a.stage.rank - b.stage.rank || a.pos - b.pos);
+const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
+  { name: 'Quarts de finale', games: e.quarters },
+  { name: 'Demi-finales', games: e.semis },
+  { name: 'Finale', games: [e.final] },
+];
+---
+<Base
+  title="Tournoi des Champions — Palets"
+  description={`Le Tournoi des Champions de palets, chaque année en janvier : palmarès, tableau final, classement de poule et joueurs. Édition ${latest.year} remportée par ${playerName(latest.final.win)}.`}
+  active="disciplines"
+  image={latest.video ? `https://i.ytimg.com/vi/${latest.video}/maxresdefault.jpg` : undefined}
+>
+  <section class="tdc-hero" style={`--dc:${d.colorVar}`}>
+    <div class="wrap tdc-hero-in">
+      <div>
+        <div class="tdc-crumb"><a href="/disciplines/palets">Palets</a><span aria-hidden="true">›</span>Tournoi des Champions</div>
+        <h1 class="tdc-h">Tournoi<small>des</small><span>Champions</span></h1>
+        <p class="tdc-p">Chaque début janvier, 16 joueurs se retrouvent pour une journée de palet : 3 parties de poule, les 8 meilleurs en quarts de finale, puis une finale en 15 points.</p>
+        <div class="tdc-kpis">
+          <div><b>{editions.length}</b><span>édition{editions.length > 1 ? 's' : ''}</span></div>
+          <div><b>{allIds.size}</b><span>joueurs</span></div>
+          <div><b>{champions.size}</b><span>champion{champions.size > 1 ? 's' : ''}</span></div>
+        </div>
+      </div>
+      <a class="tdc-champ" href={`#edition-${latest.year}`} data-tdc-go={latest.year}>
+        <span class="tdc-champ-img">
+          {photo(latest.final.win) ? <img src={photo(latest.final.win)} alt={playerName(latest.final.win)} loading="eager" /> : <span class="tdc-ini">{initials(latest.final.win)}</span>}
+        </span>
+        <span class="tdc-champ-body">
+          <span class="tdc-champ-k">🏆 Champion {latest.year}</span>
+          <span class="tdc-champ-n">{playerName(latest.final.win)}</span>
+          <span class="tdc-champ-s">{club(latest.final.win)} · bat {playerName(latest.final.lose)} {latest.final.sw}-{latest.final.sl} en finale</span>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section tdc-body" style={`--dc:${d.colorVar}`}>
+    <div class="wrap">
+      <div class="sec-head"><div><div class="eyebrow">Toutes les éditions</div><h2>Palmarès</h2></div></div>
+      <div class="tdc-palm">
+        {editions.map((e) => (
+          <a class="tdc-palm-card" href={`#edition-${e.year}`} data-tdc-go={e.year}>
+            <span class="tdc-palm-y">{e.year}</span>
+            <span class="tdc-palm-who">
+              <span class="tdc-av">{photo(e.final.win) ? <img src={photo(e.final.win)} alt="" loading="lazy" /> : initials(e.final.win)}</span>
+              <span><b>{playerName(e.final.win)}</b><small>{club(e.final.win)}</small></span>
+            </span>
+            <span class="tdc-palm-f">Finale {e.final.sw}-{e.final.sl} contre {playerName(e.final.lose)}</span>
+          </a>
+        ))}
+      </div>
+
+      <div class="tdc-tabs" role="tablist" aria-label="Choisir une édition">
+        {editions.map((e, i) => (
+          <a role="tab" href={`#edition-${e.year}`} data-tdc-go={e.year} aria-selected={i === 0 ? 'true' : 'false'}>Édition {e.year}</a>
+        ))}
+      </div>
+
+      {editions.map((e, i) => (
+        <article class="tdc-ed" id={`edition-${e.year}`} data-tdc-ed={e.year} hidden={i !== 0}>
+          <header class="tdc-ed-head">
+            <div>
+              <div class="eyebrow">Édition {e.year}</div>
+              <h2 class="tdc-ed-t">{fmtDate(e.date)}</h2>
+            </div>
+            {e.video && (
+              <a class="tdc-replay" href={`/replay/${e.video}/`}>
+                <img src={`https://i.ytimg.com/vi/${e.video}/mqdefault.jpg`} alt="" loading="lazy" />
+                <span><b>Revoir le direct</b><small>Le tournoi en vidéo sur LSEI</small></span>
+              </a>
+            )}
+          </header>
+
+          <h3 class="tdc-h3">Tableau final</h3>
+          <div class="tdc-bracket">
+            {rounds(e).map((r) => (
+              <div class="tdc-round">
+                <div class="tdc-round-n">{r.name}</div>
+                <div class="tdc-round-g">
+                  {r.games.map((m) => (
+                    <div class={`tdc-m${r.name === 'Finale' ? ' is-final' : ''}`}>
+                      <div class="tdc-m-row win"><span>{playerName(m.win)}</span><b>{m.sw}</b></div>
+                      <div class="tdc-m-row"><span>{playerName(m.lose)}</span><b>{m.sl}</b></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class={`tdc-grid2${e.groupPhoto && assetExists(e.groupPhoto) ? '' : ' is-solo'}`}>
+            <div>
+              <h3 class="tdc-h3">Phase de poule <small>3 parties · les {QUALIFIED} premiers qualifiés</small></h3>
+              <div class="tdc-table-wrap">
+                <table class="tdc-table">
+                  <thead><tr><th>#</th><th>Joueur</th><th>V.</th><th>Goal av.</th></tr></thead>
+                  <tbody>
+                    {e.pool.map((r, k) => (
+                      <tr class={k < QUALIFIED ? 'q' : ''}>
+                        <td>{k + 1}</td>
+                        <td><b>{playerName(r.id)}</b><small>{club(r.id)}</small></td>
+                        <td>{r.w}</td>
+                        <td>{signed(r.ga)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            {e.groupPhoto && assetExists(e.groupPhoto) && (
+              <figure class="tdc-group">
+                <img src={e.groupPhoto} alt={`Les joueurs du Tournoi des Champions ${e.year}`} loading="lazy" />
+                <figcaption>Les 16 joueurs de l'édition {e.year}</figcaption>
+              </figure>
+            )}
+          </div>
+
+          <h3 class="tdc-h3">Les 16 joueurs</h3>
+          <div class="tdc-players">
+            {roster(e).map(({ id, stage }) => {
+              const c = careerOf(id);
+              const img = photo(id);
+              return (
+                <div class={`tdc-pl s-${stage.cls}`}>
+                  <div class="tdc-pl-img">{img ? <img src={img} alt={playerName(id)} loading="lazy" /> : <span class="tdc-ini">{initials(id)}</span>}</div>
+                  <div class="tdc-pl-body">
+                    <span class="tdc-badge">{stage.label}</span>
+                    <b>{players[id]?.first} <span>{players[id]?.last}</span></b>
+                    <small>{club(id)}</small>
+                    {c.played > 1 && <small class="tdc-pl-c">{c.played} participations{c.titles > 0 ? ` · ${c.titles} titre${c.titles > 1 ? 's' : ''}` : ''}</small>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Onglets d'édition : une seule édition visible, synchronisée avec le #hash.
+  const eds = [...document.querySelectorAll<HTMLElement>('[data-tdc-ed]')];
+  const tabs = [...document.querySelectorAll<HTMLElement>('.tdc-tabs [data-tdc-go]')];
+  function show(year: string | undefined, scroll: boolean) {
+    const target = eds.find((el) => el.dataset.tdcEd === year) ?? eds[0];
+    if (!target) return;
+    eds.forEach((el) => (el.hidden = el !== target));
+    tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.tdcGo === target.dataset.tdcEd)));
+    if (scroll) document.querySelector('.tdc-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  document.querySelectorAll<HTMLElement>('[data-tdc-go]').forEach((a) =>
+    a.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      history.replaceState(null, '', `#edition-${a.dataset.tdcGo}`);
+      show(a.dataset.tdcGo, true);
+    }),
+  );
+  const fromHash = () => location.hash.match(/^#edition-(\d{4})$/)?.[1];
+  if (fromHash()) show(fromHash(), true);
+  addEventListener('hashchange', () => fromHash() && show(fromHash(), true));
+</script>
+
+<style is:global>
+  .tdc-hero { position: relative; overflow: hidden; color: #fff;
+    background: radial-gradient(70% 140% at 85% 0%, color-mix(in srgb, var(--dc) 42%, #0A0E1A) 0%, #0A0E1A 64%), #0A0E1A; }
+  .tdc-hero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--dc); }
+  .tdc-hero-in { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 44px; align-items: center; padding-top: 50px; padding-bottom: 50px; }
+  .tdc-crumb { display: flex; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  .tdc-crumb a { color: var(--dc); text-decoration: none; }
+  .tdc-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; letter-spacing: -.01em; font-size: clamp(44px, 7vw, 92px); line-height: .9; margin: 18px 0 0; color: #fff; }
+  .tdc-h small { font-size: .28em; letter-spacing: .08em; color: var(--dc); margin-left: .3em; vertical-align: top; }
+  .tdc-h span { display: block; color: var(--dc); }
+  .tdc-p { color: rgba(255,255,255,.8); font-size: 16px; line-height: 1.55; margin: 18px 0 0; max-width: 54ch; }
+  .tdc-kpis { display: flex; flex-wrap: wrap; gap: 12px 34px; margin-top: 24px; }
+  .tdc-kpis div { display: flex; flex-direction: column; }
+  .tdc-kpis b { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; }
+  .tdc-kpis span { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-top: 4px; }
+
+  .tdc-champ { display: grid; grid-template-columns: 150px 1fr; border-radius: 16px; overflow: hidden; text-decoration: none; color: #fff;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); box-shadow: 0 26px 56px -24px rgba(0,0,0,.85); transition: transform .3s, border-color .2s; }
+  .tdc-champ:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--dc) 70%, transparent); }
+  .tdc-champ-img { min-height: 188px; background: color-mix(in srgb, var(--dc) 30%, #0A0E1A); display: grid; place-items: center; }
+  .tdc-champ-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tdc-champ-body { display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 18px 20px; border-left: 3px solid var(--dc); }
+  .tdc-champ-k { align-self: flex-start; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: var(--dc); color: #1b1404; padding: 3px 9px; border-radius: 4px; }
+  .tdc-champ-n { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: 28px; line-height: 1; }
+  .tdc-champ-s { font-size: 14px; color: rgba(255,255,255,.75); line-height: 1.4; }
+  .tdc-ini { font-family: var(--display); font-weight: 800; font-size: 40px; color: #fff; opacity: .85; }
+
+  .tdc-body { background-image: radial-gradient(rgba(20, 30, 50, .055) 1px, transparent 1.4px); background-size: 22px 22px; }
+  .tdc-palm { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+  .tdc-palm-card { display: flex; flex-direction: column; gap: 12px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--dc);
+    border-radius: 10px; color: var(--ink); text-decoration: none; box-shadow: var(--shadow); transition: transform .2s; }
+  .tdc-palm-card:hover { transform: translateY(-3px); }
+  .tdc-palm-y { font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1; color: var(--dc); }
+  .tdc-palm-who { display: flex; align-items: center; gap: 12px; }
+  .tdc-palm-who b { display: block; font-size: 16px; }
+  .tdc-palm-who small { color: var(--ink-soft); font-size: 13px; }
+  .tdc-av { width: 46px; height: 46px; border-radius: 50%; overflow: hidden; flex: none; display: grid; place-items: center; background: var(--dc); color: #fff; font-weight: 800; }
+  .tdc-av img { width: 100%; height: 100%; object-fit: cover; }
+  .tdc-palm-f { font-size: 13px; color: var(--ink-soft); }
+
+  .tdc-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 40px 0 0; padding-top: 8px; border-bottom: 2px solid var(--line); scroll-margin-top: 90px; }
+  .tdc-tabs a { padding: 10px 18px; font-weight: 800; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-soft); text-decoration: none;
+    border-bottom: 3px solid transparent; margin-bottom: -2px; }
+  .tdc-tabs a[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--dc); }
+  .tdc-ed { padding-top: 26px; }
+  .tdc-ed-head { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .tdc-ed-t { margin: 4px 0 0; font-size: 24px; font-weight: 800; }
+  .tdc-ed-t::first-letter { text-transform: uppercase; }
+  .tdc-replay { display: flex; align-items: center; gap: 12px; padding: 6px 16px 6px 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; color: var(--ink); text-decoration: none; }
+  .tdc-replay:hover { border-color: var(--dc); }
+  .tdc-replay img { width: 112px; aspect-ratio: 16/9; object-fit: cover; border-radius: 6px; display: block; }
+  .tdc-replay b { display: block; font-size: 14px; }
+  .tdc-replay small { color: var(--ink-soft); font-size: 12px; }
+  .tdc-h3 { font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; margin: 34px 0 14px; color: var(--ink); }
+  .tdc-h3 small { font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--ink-faint); margin-left: 8px; font-size: 13px; }
+
+  .tdc-bracket { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .tdc-round-n { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 10px; }
+  .tdc-round-g { display: flex; flex-direction: column; justify-content: space-around; gap: 12px; height: calc(100% - 26px); }
+  .tdc-m { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .tdc-m.is-final { border: 2px solid var(--dc); }
+  .tdc-m-row { display: flex; justify-content: space-between; gap: 10px; padding: 9px 12px; font-size: 14px; color: var(--ink-soft); }
+  .tdc-m-row + .tdc-m-row { border-top: 1px solid var(--line); }
+  .tdc-m-row b { font-family: var(--display); font-size: 16px; }
+  .tdc-m-row.win { color: var(--ink); font-weight: 700; background: color-mix(in srgb, var(--dc) 12%, transparent); }
+  .tdc-m-row.win b { color: color-mix(in srgb, var(--dc) 75%, var(--ink)); }
+
+  .tdc-grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+  .tdc-grid2.is-solo { grid-template-columns: minmax(0, 720px); }
+  .tdc-table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .tdc-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .tdc-table th { text-align: left; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .tdc-table td { padding: 8px 12px; border-bottom: 1px solid var(--line); color: var(--ink); }
+  .tdc-table th:nth-child(n+3), .tdc-table td:nth-child(n+3) { text-align: right; font-variant-numeric: tabular-nums; }
+  .tdc-table td:first-child { color: var(--ink-faint); width: 34px; font-variant-numeric: tabular-nums; }
+  .tdc-table td b { display: block; }
+  .tdc-table td small { color: var(--ink-faint); font-size: 12px; }
+  .tdc-table tr.q td:first-child { box-shadow: inset 4px 0 0 var(--dc); color: var(--ink); font-weight: 800; }
+  .tdc-table tr.q + tr:not(.q) td { border-top: 2px dashed var(--line-strong); }
+  .tdc-table tr:last-child td { border-bottom: 0; }
+  .tdc-group { margin: 61px 0 0; }
+  .tdc-group img { width: 100%; border-radius: 10px; display: block; }
+  .tdc-group figcaption { font-size: 13px; color: var(--ink-soft); margin-top: 8px; }
+
+  .tdc-players { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
+  .tdc-pl { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+  .tdc-pl-img { aspect-ratio: 4 / 5; background: linear-gradient(160deg, color-mix(in srgb, var(--dc) 60%, #0A0E1A), #0A0E1A); display: grid; place-items: center; }
+  .tdc-pl-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tdc-pl-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 3px; }
+  .tdc-pl-body b { font-size: 15px; color: var(--ink); }
+  .tdc-pl-body b span { text-transform: uppercase; }
+  .tdc-pl-body small { font-size: 12px; color: var(--ink-soft); }
+  .tdc-pl-c { color: var(--ink-faint) !important; }
+  .tdc-badge { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; background: var(--surface-2); color: var(--ink-soft); margin-bottom: 4px; }
+  .tdc-pl.s-gold { border: 2px solid var(--dc); }
+  .tdc-pl.s-gold .tdc-badge { background: var(--dc); color: #1b1404; }
+  .tdc-pl.s-silver .tdc-badge { background: #C9CED8; color: #1d2230; }
+  .tdc-pl.s-semi .tdc-badge { background: color-mix(in srgb, var(--dc) 22%, transparent); color: var(--ink); }
+
+  @media (max-width: 900px) {
+    .tdc-hero-in { grid-template-columns: 1fr; gap: 28px; padding-top: 34px; padding-bottom: 34px; }
+    .tdc-grid2 { grid-template-columns: 1fr; }
+    .tdc-group { margin-top: 0; }
+  }
+  @media (max-width: 700px) {
+    .tdc-bracket { grid-template-columns: 1fr; }
+    .tdc-round-g { height: auto; }
+    .tdc-champ { grid-template-columns: 110px 1fr; }
+    .tdc-champ-n { font-size: 22px; }
+    .tdc-players { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  }
+</style>
