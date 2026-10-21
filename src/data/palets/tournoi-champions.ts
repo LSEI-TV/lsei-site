@@ -45,6 +45,8 @@ export interface TdcMatch { win: string; lose: string; sw: number; sl: number }
 
 export interface TdcEdition {
   year: number;
+  /** couleur de l'édition (reprise du visuel officiel de l'année) */
+  color: string;
   /** date ISO du tournoi */
   date: string;
   /** vidéo YouTube du live (id) */
@@ -57,12 +59,16 @@ export interface TdcEdition {
   final: TdcMatch;
 }
 
+/** Club organisateur (logo affiché sur la page du tournoi). */
+export const ORGANIZER = { name: 'Bambis Palets', logo: '/partenaires/bambis-palets.webp', url: 'https://www.facebook.com/cfipalet.35' };
+
 /** Nombre de qualifiés à l'issue de la poule. */
 export const QUALIFIED = 8;
 
 export const editions: TdcEdition[] = [
   {
     year: 2026,
+    color: '#1F4E9C',
     date: '2026-01-03',
     video: '1XzKh__Z6cM',
     pool: [
@@ -97,6 +103,7 @@ export const editions: TdcEdition[] = [
   },
   {
     year: 2025,
+    color: '#E0533F',
     date: '2025-01-04',
     video: 'AsbZYgDvYY0',
     groupPhoto: '/tournoi-des-champions/2025/groupe.webp',
@@ -136,6 +143,22 @@ export const playerName = (id: string) => {
   const p = players[id];
   return p ? `${p.first} ${p.last}` : id;
 };
+
+/** Vainqueur de la dernière édition (bandeau de la page Palets). */
+export function latestChampion() {
+  const e = editions[0];
+  const id = e.final.win;
+  return {
+    id,
+    year: e.year,
+    name: playerName(id),
+    club: players[id]?.club,
+    runnerUp: playerName(e.final.lose),
+    score: `${e.final.sw}-${e.final.sl}`,
+    photo: `/tournoi-des-champions/joueurs/${id}.webp`,
+    initials: players[id] ? `${players[id].first[0]}${players[id].last[0]}` : '?',
+  };
+}
 
 /** Nombre de participations / titres / finales d'un joueur, toutes éditions. */
 export function careerOf(id: string) {

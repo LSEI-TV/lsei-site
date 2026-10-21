@@ -3,7 +3,7 @@
 // (onglets, sans changement de page). Données : src/data/palets/tournoi-champions.ts.
 import Base from '../../layouts/Base.astro';
 import { getDiscipline } from '../../data/site';
-import { editions, players, playerName, careerOf, QUALIFIED, type TdcEdition, type TdcMatch } from '../../data/palets/tournoi-champions';
+import { editions, players, playerName, careerOf, QUALIFIED, ORGANIZER, type TdcEdition, type TdcMatch } from '../../data/palets/tournoi-champions';
 import { assetExists } from '../../lib/publicAssets';
 
 const d = getDiscipline('palets');
@@ -55,6 +55,12 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
           <div><b>{allIds.size}</b><span>joueurs</span></div>
           <div><b>{champions.size}</b><span>champion{champions.size > 1 ? 's' : ''}</span></div>
         </div>
+        {assetExists(ORGANIZER.logo) && (
+          <a class="tdc-org" href={ORGANIZER.url} target="_blank" rel="noopener">
+            <span class="tdc-org-logo"><img src={ORGANIZER.logo} alt={ORGANIZER.name} /></span>
+            <span><small>Organisé par</small><b>{ORGANIZER.name}</b></span>
+          </a>
+        )}
       </div>
       <a class="tdc-champ" href={`#edition-${latest.year}`} data-tdc-go={latest.year}>
         <span class="tdc-champ-img">
@@ -74,7 +80,7 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
       <div class="sec-head"><div><div class="eyebrow">Toutes les éditions</div><h2>Palmarès</h2></div></div>
       <div class="tdc-palm">
         {editions.map((e) => (
-          <a class="tdc-palm-card" href={`#edition-${e.year}`} data-tdc-go={e.year}>
+          <a class="tdc-palm-card" href={`#edition-${e.year}`} data-tdc-go={e.year} style={`--dc:${e.color}`}>
             <span class="tdc-palm-y">{e.year}</span>
             <span class="tdc-palm-who">
               <span class="tdc-av">{photo(e.final.win) ? <img src={photo(e.final.win)} alt="" loading="lazy" /> : initials(e.final.win)}</span>
@@ -87,12 +93,12 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
 
       <div class="tdc-tabs" role="tablist" aria-label="Choisir une édition">
         {editions.map((e, i) => (
-          <a role="tab" href={`#edition-${e.year}`} data-tdc-go={e.year} aria-selected={i === 0 ? 'true' : 'false'}>Édition {e.year}</a>
+          <a role="tab" href={`#edition-${e.year}`} data-tdc-go={e.year} aria-selected={i === 0 ? 'true' : 'false'} style={`--dc:${e.color}`}>Édition {e.year}</a>
         ))}
       </div>
 
       {editions.map((e, i) => (
-        <article class="tdc-ed" id={`edition-${e.year}`} data-tdc-ed={e.year} hidden={i !== 0}>
+        <article class="tdc-ed" id={`edition-${e.year}`} data-tdc-ed={e.year} hidden={i !== 0} style={`--dc:${e.color}`}>
           <header class="tdc-ed-head">
             <div>
               <div class="eyebrow">Édition {e.year}</div>
@@ -213,6 +219,12 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
   .tdc-kpis b { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; }
   .tdc-kpis span { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-top: 4px; }
 
+  .tdc-org { display: inline-flex; align-items: center; gap: 14px; margin-top: 26px; text-decoration: none; color: #fff; }
+  .tdc-org-logo { width: 96px; height: 70px; border-radius: 10px; background: #fff; display: grid; place-items: center; padding: 7px; flex: none; transition: transform .2s; }
+  .tdc-org:hover .tdc-org-logo { transform: translateY(-2px); }
+  .tdc-org-logo img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+  .tdc-org small { display: block; font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  .tdc-org b { font-size: 17px; }
   .tdc-champ { display: grid; grid-template-columns: 150px 1fr; border-radius: 16px; overflow: hidden; text-decoration: none; color: #fff;
     background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); box-shadow: 0 26px 56px -24px rgba(0,0,0,.85); transition: transform .3s, border-color .2s; }
   .tdc-champ:hover { transform: translateY(-4px); border-color: color-mix(in srgb, var(--dc) 70%, transparent); }
@@ -228,7 +240,8 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
   .tdc-palm { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
   .tdc-palm-card { display: flex; flex-direction: column; gap: 12px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--dc);
     border-radius: 10px; color: var(--ink); text-decoration: none; box-shadow: var(--shadow); transition: transform .2s; }
-  .tdc-palm-card:hover { transform: translateY(-3px); }
+  .tdc-palm-card { background: color-mix(in srgb, var(--dc) 7%, var(--surface)); border-color: color-mix(in srgb, var(--dc) 28%, var(--line)); border-top-color: var(--dc); }
+  .tdc-palm-card:hover { transform: translateY(-3px); border-color: var(--dc); }
   .tdc-palm-y { font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1; color: var(--dc); }
   .tdc-palm-who { display: flex; align-items: center; gap: 12px; }
   .tdc-palm-who b { display: block; font-size: 16px; }
@@ -240,9 +253,10 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
   .tdc-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 40px 0 0; padding-top: 8px; border-bottom: 2px solid var(--line); scroll-margin-top: 90px; }
   .tdc-tabs a { padding: 10px 18px; font-weight: 800; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-soft); text-decoration: none;
     border-bottom: 3px solid transparent; margin-bottom: -2px; }
-  .tdc-tabs a[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--dc); }
+  .tdc-tabs a[aria-selected="true"] { color: var(--dc); border-bottom-color: var(--dc); }
   .tdc-ed { padding-top: 26px; }
   .tdc-ed-head { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .tdc-ed .eyebrow { color: var(--dc); }
   .tdc-ed-t { margin: 4px 0 0; font-size: 24px; font-weight: 800; }
   .tdc-ed-t::first-letter { text-transform: uppercase; }
   .tdc-replay { display: flex; align-items: center; gap: 12px; padding: 6px 16px 6px 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; color: var(--ink); text-decoration: none; }
@@ -292,7 +306,7 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
   .tdc-pl-c { color: var(--ink-faint) !important; }
   .tdc-badge { align-self: flex-start; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; background: var(--surface-2); color: var(--ink-soft); margin-bottom: 4px; }
   .tdc-pl.s-gold { border: 2px solid var(--dc); }
-  .tdc-pl.s-gold .tdc-badge { background: var(--dc); color: #1b1404; }
+  .tdc-pl.s-gold .tdc-badge { background: var(--dc); color: #fff; }
   .tdc-pl.s-silver .tdc-badge { background: #C9CED8; color: #1d2230; }
   .tdc-pl.s-semi .tdc-badge { background: color-mix(in srgb, var(--dc) 22%, transparent); color: var(--ink); }
 

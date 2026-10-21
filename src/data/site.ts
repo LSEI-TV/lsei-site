@@ -60,7 +60,7 @@ export interface Discipline {
   /** image du bandeau hero (2400×800, sujet à droite). Repli sombre si absente. */
   hero?: string;
   /** bandeau « à la une » sous le hero de la page discipline (ex. un tournoi phare). */
-  feature?: { href: string; kicker: string; title: string; sub: string; cta: string };
+  feature?: { href: string; kicker: string; title: string; sub: string; cta: string; logo?: string; organizer?: string };
 }
 
 export const disciplines: Discipline[] = [
@@ -113,6 +113,8 @@ export const disciplines: Discipline[] = [
       title: 'Le Tournoi des Champions',
       sub: 'Le palmarès, le tableau final, le classement de poule et les 16 joueurs de chaque édition.',
       cta: 'Voir le tournoi →',
+      logo: '/partenaires/bambis-palets.webp',
+      organizer: 'Bambis Palets',
     },
     blurb:
       "Un patrimoine bien vivant : tournois, championnats de Bretagne et portraits de joueurs qui perpétuent un jeu centenaire.",
