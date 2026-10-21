@@ -129,7 +129,7 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
             ))}
           </div>
 
-          <div class={`tdc-grid2${e.groupPhoto && assetExists(e.groupPhoto) ? '' : ' is-solo'}`}>
+          <div class={`tdc-grid2${e.photo && assetExists(e.photo.src) ? '' : ' is-solo'}`}>
             <div>
               <h3 class="tdc-h3">Phase de poule <small>3 parties · les {QUALIFIED} premiers qualifiés</small></h3>
               <div class="tdc-table-wrap">
@@ -148,10 +148,10 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
                 </table>
               </div>
             </div>
-            {e.groupPhoto && assetExists(e.groupPhoto) && (
+            {e.photo && assetExists(e.photo.src) && (
               <figure class="tdc-group">
-                <img src={e.groupPhoto} alt={`Les joueurs du Tournoi des Champions ${e.year}`} loading="lazy" />
-                <figcaption>Les 16 joueurs de l'édition {e.year}</figcaption>
+                <img src={e.photo.src} alt={e.photo.caption} loading="lazy" />
+                <figcaption>{e.photo.caption}</figcaption>
               </figure>
             )}
           </div>

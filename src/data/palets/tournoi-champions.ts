@@ -51,8 +51,8 @@ export interface TdcEdition {
   date: string;
   /** vidéo YouTube du live (id) */
   video?: string;
-  /** photo de groupe (chemin /public) */
-  groupPhoto?: string;
+  /** photo de l'édition (groupe, vainqueur…) affichée à côté de la poule */
+  photo?: { src: string; caption: string };
   pool: TdcPoolRow[];
   quarters: TdcMatch[];
   semis: TdcMatch[];
@@ -71,6 +71,7 @@ export const editions: TdcEdition[] = [
     color: '#1F4E9C',
     date: '2026-01-03',
     video: '1XzKh__Z6cM',
+    photo: { src: '/tournoi-des-champions/2026/finale.webp', caption: 'Cyrille Jouault (finaliste) et Jean-Marc Toutirais (vainqueur)' },
     pool: [
       { id: 'jean-marc-toutirais', w: 3, ga: 23 },
       { id: 'adrien-morel', w: 3, ga: 12 },
@@ -106,7 +107,7 @@ export const editions: TdcEdition[] = [
     color: '#E0533F',
     date: '2025-01-04',
     video: 'AsbZYgDvYY0',
-    groupPhoto: '/tournoi-des-champions/2025/groupe.webp',
+    photo: { src: '/tournoi-des-champions/2025/groupe.webp', caption: "Les 16 joueurs de l'édition 2025" },
     pool: [
       { id: 'cyrille-jouault', w: 3, ga: 28 },
       { id: 'sylvain-pechot', w: 3, ga: 22 },
