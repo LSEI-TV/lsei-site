@@ -143,16 +143,34 @@ const pastCounts = Object.fromEntries(disciplines.map((d) => [d.slug, pastEvents
 const counts = Object.fromEntries(disciplines.map((d) => [d.slug, events.filter((e) => e.sport === d.slug).length]));
 const next = events[0] || null;
 
-// Données structurées (SEO) : chaque rendez-vous, avec lieu physique quand il est connu.
-const eventsLd = events.map((e) => ({
-  '@context': 'https://schema.org', '@type': 'SportsEvent', name: e.title,
-  startDate: e.date ? e.date.toISOString() : e.day, ...(e.endDay ? { endDate: e.endDay } : {}),
-  eventStatus: 'https://schema.org/EventScheduled',
-  eventAttendanceMode: e.confirmed ? 'https://schema.org/MixedEventAttendanceMode' : 'https://schema.org/OfflineEventAttendanceMode',
-  location: e.place ? { '@type': 'Place', name: e.place, address: e.place } : { '@type': 'VirtualLocation', url: e.link || programmeUrl },
-  ...(e.thumb ? { image: [e.thumb] } : {}), url: e.link || programmeUrl,
-  organizer: { '@type': 'Organization', name: 'LSEI — Le Sport en Image', url: siteRoot },
-}));
+// Données structurées (SEO) : chaque rendez-vous (SportsEvent), enrichi des champs
+// recommandés par Google (description, image, endDate, offers, performer) pour éviter
+// les avertissements Search Console et enrichir l'affichage dans les résultats.
+const abs = (u: string) => (/^https?:/.test(u) ? u : new URL(u, Astro.site).href);
+const eventsLd = events.map((e) => {
+  // Fin : jour de fin (multi-jours), sinon ~2h30 après l'heure de début, sinon le jour même.
+  const endIso = e.endDay ? e.endDay : e.date ? new Date(e.date.valueOf() + 2.5 * 3600 * 1000).toISOString() : e.day;
+  const watch = e.link || (e.page ? abs(e.page) : programmeUrl);
+  const matchLabel = e.tm ? `${e.tm[0].name} – ${e.tm[1].name}` : e.title;
+  return {
+    '@context': 'https://schema.org', '@type': 'SportsEvent', name: e.title,
+    startDate: e.date ? e.date.toISOString() : e.day, endDate: endIso,
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: e.confirmed ? 'https://schema.org/MixedEventAttendanceMode' : 'https://schema.org/OfflineEventAttendanceMode',
+    location: e.place ? { '@type': 'Place', name: e.place, address: e.place } : { '@type': 'VirtualLocation', url: watch },
+    image: e.thumb ? [e.thumb] : [abs(e.disc.hero || '/og-image.jpg')],
+    description: `${[e.kicker, matchLabel].filter(Boolean).join(' · ')}. ${e.live || e.confirmed ? 'En direct' : 'Au programme'} sur LSEI — Le Sport en Image${e.place ? `, ${e.place}` : ''}.`,
+    performer: e.tm
+      ? e.tm.map((t) => ({ '@type': 'SportsTeam', name: t.name }))
+      : { '@type': 'PerformingGroup', name: e.kicker || e.disc.label },
+    offers: {
+      '@type': 'Offer', url: watch, price: '0', priceCurrency: 'EUR',
+      availability: 'https://schema.org/InStock', validFrom: new Date(now).toISOString(),
+    },
+    url: watch,
+    organizer: { '@type': 'Organization', name: 'LSEI — Le Sport en Image', url: siteRoot },
+  };
+});
 const discMap = Object.fromEntries(disciplines.map((d) => [d.slug, { label: d.label, color: d.colorVar }]));
 const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=null;this.src='${t.replace('maxresdefault', 'hqdefault')}'` : undefined);
 ---
