@@ -83,7 +83,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: clip; }  /* jamais de glissement horizontal (mobile) ; n'empêche pas le scroll vertical ni le sticky */
 body {
   margin: 0;
   background: var(--paper);
@@ -2223,6 +2223,13 @@ a.nbh-row:hover { background: var(--surface-2); }
 @media (prefers-reduced-motion: reduce) { .disc-card:hover { transform: none; } .disc-card:hover::before { animation: none; } .disc-card:hover .disc-ico { transform: none; } }
 .home-2col .sec-head, .nbh-card .sec-head { flex-wrap: wrap; row-gap: 8px; }
 .home-2col .sec-head h2, .nbh-card .sec-head h2 { font-size: clamp(20px, 1.8vw, 24px); white-space: nowrap; }
+/* Bloc titre (logo fédé + eyebrow/h2) : l'item flexible doit pouvoir rétrécir. */
+.nbh-head-l > div { min-width: 0; }
+/* Sur petit écran, le titre « Classement provisoire · … » s'enroule au lieu de
+   déborder (sinon glissement horizontal du site). */
+@media (max-width: 560px) {
+  .home-2col .sec-head h2, .nbh-card .sec-head h2 { white-space: normal; }
+}
 
 
 /* ============ MAQUETTE A — PLUSIEURS DIRECTS EN MÊME TEMPS ============ */
