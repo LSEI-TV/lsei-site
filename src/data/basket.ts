@@ -338,16 +338,24 @@ function roundFromTitle(title: string): number | null {
 }
 
 /** Associe chaque journée (round) à l'id de son replay LSEI, pour la saison en cours. */
+// Un résumé/highlights ne doit PAS voler le bouton « Revoir » au match complet.
+const isResume = (t: string) => /\br[ée]sum[ée]\b|\bhighlights?\b/i.test(t || '');
+
 export function fougeresReplayMap(videos: ReplaySrc[]): Record<number, string> {
   const out: Record<number, string> = {};
-  for (const v of videos) {
-    const t = v.title || '';
-    if (!strip(t).includes('fougeres')) continue;
-    const seasonOk = t.includes(seasonYY) || (v.season && v.season.replace('/', '-') === SEASON);
-    if (!seasonOk) continue;
-    const round = roundFromTitle(t);
-    if (round == null || round in out) continue;
-    out[round] = v.id;
+  // Passe 1 : les MATCHS COMPLETS (hors résumés) alimentent « Revoir » en priorité.
+  // Passe 2 : les résumés, seulement pour les journées sans match complet disponible.
+  for (const resumePass of [false, true]) {
+    for (const v of videos) {
+      const t = v.title || '';
+      if (!strip(t).includes('fougeres')) continue;
+      if (isResume(t) !== resumePass) continue;   // passe 1 : complets ; passe 2 : résumés
+      const seasonOk = t.includes(seasonYY) || (v.season && v.season.replace('/', '-') === SEASON);
+      if (!seasonOk) continue;
+      const round = roundFromTitle(t);
+      if (round == null || round in out) continue;
+      out[round] = v.id;
+    }
   }
   return out;
 }
