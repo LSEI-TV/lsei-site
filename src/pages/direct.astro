@@ -13,6 +13,9 @@ const broadcasts = await getBroadcasts();
 const upcoming = broadcasts
   .filter((b) => !b.live)
   .sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf());
+// Directs DÉTECTÉS AU BUILD (l'étape de build interroge l'API YouTube avec sa propre clé) :
+// repli fiable si live.json est vide/en retard (quota, cron GitHub throttlé).
+const liveNow = broadcasts.filter((b) => b.live).map((b) => ({ id: b.id, title: b.title, discipline: b.discipline }));
 
 const fmtDay = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: TZ });
 const fmtTime = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: TZ });
@@ -126,6 +129,8 @@ const onerr = (id: string) => `this.onerror=null;this.src='https://i.ytimg.com/v
 </Base>
 
 <script type="application/json" id="disc-map" set:html={JSON.stringify(discMap)}></script>
+<script type="application/json" id="dr-sched" set:html={JSON.stringify(events.map((e) => ({ id: e.id, discipline: e.discipline, title: e.title, scheduled: e.iso })))}></script>
+<script type="application/json" id="dr-lives" set:html={JSON.stringify(liveNow)}></script>
 
 <script is:inline>
   // Zone live remplie depuis /live.json (mis à jour toutes les 5 min).
@@ -246,11 +251,33 @@ const onerr = (id: string) => `this.onerror=null;this.src='https://i.ytimg.com/v
         '<div class="live-sub" id="live-main-sub">' + esc(p0.sub) + '</div></div>';
       zone.innerHTML = html; wire();
     }
+    // Planning des directs programmés (embarqué au build) : sert de garde-fou si la
+    // détection live (API YouTube) est indisponible — un direct dont l'heure de début
+    // est passée est alors considéré EN COURS, sans attendre live.json.
+    var SCHED = [], BUILD_LIVES = [];
+    try { SCHED = JSON.parse(document.getElementById('dr-sched').textContent || '[]'); } catch (e) {}
+    try { BUILD_LIVES = JSON.parse(document.getElementById('dr-lives').textContent || '[]'); } catch (e) {}
+    var LIVE_GRACE = 3 * 3600000; // un direct reste « en cours » jusqu'à 3 h après son heure de début
+    function effective(s) {
+      var lives = (s && s.lives) ? s.lives : (s && s.live && s.id ? [{ id: s.id, title: s.title || 'Direct', discipline: 'billard' }] : []);
+      var ups = (s && s.upcoming && s.upcoming.length) ? s.upcoming : SCHED;
+      var now = Date.now();
+      // REPLI 1 : live.json vide mais le build a détecté un direct en cours → on l'affiche.
+      if (!lives.length && BUILD_LIVES.length) lives = BUILD_LIVES;
+      // REPLI 2 : aucun live connu mais un programmé a déjà commencé → on l'affiche EN DIRECT.
+      if (!lives.length) {
+        var started = SCHED.filter(function (u) { var t = new Date(u.scheduled).getTime(); return t <= now && now < t + LIVE_GRACE; });
+        if (started.length) lives = started.map(function (u) { return { id: u.id, title: u.title, discipline: u.discipline }; });
+      }
+      var liveIds = {};
+      lives.forEach(function (l) { liveIds[l.id] = 1; });
+      var futureUps = ups.filter(function (u) { return !liveIds[u.id] && new Date(u.scheduled).getTime() > now; });
+      return { lives: lives, upcoming: futureUps };
+    }
     function refresh() {
       fetch('/live.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (s) {
-        var lives = (s && s.lives) ? s.lives : (s && s.live && s.id ? [{ id: s.id, title: s.title || 'Direct', discipline: 'billard' }] : []);
-        render(lives, (s && s.upcoming) ? s.upcoming : []);
-      }).catch(function () {});
+        var e = effective(s); render(e.lives, e.upcoming);
+      }).catch(function () { var e = effective(null); render(e.lives, e.upcoming); });
     }
     refresh(); setInterval(refresh, 60000);
   })();

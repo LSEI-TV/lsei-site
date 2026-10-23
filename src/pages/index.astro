@@ -568,6 +568,22 @@ const slides = programme
         if (singleMedia) singleMedia.style.display = '';
         if (singleIn) singleIn.style.display = '';
       }
+      // GARDE-FOU : la « une » est un direct programmé dont l'heure de début est passée
+      // (≤ 3 h) → on l'affiche EN DIRECT même si la détection API (live.json) est indispo.
+      var heroIso = count ? count.getAttribute('data-count') : null;
+      function heroStarted() {
+        if (!heroIso) return false;
+        var t = new Date(heroIso).getTime();
+        return t <= Date.now() && Date.now() < t + 3 * 3600000;
+      }
+      function flipSelfLive() {
+        if (pill) { pill.textContent = '● En direct'; pill.classList.add('is-live'); pill.classList.remove('is-soon'); }
+        if (playBtn) playBtn.textContent = '▸ Regarder le direct';
+        var shot = hero.querySelector('.mhero-shot');
+        var tg = shot && shot.querySelector('.mhero-shot-tag'); if (tg) { tg.textContent = '● En direct'; tg.classList.add('is-live'); tg.style.display = ''; }
+        if (count) count.style.display = 'none';
+        var cal = hero.querySelector('.hero-cal'); if (cal) cal.style.display = 'none';
+      }
       function sync() {
         fetch('/live.json', { cache: 'no-store' })
           .then(function (r) { return r.ok ? r.json() : null; })
@@ -577,7 +593,7 @@ const slides = programme
             if (lives.length >= 2) { if (more) more.style.display = 'none'; showMulti(lives); return; }
             showSingle();
             if (more) more.style.display = 'none';
-            if (!lives.length) return; // pas de direct : on garde la une construite (à venir / à revoir)
+            if (!lives.length) { if (heroStarted()) flipSelfLive(); return; } // pas de live confirmé : bascule auto si l'heure est passée
             var l = lives[0];
             if (l.discipline) setSport(l.discipline);
             // Contexte « guide TV » (compétition · phase · saison) + lieu, depuis live.json enrichi.
