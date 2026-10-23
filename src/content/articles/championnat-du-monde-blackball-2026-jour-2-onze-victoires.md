@@ -44,7 +44,7 @@ draft: false
 <li><strong>13h30</strong>&nbsp;: +40 – Angleterre · +50 – Irlande · Para fauteuil (Carric, Hentry)</li>
 <li><strong>16h00</strong>&nbsp;: +50 – Angleterre · +60 – Afrique du Sud · U18 – Afrique du Sud</li>
 <li><strong>18h30</strong>&nbsp;: début des simples Femmes, avec un duel français Carneiro – Niollet</li>
-<li><strong>20h00 et 21h00</strong>&nbsp;: début des simples Hommes, avec un duel français Klinka – Lambert</li>
+<li><strong>20h00 et 21h00</strong>&nbsp;: début des simples Hommes</li>
 <li><strong>22h00</strong>&nbsp;: double Hommes Buscetti / Lambert</li>
 </ul>
 <p>Retrouvez le récit de la première journée dans notre article <a href="/actualites/championnat-du-monde-blackball-2026-jour-1-sans-faute-des-bleus/">Sans-faute des Bleus pour la 1re journée</a>.</p>
