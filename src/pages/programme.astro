@@ -236,7 +236,7 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
           <h2 class="pg-month-h"><span>{m.label}</span><small>{m.list.length} rendez-vous</small></h2>
           <div class="pg-list">
             {m.list.map((e) => (
-              <article class={`pg-ev ${e.confirmed ? 'is-on' : ''}`} data-sport={e.sport} data-vid={e.vid} style={`--dc:${e.disc.colorVar}`}>
+              <article class={`pg-ev ${e.confirmed ? 'is-on' : ''}`} data-sport={e.sport} data-vid={e.vid} data-start={e.confirmed && e.date ? e.date.toISOString() : undefined} style={`--dc:${e.disc.colorVar}`}>
                 <div class="pg-date"><span class="pg-dow">{e.dow}</span><b>{e.num}</b><span class="pg-mon">{e.mon}</span></div>
                 {e.thumb && <a class="pg-thumb" href={e.link} target="_blank" rel="noopener" aria-hidden="true" tabindex="-1"><img src={e.thumb} alt="" loading="lazy" onerror={onerr(e.thumb)} /></a>}
                 <div class="pg-body">
@@ -484,6 +484,18 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
       var DISC = {}; try { DISC = JSON.parse(document.getElementById('pg-disc').textContent); } catch (e) {}
       function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x) e.textContent = x; return e; }
       function clean(t) { var p = (t || '').split('|').map(function (s) { return s.trim(); }).filter(Boolean); return p.length ? p[p.length - 1] : (t || ''); }
+      // GARDE-FOU (sans live.json) : un direct annoncé dont l'heure de début est passée
+      // (≤ 3 h) bascule en « ● En direct » — utile quand la détection API est indispo.
+      function markStarted() {
+        var now = Date.now();
+        document.querySelectorAll('.pg-ev[data-start]').forEach(function (ev) {
+          var t = new Date(ev.getAttribute('data-start')).getTime();
+          if (isNaN(t) || t > now || now >= t + 3 * 3600000) return;
+          var bd = ev.querySelector('.pg-badge');
+          if (bd && bd.textContent.indexOf('En direct') === -1) { bd.textContent = '● En direct'; bd.classList.add('is-on'); }
+          var j = ev.querySelector('.pg-j'); if (j) j.style.display = 'none';
+        });
+      }
       function sync() {
         fetch('/live.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
           if (!d) return;
@@ -504,9 +516,11 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
             a.appendChild(dt); a.appendChild(th); a.appendChild(body); a.appendChild(side); list.appendChild(a); added++;
           });
           host.hidden = !added;
-        }).catch(function () {});
+          markStarted();
+        }).catch(function () { markStarted(); });
       }
       sync(); setInterval(sync, 60000);
+      markStarted(); setInterval(markStarted, 60000);
     })();
   </script>
 </Base>
