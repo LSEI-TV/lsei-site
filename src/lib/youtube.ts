@@ -295,14 +295,23 @@ async function yt(path: string, attempt = 0): Promise<any> {
   }
 }
 
-async function ytPaged(path: string, max = 500): Promise<any[]> {
+async function ytPaged(path: string, max = 500, maxPages = 20): Promise<any[]> {
   const out: any[] = [];
   let token = '';
+  let pages = 0;
   do {
     const data = await yt(`${path}&maxResults=50${token ? `&pageToken=${token}` : ''}`);
-    out.push(...(data.items || []));
+    const items = data.items || [];
+    out.push(...items);
     token = data.nextPageToken || '';
-  } while (token && out.length < max);
+    pages++;
+    // Garde-fou PAGES (pas seulement items) : certaines playlists corrompues (beaucoup de
+    // vidéos supprimées/privées d'autres chaînes) renvoient un nextPageToken SANS FIN avec
+    // peu d'items par page → `out.length < max` ne s'arrête jamais et la boucle part à
+    // l'infini (vidait le quota YouTube à elle seule). On plafonne à maxPages (≈1000 items,
+    // au-delà de toute playlist réelle) et on s'arrête aussi sur une page vide.
+    if (items.length === 0) break;
+  } while (token && out.length < max && pages < maxPages);
   return out;
 }
 
