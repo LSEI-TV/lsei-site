@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-23T18:49:34.959Z",
+  "updated": "2026-10-24T12:50:33.267Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
   "pool": "Poule B",
   "matches": [
@@ -317,38 +317,50 @@
     },
     {
       "date": "2026-10-23",
-      "homeSlug": "laval",
-      "awaySlug": "tours",
-      "journee": 8
-    },
-    {
-      "date": "2026-10-23",
       "homeSlug": "sables",
       "awaySlug": "bordeaux",
+      "homeScore": 86,
+      "awayScore": 76,
       "journee": 8
     },
     {
       "date": "2026-10-23",
       "homeSlug": "toulouse",
       "awaySlug": "vitre",
+      "homeScore": 79,
+      "awayScore": 74,
+      "journee": 8
+    },
+    {
+      "date": "2026-10-23",
+      "homeSlug": "laval",
+      "awaySlug": "tours",
+      "homeScore": 60,
+      "awayScore": 82,
       "journee": 8
     },
     {
       "date": "2026-10-23",
       "homeSlug": "fougeres",
       "awaySlug": "rennes",
+      "homeScore": 67,
+      "awayScore": 89,
       "journee": 8
     },
     {
       "date": "2026-10-23",
       "homeSlug": "chartres",
       "awaySlug": "lorient",
+      "homeScore": 91,
+      "awayScore": 90,
       "journee": 8
     },
     {
       "date": "2026-10-23",
       "homeSlug": "challans",
       "awaySlug": "angers",
+      "homeScore": 81,
+      "awayScore": 69,
       "journee": 8
     },
     {
