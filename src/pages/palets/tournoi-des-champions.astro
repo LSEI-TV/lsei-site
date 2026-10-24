@@ -4,7 +4,7 @@
 import Base from '../../layouts/Base.astro';
 import { getDiscipline } from '../../data/site';
 import { editions, players, playerName, careerOf, QUALIFIED, ORGANIZER, type TdcEdition, type TdcMatch } from '../../data/palets/tournoi-champions';
-import { assetExists } from '../../lib/publicAssets';
+import { assetExists, assetUrl } from '../../lib/publicAssets';
 
 const d = getDiscipline('palets');
 // Éditions JOUÉES (avec résultats) vs à venir. Le héros/palmarès portent sur la
@@ -16,7 +16,7 @@ const champions = new Set(played.map((e) => e.final!.win));
 
 const photo = (id: string) => {
   const p = `/tournoi-des-champions/joueurs/${id}.webp`;
-  return assetExists(p) ? p : null;
+  return assetExists(p) ? assetUrl(p) : null;
 };
 const initials = (id: string) => { const p = players[id]; return p ? `${p.first[0]}${p.last[0]}` : '?'; };
 const club = (id: string) => players[id]?.club ?? 'Sans club';
