@@ -569,20 +569,40 @@ const slides = programme
         if (singleIn) singleIn.style.display = '';
       }
       // GARDE-FOU : la « une » est un direct programmé dont l'heure de début est passée
-      // (≤ 3 h) → on l'affiche EN DIRECT même si la détection API (live.json) est indispo.
+      // (≤ 3 h) → on l'affiche EN DIRECT, UNIQUEMENT quand la détection (live.json) est KO.
+      // Dès que live.json redevient fiable et ne voit plus de direct, on RÉTABLIT l'état
+      // d'origine (fin du direct) — sinon le bandeau resterait « en direct » après le match.
       var heroIso = count ? count.getAttribute('data-count') : null;
       function heroStarted() {
         if (!heroIso) return false;
         var t = new Date(heroIso).getTime();
         return t <= Date.now() && Date.now() < t + 3 * 3600000;
       }
+      var _orig = null;
+      function _snap() {
+        if (_orig) return;
+        _orig = { pill: pill ? pill.innerHTML : '', pillCls: pill ? pill.className : '', btn: playBtn ? playBtn.textContent : '',
+          count: count ? count.style.display : '', cal: (hero.querySelector('.hero-cal') || {}).style ? hero.querySelector('.hero-cal').style.display : '' };
+        var tg = (hero.querySelector('.mhero-shot') || {}).querySelector ? hero.querySelector('.mhero-shot').querySelector('.mhero-shot-tag') : null;
+        _orig.tag = tg ? tg.textContent : ''; _orig.tagCls = tg ? tg.className : ''; _orig.tagDisp = tg ? tg.style.display : '';
+      }
       function flipSelfLive() {
+        _snap();
         if (pill) { pill.textContent = '● En direct'; pill.classList.add('is-live'); pill.classList.remove('is-soon'); }
         if (playBtn) playBtn.textContent = '▸ Regarder le direct';
         var shot = hero.querySelector('.mhero-shot');
         var tg = shot && shot.querySelector('.mhero-shot-tag'); if (tg) { tg.textContent = '● En direct'; tg.classList.add('is-live'); tg.style.display = ''; }
         if (count) count.style.display = 'none';
         var cal = hero.querySelector('.hero-cal'); if (cal) cal.style.display = 'none';
+      }
+      function revertSelf() {
+        if (!_orig) return;
+        if (pill) { pill.innerHTML = _orig.pill; pill.className = _orig.pillCls; }
+        if (playBtn) playBtn.textContent = _orig.btn;
+        var shot = hero.querySelector('.mhero-shot');
+        var tg = shot && shot.querySelector('.mhero-shot-tag'); if (tg) { tg.textContent = _orig.tag; tg.className = _orig.tagCls; tg.style.display = _orig.tagDisp; }
+        if (count) count.style.display = _orig.count;
+        var cal = hero.querySelector('.hero-cal'); if (cal) cal.style.display = _orig.cal;
       }
       function sync() {
         fetch('/live.json', { cache: 'no-store' })
@@ -593,7 +613,13 @@ const slides = programme
             if (lives.length >= 2) { if (more) more.style.display = 'none'; showMulti(lives); return; }
             showSingle();
             if (more) more.style.display = 'none';
-            if (!lives.length) { if (heroStarted()) flipSelfLive(); return; } // pas de live confirmé : bascule auto si l'heure est passée
+            if (!lives.length) {
+              // live.json fiable (error:false) = vérité : s'il n'y a plus de direct, on rétablit
+              // l'état (fin du match). Sinon (live.json KO) → garde-fou si l'heure est passée.
+              if (d && d.error !== true) revertSelf();
+              else if (heroStarted()) flipSelfLive();
+              return;
+            }
             var l = lives[0];
             if (l.discipline) setSport(l.discipline);
             // Contexte « guide TV » (compétition · phase · saison) + lieu, depuis live.json enrichi.
@@ -612,7 +638,7 @@ const slides = programme
             if (when) when.style.display = 'none';
             if (sub) { if (ctx) { sub.textContent = ctx; sub.style.display = ''; } else { sub.style.display = 'none'; } }
           })
-          .catch(function () {});
+          .catch(function () { if (heroStarted()) flipSelfLive(); }); // live.json injoignable → garde-fou
       }
       sync(); setInterval(sync, 60000);
     })();

@@ -259,13 +259,16 @@ const onerr = (id: string) => `this.onerror=null;this.src='https://i.ytimg.com/v
     try { BUILD_LIVES = JSON.parse(document.getElementById('dr-lives').textContent || '[]'); } catch (e) {}
     var LIVE_GRACE = 3 * 3600000; // un direct reste « en cours » jusqu'à 3 h après son heure de début
     function effective(s) {
+      // live.json FIABLE = récupéré ET sans erreur de détection → c'est la vérité (y compris
+      // « plus de direct » = fin du match). Les replis ne s'appliquent QUE s'il est KO/injoignable.
+      var ok = !!s && s.error !== true;
       var lives = (s && s.lives) ? s.lives : (s && s.live && s.id ? [{ id: s.id, title: s.title || 'Direct', discipline: 'billard' }] : []);
       var ups = (s && s.upcoming && s.upcoming.length) ? s.upcoming : SCHED;
       var now = Date.now();
-      // REPLI 1 : live.json vide mais le build a détecté un direct en cours → on l'affiche.
-      if (!lives.length && BUILD_LIVES.length) lives = BUILD_LIVES;
-      // REPLI 2 : aucun live connu mais un programmé a déjà commencé → on l'affiche EN DIRECT.
-      if (!lives.length) {
+      // REPLI 1 (live.json KO) : le build a détecté un direct en cours → on l'affiche.
+      if (!lives.length && !ok && BUILD_LIVES.length) lives = BUILD_LIVES;
+      // REPLI 2 (live.json KO) : un programmé a déjà commencé → on l'affiche EN DIRECT.
+      if (!lives.length && !ok) {
         var started = SCHED.filter(function (u) { var t = new Date(u.scheduled).getTime(); return t <= now && now < t + LIVE_GRACE; });
         if (started.length) lives = started.map(function (u) { return { id: u.id, title: u.title, discipline: u.discipline }; });
       }

@@ -484,21 +484,34 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
       var DISC = {}; try { DISC = JSON.parse(document.getElementById('pg-disc').textContent); } catch (e) {}
       function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x) e.textContent = x; return e; }
       function clean(t) { var p = (t || '').split('|').map(function (s) { return s.trim(); }).filter(Boolean); return p.length ? p[p.length - 1] : (t || ''); }
-      // GARDE-FOU (sans live.json) : un direct annoncé dont l'heure de début est passée
-      // (≤ 3 h) bascule en « ● En direct » — utile quand la détection API est indispo.
+      var reliable = false; // live.json fiable au dernier fetch (détection réussie)
+      // GARDE-FOU (uniquement si live.json KO) : un direct annoncé dont l'heure de début est
+      // passée (≤ 3 h) bascule en « ● En direct ». Dès que live.json redevient fiable et ne voit
+      // plus ce direct, on rétablit « Direct annoncé » (fin du match).
       function markStarted() {
+        if (reliable) return;
         var now = Date.now();
         document.querySelectorAll('.pg-ev[data-start]').forEach(function (ev) {
           var t = new Date(ev.getAttribute('data-start')).getTime();
           if (isNaN(t) || t > now || now >= t + 3 * 3600000) return;
           var bd = ev.querySelector('.pg-badge');
-          if (bd && bd.textContent.indexOf('En direct') === -1) { bd.textContent = '● En direct'; bd.classList.add('is-on'); }
+          if (bd && bd.textContent.indexOf('En direct') === -1) { if (!ev.dataset.badge0) ev.dataset.badge0 = bd.textContent; bd.textContent = '● En direct'; bd.classList.add('is-on'); }
           var j = ev.querySelector('.pg-j'); if (j) j.style.display = 'none';
+        });
+      }
+      function restoreEnded(liveIds) {
+        document.querySelectorAll('.pg-ev[data-start]').forEach(function (ev) {
+          if (!ev.dataset.badge0 || liveIds[ev.getAttribute('data-vid')]) return;
+          var bd = ev.querySelector('.pg-badge'); if (bd) bd.textContent = ev.dataset.badge0;
+          var j = ev.querySelector('.pg-j'); if (j) j.style.display = '';
+          delete ev.dataset.badge0;
         });
       }
       function sync() {
         fetch('/live.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-          if (!d) return;
+          reliable = !!d && d.error !== true;
+          if (!d) { markStarted(); return; }
+          var liveIds = {}; (d.lives || []).forEach(function (l) { liveIds[l.id] = 1; });
           var known = {}; document.querySelectorAll('.pg-ev[data-vid]').forEach(function (x) { var v = x.getAttribute('data-vid'); if (v) known[v] = x; });
           list.innerHTML = ''; var added = 0;
           (d.lives || []).forEach(function (l) {
@@ -516,8 +529,9 @@ const onerr = (t?: string) => (t && t.includes('maxresdefault') ? `this.onerror=
             a.appendChild(dt); a.appendChild(th); a.appendChild(body); a.appendChild(side); list.appendChild(a); added++;
           });
           host.hidden = !added;
+          if (reliable) restoreEnded(liveIds);
           markStarted();
-        }).catch(function () { markStarted(); });
+        }).catch(function () { reliable = false; markStarted(); });
       }
       sync(); setInterval(sync, 60000);
       markStarted(); setInterval(markStarted, 60000);
