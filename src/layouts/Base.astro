@@ -21,8 +21,10 @@ interface Props {
   /** 'bare' = sans le masthead/footer LSEI (pour un « site dans le site » qui pose son propre chrome). */
   chrome?: 'full' | 'bare';
   canonical?: string;
+  /** page à ne pas indexer (ex. résultats de recherche interne) → robots noindex, follow. */
+  noindex?: boolean;
 }
-const { title, description = site.description, active, image, ogType = 'website', preloadImage, chrome = 'full', canonical: canonicalProp } = Astro.props;
+const { title, description = site.description, active, image, ogType = 'website', preloadImage, chrome = 'full', canonical: canonicalProp, noindex = false } = Astro.props;
 const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
 // URLs absolues (nécessaires pour le partage réseaux sociaux + le référencement).
 const canonical = new URL(canonicalProp ?? Astro.url.pathname, Astro.site).href;
@@ -78,6 +80,7 @@ const websiteLd = {
     <meta name="theme-color" content="#0C0E13" />
     <link rel="alternate" type="application/rss+xml" title="LSEI — Actualités" href="/rss.xml" />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <!-- Open Graph (Facebook, WhatsApp, Messenger, LinkedIn…) -->
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />

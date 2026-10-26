@@ -109,7 +109,7 @@ const items: Item[] = [
 // `</script>` éventuel dans un titre → échappé pour ne pas casser le bloc JSON.
 const dataJson = JSON.stringify(items).replace(/</g, '\\u003c');
 ---
-<Base title="Recherche" description="Rechercher parmi les vidéos, les actualités et les joueurs LSEI." active="recherche">
+<Base title="Recherche" description="Rechercher parmi les vidéos, les actualités et les joueurs LSEI." active="recherche" noindex={true}>
   <section class="disc-hero">
     <div class="wrap">
       <div class="kick" style="color:var(--accent)">Recherche</div>
