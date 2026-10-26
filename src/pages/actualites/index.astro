@@ -82,6 +82,15 @@ const dcol = (slug: string) => discOf(slug)?.colorVar ?? 'var(--accent)';
 
 // Articles éditoriaux affichés. Les anciens .md non souhaités restent en draft: true.
 const SHOW_ARTICLES = true;
+
+// BANDEAU « Championnat du monde de billard blackball 2026 » : renvoie vers la page dossier.
+// Affiché jusqu'au 30/11/2026 (le site est reconstruit chaque nuit) ; « En cours » pendant l'événement.
+const CDM = {
+  href: '/billard/championnat-du-monde-blackball-2026',
+  nb: articles.filter((a) => a.id.startsWith('championnat-du-monde-blackball-2026')).length,
+  live: Date.now() <= new Date('2026-10-29T00:00:00+01:00').valueOf(),
+  show: Date.now() <= new Date('2026-11-30T23:59:59+01:00').valueOf(),
+};
 ---
 <Base title="Actualités" description="Comptes-rendus, portraits et coulisses des disciplines LSEI." active="actualites">
   <!-- EN-TÊTE -->
@@ -95,6 +104,22 @@ const SHOW_ARTICLES = true;
       <div class="nw-follow"><span>Suivez-nous</span><SocialLinks compact /></div>
     </div>
   </section>
+
+  {CDM.show && (
+    <section class="cdm-band-wrap">
+      <div class="wrap">
+        <a class="cdm-band" href={CDM.href}>
+          <span class="cdm-band-ic" aria-hidden="true">🎱</span>
+          <span class="cdm-band-txt">
+            <span class="cdm-band-k">{CDM.live ? <Fragment><i class="cdm-band-dot"></i>En cours · </Fragment> : 'Dossier · '}Londres · 20 – 28 octobre 2026</span>
+            <span class="cdm-band-t">Championnat du monde de billard blackball 2026</span>
+            <span class="cdm-band-s">🇫🇷 Tous les résultats des équipes de France, jour après jour · {CDM.nb} articles</span>
+          </span>
+          <span class="cdm-band-btn">Voir le dossier <span aria-hidden="true">→</span></span>
+        </a>
+      </div>
+    </section>
+  )}
 
   <!-- À LA UNE — articles éditoriaux, TOUJOURS en haut, le plus récent d'abord. -->
   {SHOW_ARTICLES && articles.length > 0 && (
@@ -358,3 +383,29 @@ const SHOW_ARTICLES = true;
     }
   </style>
 </Base>
+
+<style>
+  .cdm-band-wrap { padding: 22px 0 0; }
+  .cdm-band { display: flex; align-items: center; gap: 20px; padding: 18px 22px; border-radius: 16px; text-decoration: none; color: #fff;
+    background: linear-gradient(110deg, #0b1d5c 0%, #1f4fd8 55%, #2f6bff 100%); border: 2px solid #ffd77a;
+    box-shadow: 0 18px 40px -18px rgba(31, 79, 216, .7); transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden; }
+  .cdm-band::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.18) 50%, transparent 70%);
+    transform: translateX(-100%); animation: cdmShine 4s ease-in-out infinite; pointer-events: none; }
+  @keyframes cdmShine { 0%, 60% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+  .cdm-band:hover { transform: translateY(-3px); box-shadow: 0 24px 50px -18px rgba(31, 79, 216, .9); }
+  .cdm-band-ic { flex: none; font-size: 42px; line-height: 1; }
+  .cdm-band-txt { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .cdm-band-k { font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #ffd77a; display: flex; align-items: center; gap: 6px; }
+  .cdm-band-dot { width: 9px; height: 9px; border-radius: 50%; background: #ff4d5a; box-shadow: 0 0 0 0 rgba(255,77,90,.7); animation: cdmPulse 1.6s infinite; }
+  @keyframes cdmPulse { 70% { box-shadow: 0 0 0 8px rgba(255,77,90,0); } 100% { box-shadow: 0 0 0 0 rgba(255,77,90,0); } }
+  .cdm-band-t { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(20px, 2.6vw, 30px); line-height: 1.05; }
+  .cdm-band-s { font-size: 15px; color: rgba(255,255,255,.88); }
+  .cdm-band-btn { flex: none; background: #ffd77a; color: #0b1d5c; font-weight: 800; font-size: 15px; padding: 12px 18px; border-radius: 999px; white-space: nowrap; }
+  .cdm-band:hover .cdm-band-btn { background: #fff; }
+  @media (max-width: 640px) {
+    .cdm-band { flex-wrap: wrap; gap: 12px; padding: 16px; }
+    .cdm-band-ic { font-size: 32px; }
+    .cdm-band-btn { width: 100%; text-align: center; }
+  }
+  @media (prefers-reduced-motion: reduce) { .cdm-band::after, .cdm-band-dot { animation: none; } }
+</style>
