@@ -51,7 +51,7 @@ draft: false
 <li><a href="/billard/joueur/paul-coldrick/">Paul Coldrick</a> (+40 ans)&nbsp;: 4 manches sur 4, dont 1 casse et gagne</li>
 <li><a href="/billard/joueur/calvin-creach/">Calvin Créach</a> (U18)&nbsp;: 8 manches sur 9, dont 2 casse et gagne</li>
 <li><a href="/billard/joueur/dafydd-hughes/">Dafydd Hughes</a> (+60 ans)&nbsp;: 8 manches sur 10</li>
-<li><a href="/billard/joueur/anthony-thomas/">Anthony Thomas</a> et <a href="/billard/joueur/christophe-wailly/">Christophe Wailly</a> (+50 ans)&nbsp;: 4 manches sur 5 contre l'Angleterre</li>
+<li>Anthony Thomas et Christophe Wailly (+50 ans)&nbsp;: 4 manches sur 5 contre l'Angleterre</li>
 <li><a href="/billard/joueur/theo-schneider/">Théo Schneider</a> (U23)&nbsp;: 3 manches sur 4, dont 1 casse et gagne</li>
 </ul>
 
