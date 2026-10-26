@@ -1,0 +1,116 @@
+---
+// CHAMPIONNAT DU MONDE DE BILLARD BLACKBALL 2026 (Londres) — page « dossier » de l'événement :
+// présentation + tous les articles LSEI consacrés aux équipes de France (les plus récents d'abord).
+// Les articles sont repérés par leur identifiant (préfixe CDM_PREFIX) : un nouvel article
+// « championnat-du-monde-blackball-2026-… » apparaît ici automatiquement.
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { getDiscipline } from '../../data/site';
+import { articleCover } from '../../lib/articles';
+
+const CDM_PREFIX = 'championnat-du-monde-blackball-2026';
+const d = getDiscipline('billard');
+const articles = (await getCollection('articles', ({ id, data }) =>
+  id.startsWith(CDM_PREFIX) && !data.draft && data.date.valueOf() <= Date.now()))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const fmtDate = (dt: Date) => new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }).format(dt);
+
+const title = 'Championnat du monde de billard blackball 2026 à Londres';
+const description = "Le Mondial WPA de billard blackball 2026 à Londres (20-28 octobre) : résultats, Bleus du jour et programme des équipes de France, jour après jour.";
+const pageUrl = new URL('/billard/championnat-du-monde-blackball-2026', Astro.site).href;
+const ld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: title,
+    description,
+    url: pageUrl,
+    inLanguage: 'fr-FR',
+    about: {
+      '@type': 'SportsEvent',
+      name: 'Championnat du monde WPA de billard blackball 2026',
+      sport: 'Billard blackball',
+      startDate: '2026-10-20',
+      endDate: '2026-10-28',
+      eventStatus: 'https://schema.org/EventScheduled',
+      location: { '@type': 'Place', name: 'Londres', address: { '@type': 'PostalAddress', addressLocality: 'Londres', addressCountry: 'GB' } },
+      organizer: { '@type': 'Organization', name: 'World Pool Association (WPA)' },
+    },
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: articles.map((a, i) => ({
+        '@type': 'ListItem', position: i + 1, url: new URL(`/actualites/${a.id}`, Astro.site).href, name: a.data.seoTitle ?? a.data.title,
+      })),
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Billard', item: new URL('/disciplines/billard', Astro.site).href },
+      { '@type': 'ListItem', position: 2, name: title, item: pageUrl },
+    ],
+  },
+];
+const ogImage = articles.map((a) => articleCover(a)?.src).find(Boolean);
+---
+<Base title={title} description={description} active="actualites" image={ogImage}>
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  <section class="cdm-hero" style={`--dc:${d?.colorVar ?? '#2f6bff'}`}>
+    <div class="wrap">
+      <div class="cdm-crumb"><a href="/disciplines/billard">Billard</a><span aria-hidden="true">›</span>Championnat du monde 2026</div>
+      <h1 class="cdm-h">Championnat du monde<span>de billard blackball 2026</span></h1>
+      <p class="cdm-p">Du 20 au 28 octobre 2026, Londres accueille le <strong>Championnat du monde WPA de billard blackball</strong>. La Fédération Française de Billard y engage ses équipes de France Hommes, Femmes, Vétérans (+40, +50 et +60 ans), Espoirs U23, Juniors U18 et para-billard, en épreuves par équipes, en simple et en double. LSEI suit les Bleus jour après jour : résultats, Bleus du jour et programme.</p>
+      <div class="cdm-kpis">
+        <div><b>20 – 28</b><span>octobre 2026</span></div>
+        <div><b>Londres</b><span>Angleterre</span></div>
+        <div><b>{articles.length}</b><span>articles LSEI</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="sec-head"><div><div class="eyebrow">Jour après jour</div><h2>Les Bleus à Londres</h2></div></div>
+      <div class="cdm-grid">
+        {articles.map((a) => {
+          const c = articleCover(a);
+          return (
+            <a class="cdm-card" href={`/actualites/${a.id}`}>
+              {c && <img src={c.src} alt={a.data.title} loading="lazy" />}
+              <span class="cdm-card-b">
+                <span class="cdm-card-d">{fmtDate(a.data.date)}</span>
+                <span class="cdm-card-t">{a.data.title}</span>
+                <span class="cdm-card-x">{a.data.excerpt}</span>
+              </span>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .cdm-hero { position: relative; color: #fff; padding: 48px 0 44px;
+    background: radial-gradient(70% 140% at 85% 0%, color-mix(in srgb, var(--dc) 42%, #0A0E1A) 0%, #0A0E1A 64%), #0A0E1A; }
+  .cdm-hero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--dc); }
+  .cdm-crumb { display: flex; gap: 8px; font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  .cdm-crumb a { color: var(--dc); text-decoration: none; }
+  .cdm-h { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(34px, 5.5vw, 68px); line-height: .95; margin: 16px 0 0; }
+  .cdm-h span { display: block; color: var(--dc); font-size: .62em; margin-top: 6px; }
+  .cdm-p { color: rgba(255,255,255,.82); font-size: 16px; line-height: 1.6; margin: 18px 0 0; max-width: 70ch; }
+  .cdm-kpis { display: flex; flex-wrap: wrap; gap: 12px 34px; margin-top: 24px; }
+  .cdm-kpis div { display: flex; flex-direction: column; }
+  .cdm-kpis b { font-family: var(--display); font-weight: 800; font-size: 30px; line-height: 1; }
+  .cdm-kpis span { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-top: 4px; }
+  .cdm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; }
+  .cdm-card { display: flex; flex-direction: column; border-radius: 14px; overflow: hidden; text-decoration: none; color: inherit;
+    background: var(--surface, #fff); border: 1px solid color-mix(in srgb, currentColor 12%, transparent); transition: transform .25s, box-shadow .25s; }
+  .cdm-card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -22px rgba(0,0,0,.45); }
+  .cdm-card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+  .cdm-card-b { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px 18px; }
+  .cdm-card-d { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; opacity: .6; }
+  .cdm-card-t { font-weight: 700; font-size: 17px; line-height: 1.3; }
+  .cdm-card-x { font-size: 14px; line-height: 1.45; opacity: .78; }
+</style>

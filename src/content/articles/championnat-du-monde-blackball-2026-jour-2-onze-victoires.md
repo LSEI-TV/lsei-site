@@ -1,5 +1,7 @@
 ---
 title: "Championnat du monde de Blackball 2026 : onze victoires pour les Bleus lors de la 2e journée"
+seoTitle: "Mondial de billard blackball : 11 victoires des Bleus (J2)"
+seoDescription: "Mondial de billard blackball à Londres : 11 victoires pour les équipes de France le 21 octobre 2026, Élie Christidis intraitable."
 date: 2026-10-21
 excerpt: "Onze victoires et deux défaites d'une manche pour les +60 ans : les équipes de France poursuivent leur belle série à Londres. Élie Christidis intraitable chez les +40 ans."
 cover: /uploads/cdm-blackball-2026-bleus-21-10.jpg

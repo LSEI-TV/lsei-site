@@ -1,5 +1,7 @@
 ---
 title: "Championnat du monde de Blackball 2026 : sans-faute des Bleus pour la 1re journée"
+seoTitle: "Mondial de billard blackball : sans-faute des Bleus (J1)"
+seoDescription: "Championnat du monde de billard blackball à Londres : 7 victoires en 7 rencontres pour les équipes de France le 20 octobre 2026."
 date: 2026-10-20
 excerpt: "Sept rencontres, sept victoires : les équipes de France ont parfaitement lancé leur Championnat du monde à Londres. Yannick Beaufils en patron chez les Hommes."
 cover: /uploads/cdm-blackball-2026-bleus-20-10.jpg

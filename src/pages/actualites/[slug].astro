@@ -28,14 +28,15 @@ const ogImageAbs = cover ? new URL(cover.fallback ?? cover.src, Astro.site).href
 const articleLd = {
   '@context': 'https://schema.org',
   '@type': 'NewsArticle',
-  headline: article.data.title,
-  description: article.data.excerpt,
+  headline: article.data.seoTitle ?? article.data.title,
+  description: article.data.seoDescription ?? article.data.excerpt,
   image: [ogImageAbs],
   datePublished: article.data.date.toISOString(),
-  dateModified: article.data.date.toISOString(),
+  dateModified: (article.data.updated ?? article.data.date).toISOString(),
   inLanguage: 'fr-FR',
   mainEntityOfPage: { '@type': 'WebPage', '@id': shareUrl },
-  ...(article.data.author
+  // « La rédaction LSEI » = l'organisation, pas une personne
+  ...(article.data.author && !/rédaction|LSEI/i.test(article.data.author)
     ? { author: { '@type': 'Person', name: article.data.author } }
     : { author: { '@type': 'Organization', name: 'LSEI — Le Sport en Image', url: new URL('/', Astro.site).href } }),
   publisher: {
@@ -44,12 +45,31 @@ const articleLd = {
     logo: { '@type': 'ImageObject', url: new URL('/icon-512.png', Astro.site).href },
   },
 };
+
+// Articles du Championnat du monde de blackball 2026 : rattachés à la page de l'événement
+// (lien en tête d'article + fil d'Ariane structuré).
+const CDM_PREFIX = 'championnat-du-monde-blackball-2026';
+const CDM_HREF = '/billard/championnat-du-monde-blackball-2026';
+const isCdm = article.id.startsWith(CDM_PREFIX);
+const crumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Actualités', item: new URL('/actualites', Astro.site).href },
+    ...(isCdm ? [{ '@type': 'ListItem', position: 2, name: 'Championnat du monde de billard blackball 2026', item: new URL(CDM_HREF, Astro.site).href }] : []),
+    { '@type': 'ListItem', position: isCdm ? 3 : 2, name: article.data.seoTitle ?? article.data.title, item: shareUrl },
+  ],
+};
 ---
-<Base title={article.data.title} description={article.data.excerpt} active="actualites" ogType="article" image={cover ? (cover.fallback ?? cover.src) : undefined}>
+<Base title={article.data.seoTitle ?? article.data.title} description={article.data.seoDescription ?? article.data.excerpt} active="actualites" ogType="article" image={cover ? (cover.fallback ?? cover.src) : undefined}>
   <script type="application/ld+json" set:html={JSON.stringify(articleLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(crumbLd)} />
   <article class="section">
     <div class="wrap article-wrap">
       <a href="/actualites" class="link" style="display:inline-block;margin-bottom:18px">← Toutes les actualités</a>
+      {isCdm && (
+        <a href={CDM_HREF} class="cdm-dossier">🎱 Dossier · <b>Championnat du monde de billard blackball 2026</b> · tous les articles</a>
+      )}
       <h1 class="article-title">{article.data.title}</h1>
       <div class="article-meta">{article.data.author && <Fragment>{article.data.author} · </Fragment>}{fmtDate(article.data.date)}</div>
       {cover && <img class="article-cover" src={cover.src} alt={article.data.title} onerror={cover.fallback ? `this.onerror=null;this.src='${cover.fallback}'` : undefined} />}
@@ -74,3 +94,9 @@ const articleLd = {
     </div>
   </article>
 </Base>
+
+<style>
+  .cdm-dossier { display: block; margin: 0 0 18px; padding: 10px 14px; border-radius: 10px; border-left: 4px solid #2f6bff;
+    background: color-mix(in srgb, #2f6bff 9%, transparent); color: inherit; text-decoration: none; font-size: 15px; }
+  .cdm-dossier:hover { background: color-mix(in srgb, #2f6bff 16%, transparent); }
+</style>

@@ -1,5 +1,7 @@
 ---
 title: "Championnat du monde de Blackball 2026 : Marion Jude et Émilie Carneiro en quart de finale, 18 Bleus encore en lice en simple"
+seoTitle: "Mondial de billard blackball : Jude et Carneiro en quarts"
+seoDescription: "Mondial de billard blackball à Londres, 25 octobre 2026 : 18 Bleus en quart de finale des simples, Marion Jude et Émilie Carneiro en vedette."
 date: 2026-10-25
 excerpt: "Huit victoires par équipes, 25 victoires en individuel : les Bleus placent 18 joueurs en quart de finale des simples à Londres. Marion Jude et Émilie Carneiro sont les Bleues du jour."
 cover: /uploads/cdm-blackball-2026-bleus-25-10.jpg

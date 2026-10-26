@@ -1,5 +1,7 @@
 ---
 title: "Championnat du monde de Blackball 2026 : 36 victoires en individuel, Arthur Crespin Bleu du jour"
+seoTitle: "Mondial de billard blackball : Crespin et 36 victoires"
+seoDescription: "Mondial de billard blackball à Londres, 24 octobre 2026 : 6 victoires par équipes, 36 en individuel. Arthur Crespin en quart chez les U18."
 date: 2026-10-24
 excerpt: "Six victoires pour une défaite par équipes, 36 victoires en individuel : les Bleus ont réussi un grand samedi à Londres. Arthur Crespin file en quart de finale chez les U18, cinq Bleues sont en 1/8 de finale du simple Femmes."
 cover: /uploads/cdm-blackball-2026-bleus-24-10.jpg

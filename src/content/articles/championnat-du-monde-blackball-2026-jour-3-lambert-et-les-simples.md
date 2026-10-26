@@ -1,5 +1,7 @@
 ---
 title: "Championnat du monde de Blackball 2026 : neuf victoires par équipes et un départ en trombe dans les simples"
+seoTitle: "Mondial de billard blackball : Lambert lance les simples"
+seoDescription: "Mondial de billard blackball à Londres, 22 octobre 2026 : 9 victoires par équipes, Lambert 6-0 en simple, Carric en demi-finale."
 date: 2026-10-22
 excerpt: "Neuf victoires pour une défaite par équipes, quatorze victoires en individuel : les Bleus ont réussi leur entrée dans les simples à Londres. Christophe Lambert s'impose 6-0, Yvan Carric file en demi-finale."
 cover: /uploads/cdm-blackball-2026-bleus-22-10.jpg

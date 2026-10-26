@@ -7,7 +7,12 @@ const articles = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/articles' }),
   schema: z.object({
     title: z.string(),
+    // SEO (optionnels) : titre court (~60 car.) et description (~155 car.) pour Google ;
+    // le titre affiché sur la page reste `title`. `updated` = date de mise à jour (dateModified).
+    seoTitle: z.string().optional(),
+    seoDescription: z.string().optional(),
     date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
     excerpt: z.string(),
     // couverture : URL d'image (ou chemin /uploads/… après upload via l'admin)
     cover: z.string().optional(),

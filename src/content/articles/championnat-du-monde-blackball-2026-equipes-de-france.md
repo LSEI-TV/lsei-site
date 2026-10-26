@@ -1,5 +1,7 @@
 ---
 title: "Championnat du monde de Blackball 2026 : les équipes de France à Londres"
+seoTitle: "Mondial de billard blackball 2026 : les Bleus à Londres"
+seoDescription: "Les sélections de l'équipe de France de billard blackball pour le Championnat du monde WPA 2026 à Londres, du 20 au 28 octobre."
 date: 2026-10-18
 excerpt: La Fédération Française de Billard dévoile ses sélections pour le Championnat
   du monde WPA Blackball, du 21 au 28 octobre 2026 à Londres.

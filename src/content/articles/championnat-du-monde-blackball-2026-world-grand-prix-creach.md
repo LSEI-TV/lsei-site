@@ -1,5 +1,8 @@
 ---
 title: "Championnat du monde de Blackball 2026 : Calvin Créach remporte le World Grand Prix Jeunes"
+seoTitle: "World Grand Prix de billard : Calvin Créach titré à Londres"
+seoDescription: "World Grand Prix, tournoi annexe du Mondial de billard blackball à Londres : Calvin Créach gagne chez les Jeunes, Paul Coldrick finaliste."
+updated: 2026-10-24
 date: 2026-10-23
 excerpt: "Pendant la pause des épreuves par équipes, 27 Bleus ont disputé le World Grand Prix, tournoi annexe du Mondial de Londres. Calvin Créach s'impose chez les Jeunes, Paul Coldrick est finaliste chez les +40 ans."
 cover: /uploads/cdm-blackball-2026-world-grand-prix.jpg
