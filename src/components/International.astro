@@ -1,0 +1,129 @@
+---
+// Section « International » d'une fiche joueur (sous « Saison par saison ») : ses compétitions avec l'équipe de France.
+// Pour l'instant : le Championnat du Monde WPA Blackball 2026 (Londres), en un cadre qui se déplie / se replie
+// (accordéon du site : [data-accordion] + panneau suivant, cf. layouts/Base.astro).
+import { mondialDe, mondialFini, mondialMaj, type MondialMatch } from '../lib/mondial2026';
+
+interface Props { slug: string; nom: string }
+const { slug, nom } = Astro.props;
+const j = mondialDe(slug, nom);
+
+const ICO: Record<string, string> = { or: '🥇', argent: '🥈', bronze: '🥉' };
+const blocs = j ? [
+  j.equipe && { k: 'Par équipes', b: j.equipe, sous: `Équipe de France ${j.equipe.cat}` },
+  j.simple && { k: 'En simple', b: j.simple, sous: j.simple.cat },
+  j.double && { k: 'En double', b: j.double, sous: `${j.double.cat} · avec ${j.double.partenaire}` },
+].filter(Boolean) as { k: string; b: any; sous: string }[] : [];
+const resume = blocs.map((x) => `${x.k.replace('En ', '').replace('Par ', '')[0].toUpperCase()}${x.k.replace('En ', '').replace('Par ', '').slice(1)} : ${x.b.lib}`).join(' — ');
+const ligne = (m: MondialMatch) => m.res === 'victoire' ? 'v' : m.res === 'défaite' ? 'd' : 'a';
+---
+{j && (
+  <>
+    <div id="international" class="sec-head jt-anchor" style="margin-top:34px"><div><div class="eyebrow" style="color:var(--c-billard)">Équipe de France</div><h2>International</h2></div></div>
+    <div class="intl" id="mondial-2026">
+      <button type="button" class="intl-head" data-accordion aria-expanded="false" aria-controls="mondial-2026-detail">
+        <span class="intl-flag" aria-hidden="true"></span>
+        <span class="intl-tx">
+          <span class="intl-k">Championnat du Monde WPA · Londres · 20 – 28 octobre 2026</span>
+          <span class="intl-t">Avec l'équipe de France</span>
+          {j.medailles.length > 0 && (
+            <span class="intl-meds">{j.medailles.map((m) => <span class={`intl-med ${m.m}`}>{ICO[m.m]} {m.epreuve}</span>)}</span>
+          )}
+          <span class="intl-res">{resume}</span>
+        </span>
+        <span class="intl-cta"><span class="intl-o">Tous ses résultats</span><span class="intl-f">Replier</span> <span class="car-schev">▾</span></span>
+      </button>
+      <div class="intl-body" id="mondial-2026-detail" hidden>
+        <div class="intl-cols">
+          {blocs.map((x) => (
+            <div class="intl-col" style={`--ic:${x.b.col}`}>
+              <div class="intl-ch"><span class="intl-ck">{x.k}</span><span class="intl-cs">{x.sous}</span></div>
+              <div class={`intl-lib ${x.b.etat}`}>{ICO[x.b.etat] ? `${ICO[x.b.etat]} ` : ''}{x.b.lib}</div>
+              <div class="intl-stat">
+                {x.b.v} victoire{x.b.v > 1 ? 's' : ''} · {x.b.d} défaite{x.b.d > 1 ? 's' : ''}{x.k === 'Par équipes' ? ' (équipe)' : ''}
+                {x.k === 'Par équipes' && x.b.f > 0 && <><br /><b>{x.b.g}/{x.b.f}</b> manches gagnées ({x.b.pct} %){x.b.cg > 0 && <> · <b>{x.b.cg}</b> « casse et gagne »</>}</>}
+              </div>
+              <ul class="intl-ms">
+                {(x.b.rencontres || x.b.matchs || []).map((m: MondialMatch) => (
+                  <li class={`intl-m ${ligne(m)}`}>
+                    <span class="intl-md">{m.date}<em>{m.tour || m.phase}</em></span>
+                    <span class="intl-ma">{m.adv}{m.pays && <small> · {m.pays}</small>}
+                      {x.k === 'Par équipes' && (m.lui ? <small class="intl-lui">ses manches : {m.lui.g}/{m.lui.f}{m.lui.cg ? ` · ${m.lui.cg} casse et gagne` : ''}</small>
+                        : m.phase !== 'Poule' && <small class="intl-lui">détail des manches non publié</small>)}
+                    </span>
+                    <span class="intl-ms-sc">{m.score || '—'}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        {j.gp.length > 0 && (
+          <p class="intl-gp"><b>World Grand Prix</b> (tournoi annexe, hors titres mondiaux) : {j.gp.map((g, i) => <>{i > 0 && ' · '}{g.epreuve}{g.partenaire && ` avec ${g.partenaire}`} — <span class={g.etat === 'or' ? 'intl-gpw' : ''}>{g.etat === 'or' ? '🏆 ' : ''}{g.lib.toLowerCase().startsWith('vainqueur') ? 'vainqueur' : g.lib.charAt(0).toLowerCase() + g.lib.slice(1)}</span></>)}</p>
+        )}
+        <p class="intl-foot">
+          {mondialFini ? 'Résultats définitifs' : `Compétition en cours — mis à jour le ${mondialMaj}`} · sources : CueScore et LeagueAppLive ·
+          <a href="/billard/championnat-du-monde-blackball-2026">le dossier du Championnat du monde</a>
+        </p>
+      </div>
+    </div>
+    <script is:inline>
+      // lien direct …/#mondial-2026 : le cadre s'ouvre déjà déplié
+      if (location.hash === '#mondial-2026') document.addEventListener('DOMContentLoaded', function () {
+        var h = document.querySelector('#mondial-2026 .intl-head'); if (h && h.getAttribute('aria-expanded') === 'false') h.click();
+      });
+    </script>
+  </>
+)}
+
+<style>
+  .intl { border: 1px solid var(--line-strong); border-radius: 14px; background: var(--surface); overflow: hidden; position: relative; }
+  .intl::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: linear-gradient(90deg, #1d3fb8 0 33.3%, #fff 33.3% 66.6%, #e1262d 66.6%); }
+  .intl-head { width: 100%; font: inherit; color: inherit; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 16px; background: none; border: 0; padding: 20px 18px 16px; transition: background .15s; }
+  .intl-head:hover { background: color-mix(in srgb, var(--c-billard) 5%, var(--surface)); }
+  .intl-head:focus-visible { outline: 2px solid var(--c-billard); outline-offset: -2px; }
+  .intl-flag { flex: none; width: 42px; height: 30px; border-radius: 4px; background: linear-gradient(90deg, #1d3fb8 0 33.3%, #fff 33.3% 66.6%, #e1262d 66.6%); box-shadow: 0 0 0 1px var(--line-strong); }
+  .intl-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+  .intl-k { font-family: var(--display); text-transform: uppercase; font-size: 12.5px; letter-spacing: .06em; color: var(--c-billard); font-weight: 700; }
+  .intl-t { font-family: var(--display); font-size: 21px; font-weight: 700; line-height: 1.1; }
+  .intl-meds { display: flex; flex-wrap: wrap; gap: 6px; }
+  .intl-med { font-size: 13px; font-weight: 700; border-radius: 999px; padding: 3px 10px; border: 1px solid var(--line-strong); }
+  .intl-med.or { background: color-mix(in srgb, #E4B23C 18%, var(--surface)); border-color: #E4B23C; }
+  .intl-med.argent { background: color-mix(in srgb, #9aa3b5 16%, var(--surface)); border-color: #9aa3b5; }
+  .intl-med.bronze { background: color-mix(in srgb, #c27a3e 15%, var(--surface)); border-color: #c27a3e; }
+  .intl-res { font-size: 13.5px; color: var(--ink-soft); }
+  .intl-cta { flex: none; font-size: 13px; font-weight: 700; color: var(--c-billard); white-space: nowrap; }
+  .intl-f { display: none; }
+  .intl-head[aria-expanded="true"] .intl-o { display: none; }
+  .intl-head[aria-expanded="true"] .intl-f { display: inline; }
+  .intl-body { border-top: 1px solid var(--line); padding: 18px; }
+  .intl-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .intl-col { border: 1px solid var(--line); border-top: 3px solid var(--ic); border-radius: 10px; padding: 12px 14px; min-width: 0; }
+  .intl-ch { display: flex; flex-direction: column; gap: 2px; }
+  .intl-ck { font-family: var(--display); text-transform: uppercase; font-size: 13px; letter-spacing: .06em; font-weight: 700; }
+  .intl-cs { font-size: 12.5px; color: var(--ink-faint); }
+  .intl-lib { margin-top: 8px; font-weight: 800; font-size: 16px; }
+  .intl-lib.or { color: #a87a0c; } .intl-lib.argent { color: #6b7385; } .intl-lib.bronze { color: #9a5a22; } .intl-lib.encours { color: var(--c-billard); }
+  .intl-stat { font-size: 13px; color: var(--ink-soft); margin-top: 4px; line-height: 1.45; }
+  .intl-ms { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; }
+  .intl-m { display: grid; grid-template-columns: 84px 1fr auto; gap: 10px; align-items: start; padding: 7px 0 7px 9px; border-top: 1px solid var(--line); border-left: 3px solid transparent; font-size: 13px; }
+  .intl-m.v { border-left-color: #2fa36b; } .intl-m.d { border-left-color: #d64545; } .intl-m.a { border-left-color: var(--line-strong); }
+  .intl-md { display: flex; flex-direction: column; font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); }
+  .intl-md em { font-style: normal; font-family: inherit; color: var(--ink-soft); font-weight: 600; }
+  .intl-ma { min-width: 0; overflow-wrap: anywhere; }
+  .intl-ma small { color: var(--ink-faint); }
+  .intl-lui { display: block; font-size: 11.5px; }
+  .intl-ms-sc { font-family: var(--mono); font-weight: 700; white-space: nowrap; }
+  .intl-m.v .intl-ms-sc { color: #2fa36b; } .intl-m.d .intl-ms-sc { color: #d64545; }
+  .intl-gp { margin: 14px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+  .intl-gpw { font-weight: 700; color: #a87a0c; }
+  .intl-foot { margin: 12px 0 0; font-size: 12px; color: var(--ink-faint); }
+  .intl-foot a { color: var(--c-billard); }
+  @media (max-width: 640px) {
+    .intl-head { flex-wrap: wrap; gap: 12px; padding: 18px 14px 14px; }
+    .intl-flag { width: 34px; height: 24px; }
+    .intl-cta { width: 100%; }
+    .intl-body { padding: 14px; }
+    .intl-m { grid-template-columns: 70px 1fr auto; }
+  }
+</style>

@@ -1,0 +1,7799 @@
+{
+ "maj": "28/10/2026 à 11h35",
+ "fini": false,
+ "joueurs": {
+  "killian-ballon": {
+   "nom": "Killian Ballon",
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Double Hommes",
+     "lib": "Champions du monde"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "Double mixte",
+     "lib": "Médaille de bronze",
+     "etat": "bronze",
+     "partenaire": "Marion Jude"
+    }
+   ],
+   "simple": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Gareth Hibbott",
+      "pays": "Grande-Bretagne",
+      "score": "3–6",
+      "res": "défaite",
+      "date": "jeu 22/10"
+     }
+    ],
+    "v": 0,
+    "d": 1
+   },
+   "double": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Champions du monde",
+    "etat": "or",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Kristen Tanti & Neil Caruana",
+      "pays": "Malte",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "2e tour",
+      "adv": "Ayoub Bakhtaoui & Youssef Essalam",
+      "pays": "Maroc",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Keith Caruana & Gabriel Vella",
+      "pays": "Malte",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Clint Azzopardi & Miguel Amato",
+      "pays": "Malte",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Miguel Mizzi & Clevion Micallef",
+      "pays": "Malte",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Alexandre Buscetti & Christophe Lambert",
+      "pays": "France",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 6,
+    "d": 0,
+    "partenaire": "Yannick Beaufils"
+   },
+   "equipe": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Éliminée en 1/4 de finale",
+    "etat": "fini",
+    "v": 9,
+    "d": 3,
+    "g": 27,
+    "f": 42,
+    "cg": 9,
+    "pct": 64,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Pays de Galles",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 2
+      }
+     },
+     {
+      "date": "mar 20/10",
+      "adv": "Madagascar",
+      "score": "22–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Irlande",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Maurice",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Mexique",
+      "score": "25–0",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Angleterre",
+      "score": "10–15",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 1
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 2
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Malte",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 2,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Maroc",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Inde",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Pays de Galles",
+      "score": "11–13",
+      "res": "défaite",
+      "phase": "1/4 de finale",
+      "lui": null
+     }
+    ]
+   }
+  },
+  "christophe-thebeault": {
+   "nom": "Christophe Thébeault",
+   "medailles": [],
+   "gp": [],
+   "simple": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Éliminé en 3e tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Kyle Forster",
+      "pays": "Grande-Bretagne",
+      "score": "6–1",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "2e tour",
+      "adv": "Kevin Deans",
+      "pays": "Irlande",
+      "score": "6–0",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "3e tour",
+      "adv": "Clint I'Anson",
+      "pays": "Angleterre",
+      "score": "4–6",
+      "res": "défaite",
+      "date": "sam 24/10"
+     }
+    ],
+    "v": 2,
+    "d": 1
+   },
+   "double": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Éliminé en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Evan Parry Williams & Michael Smout",
+      "pays": "Pays de Galles",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "2e tour",
+      "adv": "Lee Shepherd & Jason Hill",
+      "pays": "Angleterre",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Gary Roberts & Dean Sporton",
+      "pays": "Angleterre",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Oussama Masskini & Houssam El Amari",
+      "pays": "Maroc",
+      "score": "0–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 3,
+    "d": 1,
+    "partenaire": "Alexis Klinka"
+   },
+   "equipe": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Éliminée en 1/4 de finale",
+    "etat": "fini",
+    "v": 9,
+    "d": 3,
+    "g": 33,
+    "f": 48,
+    "cg": 3,
+    "pct": 69,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Pays de Galles",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 20/10",
+      "adv": "Madagascar",
+      "score": "22–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Irlande",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Maurice",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Mexique",
+      "score": "25–0",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Angleterre",
+      "score": "10–15",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Malte",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Maroc",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Inde",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Pays de Galles",
+      "score": "11–13",
+      "res": "défaite",
+      "phase": "1/4 de finale",
+      "lui": null
+     }
+    ]
+   }
+  },
+  "christophe-lambert": {
+   "nom": "Christophe Lambert",
+   "medailles": [
+    {
+     "m": "argent",
+     "epreuve": "Simple Hommes",
+     "lib": "Vice-champion du monde"
+    },
+    {
+     "m": "argent",
+     "epreuve": "Double Hommes",
+     "lib": "Vice-champions du monde"
+    }
+   ],
+   "gp": [],
+   "simple": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Vice-champion du monde",
+    "etat": "argent",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Richard Williams",
+      "pays": "Pays de Galles",
+      "score": "6–0",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "2e tour",
+      "adv": "Neil Caruana",
+      "pays": "Malte",
+      "score": "6–2",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "3e tour",
+      "adv": "Kurt Elliott",
+      "pays": "Australie",
+      "score": "6–3",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Michael Smout",
+      "pays": "Pays de Galles",
+      "score": "6–4",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Abderahmane Ech-Chorfy",
+      "pays": "Maroc",
+      "score": "6–0",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Kevin Martin",
+      "pays": "Afrique du Sud",
+      "score": "6–2",
+      "res": "victoire",
+      "date": "mar 27/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Gareth Hibbott",
+      "pays": "Grande-Bretagne",
+      "score": "1–6",
+      "res": "défaite",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 6,
+    "d": 1
+   },
+   "double": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Vice-champions du monde",
+    "etat": "argent",
+    "matchs": [
+     {
+      "tour": "2e tour",
+      "adv": "Darren Barnard & Regan Elie",
+      "pays": "Afrique du Sud",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Atoul Damry & Bhavish Khaytoo",
+      "pays": "Maurice",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Kevin Martin & Shaun Martheze",
+      "pays": "Afrique du Sud",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Oussama Masskini & Houssam El Amari",
+      "pays": "Maroc",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Killian Ballon & Yannick Beaufils",
+      "pays": "France",
+      "score": "2–4",
+      "res": "défaite",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 4,
+    "d": 1,
+    "partenaire": "Alexandre Buscetti"
+   },
+   "equipe": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Éliminée en 1/4 de finale",
+    "etat": "fini",
+    "v": 9,
+    "d": 3,
+    "g": 34,
+    "f": 46,
+    "cg": 13,
+    "pct": 74,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Pays de Galles",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mar 20/10",
+      "adv": "Madagascar",
+      "score": "22–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 3
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Irlande",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Maurice",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 2
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Mexique",
+      "score": "25–0",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Angleterre",
+      "score": "10–15",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 2
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Malte",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Maroc",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 2
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Inde",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Pays de Galles",
+      "score": "11–13",
+      "res": "défaite",
+      "phase": "1/4 de finale",
+      "lui": null
+     }
+    ]
+   }
+  },
+  "alexandre-buscetti": {
+   "nom": "Alexandre Buscetti",
+   "medailles": [
+    {
+     "m": "argent",
+     "epreuve": "Double Hommes",
+     "lib": "Vice-champions du monde"
+    }
+   ],
+   "gp": [],
+   "simple": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Clayton Castaldi",
+      "pays": "Malte",
+      "score": "4–6",
+      "res": "défaite",
+      "date": "jeu 22/10"
+     }
+    ],
+    "v": 0,
+    "d": 1
+   },
+   "double": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Vice-champions du monde",
+    "etat": "argent",
+    "matchs": [
+     {
+      "tour": "2e tour",
+      "adv": "Darren Barnard & Regan Elie",
+      "pays": "Afrique du Sud",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Atoul Damry & Bhavish Khaytoo",
+      "pays": "Maurice",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Kevin Martin & Shaun Martheze",
+      "pays": "Afrique du Sud",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Oussama Masskini & Houssam El Amari",
+      "pays": "Maroc",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Killian Ballon & Yannick Beaufils",
+      "pays": "France",
+      "score": "2–4",
+      "res": "défaite",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 4,
+    "d": 1,
+    "partenaire": "Christophe Lambert"
+   },
+   "equipe": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Éliminée en 1/4 de finale",
+    "etat": "fini",
+    "v": 9,
+    "d": 3,
+    "g": 29,
+    "f": 43,
+    "cg": 8,
+    "pct": 67,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Pays de Galles",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 20/10",
+      "adv": "Madagascar",
+      "score": "22–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 3
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Irlande",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Maurice",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Mexique",
+      "score": "25–0",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Angleterre",
+      "score": "10–15",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 1
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Malte",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Maroc",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 2,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Inde",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Pays de Galles",
+      "score": "11–13",
+      "res": "défaite",
+      "phase": "1/4 de finale",
+      "lui": null
+     }
+    ]
+   }
+  },
+  "yannick-beaufils": {
+   "nom": "Yannick Beaufils",
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Double Hommes",
+     "lib": "Champions du monde"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "Double mixte",
+     "lib": "Éliminé en 1/8 de finale",
+     "etat": "fini",
+     "partenaire": "Émilie Carneiro"
+    }
+   ],
+   "simple": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Éliminé en 3e tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Kristen Tanti",
+      "pays": "Malte",
+      "score": "6–0",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "2e tour",
+      "adv": "Lee Shepherd",
+      "pays": "Angleterre",
+      "score": "6–3",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "3e tour",
+      "adv": "Alexis Klinka",
+      "pays": "France",
+      "score": "1–6",
+      "res": "défaite",
+      "date": "sam 24/10"
+     }
+    ],
+    "v": 2,
+    "d": 1
+   },
+   "double": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Champions du monde",
+    "etat": "or",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Kristen Tanti & Neil Caruana",
+      "pays": "Malte",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "2e tour",
+      "adv": "Ayoub Bakhtaoui & Youssef Essalam",
+      "pays": "Maroc",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Keith Caruana & Gabriel Vella",
+      "pays": "Malte",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Clint Azzopardi & Miguel Amato",
+      "pays": "Malte",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Miguel Mizzi & Clevion Micallef",
+      "pays": "Malte",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Alexandre Buscetti & Christophe Lambert",
+      "pays": "France",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 6,
+    "d": 0,
+    "partenaire": "Killian Ballon"
+   },
+   "equipe": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Éliminée en 1/4 de finale",
+    "etat": "fini",
+    "v": 9,
+    "d": 3,
+    "g": 35,
+    "f": 48,
+    "cg": 9,
+    "pct": 73,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Pays de Galles",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mar 20/10",
+      "adv": "Madagascar",
+      "score": "22–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 2
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Irlande",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Maurice",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 2
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Mexique",
+      "score": "25–0",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Angleterre",
+      "score": "10–15",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Malte",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Maroc",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Inde",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Pays de Galles",
+      "score": "11–13",
+      "res": "défaite",
+      "phase": "1/4 de finale",
+      "lui": null
+     }
+    ]
+   }
+  },
+  "alexis-klinka": {
+   "nom": "Alexis Klinka",
+   "medailles": [],
+   "gp": [
+    {
+     "epreuve": "Hommes",
+     "lib": "Éliminé en 3e tour",
+     "etat": "fini",
+     "partenaire": ""
+    },
+    {
+     "epreuve": "Double mixte",
+     "lib": "Éliminé en 1/8 de finale",
+     "etat": "fini",
+     "partenaire": "Sabrilla Brunet"
+    }
+   ],
+   "simple": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Éliminé en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Daniel Frayne",
+      "pays": "Grande-Bretagne",
+      "score": "6–0",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "2e tour",
+      "adv": "Nick Powell",
+      "pays": "Grande-Bretagne",
+      "score": "6–3",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "3e tour",
+      "adv": "Yannick Beaufils",
+      "pays": "France",
+      "score": "6–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Evan Parry-Williams",
+      "pays": "Pays de Galles",
+      "score": "6–3",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Kevin Martin",
+      "pays": "Afrique du Sud",
+      "score": "4–6",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 4,
+    "d": 1
+   },
+   "double": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Éliminé en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Evan Parry Williams & Michael Smout",
+      "pays": "Pays de Galles",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "2e tour",
+      "adv": "Lee Shepherd & Jason Hill",
+      "pays": "Angleterre",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Gary Roberts & Dean Sporton",
+      "pays": "Angleterre",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Oussama Masskini & Houssam El Amari",
+      "pays": "Maroc",
+      "score": "0–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 3,
+    "d": 1,
+    "partenaire": "Christophe Thébeault"
+   },
+   "equipe": {
+    "cat": "Hommes",
+    "col": "#2f6bff",
+    "lib": "Éliminée en 1/4 de finale",
+    "etat": "fini",
+    "v": 9,
+    "d": 3,
+    "g": 28,
+    "f": 48,
+    "cg": 9,
+    "pct": 58,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Pays de Galles",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mar 20/10",
+      "adv": "Madagascar",
+      "score": "22–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 2
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Irlande",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Maurice",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Mexique",
+      "score": "25–0",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Angleterre",
+      "score": "10–15",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Malte",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Maroc",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 2
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Inde",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Pays de Galles",
+      "score": "11–13",
+      "res": "défaite",
+      "phase": "1/4 de finale",
+      "lui": null
+     }
+    ]
+   }
+  },
+  "collette-henriksen": {
+   "nom": "Collette Henriksen",
+   "medailles": [],
+   "gp": [
+    {
+     "epreuve": "Femmes",
+     "lib": "Éliminée en 1/8 de finale",
+     "etat": "fini",
+     "partenaire": ""
+    },
+    {
+     "epreuve": "Double mixte",
+     "lib": "Vainqueur",
+     "etat": "or",
+     "partenaire": "Léonardo Moreira"
+    }
+   ],
+   "simple": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Éliminée en 1/8 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Paloma Fernandez",
+      "pays": "Mexique",
+      "score": "6–0",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "2e tour",
+      "adv": "Prudence Nkosi",
+      "pays": "Afrique du Sud",
+      "score": "6–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Kim O’Brien",
+      "pays": "Grande-Bretagne",
+      "score": "5–6",
+      "res": "défaite",
+      "date": "dim 25/10"
+     }
+    ],
+    "v": 2,
+    "d": 1
+   },
+   "double": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Éliminée en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Prudence Nkosi & Beatrice Monyake",
+      "pays": "Afrique du Sud",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Jo Hobday Emma Powers Richardson",
+      "pays": "Angleterre",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Emma Cunningham & Mika Roonay",
+      "pays": "Irlande du Nord",
+      "score": "0–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 2,
+    "d": 1,
+    "partenaire": "Ophélie Laval"
+   },
+   "equipe": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 26,
+    "f": 33,
+    "cg": 2,
+    "pct": 79,
+    "rencontres": [
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Mexique",
+      "score": "22–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Angleterre",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Australie",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Australie",
+      "score": "23–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Irlande du Nord",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 2,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "sabrilla-brunet": {
+   "nom": "Sabrilla Brunet",
+   "medailles": [
+    {
+     "m": "argent",
+     "epreuve": "Simple Femmes",
+     "lib": "Vice-championne du monde"
+    },
+    {
+     "m": "bronze",
+     "epreuve": "Double Femmes",
+     "lib": "Médaille de bronze"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "Femmes",
+     "lib": "Éliminée en 1/4 de finale",
+     "etat": "fini",
+     "partenaire": ""
+    },
+    {
+     "epreuve": "Double mixte",
+     "lib": "Éliminé en 1/8 de finale",
+     "etat": "fini",
+     "partenaire": "Alexis Klinka"
+    }
+   ],
+   "simple": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Vice-championne du monde",
+    "etat": "argent",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Belinda Marshall",
+      "pays": "Australie",
+      "score": "6–1",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "2e tour",
+      "adv": "Joy Willenberg",
+      "pays": "Afrique du Sud",
+      "score": "6–0",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Emma Cunningham",
+      "pays": "Irlande du Nord",
+      "score": "6–2",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Mary Cunningham",
+      "pays": "Irlande du Nord",
+      "score": "6–1",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Kim O’Brien",
+      "pays": "Grande-Bretagne",
+      "score": "6–5",
+      "res": "victoire",
+      "date": "mar 27/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Marion Jude",
+      "pays": "France",
+      "score": "1–6",
+      "res": "défaite",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 5,
+    "d": 1
+   },
+   "double": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "1/8 de finale",
+      "adv": "Emilie Carneiro & Floriane Niollet",
+      "pays": "France",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Nicola Ball & Mary Cunningham",
+      "pays": "Irlande du Nord",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Emma Cunningham & Mika Roonay",
+      "pays": "Irlande du Nord",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 2,
+    "d": 1,
+    "partenaire": "Marion Jude"
+   },
+   "equipe": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 27,
+    "f": 35,
+    "cg": 1,
+    "pct": 77,
+    "rencontres": [
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Mexique",
+      "score": "22–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Angleterre",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Australie",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Australie",
+      "score": "23–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Irlande du Nord",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "ophelie-laval": {
+   "nom": "Ophélie Laval",
+   "medailles": [],
+   "gp": [
+    {
+     "epreuve": "Femmes",
+     "lib": "Éliminée en 1er tour",
+     "etat": "fini",
+     "partenaire": ""
+    },
+    {
+     "epreuve": "Double mixte",
+     "lib": "Vice-champion du monde",
+     "etat": "argent",
+     "partenaire": "Damien Joly"
+    }
+   ],
+   "simple": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Éliminée en 1/8 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Charlee McDonough",
+      "pays": "Angleterre",
+      "score": "6–0",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "2e tour",
+      "adv": "Stella Paru",
+      "pays": "Australie",
+      "score": "6–2",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Marion Jude",
+      "pays": "France",
+      "score": "1–6",
+      "res": "défaite",
+      "date": "dim 25/10"
+     }
+    ],
+    "v": 2,
+    "d": 1
+   },
+   "double": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Éliminée en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Prudence Nkosi & Beatrice Monyake",
+      "pays": "Afrique du Sud",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Jo Hobday Emma Powers Richardson",
+      "pays": "Angleterre",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Emma Cunningham & Mika Roonay",
+      "pays": "Irlande du Nord",
+      "score": "0–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 2,
+    "d": 1,
+    "partenaire": "Collette Henriksen"
+   },
+   "equipe": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 26,
+    "f": 34,
+    "cg": 1,
+    "pct": 76,
+    "rencontres": [
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Mexique",
+      "score": "22–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Angleterre",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Australie",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Australie",
+      "score": "23–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Irlande du Nord",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "marion-jude": {
+   "nom": "Marion Jude",
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Simple Femmes",
+     "lib": "Championne du monde"
+    },
+    {
+     "m": "bronze",
+     "epreuve": "Double Femmes",
+     "lib": "Médaille de bronze"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "Femmes",
+     "lib": "Éliminée en 2e tour",
+     "etat": "fini",
+     "partenaire": ""
+    },
+    {
+     "epreuve": "Double mixte",
+     "lib": "Médaille de bronze",
+     "etat": "bronze",
+     "partenaire": "Killian Ballon"
+    }
+   ],
+   "simple": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Championne du monde",
+    "etat": "or",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Lilia Gonzalez",
+      "pays": "Mexique",
+      "score": "6–0",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "2e tour",
+      "adv": "Mika Roonay",
+      "pays": "Irlande du Nord",
+      "score": "6–1",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Ophélie Laval",
+      "pays": "France",
+      "score": "6–1",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Emilie Carneiro",
+      "pays": "France",
+      "score": "6–4",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Lynne Pinches",
+      "pays": "Angleterre",
+      "score": "6–2",
+      "res": "victoire",
+      "date": "mar 27/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Sabrilla Brunet",
+      "pays": "France",
+      "score": "6–1",
+      "res": "victoire",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 6,
+    "d": 0
+   },
+   "double": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "1/8 de finale",
+      "adv": "Emilie Carneiro & Floriane Niollet",
+      "pays": "France",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Nicola Ball & Mary Cunningham",
+      "pays": "Irlande du Nord",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Emma Cunningham & Mika Roonay",
+      "pays": "Irlande du Nord",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 2,
+    "d": 1,
+    "partenaire": "Sabrilla Brunet"
+   },
+   "equipe": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 29,
+    "f": 35,
+    "cg": 3,
+    "pct": 83,
+    "rencontres": [
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Mexique",
+      "score": "22–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Angleterre",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Australie",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Australie",
+      "score": "23–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 2
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Irlande du Nord",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "emilie-carneiro": {
+   "nom": "Émilie Carneiro",
+   "medailles": [],
+   "gp": [
+    {
+     "epreuve": "Femmes",
+     "lib": "Éliminée en 1/8 de finale",
+     "etat": "fini",
+     "partenaire": ""
+    },
+    {
+     "epreuve": "Double mixte",
+     "lib": "Éliminé en 1/8 de finale",
+     "etat": "fini",
+     "partenaire": "Yannick Beaufils"
+    }
+   ],
+   "simple": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Éliminée en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Floriane Niollet",
+      "pays": "France",
+      "score": "6–4",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "2e tour",
+      "adv": "Shaan Thompson (eg)",
+      "pays": "Afrique du Sud",
+      "score": "6–4",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Aorr Hickson",
+      "pays": "Thaïlande",
+      "score": "6–0",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Marion Jude",
+      "pays": "France",
+      "score": "4–6",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 3,
+    "d": 1
+   },
+   "double": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Éliminée en 1/8 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Emma Smith & Charlie Elliott",
+      "pays": "Angleterre",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Sabrilla Brunet & Marion Jude",
+      "pays": "France",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "dim 25/10"
+     }
+    ],
+    "v": 1,
+    "d": 1,
+    "partenaire": "Floriane Niollet"
+   },
+   "equipe": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 23,
+    "f": 34,
+    "cg": 1,
+    "pct": 68,
+    "rencontres": [
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Mexique",
+      "score": "22–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Angleterre",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Australie",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Australie",
+      "score": "23–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Irlande du Nord",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "floriane-niollet": {
+   "nom": "Floriane Niollet",
+   "medailles": [],
+   "gp": [
+    {
+     "epreuve": "Femmes",
+     "lib": "Éliminée en 1/8 de finale",
+     "etat": "fini",
+     "partenaire": ""
+    },
+    {
+     "epreuve": "Double mixte",
+     "lib": "Éliminé en 1/8 de finale",
+     "etat": "fini",
+     "partenaire": "Thibault Couzigou"
+    }
+   ],
+   "simple": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Éliminée en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Emilie Carneiro",
+      "pays": "France",
+      "score": "4–6",
+      "res": "défaite",
+      "date": "jeu 22/10"
+     }
+    ],
+    "v": 0,
+    "d": 1
+   },
+   "double": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Éliminée en 1/8 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Emma Smith & Charlie Elliott",
+      "pays": "Angleterre",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Sabrilla Brunet & Marion Jude",
+      "pays": "France",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "dim 25/10"
+     }
+    ],
+    "v": 1,
+    "d": 1,
+    "partenaire": "Émilie Carneiro"
+   },
+   "equipe": {
+    "cat": "Femmes",
+    "col": "#ff8a1f",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 18,
+    "f": 29,
+    "cg": 0,
+    "pct": 62,
+    "rencontres": [
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Mexique",
+      "score": "22–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Angleterre",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Australie",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Australie",
+      "score": "23–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Irlande du Nord",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 2,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "18–7",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "raphael-rybak": {
+   "nom": "Raphaël Rybak",
+   "medailles": [
+    {
+     "m": "bronze",
+     "epreuve": "Simple +50 ans",
+     "lib": "Médaille de bronze"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "+40 ans",
+     "lib": "Éliminé en 1/8 de finale",
+     "etat": "fini",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "2e tour",
+      "adv": "Laurent Lecomte",
+      "pays": "France",
+      "score": "6–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Nathan Beevers",
+      "pays": "Grande-Bretagne",
+      "score": "6–3",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Justin Kershan Pillay",
+      "pays": "Afrique du Sud",
+      "score": "6–5",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Glen Pilkington",
+      "pays": "Angleterre",
+      "score": "4–6",
+      "res": "défaite",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 3,
+    "d": 1
+   },
+   "double": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Éliminé en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Francois Debois & Laurent Lecomte",
+      "pays": "France",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Yadesh Maharaj & Chris Pillay",
+      "pays": "Afrique du Sud",
+      "score": "0–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 1,
+    "d": 1,
+    "partenaire": "Christophe Wailly"
+   },
+   "equipe": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 7,
+    "d": 1,
+    "g": 26,
+    "f": 38,
+    "cg": 0,
+    "pct": 68,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Australie",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Irlande",
+      "score": "21–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Afrique du Sud",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Irlande",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "laurent-lecomte": {
+   "nom": "Laurent Lecomte",
+   "medailles": [],
+   "gp": [
+    {
+     "epreuve": "+40 ans",
+     "lib": "Éliminé en 1er tour",
+     "etat": "fini",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Éliminé en 2e tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "2e tour",
+      "adv": "Raphael Rybak",
+      "pays": "France",
+      "score": "1–6",
+      "res": "défaite",
+      "date": "sam 24/10"
+     }
+    ],
+    "v": 0,
+    "d": 1
+   },
+   "double": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Raphael Rybak & Christophe Wailly",
+      "pays": "France",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "dim 25/10"
+     }
+    ],
+    "v": 0,
+    "d": 1,
+    "partenaire": "François Debois"
+   },
+   "equipe": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 7,
+    "d": 1,
+    "g": 11,
+    "f": 27,
+    "cg": 0,
+    "pct": 41,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Australie",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Irlande",
+      "score": "21–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 2,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Afrique du Sud",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 2,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Irlande",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 3,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "francois-debois": {
+   "nom": "François Debois",
+   "medailles": [],
+   "gp": [
+    {
+     "epreuve": "+40 ans",
+     "lib": "Éliminé en 1/4 de finale",
+     "etat": "fini",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Éliminé en 2e tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "2e tour",
+      "adv": "Basil Munsamy",
+      "pays": "Afrique du Sud",
+      "score": "2–6",
+      "res": "défaite",
+      "date": "sam 24/10"
+     }
+    ],
+    "v": 0,
+    "d": 1
+   },
+   "double": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Raphael Rybak & Christophe Wailly",
+      "pays": "France",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "dim 25/10"
+     }
+    ],
+    "v": 0,
+    "d": 1,
+    "partenaire": "Laurent Lecomte"
+   },
+   "equipe": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 7,
+    "d": 1,
+    "g": 27,
+    "f": 37,
+    "cg": 0,
+    "pct": 73,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Australie",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Irlande",
+      "score": "21–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Afrique du Sud",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Irlande",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "anthony-thomas": {
+   "nom": "Anthony Thomas",
+   "medailles": [],
+   "gp": [
+    {
+     "epreuve": "+40 ans",
+     "lib": "Éliminé en 1/8 de finale",
+     "etat": "fini",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Éliminé en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "2e tour",
+      "adv": "Graeme Witton",
+      "pays": "Angleterre",
+      "score": "6–3",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Basil Munsamy",
+      "pays": "Afrique du Sud",
+      "score": "7–2",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Chris Pillay(C.P)",
+      "pays": "Afrique du Sud",
+      "score": "2–6",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 2,
+    "d": 1
+   },
+   "double": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Yadesh Maharaj & Chris Pillay",
+      "pays": "Afrique du Sud",
+      "score": "0–4",
+      "res": "défaite",
+      "date": "dim 25/10"
+     }
+    ],
+    "v": 0,
+    "d": 1,
+    "partenaire": "Alain Gerbault"
+   },
+   "equipe": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 7,
+    "d": 1,
+    "g": 23,
+    "f": 38,
+    "cg": 0,
+    "pct": 61,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Australie",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Irlande",
+      "score": "21–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Afrique du Sud",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Irlande",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "alain-gerbault": {
+   "nom": "Alain Gerbault",
+   "medailles": [],
+   "gp": [
+    {
+     "epreuve": "+40 ans",
+     "lib": "Éliminé en 2e tour",
+     "etat": "fini",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Éliminé en 2e tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "2e tour",
+      "adv": "Joe Connolly",
+      "pays": "Irlande",
+      "score": "2–6",
+      "res": "défaite",
+      "date": "sam 24/10"
+     }
+    ],
+    "v": 0,
+    "d": 1
+   },
+   "double": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Yadesh Maharaj & Chris Pillay",
+      "pays": "Afrique du Sud",
+      "score": "0–4",
+      "res": "défaite",
+      "date": "dim 25/10"
+     }
+    ],
+    "v": 0,
+    "d": 1,
+    "partenaire": "Anthony Thomas"
+   },
+   "equipe": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 7,
+    "d": 1,
+    "g": 7,
+    "f": 21,
+    "cg": 0,
+    "pct": 33,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Australie",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 2,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Irlande",
+      "score": "21–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 2,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Afrique du Sud",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Irlande",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 2,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 2,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "christophe-wailly": {
+   "nom": "Christophe Wailly",
+   "medailles": [
+    {
+     "m": "argent",
+     "epreuve": "Simple +50 ans",
+     "lib": "Vice-champion du monde"
+    }
+   ],
+   "gp": [],
+   "simple": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Vice-champion du monde",
+    "etat": "argent",
+    "matchs": [
+     {
+      "tour": "2e tour",
+      "adv": "Yadesh Maharaj",
+      "pays": "Afrique du Sud",
+      "score": "6–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Andrew Appleton",
+      "pays": "Angleterre",
+      "score": "6–3",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Dan Lynch",
+      "pays": "Australie",
+      "score": "6–1",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Chris Pillay(C.P)",
+      "pays": "Afrique du Sud",
+      "score": "6–3",
+      "res": "victoire",
+      "date": "mar 27/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Glen Pilkington",
+      "pays": "Angleterre",
+      "score": "0–6",
+      "res": "défaite",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 4,
+    "d": 1
+   },
+   "double": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Éliminé en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Francois Debois & Laurent Lecomte",
+      "pays": "France",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Yadesh Maharaj & Chris Pillay",
+      "pays": "Afrique du Sud",
+      "score": "0–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 1,
+    "d": 1,
+    "partenaire": "Raphaël Rybak"
+   },
+   "equipe": {
+    "cat": "+50 ans",
+    "col": "#c9ccd4",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 7,
+    "d": 1,
+    "g": 26,
+    "f": 39,
+    "cg": 0,
+    "pct": 67,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Australie",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Irlande",
+      "score": "21–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Afrique du Sud",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Irlande",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "thibault-couzigou": {
+   "nom": "Thibault Couzigou",
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Double Espoirs U23",
+     "lib": "Champions du monde"
+    },
+    {
+     "m": "bronze",
+     "epreuve": "Simple Espoirs U23",
+     "lib": "Médaille de bronze"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "Double mixte",
+     "lib": "Éliminé en 1/8 de finale",
+     "etat": "fini",
+     "partenaire": "Floriane Niollet"
+    }
+   ],
+   "simple": {
+    "cat": "Espoirs U23",
+    "col": "#8a3dff",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Jake Foulds",
+      "pays": "Grande-Bretagne",
+      "score": "5–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Tristan Kirwin",
+      "pays": "Irlande",
+      "score": "5–0",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Luke Aitken",
+      "pays": "Grande-Bretagne",
+      "score": "5–4",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Leonardo Moreira",
+      "pays": "France",
+      "score": "1–5",
+      "res": "défaite",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 3,
+    "d": 1
+   },
+   "double": {
+    "cat": "Espoirs U23",
+    "col": "#8a3dff",
+    "lib": "Champions du monde",
+    "etat": "or",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Christiaan Louren Els & Dalron Maxwell Booysen",
+      "pays": "Afrique du Sud",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Sean Fitzgerald & James Boyle",
+      "pays": "Angleterre",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Damien Joly & Leonardo Moreira",
+      "pays": "France",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Chaylon Castaldi & Matthias Debono",
+      "pays": "Malte",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 4,
+    "d": 0,
+    "partenaire": "Théo Schneider"
+   },
+   "equipe": {
+    "cat": "Espoirs U23",
+    "col": "#8a3dff",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 13,
+    "f": 18,
+    "cg": 0,
+    "pct": 72,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Afrique du Sud",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Malte",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Angleterre",
+      "score": "13–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Australie",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Malte",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre",
+      "score": "13–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     }
+    ]
+   }
+  },
+  "damien-joly": {
+   "nom": "Damien Joly",
+   "medailles": [
+    {
+     "m": "bronze",
+     "epreuve": "Double Espoirs U23",
+     "lib": "Médaille de bronze"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "Hommes",
+     "lib": "Éliminé en 1er tour",
+     "etat": "fini",
+     "partenaire": ""
+    },
+    {
+     "epreuve": "Double mixte",
+     "lib": "Vice-champion du monde",
+     "etat": "argent",
+     "partenaire": "Ophélie Laval"
+    }
+   ],
+   "simple": {
+    "cat": "Espoirs U23",
+    "col": "#8a3dff",
+    "lib": "Éliminé en 1/8 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Thomas Zantedeschi",
+      "pays": "Italie",
+      "score": "5–0",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Luke Aitken",
+      "pays": "Grande-Bretagne",
+      "score": "3–5",
+      "res": "défaite",
+      "date": "dim 25/10"
+     }
+    ],
+    "v": 1,
+    "d": 1
+   },
+   "double": {
+    "cat": "Espoirs U23",
+    "col": "#8a3dff",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "1/4 de finale",
+      "adv": "Trent Tyne & Riley Hay",
+      "pays": "Australie",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Theo Schneider & Thibault Couzigou",
+      "pays": "France",
+      "score": "2–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 1,
+    "d": 1,
+    "partenaire": "Léonardo Moreira"
+   },
+   "equipe": {
+    "cat": "Espoirs U23",
+    "col": "#8a3dff",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 14,
+    "f": 20,
+    "cg": 2,
+    "pct": 70,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Afrique du Sud",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Malte",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Angleterre",
+      "score": "13–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Australie",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Malte",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre",
+      "score": "13–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     }
+    ]
+   }
+  },
+  "leonardo-moreira": {
+   "nom": "Léonardo Moreira",
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Simple Espoirs U23",
+     "lib": "Champion du monde"
+    },
+    {
+     "m": "bronze",
+     "epreuve": "Double Espoirs U23",
+     "lib": "Médaille de bronze"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "Hommes",
+     "lib": "Éliminé en 1/4 de finale",
+     "etat": "fini",
+     "partenaire": ""
+    },
+    {
+     "epreuve": "Double mixte",
+     "lib": "Vainqueur",
+     "etat": "or",
+     "partenaire": "Collette Henriksen"
+    }
+   ],
+   "simple": {
+    "cat": "Espoirs U23",
+    "col": "#8a3dff",
+    "lib": "Champion du monde",
+    "etat": "or",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Sameiyan Naidoo",
+      "pays": "Australie",
+      "score": "5–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Casdy Vella",
+      "pays": "Malte",
+      "score": "5–0",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Kirsten Nelson ( Edenpark)",
+      "pays": "Afrique du Sud",
+      "score": "5–4",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Thibault Couzigou",
+      "pays": "France",
+      "score": "5–1",
+      "res": "victoire",
+      "date": "mar 27/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Chaylon Castaldi",
+      "pays": "Malte",
+      "score": "5–4",
+      "res": "victoire",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 5,
+    "d": 0
+   },
+   "double": {
+    "cat": "Espoirs U23",
+    "col": "#8a3dff",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "1/4 de finale",
+      "adv": "Trent Tyne & Riley Hay",
+      "pays": "Australie",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Theo Schneider & Thibault Couzigou",
+      "pays": "France",
+      "score": "2–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 1,
+    "d": 1,
+    "partenaire": "Damien Joly"
+   },
+   "equipe": {
+    "cat": "Espoirs U23",
+    "col": "#8a3dff",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 14,
+    "f": 19,
+    "cg": 2,
+    "pct": 74,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Afrique du Sud",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Malte",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Angleterre",
+      "score": "13–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 1
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Australie",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Malte",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre",
+      "score": "13–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     }
+    ]
+   }
+  },
+  "theo-schneider": {
+   "nom": "Théo Schneider",
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Double Espoirs U23",
+     "lib": "Champions du monde"
+    }
+   ],
+   "gp": [],
+   "simple": {
+    "cat": "Espoirs U23",
+    "col": "#8a3dff",
+    "lib": "Éliminé en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Kameen Hayward",
+      "pays": "Afrique du Sud",
+      "score": "5–3",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Junior Amos Mcira",
+      "pays": "Afrique du Sud",
+      "score": "5–2",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Irfaan Williams",
+      "pays": "Afrique du Sud",
+      "score": "2–5",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 2,
+    "d": 1
+   },
+   "double": {
+    "cat": "Espoirs U23",
+    "col": "#8a3dff",
+    "lib": "Champions du monde",
+    "etat": "or",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Christiaan Louren Els & Dalron Maxwell Booysen",
+      "pays": "Afrique du Sud",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Sean Fitzgerald & James Boyle",
+      "pays": "Angleterre",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Damien Joly & Leonardo Moreira",
+      "pays": "France",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Chaylon Castaldi & Matthias Debono",
+      "pays": "Malte",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 4,
+    "d": 0,
+    "partenaire": "Thibault Couzigou"
+   },
+   "equipe": {
+    "cat": "Espoirs U23",
+    "col": "#8a3dff",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 13,
+    "f": 18,
+    "cg": 2,
+    "pct": 72,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Afrique du Sud",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Malte",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Angleterre",
+      "score": "13–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Australie",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Malte",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre",
+      "score": "13–2",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "10–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     }
+    ]
+   }
+  },
+  "nicolas-grandemange-denizot": {
+   "nom": "Nicolas Grandemange-Denizot",
+   "medailles": [
+    {
+     "m": "argent",
+     "epreuve": "Double +40 ans",
+     "lib": "Vice-champions du monde"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "+40 ans",
+     "lib": "Éliminé en 2e tour",
+     "etat": "fini",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "John Williams",
+      "pays": "Angleterre",
+      "score": "5–6",
+      "res": "défaite",
+      "date": "sam 24/10"
+     }
+    ],
+    "v": 0,
+    "d": 1
+   },
+   "double": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Vice-champions du monde",
+    "etat": "argent",
+    "matchs": [
+     {
+      "tour": "1/4 de finale",
+      "adv": "Jerome Ferry & Frederic Moreau",
+      "pays": "France",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Kamlan Moodley Ketan Nydoo",
+      "pays": "Afrique du Sud",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Paul Coldrick & Christophe Faurie",
+      "pays": "France",
+      "score": "1–4",
+      "res": "défaite",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 2,
+    "d": 1,
+    "partenaire": "Élie Christidis"
+   },
+   "equipe": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 20,
+    "f": 30,
+    "cg": 1,
+    "pct": 67,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Australie",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Singapour",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "15–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Singapour",
+      "score": "20–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "elie-christidis": {
+   "nom": "Élie Christidis",
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Simple +40 ans",
+     "lib": "Champion du monde"
+    },
+    {
+     "m": "argent",
+     "epreuve": "Double +40 ans",
+     "lib": "Vice-champions du monde"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "+40 ans",
+     "lib": "Médaille de bronze",
+     "etat": "bronze",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Champion du monde",
+    "etat": "or",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Kelvyn Low Hock Soon",
+      "pays": "Singapour",
+      "score": "6–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Jeff Williams-Jones",
+      "pays": "Australie",
+      "score": "6–3",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Aziz Williams",
+      "pays": "Afrique du Sud",
+      "score": "6–0",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Marco Garth Williams",
+      "pays": "Afrique du Sud",
+      "score": "6–5",
+      "res": "victoire",
+      "date": "mar 27/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Mahier Daniels",
+      "pays": "Afrique du Sud",
+      "score": "6–4",
+      "res": "victoire",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 5,
+    "d": 0
+   },
+   "double": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Vice-champions du monde",
+    "etat": "argent",
+    "matchs": [
+     {
+      "tour": "1/4 de finale",
+      "adv": "Jerome Ferry & Frederic Moreau",
+      "pays": "France",
+      "score": "4–3",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Kamlan Moodley Ketan Nydoo",
+      "pays": "Afrique du Sud",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Paul Coldrick & Christophe Faurie",
+      "pays": "France",
+      "score": "1–4",
+      "res": "défaite",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 2,
+    "d": 1,
+    "partenaire": "Nicolas Grandemange-Denizot"
+   },
+   "equipe": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 25,
+    "f": 35,
+    "cg": 4,
+    "pct": 71,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Australie",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Singapour",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 2
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "15–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Singapour",
+      "score": "20–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "christophe-faurie": {
+   "nom": "Christophe Faurie",
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Double +40 ans",
+     "lib": "Champions du monde"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "+40 ans",
+     "lib": "Éliminé en 1er tour",
+     "etat": "fini",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Shane Pillay",
+      "pays": "Afrique du Sud",
+      "score": "4–6",
+      "res": "défaite",
+      "date": "sam 24/10"
+     }
+    ],
+    "v": 0,
+    "d": 1
+   },
+   "double": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Champions du monde",
+    "etat": "or",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Daniel Love & Brett Whitley",
+      "pays": "Angleterre",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Steve Landsbough & Matt Evans",
+      "pays": "Australie",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Chris Southall & Anthony Banner",
+      "pays": "Angleterre",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Nicolas Grandemange-Denizot & Elie Christidis",
+      "pays": "France",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 4,
+    "d": 0,
+    "partenaire": "Paul Coldrick"
+   },
+   "equipe": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 20,
+    "f": 32,
+    "cg": 2,
+    "pct": 62,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Australie",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Singapour",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "15–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Singapour",
+      "score": "20–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "frederic-moreau": {
+   "nom": "Frédéric Moreau",
+   "medailles": [],
+   "gp": [
+    {
+     "epreuve": "+40 ans",
+     "lib": "Éliminé en 1er tour",
+     "etat": "fini",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Mahier Daniels",
+      "pays": "Afrique du Sud",
+      "score": "3–6",
+      "res": "défaite",
+      "date": "sam 24/10"
+     }
+    ],
+    "v": 0,
+    "d": 1
+   },
+   "double": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Éliminé en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Margo Garth Williams Shane Pillay",
+      "pays": "Afrique du Sud",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Nicolas Grandemange-Denizot & Elie Christidis",
+      "pays": "France",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 1,
+    "d": 1,
+    "partenaire": "Jérôme Ferry"
+   },
+   "equipe": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 23,
+    "f": 33,
+    "cg": 3,
+    "pct": 70,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Australie",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Singapour",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "15–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Singapour",
+      "score": "20–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "paul-coldrick": {
+   "nom": "Paul Coldrick",
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Double +40 ans",
+     "lib": "Champions du monde"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "+40 ans",
+     "lib": "Vice-champion du monde",
+     "etat": "argent",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Éliminé en 1/8 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Ricky Chew",
+      "pays": "Singapour",
+      "score": "6–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Daniel Love",
+      "pays": "Angleterre",
+      "score": "5–6",
+      "res": "défaite",
+      "date": "dim 25/10"
+     }
+    ],
+    "v": 1,
+    "d": 1
+   },
+   "double": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Champions du monde",
+    "etat": "or",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Daniel Love & Brett Whitley",
+      "pays": "Angleterre",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Steve Landsbough & Matt Evans",
+      "pays": "Australie",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Chris Southall & Anthony Banner",
+      "pays": "Angleterre",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Nicolas Grandemange-Denizot & Elie Christidis",
+      "pays": "France",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 4,
+    "d": 0,
+    "partenaire": "Christophe Faurie"
+   },
+   "equipe": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 24,
+    "f": 34,
+    "cg": 3,
+    "pct": 71,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Australie",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Singapour",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 2,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "15–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Singapour",
+      "score": "20–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 1
+      }
+     }
+    ]
+   }
+  },
+  "jerome-ferry": {
+   "nom": "Jerome Ferry",
+   "medailles": [],
+   "gp": [
+    {
+     "epreuve": "+40 ans",
+     "lib": "Éliminé en 1/8 de finale",
+     "etat": "fini",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Chris Southall",
+      "pays": "Angleterre",
+      "score": "4–6",
+      "res": "défaite",
+      "date": "sam 24/10"
+     }
+    ],
+    "v": 0,
+    "d": 1
+   },
+   "double": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Éliminé en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Margo Garth Williams Shane Pillay",
+      "pays": "Afrique du Sud",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Nicolas Grandemange-Denizot & Elie Christidis",
+      "pays": "France",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 1,
+    "d": 1,
+    "partenaire": "Frédéric Moreau"
+   },
+   "equipe": {
+    "cat": "+40 ans",
+    "col": "#e1262d",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 8,
+    "d": 0,
+    "g": 23,
+    "f": 36,
+    "cg": 1,
+    "pct": 64,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Australie",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Singapour",
+      "score": "17–8",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "15–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "19–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Singapour",
+      "score": "20–5",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Angleterre",
+      "score": "16–9",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "dafydd-hughes": {
+   "nom": "Dafydd Hughes",
+   "medailles": [
+    {
+     "m": "bronze",
+     "epreuve": "Simple +60 ans",
+     "lib": "Médaille de bronze"
+    }
+   ],
+   "gp": [],
+   "simple": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Jamiel Adams",
+      "pays": "Afrique du Sud",
+      "score": "5–3",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Shane Robinson",
+      "pays": "Angleterre",
+      "score": "5–2",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Robert Harmston",
+      "pays": "Angleterre",
+      "score": "5–4",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Keith Brewer",
+      "pays": "Grande-Bretagne",
+      "score": "0–5",
+      "res": "défaite",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 3,
+    "d": 1
+   },
+   "equipe": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Qualifiée pour le match de la 3e place",
+    "etat": "encours",
+    "v": 5,
+    "d": 7,
+    "g": 36,
+    "f": 55,
+    "cg": 2,
+    "pct": 65,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Angleterre",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Australie",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "8–17",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Angleterre",
+      "score": "7–18",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "9–16",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre",
+      "score": "5–20",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Afrique du Sud",
+      "score": "9–16",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Australie",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "yvan-morales": {
+   "nom": "Yvan Morales",
+   "medailles": [],
+   "gp": [],
+   "simple": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Neil Jones",
+      "pays": "Angleterre",
+      "score": "0–5",
+      "res": "défaite",
+      "date": "sam 24/10"
+     }
+    ],
+    "v": 0,
+    "d": 1
+   },
+   "double": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Neil Jones & Tony Hazledine",
+      "pays": "Angleterre",
+      "score": "1–4",
+      "res": "défaite",
+      "date": "dim 25/10"
+     }
+    ],
+    "v": 0,
+    "d": 1,
+    "partenaire": "Alain Sanchez"
+   },
+   "equipe": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Qualifiée pour le match de la 3e place",
+    "etat": "encours",
+    "v": 5,
+    "d": 7,
+    "g": 19,
+    "f": 55,
+    "cg": 0,
+    "pct": 35,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Angleterre",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Australie",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "8–17",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Angleterre",
+      "score": "7–18",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "9–16",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre",
+      "score": "5–20",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Afrique du Sud",
+      "score": "9–16",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Australie",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "alain-sanchez": {
+   "nom": "Alain Sanchez",
+   "medailles": [],
+   "gp": [],
+   "simple": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Éliminé en 1/8 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "James Goodwin",
+      "pays": "Angleterre",
+      "score": "5–0",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Stu Richardson",
+      "pays": "Angleterre",
+      "score": "0–5",
+      "res": "défaite",
+      "date": "dim 25/10"
+     }
+    ],
+    "v": 1,
+    "d": 1
+   },
+   "double": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Neil Jones & Tony Hazledine",
+      "pays": "Angleterre",
+      "score": "1–4",
+      "res": "défaite",
+      "date": "dim 25/10"
+     }
+    ],
+    "v": 0,
+    "d": 1,
+    "partenaire": "Yvan Morales"
+   },
+   "equipe": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Qualifiée pour le match de la 3e place",
+    "etat": "encours",
+    "v": 5,
+    "d": 7,
+    "g": 23,
+    "f": 55,
+    "cg": 0,
+    "pct": 42,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Angleterre",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Australie",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "8–17",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Angleterre",
+      "score": "7–18",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "9–16",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre",
+      "score": "5–20",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Afrique du Sud",
+      "score": "9–16",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Australie",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "patrick-lapert": {
+   "nom": "Patrick Lapert",
+   "medailles": [
+    {
+     "m": "bronze",
+     "epreuve": "Double +60 ans",
+     "lib": "Médaille de bronze"
+    }
+   ],
+   "gp": [],
+   "simple": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Éliminé en 1er tour",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Stu Richardson",
+      "pays": "Angleterre",
+      "score": "3–5",
+      "res": "défaite",
+      "date": "sam 24/10"
+     }
+    ],
+    "v": 0,
+    "d": 1
+   },
+   "double": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "1/4 de finale",
+      "adv": "Keith Brewer & Stu Richardson",
+      "pays": "Angleterre",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Jim Goodwin & Ian Wilkinson",
+      "pays": "Angleterre",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 1,
+    "d": 1,
+    "partenaire": "Olivier Martre"
+   },
+   "equipe": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Qualifiée pour le match de la 3e place",
+    "etat": "encours",
+    "v": 5,
+    "d": 7,
+    "g": 14,
+    "f": 55,
+    "cg": 1,
+    "pct": 25,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Angleterre",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Australie",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "8–17",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Angleterre",
+      "score": "7–18",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "9–16",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre",
+      "score": "5–20",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Afrique du Sud",
+      "score": "9–16",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Australie",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "olivier-martre": {
+   "nom": "Olivier Martre",
+   "medailles": [
+    {
+     "m": "bronze",
+     "epreuve": "Double +60 ans",
+     "lib": "Médaille de bronze"
+    }
+   ],
+   "gp": [],
+   "simple": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Éliminé en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Paxton Johnson",
+      "pays": "Afrique du Sud",
+      "score": "5–4",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Karel Saaiman",
+      "pays": "Afrique du Sud",
+      "score": "5–3",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Ian Wilkinson",
+      "pays": "Angleterre",
+      "score": "3–5",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 2,
+    "d": 1
+   },
+   "double": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "1/4 de finale",
+      "adv": "Keith Brewer & Stu Richardson",
+      "pays": "Angleterre",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Jim Goodwin & Ian Wilkinson",
+      "pays": "Angleterre",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 1,
+    "d": 1,
+    "partenaire": "Patrick Lapert"
+   },
+   "equipe": {
+    "cat": "+60 ans",
+    "col": "#c07a3a",
+    "lib": "Qualifiée pour le match de la 3e place",
+    "etat": "encours",
+    "v": 5,
+    "d": 7,
+    "g": 30,
+    "f": 55,
+    "cg": 0,
+    "pct": 55,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Angleterre",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Afrique du Sud",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Australie",
+      "score": "12–13",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Angleterre",
+      "score": "8–17",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Afrique du Sud",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie",
+      "score": "14–11",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Angleterre",
+      "score": "7–18",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Afrique du Sud",
+      "score": "9–16",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Australie",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre",
+      "score": "5–20",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Afrique du Sud",
+      "score": "9–16",
+      "res": "défaite",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "mar 27/10",
+      "adv": "Australie",
+      "score": "15–10",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "arthur-crespin": {
+   "nom": "Arthur Crespin",
+   "medailles": [
+    {
+     "m": "bronze",
+     "epreuve": "Double Juniors U18",
+     "lib": "Médaille de bronze"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "Jeunes",
+     "lib": "Médaille de bronze",
+     "etat": "bronze",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "Juniors U18",
+    "col": "#18c4d8",
+    "lib": "Éliminé en 1/4 de finale",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "harry bell",
+      "pays": "Angleterre",
+      "score": "5–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Peyton Roberts",
+      "pays": "Australie",
+      "score": "5–0",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Shannon Adam Naidoo",
+      "pays": "Afrique du Sud",
+      "score": "3–5",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 2,
+    "d": 1
+   },
+   "double": {
+    "cat": "Juniors U18",
+    "col": "#18c4d8",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Josh Bruce & Harry Bell",
+      "pays": "Angleterre",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Theolandre Joubert & Shannon Adam Naidoo",
+      "pays": "Afrique du Sud",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Jake Castaldi & Dielyn Edwards",
+      "pays": "Malte",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 2,
+    "d": 1,
+    "partenaire": "Calvin Créach"
+   },
+   "equipe": {
+    "cat": "Juniors U18",
+    "col": "#18c4d8",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 10,
+    "d": 0,
+    "g": 27,
+    "f": 38,
+    "cg": 2,
+    "pct": 71,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Afrique du Sud",
+      "score": "12–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 5,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Australie",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Inde",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Irlande (U15)",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 1
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Malte",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Afrique du Sud (U15)",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie (U15)",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Mexique",
+      "score": "14–1",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre (U15)",
+      "score": "12–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "aymeric-luneau": {
+   "nom": "Aymeric Luneau",
+   "medailles": [
+    {
+     "m": "bronze",
+     "epreuve": "Simple Juniors U18",
+     "lib": "Médaille de bronze"
+    },
+    {
+     "m": "bronze",
+     "epreuve": "Double Juniors U18",
+     "lib": "Médaille de bronze"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "Jeunes",
+     "lib": "Éliminé en 2e tour",
+     "etat": "fini",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "Juniors U18",
+    "col": "#18c4d8",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Sebastian Garcia",
+      "pays": "Mexique",
+      "score": "5–0",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Seth Thicthener",
+      "pays": "Australie",
+      "score": "5–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Jayden Willemse",
+      "pays": "Afrique du Sud",
+      "score": "5–3",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Shannon Adam Naidoo",
+      "pays": "Afrique du Sud",
+      "score": "4–5",
+      "res": "défaite",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 3,
+    "d": 1
+   },
+   "double": {
+    "cat": "Juniors U18",
+    "col": "#18c4d8",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Sebastian Garcia & Gael Montanez",
+      "pays": "Mexique",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Aditi Navin & To Be Confirmed",
+      "pays": "Inde",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Jayden Donnevic Willemse Jermino Bernito Jordan Fink",
+      "pays": "Afrique du Sud",
+      "score": "0–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 2,
+    "d": 1,
+    "partenaire": "Louka Bournot"
+   },
+   "equipe": {
+    "cat": "Juniors U18",
+    "col": "#18c4d8",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 10,
+    "d": 0,
+    "g": 21,
+    "f": 33,
+    "cg": 3,
+    "pct": 64,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Afrique du Sud",
+      "score": "12–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": null
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Australie",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Inde",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Irlande (U15)",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Malte",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 0,
+       "f": 2,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Afrique du Sud (U15)",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie (U15)",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Mexique",
+      "score": "14–1",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 1
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre (U15)",
+      "score": "12–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     }
+    ]
+   }
+  },
+  "calvin-creach": {
+   "nom": "Calvin Créach",
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Simple Juniors U18",
+     "lib": "Champion du monde"
+    },
+    {
+     "m": "bronze",
+     "epreuve": "Double Juniors U18",
+     "lib": "Médaille de bronze"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "Jeunes",
+     "lib": "Vainqueur",
+     "etat": "or",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "Juniors U18",
+    "col": "#18c4d8",
+    "lib": "Champion du monde",
+    "etat": "or",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Dielyn Edwards",
+      "pays": "Malte",
+      "score": "5–2",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Jake Castaldi",
+      "pays": "Malte",
+      "score": "5–0",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Karan Gokul Seshadri",
+      "pays": "Inde",
+      "score": "5–1",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Theolandre Joubert",
+      "pays": "Afrique du Sud",
+      "score": "5–1",
+      "res": "victoire",
+      "date": "mar 27/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Shannon Adam Naidoo",
+      "pays": "Afrique du Sud",
+      "score": "5–1",
+      "res": "victoire",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 5,
+    "d": 0
+   },
+   "double": {
+    "cat": "Juniors U18",
+    "col": "#18c4d8",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Josh Bruce & Harry Bell",
+      "pays": "Angleterre",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Theolandre Joubert & Shannon Adam Naidoo",
+      "pays": "Afrique du Sud",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Jake Castaldi & Dielyn Edwards",
+      "pays": "Malte",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 2,
+    "d": 1,
+    "partenaire": "Arthur Crespin"
+   },
+   "equipe": {
+    "cat": "Juniors U18",
+    "col": "#18c4d8",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 10,
+    "d": 0,
+    "g": 31,
+    "f": 40,
+    "cg": 8,
+    "pct": 78,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Afrique du Sud",
+      "score": "12–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Australie",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Inde",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Irlande (U15)",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Malte",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 1
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Afrique du Sud (U15)",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie (U15)",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Mexique",
+      "score": "14–1",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 1
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre (U15)",
+      "score": "12–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 3
+      }
+     }
+    ]
+   }
+  },
+  "louka-bournot": {
+   "nom": "Louka Bournot",
+   "medailles": [
+    {
+     "m": "argent",
+     "epreuve": "Simple U15",
+     "lib": "Vice-champion du monde"
+    },
+    {
+     "m": "bronze",
+     "epreuve": "Double Juniors U18",
+     "lib": "Médaille de bronze"
+    }
+   ],
+   "gp": [
+    {
+     "epreuve": "Jeunes",
+     "lib": "Éliminé en 1/4 de finale",
+     "etat": "fini",
+     "partenaire": ""
+    }
+   ],
+   "simple": {
+    "cat": "U15",
+    "col": "#9fb0d8",
+    "lib": "Vice-champion du monde",
+    "etat": "argent",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Angelo Tsikouris",
+      "pays": "Australie",
+      "score": "5–1",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/8 de finale",
+      "adv": "Scotty Denston",
+      "pays": "Australie",
+      "score": "5–2",
+      "res": "victoire",
+      "date": "sam 24/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Mikey Galloway",
+      "pays": "Irlande",
+      "score": "5–4",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Mateo Marrone",
+      "pays": "Irlande",
+      "score": "5–2",
+      "res": "victoire",
+      "date": "mar 27/10"
+     },
+     {
+      "tour": "Finale",
+      "adv": "Kai Jackson",
+      "pays": "Angleterre",
+      "score": "2–5",
+      "res": "défaite",
+      "date": "mar 27/10"
+     }
+    ],
+    "v": 4,
+    "d": 1
+   },
+   "double": {
+    "cat": "Juniors U18",
+    "col": "#18c4d8",
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "matchs": [
+     {
+      "tour": "1er tour",
+      "adv": "Sebastian Garcia & Gael Montanez",
+      "pays": "Mexique",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "dim 25/10"
+     },
+     {
+      "tour": "1/4 de finale",
+      "adv": "Aditi Navin & To Be Confirmed",
+      "pays": "Inde",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "lun 26/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Jayden Donnevic Willemse Jermino Bernito Jordan Fink",
+      "pays": "Afrique du Sud",
+      "score": "0–4",
+      "res": "défaite",
+      "date": "lun 26/10"
+     }
+    ],
+    "v": 2,
+    "d": 1,
+    "partenaire": "Aymeric Luneau"
+   },
+   "equipe": {
+    "cat": "Juniors U18",
+    "col": "#18c4d8",
+    "lib": "Qualifiée pour les 1/2 finales",
+    "etat": "encours",
+    "v": 10,
+    "d": 0,
+    "g": 28,
+    "f": 39,
+    "cg": 3,
+    "pct": 72,
+    "rencontres": [
+     {
+      "date": "mar 20/10",
+      "adv": "Afrique du Sud",
+      "score": "12–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Australie",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Inde",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
+     },
+     {
+      "date": "mer 21/10",
+      "adv": "Irlande (U15)",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Malte",
+      "score": "9–6",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "jeu 22/10",
+      "adv": "Afrique du Sud (U15)",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "sam 24/10",
+      "adv": "Australie (U15)",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 1
+      }
+     },
+     {
+      "date": "dim 25/10",
+      "adv": "Mexique",
+      "score": "14–1",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre",
+      "score": "11–4",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
+     },
+     {
+      "date": "lun 26/10",
+      "adv": "Angleterre (U15)",
+      "score": "12–3",
+      "res": "victoire",
+      "phase": "Poule",
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
+     }
+    ]
+   }
+  },
+  "yvan-carric": {
+   "nom": "Yvan Carric",
+   "medailles": [],
+   "gp": [],
+   "simple": {
+    "cat": "Para fauteuil",
+    "col": "#22b04b",
+    "lib": "4e place",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "poule · 1re journée",
+      "adv": "Luke Dolan",
+      "pays": "Grande-Bretagne",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "mer 21/10"
+     },
+     {
+      "tour": "poule · 2e journée",
+      "adv": "Frankie Gillen",
+      "pays": "Grande-Bretagne",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "mer 21/10"
+     },
+     {
+      "tour": "poule · 3e journée",
+      "adv": "Dave Beaumont",
+      "pays": "Grande-Bretagne",
+      "score": "2–4",
+      "res": "défaite",
+      "date": "mer 21/10"
+     },
+     {
+      "tour": "poule · 4e journée",
+      "adv": "Mahomed Aslam Abubaker",
+      "pays": "Malawi",
+      "score": "4–2",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "poule · 5e journée",
+      "adv": "Frederik Johannes Rossouw",
+      "pays": "Afrique du Sud",
+      "score": "4–0",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "1/2 finale",
+      "adv": "Roy Kimberley",
+      "pays": "Grande-Bretagne",
+      "score": "0–5",
+      "res": "défaite",
+      "date": "ven 23/10"
+     },
+     {
+      "tour": "match pour la 3e place",
+      "adv": "Dave Beaumont",
+      "pays": "Grande-Bretagne",
+      "score": "3–5",
+      "res": "défaite",
+      "date": "ven 23/10"
+     }
+    ],
+    "v": 3,
+    "d": 4
+   }
+  },
+  "sebastien-hentry": {
+   "nom": "Sébastien Hentry",
+   "medailles": [],
+   "gp": [],
+   "simple": {
+    "cat": "Para fauteuil",
+    "col": "#22b04b",
+    "lib": "Éliminé en poule",
+    "etat": "fini",
+    "matchs": [
+     {
+      "tour": "poule · 2e journée",
+      "adv": "Roy Kimberley",
+      "pays": "Grande-Bretagne",
+      "score": "0–4",
+      "res": "défaite",
+      "date": "mer 21/10"
+     },
+     {
+      "tour": "poule · 3e journée",
+      "adv": "Craig Welsh",
+      "pays": "Pays de Galles",
+      "score": "3–4",
+      "res": "défaite",
+      "date": "mer 21/10"
+     },
+     {
+      "tour": "poule · 4e journée",
+      "adv": "Tony Southern",
+      "pays": "Grande-Bretagne",
+      "score": "2–4",
+      "res": "défaite",
+      "date": "jeu 22/10"
+     },
+     {
+      "tour": "poule · 5e journée",
+      "adv": "Gary Adams",
+      "pays": "Afrique du Sud",
+      "score": "4–1",
+      "res": "victoire",
+      "date": "jeu 22/10"
+     }
+    ],
+    "v": 1,
+    "d": 3
+   }
+  }
+ }
+}

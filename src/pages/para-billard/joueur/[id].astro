@@ -1,5 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
+import International from '../../../components/International.astro';
+import { titresMondiaux, mondialDe } from '../../../lib/mondial2026';
 import HubNav from '../../../components/HubNav.astro';
 import { getCollection } from 'astro:content';
 import { photoOf, fromPov, fmtDate, frRound, playersInText, playerSlugs } from '../../../lib/billardStats';
@@ -72,11 +74,13 @@ const winPct = career.played ? Math.round((career.wins / career.played) * 100) :
 const bestRank = Math.min(...bySeason.map((x) => x.p.rank));
 
 const palm = getParaPalmares();
-const titles: { label: string; slug: string; kind: 'saison' | 'france' | 'promo' }[] = [];
+const titles: { label: string; slug: string; kind: 'saison' | 'france' | 'promo' | 'monde'; titre?: string }[] = [];
 for (const pl of palm) {
   if (pl.champ.id === pid) titles.push({ label: pl.label, slug: pl.slug, kind: 'saison' });
   if (pl.cdf && pl.cdf.id === pid) titles.push({ label: pl.label, slug: pl.slug, kind: pl.cdfPromo ? 'promo' : 'france' });
 }
+// Titres de champion du monde (Mondial WPA Londres 2026, cf. lib/mondial2026.ts)
+for (const t of titresMondiaux(slug, name)) titles.unshift({ label: t.label, slug: '', kind: 'monde', titre: t.titre });
 // Une victoire en « promotion » (avant le CdF officiel 2025/2026) figure au palmarès
 // mais n'est pas comptée comme un titre officiel.
 const officialTitles = titles.filter((t) => t.kind !== 'promo');
@@ -249,6 +253,7 @@ const playerVideos = playerVideosFor(name, await getReplays({ discipline: 'billa
       <nav class="jtabs"><div class="jtabs-in">
         <a href="#profil" class="jtab">Profil</a>
         <a href="#saisons" class="jtab">Saison par saison</a>
+        {mondialDe(slug, name) && <a href="#international" class="jtab">International</a>}
         {rivals.length > 0 && <a href="#confrontations" class="jtab">Confrontations</a>}
         {playerVideos.length > 0 && <a href="#videos" class="jtab">Vidéos</a>}
         {lastMatch && <a href={`/para-billard/joueur/${slugOf(lastMatch.oppId)}`} class="jtab jtab-last">Dernier : {lastMatch.win ? 'V' : 'D'} {lastMatch.my}–{lastMatch.opp} vs {lastMatch.oppName}</a>}
@@ -320,8 +325,8 @@ const playerVideos = playerVideosFor(name, await getReplays({ discipline: 'billa
           <div class="car-palm-list">
             {titles.map((t) => (
               <span class={`car-palm-item ${t.kind}`}>
-                <span class="car-palm-ic">{t.kind === 'france' ? '🏆' : t.kind === 'promo' ? '🎖️' : '⭐'}</span>
-                <span class="car-palm-body"><b>{t.kind === 'france' ? 'Champion de France' : t.kind === 'promo' ? 'Champion de France · promotion' : 'Champion de saison'}</b><span>{t.label}</span></span>
+                <span class="car-palm-ic">{t.kind === 'monde' ? '🌍' : t.kind === 'france' ? '🏆' : t.kind === 'promo' ? '🎖️' : '⭐'}</span>
+                <span class="car-palm-body"><b>{t.kind === 'monde' ? t.titre : t.kind === 'france' ? 'Champion de France' : t.kind === 'promo' ? 'Champion de France · promotion' : 'Champion de saison'}</b><span>{t.label}</span></span>
               </span>
             ))}
           </div>
@@ -383,6 +388,8 @@ const playerVideos = playerVideosFor(name, await getReplays({ discipline: 'billa
           </div>
         ))}
       </div>
+
+      <International slug={slug} nom={name} />
 
       {playerVideos.length > 0 && (
         <>
