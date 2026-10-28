@@ -1,5 +1,5 @@
 {
- "maj": "28/10/2026 à 12h12",
+ "maj": "28/10/2026 à 12h23",
  "fini": false,
  "joueurs": {
   "killian-ballon": {
@@ -278,67 +278,89 @@
        "adv": "Pays de Galles",
        "date": "mar 20/10",
        "g": 2,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Madagascar",
        "date": "mar 20/10",
        "g": 4,
-       "f": 4
+       "f": 4,
+       "parfait": true,
+       "best": true
       },
       {
        "adv": "Afrique du Sud",
        "date": "mer 21/10",
        "g": 1,
-       "f": 3
+       "f": 3,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Irlande",
        "date": "jeu 22/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Maurice",
        "date": "sam 24/10",
        "g": 3,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Mexique",
        "date": "dim 25/10",
        "g": 4,
-       "f": 4
+       "f": 4,
+       "parfait": true,
+       "best": false
       },
       {
        "adv": "Angleterre",
        "date": "dim 25/10",
        "g": 1,
-       "f": 3
+       "f": 3,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Australie",
        "date": "lun 26/10",
        "g": 4,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Malte",
        "date": "lun 26/10",
        "g": 1,
-       "f": 2
+       "f": 2,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Maroc",
        "date": "mar 27/10",
        "g": 1,
-       "f": 3
+       "f": 3,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Inde",
        "date": "mar 27/10",
        "g": 3,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       }
      ]
     },
@@ -356,7 +378,9 @@
        "tour": "1er tour",
        "adv": "Hibbott",
        "a": 3,
-       "b": 6
+       "b": 6,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
@@ -374,42 +398,54 @@
        "tour": "1er tour",
        "adv": "Tanti",
        "a": 4,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": true
       },
       {
        "tour": "2e tour",
        "adv": "Bakhtaoui",
        "a": 4,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": true
       },
       {
        "tour": "1/8 de finale",
        "adv": "Caruana",
        "a": 4,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": true
       },
       {
        "tour": "1/4 de finale",
        "adv": "Azzopardi",
        "a": 4,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": true
       },
       {
        "tour": "1/2 finale",
        "adv": "Mizzi",
        "a": 4,
-       "b": 1
+       "b": 1,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "Finale",
        "adv": "Buscetti",
        "a": 4,
-       "b": 2
+       "b": 2,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
+    "titre": "Killian Ballon repart de Londres avec une médaille : champion du monde en double avec Yannick Beaufils.",
     "analyse": [
-     "Killian Ballon repart de Londres avec une médaille : champion du monde en double avec Yannick Beaufils.",
      "Par équipes, il remporte 27 de ses 42 manches (64 %) en 11 rencontres, et se classe 16e sur 60 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
      "Sa meilleure rencontre : France – Madagascar (20/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
      "En simple, il s'incline d'entrée (3–6 contre Gareth Hibbott).",
@@ -680,67 +716,89 @@
        "adv": "Pays de Galles",
        "date": "mar 20/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Madagascar",
        "date": "mar 20/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Afrique du Sud",
        "date": "mer 21/10",
        "g": 2,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Irlande",
        "date": "jeu 22/10",
        "g": 4,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Maurice",
        "date": "sam 24/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Mexique",
        "date": "dim 25/10",
        "g": 5,
-       "f": 5
+       "f": 5,
+       "parfait": true,
+       "best": true
       },
       {
        "adv": "Angleterre",
        "date": "dim 25/10",
        "g": 1,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Australie",
        "date": "lun 26/10",
        "g": 4,
-       "f": 4
+       "f": 4,
+       "parfait": true,
+       "best": false
       },
       {
        "adv": "Malte",
        "date": "lun 26/10",
        "g": 3,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Maroc",
        "date": "mar 27/10",
        "g": 1,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Inde",
        "date": "mar 27/10",
        "g": 4,
-       "f": 4
+       "f": 4,
+       "parfait": true,
+       "best": false
       }
      ]
     },
@@ -758,19 +816,25 @@
        "tour": "1er tour",
        "adv": "Forster",
        "a": 6,
-       "b": 1
+       "b": 1,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "2e tour",
        "adv": "Deans",
        "a": 6,
-       "b": 0
+       "b": 0,
+       "blanc": true,
+       "decisif": false
       },
       {
        "tour": "3e tour",
        "adv": "I'Anson",
        "a": 4,
-       "b": 6
+       "b": 6,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
@@ -788,28 +852,37 @@
        "tour": "1er tour",
        "adv": "Williams",
        "a": 4,
-       "b": 2
+       "b": 2,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "2e tour",
        "adv": "Shepherd",
        "a": 4,
-       "b": 0
+       "b": 0,
+       "blanc": true,
+       "decisif": false
       },
       {
        "tour": "1/8 de finale",
        "adv": "Roberts",
        "a": 4,
-       "b": 1
+       "b": 1,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "1/4 de finale",
        "adv": "Masskini",
        "a": 0,
-       "b": 4
+       "b": 4,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
+    "titre": null,
     "analyse": [
      "Christophe Thébeault a disputé 18 matchs à Londres sous le maillot de l'équipe de France Hommes.",
      "Par équipes, il remporte 33 de ses 48 manches (69 %) en 11 rencontres, le 3e meilleur pourcentage de l'équipe de France Hommes, et se classe 9e sur 60 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
@@ -1133,67 +1206,89 @@
        "adv": "Pays de Galles",
        "date": "mar 20/10",
        "g": 2,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Madagascar",
        "date": "mar 20/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Afrique du Sud",
        "date": "mer 21/10",
        "g": 3,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Irlande",
        "date": "jeu 22/10",
        "g": 4,
-       "f": 4
+       "f": 4,
+       "parfait": true,
+       "best": false
       },
       {
        "adv": "Maurice",
        "date": "sam 24/10",
        "g": 4,
-       "f": 4
+       "f": 4,
+       "parfait": true,
+       "best": false
       },
       {
        "adv": "Mexique",
        "date": "dim 25/10",
        "g": 3,
-       "f": 3
+       "f": 3,
+       "parfait": true,
+       "best": false
       },
       {
        "adv": "Angleterre",
        "date": "dim 25/10",
        "g": 1,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Australie",
        "date": "lun 26/10",
        "g": 2,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Malte",
        "date": "lun 26/10",
        "g": 5,
-       "f": 5
+       "f": 5,
+       "parfait": true,
+       "best": true
       },
       {
        "adv": "Maroc",
        "date": "mar 27/10",
        "g": 4,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Inde",
        "date": "mar 27/10",
        "g": 3,
-       "f": 3
+       "f": 3,
+       "parfait": true,
+       "best": false
       }
      ]
     },
@@ -1211,43 +1306,57 @@
        "tour": "1er tour",
        "adv": "Williams",
        "a": 6,
-       "b": 0
+       "b": 0,
+       "blanc": true,
+       "decisif": false
       },
       {
        "tour": "2e tour",
        "adv": "Caruana",
        "a": 6,
-       "b": 2
+       "b": 2,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "3e tour",
        "adv": "Elliott",
        "a": 6,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "1/8 de finale",
        "adv": "Smout",
        "a": 6,
-       "b": 4
+       "b": 4,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "1/4 de finale",
        "adv": "Ech-Chorfy",
        "a": 6,
-       "b": 0
+       "b": 0,
+       "blanc": true,
+       "decisif": false
       },
       {
        "tour": "1/2 finale",
        "adv": "Martin",
        "a": 6,
-       "b": 2
+       "b": 2,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "Finale",
        "adv": "Hibbott",
        "a": 1,
-       "b": 6
+       "b": 6,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
@@ -1265,36 +1374,46 @@
        "tour": "2e tour",
        "adv": "Barnard",
        "a": 4,
-       "b": 1
+       "b": 1,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "1/8 de finale",
        "adv": "Damry",
        "a": 4,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": true
       },
       {
        "tour": "1/4 de finale",
        "adv": "Martin",
        "a": 4,
-       "b": 1
+       "b": 1,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "1/2 finale",
        "adv": "Masskini",
        "a": 4,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": true
       },
       {
        "tour": "Finale",
        "adv": "Ballon",
        "a": 2,
-       "b": 4
+       "b": 4,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
+    "titre": "Christophe Lambert repart de Londres avec 2 médailles : vice-champion du monde en simple et vice-champion du monde en double avec Alexandre Buscetti.",
     "analyse": [
-     "Christophe Lambert repart de Londres avec 2 médailles : vice-champion du monde en simple et vice-champion du monde en double avec Alexandre Buscetti.",
      "Par équipes, il remporte 34 de ses 46 manches (74 %) en 11 rencontres, le meilleur pourcentage de l'équipe de France Hommes, et se classe 4e sur 60 joueurs de l'épreuve. Il signe 13 « casse et gagne », le meilleur total de l'équipe.",
      "Sa meilleure rencontre : France – Malte (26/10), avec 5 manches sur 5, et 5 rencontres sans perdre une manche.",
      "En simple, il gagne 37 manches pour 17 concédées sur l'ensemble du tableau, dont 2 victoires sans perdre une manche.",
@@ -1563,67 +1682,89 @@
        "adv": "Pays de Galles",
        "date": "mar 20/10",
        "g": 3,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Madagascar",
        "date": "mar 20/10",
        "g": 4,
-       "f": 4
+       "f": 4,
+       "parfait": true,
+       "best": false
       },
       {
        "adv": "Afrique du Sud",
        "date": "mer 21/10",
        "g": 0,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Irlande",
        "date": "jeu 22/10",
        "g": 2,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Maurice",
        "date": "sam 24/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Mexique",
        "date": "dim 25/10",
        "g": 5,
-       "f": 5
+       "f": 5,
+       "parfait": true,
+       "best": true
       },
       {
        "adv": "Angleterre",
        "date": "dim 25/10",
        "g": 2,
-       "f": 3
+       "f": 3,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Australie",
        "date": "lun 26/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Malte",
        "date": "lun 26/10",
        "g": 1,
-       "f": 3
+       "f": 3,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Maroc",
        "date": "mar 27/10",
        "g": 2,
-       "f": 2
+       "f": 2,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Inde",
        "date": "mar 27/10",
        "g": 4,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       }
      ]
     },
@@ -1641,7 +1782,9 @@
        "tour": "1er tour",
        "adv": "Castaldi",
        "a": 4,
-       "b": 6
+       "b": 6,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
@@ -1659,36 +1802,46 @@
        "tour": "2e tour",
        "adv": "Barnard",
        "a": 4,
-       "b": 1
+       "b": 1,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "1/8 de finale",
        "adv": "Damry",
        "a": 4,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": true
       },
       {
        "tour": "1/4 de finale",
        "adv": "Martin",
        "a": 4,
-       "b": 1
+       "b": 1,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "1/2 finale",
        "adv": "Masskini",
        "a": 4,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": true
       },
       {
        "tour": "Finale",
        "adv": "Ballon",
        "a": 2,
-       "b": 4
+       "b": 4,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
+    "titre": "Alexandre Buscetti repart de Londres avec une médaille : vice-champion du monde en double avec Christophe Lambert.",
     "analyse": [
-     "Alexandre Buscetti repart de Londres avec une médaille : vice-champion du monde en double avec Christophe Lambert.",
      "Par équipes, il remporte 29 de ses 43 manches (67 %) en 11 rencontres, et se classe 12e sur 60 joueurs de l'épreuve. Il signe 8 « casse et gagne ».",
      "Sa meilleure rencontre : France – Mexique (25/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
      "En simple, il s'incline d'entrée (4–6 contre Clayton Castaldi).",
@@ -1988,67 +2141,89 @@
        "adv": "Pays de Galles",
        "date": "mar 20/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Madagascar",
        "date": "mar 20/10",
        "g": 5,
-       "f": 5
+       "f": 5,
+       "parfait": true,
+       "best": true
       },
       {
        "adv": "Afrique du Sud",
        "date": "mer 21/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Irlande",
        "date": "jeu 22/10",
        "g": 2,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Maurice",
        "date": "sam 24/10",
        "g": 4,
-       "f": 4
+       "f": 4,
+       "parfait": true,
+       "best": false
       },
       {
        "adv": "Mexique",
        "date": "dim 25/10",
        "g": 4,
-       "f": 4
+       "f": 4,
+       "parfait": true,
+       "best": false
       },
       {
        "adv": "Angleterre",
        "date": "dim 25/10",
        "g": 4,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Australie",
        "date": "lun 26/10",
        "g": 2,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Malte",
        "date": "lun 26/10",
        "g": 3,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Maroc",
        "date": "mar 27/10",
        "g": 2,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Inde",
        "date": "mar 27/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       }
      ]
     },
@@ -2066,19 +2241,25 @@
        "tour": "1er tour",
        "adv": "Tanti",
        "a": 6,
-       "b": 0
+       "b": 0,
+       "blanc": true,
+       "decisif": false
       },
       {
        "tour": "2e tour",
        "adv": "Shepherd",
        "a": 6,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "3e tour",
        "adv": "Klinka",
        "a": 1,
-       "b": 6
+       "b": 6,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
@@ -2096,42 +2277,54 @@
        "tour": "1er tour",
        "adv": "Tanti",
        "a": 4,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": true
       },
       {
        "tour": "2e tour",
        "adv": "Bakhtaoui",
        "a": 4,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": true
       },
       {
        "tour": "1/8 de finale",
        "adv": "Caruana",
        "a": 4,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": true
       },
       {
        "tour": "1/4 de finale",
        "adv": "Azzopardi",
        "a": 4,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": true
       },
       {
        "tour": "1/2 finale",
        "adv": "Mizzi",
        "a": 4,
-       "b": 1
+       "b": 1,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "Finale",
        "adv": "Buscetti",
        "a": 4,
-       "b": 2
+       "b": 2,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
+    "titre": "Yannick Beaufils repart de Londres avec une médaille : champion du monde en double avec Killian Ballon.",
     "analyse": [
-     "Yannick Beaufils repart de Londres avec une médaille : champion du monde en double avec Killian Ballon.",
      "Par équipes, il remporte 35 de ses 48 manches (73 %) en 11 rencontres, le 2e meilleur pourcentage de l'équipe de France Hommes, et se classe 5e sur 60 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
      "Sa meilleure rencontre : France – Madagascar (20/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
      "En simple, il remporte 2 matchs avant de s'arrêter au 3e tour (1–6 contre Alexis Klinka), dont 1 victoire sans perdre une manche.",
@@ -2431,67 +2624,89 @@
        "adv": "Pays de Galles",
        "date": "mar 20/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Madagascar",
        "date": "mar 20/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Afrique du Sud",
        "date": "mer 21/10",
        "g": 4,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Irlande",
        "date": "jeu 22/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Maurice",
        "date": "sam 24/10",
        "g": 2,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Mexique",
        "date": "dim 25/10",
        "g": 4,
-       "f": 4
+       "f": 4,
+       "parfait": true,
+       "best": true
       },
       {
        "adv": "Angleterre",
        "date": "dim 25/10",
        "g": 1,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Australie",
        "date": "lun 26/10",
        "g": 3,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Malte",
        "date": "lun 26/10",
        "g": 2,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Maroc",
        "date": "mar 27/10",
        "g": 2,
-       "f": 5
+       "f": 5,
+       "parfait": false,
+       "best": false
       },
       {
        "adv": "Inde",
        "date": "mar 27/10",
        "g": 1,
-       "f": 4
+       "f": 4,
+       "parfait": false,
+       "best": false
       }
      ]
     },
@@ -2509,31 +2724,41 @@
        "tour": "1er tour",
        "adv": "Frayne",
        "a": 6,
-       "b": 0
+       "b": 0,
+       "blanc": true,
+       "decisif": false
       },
       {
        "tour": "2e tour",
        "adv": "Powell",
        "a": 6,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "3e tour",
        "adv": "Beaufils",
        "a": 6,
-       "b": 1
+       "b": 1,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "1/8 de finale",
        "adv": "Parry-Williams",
        "a": 6,
-       "b": 3
+       "b": 3,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "1/4 de finale",
        "adv": "Martin",
        "a": 4,
-       "b": 6
+       "b": 6,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
@@ -2551,28 +2776,37 @@
        "tour": "1er tour",
        "adv": "Williams",
        "a": 4,
-       "b": 2
+       "b": 2,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "2e tour",
        "adv": "Shepherd",
        "a": 4,
-       "b": 0
+       "b": 0,
+       "blanc": true,
+       "decisif": false
       },
       {
        "tour": "1/8 de finale",
        "adv": "Roberts",
        "a": 4,
-       "b": 1
+       "b": 1,
+       "blanc": false,
+       "decisif": false
       },
       {
        "tour": "1/4 de finale",
        "adv": "Masskini",
        "a": 0,
-       "b": 4
+       "b": 4,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
+    "titre": null,
     "analyse": [
      "Alexis Klinka a disputé 20 matchs à Londres sous le maillot de l'équipe de France Hommes.",
      "Par équipes, il remporte 28 de ses 48 manches (58 %) en 11 rencontres. Il signe 9 « casse et gagne ».",

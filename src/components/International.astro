@@ -19,7 +19,7 @@ const ligne = (m: MondialMatch) => m.res === 'victoire' ? 'v' : m.res === 'défa
 // Statistiques + analyse (présentes quand son Mondial est terminé) et graphiques en barres empilées :
 // manches gagnées (bleu du site) / perdues (gris neutre), chiffre au-dessus de chaque barre, info-bulle au survol.
 const S = (j as any)?.stats;
-type Barre = { lab: string; sub: string; g: number; p: number; tip: string; v: string };
+type Barre = { lab: string; sub: string; g: number; p: number; tip: string; v: string; mk?: string; best?: boolean };
 const graphe = (bs: Barre[]) => {
   const W = 46, gap = 10, H = 120, top = 18, max = Math.max(1, ...bs.map((b) => b.g + b.p));
   return { w: bs.length * (W + gap) + gap, h: top + H + 34, W, gap, H, top, k: H / max, bs };
@@ -28,12 +28,24 @@ const ABR: Record<string, string> = { 'Pays de Galles': 'Galles', 'Afrique du Su
 const court = (s: string) => { s = ABR[s] || s; return s.length > 9 ? s.slice(0, 8).trimEnd() + '.' : s; };
 const graphes: { t: string; note: string; g: ReturnType<typeof graphe> }[] = [];
 if (S?.equipe?.serie?.length) graphes.push({ t: 'Par équipes, rencontre après rencontre', note: "rencontres de poule : le détail des matchs à élimination directe n'est pas publié",
-  g: graphe(S.equipe.serie.map((r: any) => ({ lab: r.adv, sub: r.date.split(' ')[1] || r.date, g: r.g, p: r.f - r.g, v: `${r.g}/${r.f}`, tip: `${r.date} · France – ${r.adv} : ${r.g}/${r.f} manches` }))) });
+  g: graphe(S.equipe.serie.map((r: any) => ({ lab: r.adv, sub: r.date.split(' ')[1] || r.date, g: r.g, p: r.f - r.g, v: `${r.g}/${r.f}`, mk: r.parfait ? '★' : '', best: r.best,
+    tip: `${r.date} · France – ${r.adv} : ${r.g}/${r.f} manches${r.parfait ? ' · sans perdre une manche' : ''}${r.best ? ' · sa meilleure rencontre' : ''}` }))) });
 for (const k of ['simple', 'double'] as const) {
   if (!S?.[k]?.serie?.length) continue;
   graphes.push({ t: `${k === 'simple' ? 'En simple' : `En double avec ${j?.double?.partenaire}`}, match après match`, note: "ses manches face à celles de l'adversaire",
-    g: graphe(S[k].serie.map((m: any) => ({ lab: m.adv, sub: m.tour.replace(' de finale', '').replace('Finale', 'finale'), g: m.a, p: m.b, v: `${m.a}–${m.b}`, tip: `${m.tour} · ${m.adv} : ${m.a}–${m.b}` }))) });
+    g: graphe(S[k].serie.map((m: any) => ({ lab: m.adv, sub: m.tour.replace(' de finale', '').replace('Finale', 'finale'), g: m.a, p: m.b, v: `${m.a}–${m.b}`,
+      mk: m.blanc ? '★' : m.decisif ? '⚡' : '', tip: `${m.tour} · ${m.adv} : ${m.a}–${m.b}${m.blanc ? ' · sans perdre une manche' : m.decisif ? ' · gagné à la manche décisive' : ''}` }))) });
 }
+const avecMk = (c: string) => graphes.some((x) => x.g.bs.some((b) => b.mk === c));
+// Ronds : pourcentage de manches gagnées par épreuve et sur tout le Mondial (même échelle pour tous)
+const ronds = S ? [
+  S.equipe && { t: 'Par équipes', pct: S.equipe.pct, g: S.equipe.g, f: S.equipe.f, s: `${S.equipe.rencontres} rencontres` },
+  S.simple && S.simple.g + S.simple.p > 0 && { t: 'En simple', pct: S.simple.pct, g: S.simple.g, f: S.simple.g + S.simple.p, s: `${S.simple.serie.length} matchs` },
+  S.double && S.double.g + S.double.p > 0 && { t: 'En double', pct: S.double.pct, g: S.double.g, f: S.double.g + S.double.p, s: `avec ${(j?.double?.partenaire || '').split(' ').slice(-1)[0]}` },
+  S.kpi.f > 0 && { t: 'Tout le Mondial', pct: S.kpi.pct, g: S.kpi.g, f: S.kpi.f, s: `${S.kpi.matchs} matchs`, tout: true },
+].filter(Boolean) as { t: string; pct: number; g: number; f: number; s: string; tout?: boolean }[] : [];
+const RC = 2 * Math.PI * 34;
+const E2 = S?.equipe;
 ---
 {j && (
   <>
@@ -55,14 +67,37 @@ for (const k of ['simple', 'double'] as const) {
       <div class="intl-body" id="mondial-2026-detail" hidden>
         {S && (
           <div class="intl-an">
-            <div class="intl-kpis">
-              <div><b>{S.kpi.matchs}</b><span>matchs joués</span></div>
-              <div><b>{S.kpi.pct} %</b><span>de manches gagnées ({S.kpi.g}/{S.kpi.f})</span></div>
-              <div><b>{S.kpi.cg}</b><span>« casse et gagne » par équipes</span></div>
-              <div><b>{S.kpi.medailles}</b><span>médaille{S.kpi.medailles > 1 ? 's' : ''} mondiale{S.kpi.medailles > 1 ? 's' : ''}</span></div>
+            {S.titre && <p class="intl-titre">{S.titre}</p>}
+            <div class="intl-ronds">
+              {ronds.map((r) => (
+                <div class={`intl-rond${r.tout ? ' tout' : ''}`}>
+                  <svg viewBox="0 0 84 84" width="96" height="96" role="img" aria-label={`${r.t} : ${r.pct} % de manches gagnées (${r.g} sur ${r.f})`}>
+                    <circle cx="42" cy="42" r="34" class="trk" />
+                    <circle cx="42" cy="42" r="34" class="val" stroke-dasharray={`${(RC * r.pct) / 100} ${RC}`} transform="rotate(-90 42 42)" />
+                    <text x="42" y="47" class="pct">{r.pct} %</text>
+                  </svg>
+                  <b>{r.t}</b><span>{r.g} / {r.f} manches · {r.s}</span>
+                </div>
+              ))}
             </div>
+            {E2 && (E2.rang_comp || E2.rang_eq || E2.cg > 0) && (
+              <div class="intl-pills">
+                {E2.rang_comp && E2.rang_comp[0] <= Math.max(10, Math.floor(E2.rang_comp[1] / 3)) && (
+                  <div class="intl-pill"><b>{E2.rang_comp[0]}<sup>{E2.rang_comp[0] === 1 ? 'er' : 'e'}</sup> / {E2.rang_comp[1]}</b><span>joueurs de l'épreuve par équipes {E2 && j?.equipe?.cat}, au pourcentage</span>
+                    <span class="intl-reg" aria-hidden="true"><i style={`left:${((E2.rang_comp[0] - 1) / Math.max(1, E2.rang_comp[1] - 1)) * 100}%`}></i></span></div>
+                )}
+                {E2.rang_eq && E2.rang_eq <= 3 && (
+                  <div class="intl-pill"><b>{E2.rang_eq === 1 ? '1er' : `${E2.rang_eq}e`}</b><span>de l'équipe de France {j?.equipe?.cat} au pourcentage de manches</span></div>
+                )}
+                {E2.cg > 0 && (
+                  <div class="intl-pill"><b>{E2.cg}</b><span>« casse et gagne »{E2.rang_cg === 1 ? ', meilleur total de l’équipe' : ''}</span></div>
+                )}
+              </div>
+            )}
             <div class="intl-ana"><div class="intl-ana-h">L'analyse</div>{S.analyse.map((t: string) => <p>{t}</p>)}</div>
-            {graphes.length > 0 && <div class="intl-leg"><span><i class="w"></i>Manches gagnées</span><span><i class="l"></i>Manches perdues</span></div>}
+            {graphes.length > 0 && <div class="intl-leg"><span><i class="w"></i>Manches gagnées</span><span><i class="l"></i>Manches perdues</span>
+              {avecMk('★') && <span><em>★</em>sans perdre une manche</span>}{avecMk('⚡') && <span><em>⚡</em>gagné à la manche décisive</span>}
+              {graphes.some((x) => x.g.bs.some((b) => b.best)) && <span><i class="bst"></i>sa meilleure rencontre</span>}</div>}
             {graphes.map((x) => (
               <figure class="intl-g">
                 <figcaption>{x.t} <small>({x.note})</small></figcaption>
@@ -71,7 +106,9 @@ for (const k of ['simple', 'double'] as const) {
                     <g class="intl-b"><title>{b.tip}</title>
                       <rect x={xx} y={y0 - b.g * x.g.k} width={x.g.W} height={Math.max(0, b.g * x.g.k - (b.p ? 1 : 0))} rx="3" class="w" />
                       {b.p > 0 && <rect x={xx} y={y0 - (b.g + b.p) * x.g.k} width={x.g.W} height={Math.max(0, b.p * x.g.k - 1)} rx="3" class="l" />}
+                      {b.best && <rect x={xx - 2} y={y0 - (b.g + b.p) * x.g.k - 2} width={x.g.W + 4} height={(b.g + b.p) * x.g.k + 2} rx="4" class="bst" />}
                       <text x={xx + x.g.W / 2} y={y0 - (b.g + b.p) * x.g.k - 5} class="v">{b.v}</text>
+                      {b.mk && <text x={xx + x.g.W / 2} y={y0 - 6} class="mk">{b.mk}</text>}
                       <text x={xx + x.g.W / 2} y={y0 + 14} class="x">{court(b.lab)}</text>
                       <text x={xx + x.g.W / 2} y={y0 + 27} class="x2">{b.sub}</text>
                     </g>); })}
@@ -163,6 +200,28 @@ for (const k of ['simple', 'double'] as const) {
   .intl-g text.x2 { font-size: 10px; fill: var(--ink-faint); }
   .intl-g line.base { stroke: var(--line-strong); stroke-width: 1; }
   .intl-b:hover rect { opacity: .82; }
+  .intl-g rect.bst { fill: none; stroke: #E4B23C; stroke-width: 2; }
+  .intl-b:hover rect.bst { opacity: 1; }
+  .intl-g text.mk { font-size: 13px; fill: #fff; font-family: inherit; }
+  .intl-leg em { font-style: normal; margin-right: 5px; }
+  .intl-leg i.bst { background: none; border: 2px solid #E4B23C; }
+  .intl-titre { margin: 0; font-family: var(--display); font-size: 19px; font-weight: 700; line-height: 1.3; color: var(--ink); text-align: left; }
+  .intl-ronds { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .intl-rond { border: 1px solid var(--line); border-radius: 12px; padding: 12px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; }
+  .intl-rond.tout { border-color: color-mix(in srgb, var(--c-billard) 45%, var(--line)); background: color-mix(in srgb, var(--c-billard) 5%, var(--surface)); }
+  .intl-rond circle { fill: none; stroke-width: 8; }
+  .intl-rond circle.trk { stroke: var(--line); }
+  .intl-rond circle.val { stroke: #1E7BE0; stroke-linecap: round; }
+  .intl-rond text.pct { text-anchor: middle; font-family: var(--display); font-size: 17px; font-weight: 700; fill: var(--ink); }
+  .intl-rond b { font-size: 14px; margin-top: 4px; }
+  .intl-rond span { font-size: 12px; color: var(--ink-soft); }
+  .intl-pills { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+  .intl-pill { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; gap: 3px; }
+  .intl-pill b { font-family: var(--display); font-size: 24px; line-height: 1.1; color: var(--c-billard); }
+  .intl-pill b sup { font-size: .55em; }
+  .intl-pill span { font-size: 12.5px; color: var(--ink-soft); }
+  .intl-reg { position: relative; height: 8px; margin-top: 6px; border-radius: 4px; background: repeating-linear-gradient(90deg, var(--line-strong) 0 1px, transparent 1px 6px), var(--surface-2, var(--line)); }
+  .intl-reg i { position: absolute; top: -4px; width: 4px; height: 16px; margin-left: -2px; border-radius: 2px; background: var(--c-billard); }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .intl-g rect.l { fill: #5a6274; } :root:not([data-theme="light"]) .intl-leg i.l { background: #5a6274; } }
   :root[data-theme="dark"] .intl-g rect.l { fill: #5a6274; } :root[data-theme="dark"] .intl-leg i.l { background: #5a6274; }
   @media (max-width: 640px) { .intl-kpis { grid-template-columns: repeat(2, 1fr); } .intl-kpis b { font-size: 22px; } }
