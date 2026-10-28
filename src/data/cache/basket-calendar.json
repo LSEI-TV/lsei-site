@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-27T19:46:11.258Z",
+  "updated": "2026-10-28T15:18:06.624Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
   "pool": "Poule B",
   "matches": [
@@ -367,6 +367,8 @@
       "date": "2026-10-27",
       "homeSlug": "rennes",
       "awaySlug": "vitre",
+      "homeScore": 96,
+      "awayScore": 64,
       "journee": 8
     },
     {

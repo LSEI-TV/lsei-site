@@ -1,11 +1,22 @@
 {
-  "updated": "2026-10-27T19:46:10.422Z",
+  "updated": "2026-10-28T15:18:05.827Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/classement",
   "pool": "Poule B",
   "rows": [
     {
-      "slug": "challans",
+      "slug": "rennes",
       "rank": 1,
+      "pts": 12,
+      "played": 7,
+      "w": 5,
+      "l": 2,
+      "pf": 616,
+      "pa": 552,
+      "diff": 64
+    },
+    {
+      "slug": "challans",
+      "rank": 2,
       "pts": 12,
       "played": 7,
       "w": 5,
@@ -16,7 +27,7 @@
     },
     {
       "slug": "tours",
-      "rank": 2,
+      "rank": 3,
       "pts": 12,
       "played": 8,
       "w": 4,
@@ -27,7 +38,7 @@
     },
     {
       "slug": "lorient",
-      "rank": 3,
+      "rank": 4,
       "pts": 12,
       "played": 8,
       "w": 4,
@@ -38,7 +49,7 @@
     },
     {
       "slug": "tarbes",
-      "rank": 4,
+      "rank": 5,
       "pts": 11,
       "played": 6,
       "w": 5,
@@ -49,7 +60,7 @@
     },
     {
       "slug": "fougeres",
-      "rank": 5,
+      "rank": 6,
       "pts": 11,
       "played": 7,
       "w": 4,
@@ -57,17 +68,6 @@
       "pf": 499,
       "pa": 540,
       "diff": -41
-    },
-    {
-      "slug": "rennes",
-      "rank": 6,
-      "pts": 10,
-      "played": 6,
-      "w": 4,
-      "l": 2,
-      "pf": 520,
-      "pa": 488,
-      "diff": 32
     },
     {
       "slug": "toulouse",
@@ -103,8 +103,19 @@
       "diff": -10
     },
     {
-      "slug": "bordeaux",
+      "slug": "vitre",
       "rank": 10,
+      "pts": 10,
+      "played": 7,
+      "w": 3,
+      "l": 4,
+      "pf": 516,
+      "pa": 541,
+      "diff": -25
+    },
+    {
+      "slug": "bordeaux",
+      "rank": 11,
       "pts": 10,
       "played": 8,
       "w": 2,
@@ -115,7 +126,7 @@
     },
     {
       "slug": "chartres",
-      "rank": 11,
+      "rank": 12,
       "pts": 10,
       "played": 7,
       "w": 3,
@@ -123,17 +134,6 @@
       "pf": 556,
       "pa": 587,
       "diff": -31
-    },
-    {
-      "slug": "vitre",
-      "rank": 12,
-      "pts": 9,
-      "played": 6,
-      "w": 3,
-      "l": 3,
-      "pf": 452,
-      "pa": 445,
-      "diff": 7
     },
     {
       "slug": "laval",
