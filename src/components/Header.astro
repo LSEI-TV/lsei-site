@@ -54,6 +54,20 @@ today = today.charAt(0).toUpperCase() + today.slice(1);
 </header>
 
 <script is:inline>
+  // Thème HALLOWEEN : s'active tout seul pendant la fenêtre ci-dessous (calcul dans le
+  // navigateur → s'allume et s'éteint sans redéploiement), retour au header habituel après.
+  // Aperçu immédiat hors fenêtre : ajouter ?halloween=1 à l'URL.
+  (function () {
+    try {
+      var START = new Date('2026-10-30T19:00:00');   // allumage : vendredi 30/10 à 19h
+      var END = new Date('2026-11-02T06:00:00');      // extinction : lundi 02/11 au matin (retour habituel)
+      var force = /[?&]halloween=1(?:&|$)/.test(location.search);
+      if (force || (Date.now() >= START.getTime() && Date.now() < END.getTime())) {
+        document.documentElement.setAttribute('data-hw', '1');
+      }
+    } catch (e) {}
+  })();
+
   // Date du jour, calculée dans le navigateur → toujours à jour (pas figée au build).
   (function () {
     var el = document.getElementById('js-today');
@@ -90,3 +104,84 @@ today = today.charAt(0).toUpperCase() + today.slice(1);
     });
   })();
 </script>
+
+<style is:global>
+  /* ======= Thème HALLOWEEN (activé par data-hw="1" sur <html>, cf. script ci-dessus) =======
+     Déployé une fois : s'allume pendant la fenêtre et revient au header habituel après,
+     sans redéploiement. Toiles d'araignée dans les coins, bandeau nuit, bouton citrouille. */
+  :root[data-hw="1"] .util {
+    background: linear-gradient(90deg, #170b26 0%, #3a1608 100%);
+    color: #ffcf8a; border-bottom: 1px solid #4a2a12;
+  }
+  :root[data-hw="1"] .util .left { color: #ffcf8a; }
+  :root[data-hw="1"] .util .left b { color: #ff8c1a; }
+  :root[data-hw="1"] .util .right { color: #ffcf8a; }
+  :root[data-hw="1"] .util .right a:hover { color: #ff8c1a; }
+  :root[data-hw="1"] .util .left::after {
+    content: "🎃 Spécial Halloween"; font-weight: 700; color: #ff8c1a; white-space: nowrap;
+  }
+  :root[data-hw="1"] .util .right::before {
+    content: "🦇"; font-size: 13px; animation: hw-bat 3s ease-in-out infinite;
+  }
+
+  /* Toiles d'araignée dans les coins du masthead (la droite s'efface sur petit écran) */
+  :root[data-hw="1"] .masthead::before,
+  :root[data-hw="1"] .masthead::after {
+    content: "🕸️"; position: absolute; top: -2px; font-size: 28px; opacity: .5;
+    pointer-events: none; z-index: 1;
+  }
+  :root[data-hw="1"] .masthead::before { left: 2px; }
+  :root[data-hw="1"] .masthead::after { right: 2px; transform: scaleX(-1); }
+
+  /* Bouton « Regarder le direct » en citrouille lumineuse */
+  :root[data-hw="1"] .masthead .btn,
+  :root[data-hw="1"] .btn-live {
+    background: linear-gradient(180deg, #ff8c1a, #e8600b); color: #1a0f04;
+    box-shadow: 0 0 0 1px rgba(255,140,26,.55), 0 6px 18px rgba(255,120,20,.45);
+  }
+  :root[data-hw="1"] .masthead .btn:hover,
+  :root[data-hw="1"] .btn-live:hover { background: linear-gradient(180deg, #ff9f3d, #d1560a); }
+  :root[data-hw="1"] nav.main a.active { border-color: #ff8c1a; }
+  :root[data-hw="1"] .search-link.active { color: #ff8c1a; }
+
+  @keyframes hw-bat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+  @media (prefers-reduced-motion: reduce) { :root[data-hw="1"] .util .right::before { animation: none; } }
+  @media (max-width: 900px) { :root[data-hw="1"] .masthead::after { display: none; } }
+  @media (max-width: 640px) {
+    :root[data-hw="1"] .masthead::before { font-size: 22px; }
+    :root[data-hw="1"] .util .left::after { content: "🎃 Halloween"; }
+  }
+
+  /* ---- Décor Halloween du hero d'accueil (markup .hw-deco / .hw-pumpkin dans index.astro) ---- */
+  .hw-deco, .hw-pumpkin, .hw-scene { display: none; }
+  :root[data-hw="1"] .hw-deco { display: block; position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+  :root[data-hw="1"] .hw-web { position: absolute; top: -10px; font-size: 48px; opacity: .4; }
+  :root[data-hw="1"] .hw-web-l { left: -8px; }
+  :root[data-hw="1"] .hw-web-r { right: -8px; transform: scaleX(-1); }
+  /* citrouille d'Halloween, centrée entre le compte à rebours (gauche) et la vidéo (droite) */
+  /* scène en arrière-plan : marécage deviné + fumée qui dérive */
+  :root[data-hw="1"] .hw-scene { display: block; position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  /* brume qui couvre toute l'image, en nappes qui dérivent lentement */
+  :root[data-hw="1"] .hw-fog { position: absolute; border-radius: 50%; filter: blur(36px); mix-blend-mode: screen;
+    background: radial-gradient(ellipse at center, rgba(178,190,208,.5), rgba(178,190,208,0) 70%); }
+  :root[data-hw="1"] .hw-fog-1 { width: 540px; height: 210px; left: -5%; top: 8%;   opacity: .4;  animation: hw-drift 30s ease-in-out infinite; }
+  :root[data-hw="1"] .hw-fog-2 { width: 640px; height: 240px; right: -6%; top: 22%; opacity: .34; animation: hw-drift 42s ease-in-out infinite reverse; }
+  :root[data-hw="1"] .hw-fog-3 { width: 720px; height: 280px; left: 26%; top: 40%;  opacity: .3;  animation: hw-drift 36s ease-in-out infinite; animation-delay: -8s; }
+  :root[data-hw="1"] .hw-fog-4 { width: 500px; height: 200px; left: 2%;  bottom: 0%; opacity: .42; animation: hw-drift 28s ease-in-out infinite reverse; animation-delay: -14s; }
+  :root[data-hw="1"] .hw-fog-5 { width: 580px; height: 220px; right: 1%; bottom: 4%; opacity: .36; animation: hw-drift 38s ease-in-out infinite; animation-delay: -5s; }
+  @keyframes hw-drift { 0%, 100% { transform: translateX(-18px); } 50% { transform: translateX(26px); } }
+  @media (prefers-reduced-motion: reduce) { :root[data-hw="1"] .hw-fog { animation: none; } }
+
+  /* grosse citrouille EN ARRIÈRE-PLAN (z-index 0) : derrière le cadre vidéo et les textes, elle émerge du bas */
+  :root[data-hw="1"] .hw-pumpkin { display: block; position: absolute; left: 50%; bottom: -90px; transform: translateX(-50%);
+    width: 430px; z-index: 0; pointer-events: none; filter: drop-shadow(0 0 34px rgba(255,140,30,.28)); }
+  :root[data-hw="1"] .hw-pumpkin svg { display: block; width: 100%; height: auto; }
+  @media (max-width: 900px) {
+    /* le hero passe en 1 colonne : plus d'espace « entre » le compte à rebours et la vidéo */
+    :root[data-hw="1"] .hw-pumpkin, :root[data-hw="1"] .hw-scene { display: none; }
+  }
+  @media (max-width: 640px) {
+    :root[data-hw="1"] .hw-web { font-size: 34px; }
+    :root[data-hw="1"] .hw-web-r { display: none; }
+  }
+</style>
