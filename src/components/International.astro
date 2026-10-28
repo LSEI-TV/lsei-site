@@ -62,7 +62,7 @@ const ligne = (m: MondialMatch) => m.res === 'victoire' ? 'v' : m.res === 'défa
           <p class="intl-gp"><b>World Grand Prix</b> (tournoi annexe, hors titres mondiaux) : {j.gp.map((g, i) => <>{i > 0 && ' · '}{g.epreuve}{g.partenaire && ` avec ${g.partenaire}`} — <span class={g.etat === 'or' ? 'intl-gpw' : ''}>{g.etat === 'or' ? '🏆 ' : ''}{g.lib.toLowerCase().startsWith('vainqueur') ? 'vainqueur' : g.lib.charAt(0).toLowerCase() + g.lib.slice(1)}</span></>)}</p>
         )}
         <p class="intl-foot">
-          {mondialFini ? 'Résultats définitifs' : `Compétition en cours — mis à jour le ${mondialMaj}`} · sources : CueScore et LeagueAppLive ·
+          {mondialFini ? 'Résultats définitifs' : `Compétition en cours — mis à jour le ${mondialMaj}`} ·
           <a href="/billard/championnat-du-monde-blackball-2026">le dossier du Championnat du monde</a>
         </p>
       </div>
