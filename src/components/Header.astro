@@ -26,6 +26,13 @@ today = today.charAt(0).toUpperCase() + today.slice(1);
 <header class="masthead">
   <div class="wrap">
     <Logo />
+    <span class="xmas-hat" aria-hidden="true">
+      <svg viewBox="0 0 80 66" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 48 C16 20 42 6 64 11 C59 20 55 28 57 40 C45 35 24 37 15 48 Z" fill="#d12f2f"/>
+        <path d="M7 46 Q40 35 63 46 Q40 57 7 46 Z" fill="#fbfbfb"/>
+        <circle cx="65" cy="11" r="9" fill="#fbfbfb"/>
+      </svg>
+    </span>
     <nav class="main">
       <a href="/" class={active === 'direct' ? 'active' : ''}>Accueil</a>
       <a href="/programme" class={active === 'programme' ? 'active' : ''}>Programme</a>
@@ -53,6 +60,9 @@ today = today.charAt(0).toUpperCase() + today.slice(1);
   </nav>
 </header>
 
+{/* Guirlande de Noël sous le menu (variante « guirlandes » ; activée par data-xmas-style) */}
+<div class="xmas-garland" aria-hidden="true">{Array.from({ length: 40 }).map(() => <span></span>)}</div>
+
 <script is:inline>
   // Thème HALLOWEEN : s'active tout seul pendant la fenêtre ci-dessous (calcul dans le
   // navigateur → s'allume et s'éteint sans redéploiement), retour au header habituel après.
@@ -64,6 +74,28 @@ today = today.charAt(0).toUpperCase() + today.slice(1);
       var force = /[?&]halloween=1(?:&|$)/.test(location.search);
       if (force || (Date.now() >= START.getTime() && Date.now() < END.getTime())) {
         document.documentElement.setAttribute('data-hw', '1');
+      }
+    } catch (e) {}
+  })();
+
+  // Thème NOËL — même principe. Fenêtre à fixer.
+  // Le décor est composé de « tokens » (village / garland / hat / baubles / sport) : chaque aperçu
+  // en active un sous-ensemble, ce qui rend les combinaisons triviales.
+  //   ?noel=1 village seul · ?noel=2 guirlande+boules · ?noel=3 bonnet+ballons · ?noel=4 village+guirlande+bonnet
+  (function () {
+    try {
+      var START = new Date('2026-12-20T00:00:00');  // allumage : samedi 20/12 à minuit
+      var END = new Date('2026-12-29T00:00:00');     // extinction : visible jusqu'au 28/12 inclus (relais Nouvel An le 30/12)
+      var s = location.search;
+      var f1 = /[?&]noel=1(?:&|$)/.test(s), f2 = /[?&]noel=2(?:&|$)/.test(s),
+          f3 = /[?&]noel=3(?:&|$)/.test(s), f4 = /[?&]noel=4(?:&|$)/.test(s);
+      if (f1 || f2 || f3 || f4 || (Date.now() >= START.getTime() && Date.now() < END.getTime())) {
+        document.documentElement.setAttribute('data-xmas', '1');
+        var style = f1 ? 'village'
+                  : f2 ? 'garland baubles'
+                  : f3 ? 'hat sport'
+                  : 'village garland hat'; // ?noel=4 et fenêtre de dates = combo retenu (village + guirlande + bonnet)
+        document.documentElement.setAttribute('data-xmas-style', style);
       }
     } catch (e) {}
   })();
@@ -184,4 +216,116 @@ today = today.charAt(0).toUpperCase() + today.slice(1);
     :root[data-hw="1"] .hw-web { font-size: 34px; }
     :root[data-hw="1"] .hw-web-r { display: none; }
   }
+
+  /* ================= Thème NOËL (data-xmas="1") =================
+     Décor modulaire par tokens dans data-xmas-style (ex. "village garland hat") :
+       village = skyline enneigée · garland = guirlande LED sous le menu · baubles = boules suspendues
+       hat = bonnet sur le logo · sport = ballons de sport suspendus
+     Aperçus : ?noel=1 village · ?noel=2 guirlande+boules · ?noel=3 bonnet+ballons · ?noel=4 village+guirlande+bonnet */
+  .xmas-scene, .xmas-village { display: none; }
+  /* header festif */
+  :root[data-xmas="1"] .util { background: linear-gradient(90deg, #5a1113 0%, #0e3b24 100%); color: #ffe9b8; border-bottom: 1px solid #6b2a1e; }
+  :root[data-xmas="1"] .util .left { color: #ffe9b8; }
+  :root[data-xmas="1"] .util .left b { color: #ffd54a; }
+  :root[data-xmas="1"] .util .right { color: #ffe9b8; }
+  :root[data-xmas="1"] .util .right a:hover { color: #ffd54a; }
+  :root[data-xmas="1"] .util .left::after { content: "🎄 Joyeuses fêtes"; font-weight: 700; color: #ffd54a; white-space: nowrap; }
+  :root[data-xmas="1"] .util .right::before { content: "❄"; color: #cfe6ff; font-size: 13px; }
+  :root[data-xmas="1"] .masthead::before, :root[data-xmas="1"] .masthead::after { content: "❄"; position: absolute; top: 2px; font-size: 20px; color: #dcecff; opacity: .5; pointer-events: none; z-index: 1; }
+  :root[data-xmas="1"] .masthead::before { left: 6px; } :root[data-xmas="1"] .masthead::after { right: 6px; }
+  :root[data-xmas="1"] .masthead .btn, :root[data-xmas="1"] .btn-live { background: linear-gradient(180deg, #e0413a, #b5231d); color: #fff; box-shadow: 0 0 0 1px rgba(224,65,58,.5), 0 6px 16px rgba(200,30,25,.4); }
+  :root[data-xmas="1"] .masthead .btn:hover, :root[data-xmas="1"] .btn-live:hover { background: linear-gradient(180deg, #ee5a52, #9e1c17); }
+  :root[data-xmas="1"] nav.main a.active { border-color: #e0413a; }
+
+  /* scène hero : lune, étoiles, village, neige */
+  :root[data-xmas="1"] .xmas-scene { display: block; position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  :root[data-xmas-style~="village"] .xmas-moon { position: absolute; top: 18px; right: 8%; width: 70px; height: 70px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 36%, #fdfbf0, #e7eef7 60%, #cdd8e8 100%); box-shadow: 0 0 44px 12px rgba(220,232,250,.35); opacity: .9; }
+  :root[data-xmas-style~="village"] .xmas-stars { position: absolute; left: 0; right: 0; top: 0; height: 62%;
+    background-image: radial-gradient(1.4px 1.4px at 12% 24%, #fff, transparent), radial-gradient(1.2px 1.2px at 28% 52%, #fff, transparent),
+      radial-gradient(1.6px 1.6px at 46% 18%, #fff, transparent), radial-gradient(1.2px 1.2px at 63% 42%, #fff, transparent),
+      radial-gradient(1.4px 1.4px at 78% 28%, #fff, transparent), radial-gradient(1.2px 1.2px at 90% 54%, #fff, transparent),
+      radial-gradient(1.2px 1.2px at 36% 34%, #fff, transparent), radial-gradient(1.4px 1.4px at 70% 14%, #fff, transparent);
+    opacity: .55; animation: xmas-tw 5s ease-in-out infinite alternate; }
+  @keyframes xmas-tw { from { opacity: .35; } to { opacity: .75; } }
+  :root[data-xmas-style~="village"] .xmas-village { display: block; position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 96%; }
+  :root[data-xmas-style~="village"] .vl-hill { fill: #1b3048; }
+  :root[data-xmas-style~="village"] .vl-far { fill: #223a56; opacity: .7; }
+  :root[data-xmas-style~="village"] .vl-chim { fill: #1a2d44; }
+  :root[data-xmas-style~="village"] .vl-snow { fill: url(#vlSnowG); }
+  :root[data-xmas-style~="village"] .vl-tree path { fill: #1a5235; }
+  :root[data-xmas-style~="village"] .vl-house rect { fill: #243b58; }
+  :root[data-xmas-style~="village"] .vl-roof { fill: #2c466a; }
+  :root[data-xmas-style~="village"] .vl-cap { fill: #f3f7fc; }
+  :root[data-xmas-style~="village"] .vl-win { fill: #ffd97a; filter: drop-shadow(0 0 4px rgba(255,200,90,.9)); }
+  :root[data-xmas-style~="village"] .vl-star2 { fill: #ffd54a; }
+  :root[data-xmas-style~="village"] .vl-fir { fill: #1d6b38; stroke: #0f4425; stroke-width: 2; }
+  :root[data-xmas-style~="village"] .vl-glow { fill: #dff3e6; opacity: .18; filter: blur(7px); }
+  :root[data-xmas-style~="village"] .vl-r { color: #ff5a4d; } :root[data-xmas-style~="village"] .vl-y { color: #ffd23f; } :root[data-xmas-style~="village"] .vl-b { color: #63b3ff; }
+  :root[data-xmas-style~="village"] .vl-light circle { fill: currentColor; filter: drop-shadow(0 0 3px currentColor); }
+  :root[data-xmas-style~="village"] .vl-r { animation: xmas-tw 1.8s ease-in-out infinite alternate; }
+  :root[data-xmas-style~="village"] .vl-y { animation: xmas-tw 1.8s ease-in-out .6s infinite alternate; }
+  :root[data-xmas-style~="village"] .vl-b { animation: xmas-tw 1.8s ease-in-out 1.2s infinite alternate; }
+  :root[data-xmas-style~="village"] .vl-star { fill: #ffe066; filter: drop-shadow(0 0 7px rgba(255,214,80,.85)); }
+
+  :root[data-xmas="1"] .xmas-snow { position: absolute; inset: 0; pointer-events: none; }
+  :root[data-xmas="1"] .xmas-snow-1 { background-image:
+      radial-gradient(2px 2px at 20px 30px, #fff, transparent), radial-gradient(2px 2px at 110px 80px, #fff, transparent),
+      radial-gradient(1.6px 1.6px at 170px 140px, #fff, transparent), radial-gradient(2px 2px at 60px 180px, #fff, transparent);
+    background-size: 200px 200px; opacity: .9; animation: xmas-fall1 9s linear infinite; }
+  :root[data-xmas="1"] .xmas-snow-2 { background-image:
+      radial-gradient(3px 3px at 50px 60px, #fff, transparent), radial-gradient(2.4px 2.4px at 150px 20px, #fff, transparent),
+      radial-gradient(3px 3px at 210px 120px, #fff, transparent), radial-gradient(2.4px 2.4px at 90px 170px, #fff, transparent);
+    background-size: 260px 260px; opacity: .8; animation: xmas-fall2 6.5s linear infinite; }
+  :root[data-xmas="1"] .xmas-snow-3 { background-image:
+      radial-gradient(1.4px 1.4px at 30px 50px, #fff, transparent), radial-gradient(1.4px 1.4px at 120px 110px, #fff, transparent),
+      radial-gradient(1.2px 1.2px at 180px 40px, #fff, transparent);
+    background-size: 160px 160px; opacity: .6; animation: xmas-fall3 13s linear infinite; }
+  @keyframes xmas-fall1 { to { background-position: 30px 200px; } }
+  @keyframes xmas-fall2 { to { background-position: -40px 260px; } }
+  @keyframes xmas-fall3 { to { background-position: 16px 160px; } }
+
+  /* ---- token « garland » : guirlande de LED sous le menu ---- */
+  .xmas-garland { display: none; }
+  :root[data-xmas-style~="garland"] .xmas-garland { display: flex; justify-content: space-between; align-items: flex-start;
+    position: sticky; top: 74px; z-index: 39; height: 0; padding: 0 14px; pointer-events: none; border-top: 2px solid #2e5b35; }
+  :root[data-xmas-style~="garland"] .xmas-garland span { width: 9px; height: 13px; border-radius: 50% 50% 55% 55% / 44% 44% 62% 62%;
+    position: relative; animation: xmas-blink 2.4s ease-in-out infinite; }
+  :root[data-xmas-style~="garland"] .xmas-garland span::before { content: ""; position: absolute; left: 50%; top: -4px; width: 2px; height: 4px; background: #2e5b35; transform: translateX(-50%); }
+  :root[data-xmas-style~="garland"] .xmas-garland span:nth-child(4n+1) { background: #e23b3b; box-shadow: 0 0 8px 1px rgba(226,59,59,.8); }
+  :root[data-xmas-style~="garland"] .xmas-garland span:nth-child(4n+2) { background: #e7b53c; box-shadow: 0 0 8px 1px rgba(231,181,60,.8); }
+  :root[data-xmas-style~="garland"] .xmas-garland span:nth-child(4n+3) { background: #3f7fd6; box-shadow: 0 0 8px 1px rgba(63,127,214,.8); }
+  :root[data-xmas-style~="garland"] .xmas-garland span:nth-child(4n+4) { background: #49b36a; box-shadow: 0 0 8px 1px rgba(73,179,106,.8); }
+  :root[data-xmas-style~="garland"] .xmas-garland span:nth-child(3n+2) { animation-delay: .8s; }
+  :root[data-xmas-style~="garland"] .xmas-garland span:nth-child(3n+3) { animation-delay: 1.6s; }
+  @keyframes xmas-blink { 0%, 100% { opacity: 1; } 50% { opacity: .32; } }
+
+  /* ---- token « baubles » : boules suspendues dans le hero ---- */
+  .xmas-baubles { display: none; }
+  :root[data-xmas-style~="baubles"] .xmas-baubles { display: block; position: absolute; inset: 0; pointer-events: none; }
+  :root[data-xmas-style~="baubles"] .xb { position: absolute; top: 0; width: var(--s); height: var(--s);
+    transform-origin: 50% -180px; animation: xb-sway 5.5s ease-in-out infinite; animation-delay: var(--d); }
+  :root[data-xmas-style~="baubles"] .xb::before { content: ""; position: absolute; left: 50%; bottom: 100%; width: 1px; height: 180px; transform: translateX(-50%);
+    background: linear-gradient(rgba(220,230,245,.4), rgba(220,230,245,.06)); }
+  :root[data-xmas-style~="baubles"] .xb::after { content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.95), var(--c) 55%, color-mix(in srgb, var(--c) 55%, #000) 100%);
+    box-shadow: 0 5px 14px rgba(0,0,0,.45), 0 0 16px color-mix(in srgb, var(--c) 45%, transparent); }
+  :root[data-xmas-style~="baubles"] .xb-r { --c: #e23b3b; } :root[data-xmas-style~="baubles"] .xb-y { --c: #e7b53c; } :root[data-xmas-style~="baubles"] .xb-b { --c: #3f7fd6; }
+  @keyframes xb-sway { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+
+  /* ---- token « hat » : bonnet de Père Noël sur le logo ---- */
+  .xmas-hat, .xmas-sport { display: none; }
+  :root[data-xmas-style~="hat"] .masthead .wrap { position: relative; }
+  :root[data-xmas-style~="hat"] .xmas-hat { display: block; position: absolute; left: -2px; top: 1px; width: 40px; z-index: 3; transform: rotate(-20deg); pointer-events: none; }
+  :root[data-xmas-style~="hat"] .xmas-hat svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 2px 3px rgba(0,0,0,.35)); }
+  /* ---- token « sport » : ballons de sport suspendus dans le hero ---- */
+  :root[data-xmas-style~="sport"] .xmas-sport { display: block; position: absolute; inset: 0; pointer-events: none; }
+  :root[data-xmas-style~="sport"] .xs { position: absolute; top: 106px; width: var(--s); transform-origin: 50% -106px; animation: xb-sway 5.6s ease-in-out infinite; animation-delay: var(--d); }
+  :root[data-xmas-style~="sport"] .xs::before { content: ""; position: absolute; left: 50%; bottom: 100%; width: 1px; height: 106px; transform: translateX(-50%); background: linear-gradient(rgba(220,230,245,.42), rgba(220,230,245,.06)); }
+  :root[data-xmas-style~="sport"] .xs svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 6px 13px rgba(0,0,0,.45)); }
+  @media (max-width: 900px) { :root[data-xmas-style~="sport"] .xmas-sport { display: none; } }
+
+  @media (prefers-reduced-motion: reduce) { :root[data-xmas="1"] .xmas-garland span, :root[data-xmas="1"] .xb, :root[data-xmas="1"] .xs { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { :root[data-xmas="1"] .xmas-snow, :root[data-xmas="1"] .vl-light, :root[data-xmas="1"] .xmas-stars { animation: none; } }
+  @media (max-width: 900px) { :root[data-xmas="1"] .xmas-village { height: 48%; } }
 </style>
