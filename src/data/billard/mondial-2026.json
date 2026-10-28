@@ -1,5 +1,5 @@
 {
- "maj": "28/10/2026 à 11h35",
+ "maj": "28/10/2026 à 12h12",
  "fini": false,
  "joueurs": {
   "killian-ballon": {
@@ -249,6 +249,172 @@
       "lui": null
      }
     ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 18,
+     "g": 54,
+     "f": 90,
+     "pct": 60,
+     "cg": 9,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 27,
+     "f": 42,
+     "pct": 64,
+     "cg": 9,
+     "rencontres": 11,
+     "rang_eq": 5,
+     "nb_eq": 6,
+     "rang_cg": 2,
+     "rang_comp": [
+      16,
+      60
+     ],
+     "parfaites": 2,
+     "serie": [
+      {
+       "adv": "Pays de Galles",
+       "date": "mar 20/10",
+       "g": 2,
+       "f": 4
+      },
+      {
+       "adv": "Madagascar",
+       "date": "mar 20/10",
+       "g": 4,
+       "f": 4
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 1,
+       "f": 3
+      },
+      {
+       "adv": "Irlande",
+       "date": "jeu 22/10",
+       "g": 3,
+       "f": 4
+      },
+      {
+       "adv": "Maurice",
+       "date": "sam 24/10",
+       "g": 3,
+       "f": 5
+      },
+      {
+       "adv": "Mexique",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 4
+      },
+      {
+       "adv": "Angleterre",
+       "date": "dim 25/10",
+       "g": 1,
+       "f": 3
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 4,
+       "f": 5
+      },
+      {
+       "adv": "Malte",
+       "date": "lun 26/10",
+       "g": 1,
+       "f": 2
+      },
+      {
+       "adv": "Maroc",
+       "date": "mar 27/10",
+       "g": 1,
+       "f": 3
+      },
+      {
+       "adv": "Inde",
+       "date": "mar 27/10",
+       "g": 3,
+       "f": 5
+      }
+     ]
+    },
+    "simple": {
+     "g": 3,
+     "p": 6,
+     "pct": 33,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Hibbott",
+       "a": 3,
+       "b": 6
+      }
+     ]
+    },
+    "double": {
+     "g": 24,
+     "p": 15,
+     "pct": 62,
+     "v": 6,
+     "d": 0,
+     "blanc": 0,
+     "serres_v": 4,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Tanti",
+       "a": 4,
+       "b": 3
+      },
+      {
+       "tour": "2e tour",
+       "adv": "Bakhtaoui",
+       "a": 4,
+       "b": 3
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Caruana",
+       "a": 4,
+       "b": 3
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Azzopardi",
+       "a": 4,
+       "b": 3
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Mizzi",
+       "a": 4,
+       "b": 1
+      },
+      {
+       "tour": "Finale",
+       "adv": "Buscetti",
+       "a": 4,
+       "b": 2
+      }
+     ]
+    },
+    "analyse": [
+     "Killian Ballon repart de Londres avec une médaille : champion du monde en double avec Yannick Beaufils.",
+     "Par équipes, il remporte 27 de ses 42 manches (64 %) en 11 rencontres, et se classe 16e sur 60 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Madagascar (20/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
+     "En simple, il s'incline d'entrée (3–6 contre Gareth Hibbott).",
+     "En double avec Yannick Beaufils, il gagne 24 manches pour 15 concédées sur l'ensemble du tableau, dont 4 matchs gagnés à la manche décisive."
+    ]
    }
   },
   "christophe-thebeault": {
@@ -484,6 +650,172 @@
       "phase": "1/4 de finale",
       "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 18,
+     "g": 61,
+     "f": 90,
+     "pct": 68,
+     "cg": 3,
+     "medailles": 0
+    },
+    "equipe": {
+     "g": 33,
+     "f": 48,
+     "pct": 69,
+     "cg": 3,
+     "rencontres": 11,
+     "rang_eq": 3,
+     "nb_eq": 6,
+     "rang_cg": 6,
+     "rang_comp": [
+      9,
+      60
+     ],
+     "parfaites": 3,
+     "serie": [
+      {
+       "adv": "Pays de Galles",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 4
+      },
+      {
+       "adv": "Madagascar",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 4
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 4
+      },
+      {
+       "adv": "Irlande",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 5
+      },
+      {
+       "adv": "Maurice",
+       "date": "sam 24/10",
+       "g": 3,
+       "f": 4
+      },
+      {
+       "adv": "Mexique",
+       "date": "dim 25/10",
+       "g": 5,
+       "f": 5
+      },
+      {
+       "adv": "Angleterre",
+       "date": "dim 25/10",
+       "g": 1,
+       "f": 4
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 4,
+       "f": 4
+      },
+      {
+       "adv": "Malte",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 5
+      },
+      {
+       "adv": "Maroc",
+       "date": "mar 27/10",
+       "g": 1,
+       "f": 5
+      },
+      {
+       "adv": "Inde",
+       "date": "mar 27/10",
+       "g": 4,
+       "f": 4
+      }
+     ]
+    },
+    "simple": {
+     "g": 16,
+     "p": 7,
+     "pct": 70,
+     "v": 2,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Forster",
+       "a": 6,
+       "b": 1
+      },
+      {
+       "tour": "2e tour",
+       "adv": "Deans",
+       "a": 6,
+       "b": 0
+      },
+      {
+       "tour": "3e tour",
+       "adv": "I'Anson",
+       "a": 4,
+       "b": 6
+      }
+     ]
+    },
+    "double": {
+     "g": 12,
+     "p": 7,
+     "pct": 63,
+     "v": 3,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Williams",
+       "a": 4,
+       "b": 2
+      },
+      {
+       "tour": "2e tour",
+       "adv": "Shepherd",
+       "a": 4,
+       "b": 0
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Roberts",
+       "a": 4,
+       "b": 1
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Masskini",
+       "a": 0,
+       "b": 4
+      }
+     ]
+    },
+    "analyse": [
+     "Christophe Thébeault a disputé 18 matchs à Londres sous le maillot de l'équipe de France Hommes.",
+     "Par équipes, il remporte 33 de ses 48 manches (69 %) en 11 rencontres, le 3e meilleur pourcentage de l'équipe de France Hommes, et se classe 9e sur 60 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Mexique (25/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
+     "En simple, il remporte 2 matchs avant de s'arrêter au 3e tour (4–6 contre Clint I'Anson), dont 1 victoire sans perdre une manche.",
+     "En double avec Alexis Klinka, il remporte 3 matchs avant de s'arrêter en 1/4 de finale (0–4 contre Oussama Masskini / Houssam El Amari), dont 1 victoire sans perdre une manche."
     ]
    }
   },
@@ -772,6 +1104,202 @@
       "lui": null
      }
     ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 23,
+     "g": 89,
+     "f": 130,
+     "pct": 68,
+     "cg": 13,
+     "medailles": 2
+    },
+    "equipe": {
+     "g": 34,
+     "f": 46,
+     "pct": 74,
+     "cg": 13,
+     "rencontres": 11,
+     "rang_eq": 1,
+     "nb_eq": 6,
+     "rang_cg": 1,
+     "rang_comp": [
+      4,
+      60
+     ],
+     "parfaites": 5,
+     "serie": [
+      {
+       "adv": "Pays de Galles",
+       "date": "mar 20/10",
+       "g": 2,
+       "f": 4
+      },
+      {
+       "adv": "Madagascar",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 4
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 5
+      },
+      {
+       "adv": "Irlande",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 4
+      },
+      {
+       "adv": "Maurice",
+       "date": "sam 24/10",
+       "g": 4,
+       "f": 4
+      },
+      {
+       "adv": "Mexique",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 3
+      },
+      {
+       "adv": "Angleterre",
+       "date": "dim 25/10",
+       "g": 1,
+       "f": 5
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 4
+      },
+      {
+       "adv": "Malte",
+       "date": "lun 26/10",
+       "g": 5,
+       "f": 5
+      },
+      {
+       "adv": "Maroc",
+       "date": "mar 27/10",
+       "g": 4,
+       "f": 5
+      },
+      {
+       "adv": "Inde",
+       "date": "mar 27/10",
+       "g": 3,
+       "f": 3
+      }
+     ]
+    },
+    "simple": {
+     "g": 37,
+     "p": 17,
+     "pct": 69,
+     "v": 6,
+     "d": 1,
+     "blanc": 2,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Williams",
+       "a": 6,
+       "b": 0
+      },
+      {
+       "tour": "2e tour",
+       "adv": "Caruana",
+       "a": 6,
+       "b": 2
+      },
+      {
+       "tour": "3e tour",
+       "adv": "Elliott",
+       "a": 6,
+       "b": 3
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Smout",
+       "a": 6,
+       "b": 4
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Ech-Chorfy",
+       "a": 6,
+       "b": 0
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Martin",
+       "a": 6,
+       "b": 2
+      },
+      {
+       "tour": "Finale",
+       "adv": "Hibbott",
+       "a": 1,
+       "b": 6
+      }
+     ]
+    },
+    "double": {
+     "g": 18,
+     "p": 12,
+     "pct": 60,
+     "v": 4,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 2,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "2e tour",
+       "adv": "Barnard",
+       "a": 4,
+       "b": 1
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Damry",
+       "a": 4,
+       "b": 3
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Martin",
+       "a": 4,
+       "b": 1
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Masskini",
+       "a": 4,
+       "b": 3
+      },
+      {
+       "tour": "Finale",
+       "adv": "Ballon",
+       "a": 2,
+       "b": 4
+      }
+     ]
+    },
+    "analyse": [
+     "Christophe Lambert repart de Londres avec 2 médailles : vice-champion du monde en simple et vice-champion du monde en double avec Alexandre Buscetti.",
+     "Par équipes, il remporte 34 de ses 46 manches (74 %) en 11 rencontres, le meilleur pourcentage de l'équipe de France Hommes, et se classe 4e sur 60 joueurs de l'épreuve. Il signe 13 « casse et gagne », le meilleur total de l'équipe.",
+     "Sa meilleure rencontre : France – Malte (26/10), avec 5 manches sur 5, et 5 rencontres sans perdre une manche.",
+     "En simple, il gagne 37 manches pour 17 concédées sur l'ensemble du tableau, dont 2 victoires sans perdre une manche.",
+     "En double avec Alexandre Buscetti, il gagne 18 manches pour 12 concédées sur l'ensemble du tableau, dont 2 matchs gagnés à la manche décisive."
+    ]
    }
   },
   "alexandre-buscetti": {
@@ -1005,6 +1533,166 @@
       "phase": "1/4 de finale",
       "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 17,
+     "g": 51,
+     "f": 83,
+     "pct": 61,
+     "cg": 8,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 29,
+     "f": 43,
+     "pct": 67,
+     "cg": 8,
+     "rencontres": 11,
+     "rang_eq": 4,
+     "nb_eq": 6,
+     "rang_cg": 5,
+     "rang_comp": [
+      12,
+      60
+     ],
+     "parfaites": 2,
+     "serie": [
+      {
+       "adv": "Pays de Galles",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 5
+      },
+      {
+       "adv": "Madagascar",
+       "date": "mar 20/10",
+       "g": 4,
+       "f": 4
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 0,
+       "f": 4
+      },
+      {
+       "adv": "Irlande",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 4
+      },
+      {
+       "adv": "Maurice",
+       "date": "sam 24/10",
+       "g": 3,
+       "f": 4
+      },
+      {
+       "adv": "Mexique",
+       "date": "dim 25/10",
+       "g": 5,
+       "f": 5
+      },
+      {
+       "adv": "Angleterre",
+       "date": "dim 25/10",
+       "g": 2,
+       "f": 3
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 4
+      },
+      {
+       "adv": "Malte",
+       "date": "lun 26/10",
+       "g": 1,
+       "f": 3
+      },
+      {
+       "adv": "Maroc",
+       "date": "mar 27/10",
+       "g": 2,
+       "f": 2
+      },
+      {
+       "adv": "Inde",
+       "date": "mar 27/10",
+       "g": 4,
+       "f": 5
+      }
+     ]
+    },
+    "simple": {
+     "g": 4,
+     "p": 6,
+     "pct": 40,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Castaldi",
+       "a": 4,
+       "b": 6
+      }
+     ]
+    },
+    "double": {
+     "g": 18,
+     "p": 12,
+     "pct": 60,
+     "v": 4,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 2,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "2e tour",
+       "adv": "Barnard",
+       "a": 4,
+       "b": 1
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Damry",
+       "a": 4,
+       "b": 3
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Martin",
+       "a": 4,
+       "b": 1
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Masskini",
+       "a": 4,
+       "b": 3
+      },
+      {
+       "tour": "Finale",
+       "adv": "Ballon",
+       "a": 2,
+       "b": 4
+      }
+     ]
+    },
+    "analyse": [
+     "Alexandre Buscetti repart de Londres avec une médaille : vice-champion du monde en double avec Christophe Lambert.",
+     "Par équipes, il remporte 29 de ses 43 manches (67 %) en 11 rencontres, et se classe 12e sur 60 joueurs de l'épreuve. Il signe 8 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Mexique (25/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
+     "En simple, il s'incline d'entrée (4–6 contre Clayton Castaldi).",
+     "En double avec Christophe Lambert, il gagne 18 manches pour 12 concédées sur l'ensemble du tableau, dont 2 matchs gagnés à la manche décisive."
     ]
    }
   },
@@ -1271,6 +1959,184 @@
       "lui": null
      }
     ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 20,
+     "g": 72,
+     "f": 109,
+     "pct": 66,
+     "cg": 9,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 35,
+     "f": 48,
+     "pct": 73,
+     "cg": 9,
+     "rencontres": 11,
+     "rang_eq": 2,
+     "nb_eq": 6,
+     "rang_cg": 2,
+     "rang_comp": [
+      5,
+      60
+     ],
+     "parfaites": 3,
+     "serie": [
+      {
+       "adv": "Pays de Galles",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 4
+      },
+      {
+       "adv": "Madagascar",
+       "date": "mar 20/10",
+       "g": 5,
+       "f": 5
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 4
+      },
+      {
+       "adv": "Irlande",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 4
+      },
+      {
+       "adv": "Maurice",
+       "date": "sam 24/10",
+       "g": 4,
+       "f": 4
+      },
+      {
+       "adv": "Mexique",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 4
+      },
+      {
+       "adv": "Angleterre",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 5
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 4
+      },
+      {
+       "adv": "Malte",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 5
+      },
+      {
+       "adv": "Maroc",
+       "date": "mar 27/10",
+       "g": 2,
+       "f": 5
+      },
+      {
+       "adv": "Inde",
+       "date": "mar 27/10",
+       "g": 3,
+       "f": 4
+      }
+     ]
+    },
+    "simple": {
+     "g": 13,
+     "p": 9,
+     "pct": 59,
+     "v": 2,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Tanti",
+       "a": 6,
+       "b": 0
+      },
+      {
+       "tour": "2e tour",
+       "adv": "Shepherd",
+       "a": 6,
+       "b": 3
+      },
+      {
+       "tour": "3e tour",
+       "adv": "Klinka",
+       "a": 1,
+       "b": 6
+      }
+     ]
+    },
+    "double": {
+     "g": 24,
+     "p": 15,
+     "pct": 62,
+     "v": 6,
+     "d": 0,
+     "blanc": 0,
+     "serres_v": 4,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Tanti",
+       "a": 4,
+       "b": 3
+      },
+      {
+       "tour": "2e tour",
+       "adv": "Bakhtaoui",
+       "a": 4,
+       "b": 3
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Caruana",
+       "a": 4,
+       "b": 3
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Azzopardi",
+       "a": 4,
+       "b": 3
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Mizzi",
+       "a": 4,
+       "b": 1
+      },
+      {
+       "tour": "Finale",
+       "adv": "Buscetti",
+       "a": 4,
+       "b": 2
+      }
+     ]
+    },
+    "analyse": [
+     "Yannick Beaufils repart de Londres avec une médaille : champion du monde en double avec Killian Ballon.",
+     "Par équipes, il remporte 35 de ses 48 manches (73 %) en 11 rencontres, le 2e meilleur pourcentage de l'équipe de France Hommes, et se classe 5e sur 60 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Madagascar (20/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
+     "En simple, il remporte 2 matchs avant de s'arrêter au 3e tour (1–6 contre Alexis Klinka), dont 1 victoire sans perdre une manche.",
+     "En double avec Killian Ballon, il gagne 24 manches pour 15 concédées sur l'ensemble du tableau, dont 4 matchs gagnés à la manche décisive."
+    ]
    }
   },
   "alexis-klinka": {
@@ -1535,6 +2401,184 @@
       "phase": "1/4 de finale",
       "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 20,
+     "g": 68,
+     "f": 108,
+     "pct": 63,
+     "cg": 9,
+     "medailles": 0
+    },
+    "equipe": {
+     "g": 28,
+     "f": 48,
+     "pct": 58,
+     "cg": 9,
+     "rencontres": 11,
+     "rang_eq": 6,
+     "nb_eq": 6,
+     "rang_cg": 2,
+     "rang_comp": [
+      24,
+      60
+     ],
+     "parfaites": 1,
+     "serie": [
+      {
+       "adv": "Pays de Galles",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 4
+      },
+      {
+       "adv": "Madagascar",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 4
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 5
+      },
+      {
+       "adv": "Irlande",
+       "date": "jeu 22/10",
+       "g": 3,
+       "f": 4
+      },
+      {
+       "adv": "Maurice",
+       "date": "sam 24/10",
+       "g": 2,
+       "f": 4
+      },
+      {
+       "adv": "Mexique",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 4
+      },
+      {
+       "adv": "Angleterre",
+       "date": "dim 25/10",
+       "g": 1,
+       "f": 5
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 4
+      },
+      {
+       "adv": "Malte",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 5
+      },
+      {
+       "adv": "Maroc",
+       "date": "mar 27/10",
+       "g": 2,
+       "f": 5
+      },
+      {
+       "adv": "Inde",
+       "date": "mar 27/10",
+       "g": 1,
+       "f": 4
+      }
+     ]
+    },
+    "simple": {
+     "g": 28,
+     "p": 13,
+     "pct": 68,
+     "v": 4,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Frayne",
+       "a": 6,
+       "b": 0
+      },
+      {
+       "tour": "2e tour",
+       "adv": "Powell",
+       "a": 6,
+       "b": 3
+      },
+      {
+       "tour": "3e tour",
+       "adv": "Beaufils",
+       "a": 6,
+       "b": 1
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Parry-Williams",
+       "a": 6,
+       "b": 3
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Martin",
+       "a": 4,
+       "b": 6
+      }
+     ]
+    },
+    "double": {
+     "g": 12,
+     "p": 7,
+     "pct": 63,
+     "v": 3,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Williams",
+       "a": 4,
+       "b": 2
+      },
+      {
+       "tour": "2e tour",
+       "adv": "Shepherd",
+       "a": 4,
+       "b": 0
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Roberts",
+       "a": 4,
+       "b": 1
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Masskini",
+       "a": 0,
+       "b": 4
+      }
+     ]
+    },
+    "analyse": [
+     "Alexis Klinka a disputé 20 matchs à Londres sous le maillot de l'équipe de France Hommes.",
+     "Par équipes, il remporte 28 de ses 48 manches (58 %) en 11 rencontres. Il signe 9 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Mexique (25/10), avec 4 manches sur 4.",
+     "En simple, il remporte 4 matchs avant de s'arrêter en 1/4 de finale (4–6 contre Kevin Martin), dont 1 victoire sans perdre une manche.",
+     "En double avec Christophe Thébeault, il remporte 3 matchs avant de s'arrêter en 1/4 de finale (0–4 contre Oussama Masskini / Houssam El Amari), dont 1 victoire sans perdre une manche."
     ]
    }
   },

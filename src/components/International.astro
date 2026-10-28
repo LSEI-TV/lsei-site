@@ -16,6 +16,24 @@ const blocs = j ? [
 ].filter(Boolean) as { k: string; b: any; sous: string }[] : [];
 const resume = blocs.map((x) => `${x.k.replace('En ', '').replace('Par ', '')[0].toUpperCase()}${x.k.replace('En ', '').replace('Par ', '').slice(1)} : ${x.b.lib}`).join(' — ');
 const ligne = (m: MondialMatch) => m.res === 'victoire' ? 'v' : m.res === 'défaite' ? 'd' : 'a';
+// Statistiques + analyse (présentes quand son Mondial est terminé) et graphiques en barres empilées :
+// manches gagnées (bleu du site) / perdues (gris neutre), chiffre au-dessus de chaque barre, info-bulle au survol.
+const S = (j as any)?.stats;
+type Barre = { lab: string; sub: string; g: number; p: number; tip: string; v: string };
+const graphe = (bs: Barre[]) => {
+  const W = 46, gap = 10, H = 120, top = 18, max = Math.max(1, ...bs.map((b) => b.g + b.p));
+  return { w: bs.length * (W + gap) + gap, h: top + H + 34, W, gap, H, top, k: H / max, bs };
+};
+const ABR: Record<string, string> = { 'Pays de Galles': 'Galles', 'Afrique du Sud': 'Afr. Sud', 'Irlande du Nord': 'Irl. Nord', 'Grande-Bretagne': 'G.-B.' };
+const court = (s: string) => { s = ABR[s] || s; return s.length > 9 ? s.slice(0, 8).trimEnd() + '.' : s; };
+const graphes: { t: string; note: string; g: ReturnType<typeof graphe> }[] = [];
+if (S?.equipe?.serie?.length) graphes.push({ t: 'Par équipes, rencontre après rencontre', note: "rencontres de poule : le détail des matchs à élimination directe n'est pas publié",
+  g: graphe(S.equipe.serie.map((r: any) => ({ lab: r.adv, sub: r.date.split(' ')[1] || r.date, g: r.g, p: r.f - r.g, v: `${r.g}/${r.f}`, tip: `${r.date} · France – ${r.adv} : ${r.g}/${r.f} manches` }))) });
+for (const k of ['simple', 'double'] as const) {
+  if (!S?.[k]?.serie?.length) continue;
+  graphes.push({ t: `${k === 'simple' ? 'En simple' : `En double avec ${j?.double?.partenaire}`}, match après match`, note: "ses manches face à celles de l'adversaire",
+    g: graphe(S[k].serie.map((m: any) => ({ lab: m.adv, sub: m.tour.replace(' de finale', '').replace('Finale', 'finale'), g: m.a, p: m.b, v: `${m.a}–${m.b}`, tip: `${m.tour} · ${m.adv} : ${m.a}–${m.b}` }))) });
+}
 ---
 {j && (
   <>
@@ -30,10 +48,39 @@ const ligne = (m: MondialMatch) => m.res === 'victoire' ? 'v' : m.res === 'défa
             <span class="intl-meds">{j.medailles.map((m) => <span class={`intl-med ${m.m}`}>{ICO[m.m]} {m.epreuve}</span>)}</span>
           )}
           <span class="intl-res">{resume}</span>
+          {S?.kpi?.f > 0 && <span class="intl-res"><b>{S.kpi.g}/{S.kpi.f}</b> manches gagnées sur tout le Mondial ({S.kpi.pct} %)</span>}
         </span>
         <span class="intl-cta"><span class="intl-o">Tous ses résultats</span><span class="intl-f">Replier</span> <span class="car-schev">▾</span></span>
       </button>
       <div class="intl-body" id="mondial-2026-detail" hidden>
+        {S && (
+          <div class="intl-an">
+            <div class="intl-kpis">
+              <div><b>{S.kpi.matchs}</b><span>matchs joués</span></div>
+              <div><b>{S.kpi.pct} %</b><span>de manches gagnées ({S.kpi.g}/{S.kpi.f})</span></div>
+              <div><b>{S.kpi.cg}</b><span>« casse et gagne » par équipes</span></div>
+              <div><b>{S.kpi.medailles}</b><span>médaille{S.kpi.medailles > 1 ? 's' : ''} mondiale{S.kpi.medailles > 1 ? 's' : ''}</span></div>
+            </div>
+            <div class="intl-ana"><div class="intl-ana-h">L'analyse</div>{S.analyse.map((t: string) => <p>{t}</p>)}</div>
+            {graphes.length > 0 && <div class="intl-leg"><span><i class="w"></i>Manches gagnées</span><span><i class="l"></i>Manches perdues</span></div>}
+            {graphes.map((x) => (
+              <figure class="intl-g">
+                <figcaption>{x.t} <small>({x.note})</small></figcaption>
+                <div class="intl-gs"><svg viewBox={`0 0 ${x.g.w} ${x.g.h}`} width={x.g.w} height={x.g.h} role="img" aria-label={x.t}>
+                  {x.g.bs.map((b, i) => { const xx = x.g.gap + i * (x.g.W + x.g.gap), y0 = x.g.top + x.g.H; return (
+                    <g class="intl-b"><title>{b.tip}</title>
+                      <rect x={xx} y={y0 - b.g * x.g.k} width={x.g.W} height={Math.max(0, b.g * x.g.k - (b.p ? 1 : 0))} rx="3" class="w" />
+                      {b.p > 0 && <rect x={xx} y={y0 - (b.g + b.p) * x.g.k} width={x.g.W} height={Math.max(0, b.p * x.g.k - 1)} rx="3" class="l" />}
+                      <text x={xx + x.g.W / 2} y={y0 - (b.g + b.p) * x.g.k - 5} class="v">{b.v}</text>
+                      <text x={xx + x.g.W / 2} y={y0 + 14} class="x">{court(b.lab)}</text>
+                      <text x={xx + x.g.W / 2} y={y0 + 27} class="x2">{b.sub}</text>
+                    </g>); })}
+                  <line x1="0" x2={x.g.w} y1={x.g.top + x.g.H} y2={x.g.top + x.g.H} class="base" />
+                </svg></div>
+              </figure>
+            ))}
+          </div>
+        )}
         <div class="intl-cols">
           {blocs.map((x) => (
             <div class="intl-col" style={`--ic:${x.b.col}`}>
@@ -93,6 +140,32 @@ const ligne = (m: MondialMatch) => m.res === 'victoire' ? 'v' : m.res === 'défa
   .intl-med.bronze { background: color-mix(in srgb, #c27a3e 15%, var(--surface)); border-color: #c27a3e; }
   .intl-res { font-size: 13.5px; color: var(--ink-soft); }
   .intl-cta { flex: none; font-size: 13px; font-weight: 700; color: var(--c-billard); white-space: nowrap; }
+  .intl-an { margin-bottom: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .intl-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .intl-kpis > div { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; }
+  .intl-kpis b { font-family: var(--display); font-size: 26px; line-height: 1.1; color: var(--ink); }
+  .intl-kpis span { font-size: 12.5px; color: var(--ink-soft); }
+  .intl-ana { border-left: 3px solid var(--c-billard); padding: 2px 0 2px 14px; }
+  .intl-ana-h { font-family: var(--display); text-transform: uppercase; font-size: 13px; letter-spacing: .06em; font-weight: 700; color: var(--c-billard); margin-bottom: 4px; }
+  .intl-ana p { margin: 0 0 6px; font-size: 14.5px; line-height: 1.55; color: var(--ink); }
+  .intl-leg { display: flex; gap: 16px; font-size: 12.5px; color: var(--ink-soft); }
+  .intl-leg i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .intl-leg i.w { background: #1E7BE0; } .intl-g rect.w { fill: #1E7BE0; }
+  .intl-leg i.l { background: #a3abbb; } .intl-g rect.l { fill: #a3abbb; }
+  .intl-g { margin: 0; }
+  .intl-g figcaption { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .intl-g figcaption small { font-weight: 400; color: var(--ink-faint); margin-left: 4px; }
+  .intl-gs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .intl-g svg { display: block; max-width: none; }
+  .intl-g text { text-anchor: middle; font-family: var(--mono); }
+  .intl-g text.v { font-size: 11px; font-weight: 700; fill: var(--ink); }
+  .intl-g text.x { font-size: 10.5px; fill: var(--ink-soft); }
+  .intl-g text.x2 { font-size: 10px; fill: var(--ink-faint); }
+  .intl-g line.base { stroke: var(--line-strong); stroke-width: 1; }
+  .intl-b:hover rect { opacity: .82; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .intl-g rect.l { fill: #5a6274; } :root:not([data-theme="light"]) .intl-leg i.l { background: #5a6274; } }
+  :root[data-theme="dark"] .intl-g rect.l { fill: #5a6274; } :root[data-theme="dark"] .intl-leg i.l { background: #5a6274; }
+  @media (max-width: 640px) { .intl-kpis { grid-template-columns: repeat(2, 1fr); } .intl-kpis b { font-size: 22px; } }
   .intl-f { display: none; }
   .intl-head[aria-expanded="true"] .intl-o { display: none; }
   .intl-head[aria-expanded="true"] .intl-f { display: inline; }
