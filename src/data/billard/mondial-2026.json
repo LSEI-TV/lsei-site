@@ -1,6 +1,6 @@
 {
- "maj": "28/10/2026 à 15h23",
- "fini": false,
+ "maj": "28/10/2026 à 21h45",
+ "fini": true,
  "joueurs": {
   "killian-ballon": {
    "nom": "Killian Ballon",
@@ -269,8 +269,8 @@
      "nb_eq": 6,
      "rang_cg": 2,
      "rang_comp": [
-      12,
-      53
+      10,
+      47
      ],
      "parfaites": 2,
      "serie": [
@@ -446,7 +446,7 @@
     },
     "titre": "Killian Ballon repart de Londres avec une médaille : champion du monde en double avec Yannick Beaufils.",
     "analyse": [
-     "Par équipes, il remporte 27 de ses 42 manches (64 %) en 11 rencontres, et se classe 12e sur 53 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
+     "Par équipes, il remporte 27 de ses 42 manches (64 %) en 11 rencontres, et se classe 10e sur 47 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
      "Sa meilleure rencontre : France – Madagascar (20/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
      "En simple, il s'incline d'entrée (3–6 contre Gareth Hibbott).",
      "En double avec Yannick Beaufils, il gagne 24 manches pour 15 concédées sur l'ensemble du tableau, dont 4 matchs gagnés à la manche décisive."
@@ -708,7 +708,7 @@
      "rang_cg": 6,
      "rang_comp": [
       7,
-      53
+      47
      ],
      "parfaites": 3,
      "serie": [
@@ -885,7 +885,7 @@
     "titre": null,
     "analyse": [
      "Christophe Thébeault a disputé 18 matchs à Londres sous le maillot de l'équipe de France Hommes.",
-     "Par équipes, il remporte 33 de ses 48 manches (69 %) en 11 rencontres, le 3e meilleur pourcentage de l'équipe de France Hommes, et se classe 7e sur 53 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
+     "Par équipes, il remporte 33 de ses 48 manches (69 %) en 11 rencontres, le 3e meilleur pourcentage de l'équipe de France Hommes, et se classe 7e sur 47 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
      "Sa meilleure rencontre : France – Mexique (25/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
      "En simple, il remporte 2 matchs avant de s'arrêter au 3e tour (4–6 contre Clint I'Anson), dont 1 victoire sans perdre une manche.",
      "En double avec Alexis Klinka, il remporte 3 matchs avant de s'arrêter en 1/4 de finale (0–4 contre Oussama Masskini / Houssam El Amari), dont 1 victoire sans perdre une manche."
@@ -1198,7 +1198,7 @@
      "rang_cg": 1,
      "rang_comp": [
       2,
-      53
+      47
      ],
      "parfaites": 5,
      "serie": [
@@ -1414,7 +1414,7 @@
     },
     "titre": "Christophe Lambert repart de Londres avec 2 médailles : vice-champion du monde en simple et vice-champion du monde en double avec Alexandre Buscetti.",
     "analyse": [
-     "Par équipes, il remporte 34 de ses 46 manches (74 %) en 11 rencontres, le meilleur pourcentage de l'équipe de France Hommes, et se classe 2e sur 53 joueurs de l'épreuve. Il signe 13 « casse et gagne », le meilleur total de l'équipe.",
+     "Par équipes, il remporte 34 de ses 46 manches (74 %) en 11 rencontres, le meilleur pourcentage de l'équipe de France Hommes, et se classe 2e sur 47 joueurs de l'épreuve. Il signe 13 « casse et gagne », le meilleur total de l'équipe.",
      "Sa meilleure rencontre : France – Malte (26/10), avec 5 manches sur 5, et 5 rencontres sans perdre une manche.",
      "En simple, il gagne 37 manches pour 17 concédées sur l'ensemble du tableau, dont 2 victoires sans perdre une manche.",
      "En double avec Alexandre Buscetti, il gagne 18 manches pour 12 concédées sur l'ensemble du tableau, dont 2 matchs gagnés à la manche décisive."
@@ -1674,7 +1674,7 @@
      "rang_cg": 5,
      "rang_comp": [
       8,
-      53
+      47
      ],
      "parfaites": 2,
      "serie": [
@@ -1842,7 +1842,7 @@
     },
     "titre": "Alexandre Buscetti repart de Londres avec une médaille : vice-champion du monde en double avec Christophe Lambert.",
     "analyse": [
-     "Par équipes, il remporte 29 de ses 43 manches (67 %) en 11 rencontres, et se classe 8e sur 53 joueurs de l'épreuve. Il signe 8 « casse et gagne ».",
+     "Par équipes, il remporte 29 de ses 43 manches (67 %) en 11 rencontres, et se classe 8e sur 47 joueurs de l'épreuve. Il signe 8 « casse et gagne ».",
      "Sa meilleure rencontre : France – Mexique (25/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
      "En simple, il s'incline d'entrée (4–6 contre Clayton Castaldi).",
      "En double avec Christophe Lambert, il gagne 18 manches pour 12 concédées sur l'ensemble du tableau, dont 2 matchs gagnés à la manche décisive."
@@ -2133,7 +2133,7 @@
      "rang_cg": 2,
      "rang_comp": [
       3,
-      53
+      47
      ],
      "parfaites": 3,
      "serie": [
@@ -2325,7 +2325,7 @@
     },
     "titre": "Yannick Beaufils repart de Londres avec une médaille : champion du monde en double avec Killian Ballon.",
     "analyse": [
-     "Par équipes, il remporte 35 de ses 48 manches (73 %) en 11 rencontres, le 2e meilleur pourcentage de l'équipe de France Hommes, et se classe 3e sur 53 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
+     "Par équipes, il remporte 35 de ses 48 manches (73 %) en 11 rencontres, le 2e meilleur pourcentage de l'équipe de France Hommes, et se classe 3e sur 47 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
      "Sa meilleure rencontre : France – Madagascar (20/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
      "En simple, il remporte 2 matchs avant de s'arrêter au 3e tour (1–6 contre Alexis Klinka), dont 1 victoire sans perdre une manche.",
      "En double avec Killian Ballon, il gagne 24 manches pour 15 concédées sur l'ensemble du tableau, dont 4 matchs gagnés à la manche décisive."
@@ -2615,8 +2615,8 @@
      "nb_eq": 6,
      "rang_cg": 2,
      "rang_comp": [
-      18,
-      53
+      14,
+      47
      ],
      "parfaites": 1,
      "serie": [
@@ -2809,7 +2809,7 @@
     "titre": null,
     "analyse": [
      "Alexis Klinka a disputé 20 matchs à Londres sous le maillot de l'équipe de France Hommes.",
-     "Par équipes, il remporte 28 de ses 48 manches (58 %) en 11 rencontres. Il signe 9 « casse et gagne ».",
+     "Par équipes, il remporte 28 de ses 48 manches (58 %) en 11 rencontres, et se classe 14e sur 47 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
      "Sa meilleure rencontre : France – Mexique (25/10), avec 4 manches sur 4.",
      "En simple, il remporte 4 matchs avant de s'arrêter en 1/4 de finale (4–6 contre Kevin Martin), dont 1 victoire sans perdre une manche.",
      "En double avec Christophe Thébeault, il remporte 3 matchs avant de s'arrêter en 1/4 de finale (0–4 contre Oussama Masskini / Houssam El Amari), dont 1 victoire sans perdre une manche."
@@ -2818,7 +2818,13 @@
   },
   "collette-henriksen": {
    "nom": "Collette Henriksen",
-   "medailles": [],
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes Femmes",
+     "lib": "Championnes du monde"
+    }
+   ],
    "gp": [
     {
      "epreuve": "Femmes",
@@ -2905,9 +2911,9 @@
    "equipe": {
     "cat": "Femmes",
     "col": "#ff8a1f",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
-    "v": 9,
+    "lib": "Championnes du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 26,
     "f": 33,
@@ -3017,13 +3023,196 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "13–3",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 14,
+     "g": 51,
+     "f": 70,
+     "pct": 73,
+     "cg": 2,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 26,
+     "f": 33,
+     "pct": 79,
+     "cg": 2,
+     "rencontres": 8,
+     "rang_eq": 2,
+     "nb_eq": 6,
+     "rang_cg": 2,
+     "rang_comp": [
+      2,
+      23
+     ],
+     "parfaites": 3,
+     "serie": [
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Mexique",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "sam 24/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "dim 25/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Irlande du Nord",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 2,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 17,
+     "p": 7,
+     "pct": 71,
+     "v": 2,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Fernandez",
+       "a": 6,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "2e tour",
+       "adv": "Nkosi",
+       "a": 6,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "O’Brien",
+       "a": 5,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 8,
+     "p": 5,
+     "pct": 62,
+     "v": 2,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Nkosi",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Richardson",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Cunningham",
+       "a": 0,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Collette Henriksen repart de Londres avec une médaille : championne du monde par équipes avec l'équipe de France Femmes.",
+    "analyse": [
+     "Par équipes, elle remporte 26 de ses 33 manches (79 %) en 8 rencontres, le 2e meilleur pourcentage de l'équipe de France Femmes, et se classe 2e sur 23 joueuses de l'épreuve. Elle signe 2 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Afrique du Sud (21/10), avec 4 manches sur 4, et 3 rencontres sans perdre une manche.",
+     "En simple, elle remporte 2 matchs avant de s'arrêter en 1/8 de finale (5–6 contre Kim O’Brien), dont 1 victoire sans perdre une manche.",
+     "En double avec Ophélie Laval, elle remporte 2 matchs avant de s'arrêter en 1/4 de finale (0–4 contre Emma Cunningham / Mika Roonay), dont 1 victoire sans perdre une manche."
     ]
    }
   },
   "sabrilla-brunet": {
    "nom": "Sabrilla Brunet",
    "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes Femmes",
+     "lib": "Championnes du monde"
+    },
     {
      "m": "argent",
      "epreuve": "Simple Femmes",
@@ -3145,9 +3334,9 @@
    "equipe": {
     "cat": "Femmes",
     "col": "#ff8a1f",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
-    "v": 9,
+    "lib": "Championnes du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 27,
     "f": 35,
@@ -3257,13 +3446,221 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "13–3",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 17,
+     "g": 69,
+     "f": 99,
+     "pct": 70,
+     "cg": 1,
+     "medailles": 3
+    },
+    "equipe": {
+     "g": 27,
+     "f": 35,
+     "pct": 77,
+     "cg": 1,
+     "rencontres": 8,
+     "rang_eq": 3,
+     "nb_eq": 6,
+     "rang_cg": 3,
+     "rang_comp": [
+      3,
+      23
+     ],
+     "parfaites": 2,
+     "serie": [
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Mexique",
+       "date": "jeu 22/10",
+       "g": 5,
+       "f": 5,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Angleterre",
+       "date": "sam 24/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "dim 25/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Irlande du Nord",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 31,
+     "p": 15,
+     "pct": 67,
+     "v": 5,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 1,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Marshall",
+       "a": 6,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "2e tour",
+       "adv": "Willenberg",
+       "a": 6,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Cunningham",
+       "a": 6,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Cunningham",
+       "a": 6,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "O’Brien",
+       "a": 6,
+       "b": 5,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "Finale",
+       "adv": "Jude",
+       "a": 1,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 11,
+     "p": 7,
+     "pct": 61,
+     "v": 2,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 1,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1/8 de finale",
+       "adv": "Carneiro",
+       "a": 4,
+       "b": 3,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Ball",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Cunningham",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Sabrilla Brunet repart de Londres avec 3 médailles : championne du monde par équipes avec l'équipe de France Femmes, vice-championne du monde en simple et médaille de bronze en double avec Marion Jude.",
+    "analyse": [
+     "Par équipes, elle remporte 27 de ses 35 manches (77 %) en 8 rencontres, le 3e meilleur pourcentage de l'équipe de France Femmes, et se classe 3e sur 23 joueuses de l'épreuve. Elle signe 1 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Mexique (22/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
+     "En simple, elle gagne 31 manches pour 15 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive.",
+     "En double avec Marion Jude, elle gagne 11 manches pour 7 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive."
     ]
    }
   },
   "ophelie-laval": {
    "nom": "Ophélie Laval",
-   "medailles": [],
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes Femmes",
+     "lib": "Championnes du monde"
+    }
+   ],
    "gp": [
     {
      "epreuve": "Femmes",
@@ -3350,9 +3747,9 @@
    "equipe": {
     "cat": "Femmes",
     "col": "#ff8a1f",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
-    "v": 9,
+    "lib": "Championnes du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 26,
     "f": 34,
@@ -3462,7 +3859,185 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "13–3",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 14,
+     "g": 47,
+     "f": 68,
+     "pct": 69,
+     "cg": 1,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 26,
+     "f": 34,
+     "pct": 76,
+     "cg": 1,
+     "rencontres": 8,
+     "rang_eq": 4,
+     "nb_eq": 6,
+     "rang_cg": 3,
+     "rang_comp": [
+      4,
+      23
+     ],
+     "parfaites": 3,
+     "serie": [
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Mexique",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "sam 24/10",
+       "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "dim 25/10",
+       "g": 5,
+       "f": 5,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Australie",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Irlande du Nord",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 13,
+     "p": 8,
+     "pct": 62,
+     "v": 2,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "McDonough",
+       "a": 6,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "2e tour",
+       "adv": "Paru",
+       "a": 6,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Jude",
+       "a": 1,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 8,
+     "p": 5,
+     "pct": 62,
+     "v": 2,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Nkosi",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Richardson",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Cunningham",
+       "a": 0,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Ophélie Laval repart de Londres avec une médaille : championne du monde par équipes avec l'équipe de France Femmes.",
+    "analyse": [
+     "Par équipes, elle remporte 26 de ses 34 manches (76 %) en 8 rencontres, et se classe 4e sur 23 joueuses de l'épreuve. Elle signe 1 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Australie (25/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
+     "En simple, elle remporte 2 matchs avant de s'arrêter en 1/8 de finale (1–6 contre Marion Jude), dont 1 victoire sans perdre une manche.",
+     "En double avec Collette Henriksen, elle remporte 2 matchs avant de s'arrêter en 1/4 de finale (0–4 contre Emma Cunningham / Mika Roonay), dont 1 victoire sans perdre une manche."
     ]
    }
   },
@@ -3473,6 +4048,11 @@
      "m": "or",
      "epreuve": "Simple Femmes",
      "lib": "Championne du monde"
+    },
+    {
+     "m": "or",
+     "epreuve": "Équipes Femmes",
+     "lib": "Championnes du monde"
     },
     {
      "m": "bronze",
@@ -3590,9 +4170,9 @@
    "equipe": {
     "cat": "Femmes",
     "col": "#ff8a1f",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
-    "v": 9,
+    "lib": "Championnes du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 29,
     "f": 35,
@@ -3702,13 +4282,221 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "13–3",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 17,
+     "g": 76,
+     "f": 98,
+     "pct": 78,
+     "cg": 3,
+     "medailles": 3
+    },
+    "equipe": {
+     "g": 29,
+     "f": 35,
+     "pct": 83,
+     "cg": 3,
+     "rencontres": 8,
+     "rang_eq": 1,
+     "nb_eq": 6,
+     "rang_cg": 1,
+     "rang_comp": [
+      1,
+      23
+     ],
+     "parfaites": 4,
+     "serie": [
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Mexique",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "sam 24/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "dim 25/10",
+       "g": 5,
+       "f": 5,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Irlande du Nord",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 36,
+     "p": 9,
+     "pct": 80,
+     "v": 6,
+     "d": 0,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Gonzalez",
+       "a": 6,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "2e tour",
+       "adv": "Roonay",
+       "a": 6,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Laval",
+       "a": 6,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Carneiro",
+       "a": 6,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Pinches",
+       "a": 6,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "Finale",
+       "adv": "Brunet",
+       "a": 6,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 11,
+     "p": 7,
+     "pct": 61,
+     "v": 2,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 1,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1/8 de finale",
+       "adv": "Carneiro",
+       "a": 4,
+       "b": 3,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Ball",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Cunningham",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Marion Jude repart de Londres avec 3 médailles : championne du monde en simple, championne du monde par équipes avec l'équipe de France Femmes et médaille de bronze en double avec Sabrilla Brunet.",
+    "analyse": [
+     "Par équipes, elle remporte 29 de ses 35 manches (83 %) en 8 rencontres, le meilleur pourcentage de l'équipe de France Femmes, et se classe 1re sur 23 joueuses de l'épreuve. Elle signe 3 « casse et gagne », le meilleur total de l'équipe.",
+     "Sa meilleure rencontre : France – Australie (25/10), avec 5 manches sur 5, et 4 rencontres sans perdre une manche.",
+     "En simple, elle gagne 36 manches pour 9 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche.",
+     "En double avec Sabrilla Brunet, elle gagne 11 manches pour 7 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive."
     ]
    }
   },
   "emilie-carneiro": {
    "nom": "Émilie Carneiro",
-   "medailles": [],
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes Femmes",
+     "lib": "Championnes du monde"
+    }
+   ],
    "gp": [
     {
      "epreuve": "Femmes",
@@ -3795,9 +4583,9 @@
    "equipe": {
     "cat": "Femmes",
     "col": "#ff8a1f",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
-    "v": 9,
+    "lib": "Championnes du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 23,
     "f": 34,
@@ -3907,13 +4695,197 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "13–3",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 14,
+     "g": 52,
+     "f": 84,
+     "pct": 62,
+     "cg": 1,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 23,
+     "f": 34,
+     "pct": 68,
+     "cg": 1,
+     "rencontres": 8,
+     "rang_eq": 5,
+     "nb_eq": 6,
+     "rang_cg": 3,
+     "rang_comp": [
+      5,
+      23
+     ],
+     "parfaites": 0,
+     "serie": [
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 1,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Mexique",
+       "date": "jeu 22/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "sam 24/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "dim 25/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande du Nord",
+       "date": "lun 26/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": true
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 22,
+     "p": 14,
+     "pct": 61,
+     "v": 3,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Niollet",
+       "a": 6,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "2e tour",
+       "adv": "(eg)",
+       "a": 6,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Hickson",
+       "a": 6,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Jude",
+       "a": 4,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 7,
+     "p": 7,
+     "pct": 50,
+     "v": 1,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 1,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Smith",
+       "a": 4,
+       "b": 3,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Brunet",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Émilie Carneiro repart de Londres avec une médaille : championne du monde par équipes avec l'équipe de France Femmes.",
+    "analyse": [
+     "Par équipes, elle remporte 23 de ses 34 manches (68 %) en 8 rencontres, et se classe 5e sur 23 joueuses de l'épreuve. Elle signe 1 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Irlande du Nord (26/10), avec 4 manches sur 5.",
+     "En simple, elle remporte 3 matchs avant de s'arrêter en 1/4 de finale (4–6 contre Marion Jude), dont 1 victoire sans perdre une manche.",
+     "En double avec Floriane Niollet, elle remporte 1 match avant de s'arrêter en 1/8 de finale (3–4 contre Sabrilla Brunet / Marion Jude), dont 1 match gagné à la manche décisive."
     ]
    }
   },
   "floriane-niollet": {
    "nom": "Floriane Niollet",
-   "medailles": [],
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes Femmes",
+     "lib": "Championnes du monde"
+    }
+   ],
    "gp": [
     {
      "epreuve": "Femmes",
@@ -3976,9 +4948,9 @@
    "equipe": {
     "cat": "Femmes",
     "col": "#ff8a1f",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
-    "v": 9,
+    "lib": "Championnes du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 18,
     "f": 29,
@@ -4088,13 +5060,172 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "13–3",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 11,
+     "g": 29,
+     "f": 53,
+     "pct": 55,
+     "cg": 0,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 18,
+     "f": 29,
+     "pct": 62,
+     "cg": 0,
+     "rencontres": 8,
+     "rang_eq": 6,
+     "nb_eq": 6,
+     "rang_cg": null,
+     "rang_comp": [
+      6,
+      23
+     ],
+     "parfaites": 1,
+     "serie": [
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Mexique",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "sam 24/10",
+       "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Irlande du Nord",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 4,
+     "p": 6,
+     "pct": 40,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Carneiro",
+       "a": 4,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 7,
+     "p": 7,
+     "pct": 50,
+     "v": 1,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 1,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Smith",
+       "a": 4,
+       "b": 3,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Brunet",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Floriane Niollet repart de Londres avec une médaille : championne du monde par équipes avec l'équipe de France Femmes.",
+    "analyse": [
+     "Par équipes, elle remporte 18 de ses 29 manches (62 %) en 8 rencontres, et se classe 6e sur 23 joueuses de l'épreuve.",
+     "Sa meilleure rencontre : France – Australie (25/10), avec 4 manches sur 4.",
+     "En simple, elle s'incline d'entrée (4–6 contre Emilie Carneiro).",
+     "En double avec Émilie Carneiro, elle remporte 1 match avant de s'arrêter en 1/8 de finale (3–4 contre Sabrilla Brunet / Marion Jude), dont 1 match gagné à la manche décisive."
     ]
    }
   },
   "raphael-rybak": {
    "nom": "Raphaël Rybak",
    "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes +50 ans",
+     "lib": "Champions du monde"
+    },
     {
      "m": "bronze",
      "epreuve": "Simple +50 ans",
@@ -4181,9 +5312,9 @@
    "equipe": {
     "cat": "+50 ans",
     "col": "#c9ccd4",
-    "lib": "Qualifiée pour les 1/2 finales",
-    "etat": "encours",
-    "v": 7,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 9,
     "d": 1,
     "g": 26,
     "f": 38,
@@ -4285,13 +5416,205 @@
        "f": 5,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "1/2 finale",
+      "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Angleterre",
+      "score": "13–11",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 14,
+     "g": 52,
+     "f": 86,
+     "pct": 60,
+     "cg": 0,
+     "medailles": 2
+    },
+    "equipe": {
+     "g": 26,
+     "f": 38,
+     "pct": 68,
+     "cg": 0,
+     "rencontres": 8,
+     "rang_eq": 2,
+     "nb_eq": 6,
+     "rang_cg": null,
+     "rang_comp": [
+      2,
+      12
+     ],
+     "parfaites": 2,
+     "serie": [
+      {
+       "adv": "Australie",
+       "date": "mar 20/10",
+       "g": 5,
+       "f": 5,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande",
+       "date": "jeu 22/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 5,
+       "f": 5,
+       "parfait": true,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 22,
+     "p": 15,
+     "pct": 59,
+     "v": 3,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 1,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "2e tour",
+       "adv": "Lecomte",
+       "a": 6,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Beevers",
+       "a": 6,
+       "b": 3,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Pillay",
+       "a": 6,
+       "b": 5,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Pilkington",
+       "a": 4,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 4,
+     "p": 7,
+     "pct": 36,
+     "v": 1,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 1,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Debois",
+       "a": 4,
+       "b": 3,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Maharaj",
+       "a": 0,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Raphaël Rybak repart de Londres avec 2 médailles : champion du monde par équipes avec l'équipe de France +50 ans et médaille de bronze en simple.",
+    "analyse": [
+     "Par équipes, il remporte 26 de ses 38 manches (68 %) en 8 rencontres, le 2e meilleur pourcentage de l'équipe de France +50 ans, et se classe 2e sur 12 joueurs de l'épreuve.",
+     "Sa meilleure rencontre : France – Australie (20/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
+     "En simple, il gagne 22 manches pour 15 concédées sur l'ensemble du tableau, dont 1 match gagné à la manche décisive.",
+     "En double avec Christophe Wailly, il remporte 1 match avant de s'arrêter en 1/4 de finale (0–4 contre Yadesh Maharaj / Chris Pillay), dont 1 match gagné à la manche décisive."
     ]
    }
   },
   "laurent-lecomte": {
    "nom": "Laurent Lecomte",
-   "medailles": [],
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes +50 ans",
+     "lib": "Champions du monde"
+    }
+   ],
    "gp": [
     {
      "epreuve": "+40 ans",
@@ -4340,9 +5663,9 @@
    "equipe": {
     "cat": "+50 ans",
     "col": "#c9ccd4",
-    "lib": "Qualifiée pour les 1/2 finales",
-    "etat": "encours",
-    "v": 7,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 9,
     "d": 1,
     "g": 11,
     "f": 27,
@@ -4444,13 +5767,173 @@
        "f": 3,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "1/2 finale",
+      "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Angleterre",
+      "score": "13–11",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 10,
+     "g": 15,
+     "f": 41,
+     "pct": 37,
+     "cg": 0,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 11,
+     "f": 27,
+     "pct": 41,
+     "cg": 0,
+     "rencontres": 8,
+     "rang_eq": 5,
+     "nb_eq": 6,
+     "rang_cg": null,
+     "rang_comp": [
+      7,
+      12
+     ],
+     "parfaites": 1,
+     "serie": [
+      {
+       "adv": "Australie",
+       "date": "mar 20/10",
+       "g": 0,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande",
+       "date": "jeu 22/10",
+       "g": 5,
+       "f": 5,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 1,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "lun 26/10",
+       "g": 0,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande",
+       "date": "lun 26/10",
+       "g": 1,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 0,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 1,
+     "p": 6,
+     "pct": 14,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "2e tour",
+       "adv": "Rybak",
+       "a": 1,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 3,
+     "p": 4,
+     "pct": 43,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Rybak",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Laurent Lecomte repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +50 ans.",
+    "analyse": [
+     "Par équipes, il remporte 11 de ses 27 manches (41 %) en 8 rencontres, et se classe 7e sur 12 joueurs de l'épreuve.",
+     "Sa meilleure rencontre : France – Irlande (22/10), avec 5 manches sur 5.",
+     "En simple, il s'incline d'entrée (1–6 contre Raphael Rybak).",
+     "En double avec François Debois, il s'incline d'entrée (3–4 contre Raphael Rybak / Christophe Wailly)."
     ]
    }
   },
   "francois-debois": {
    "nom": "François Debois",
-   "medailles": [],
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes +50 ans",
+     "lib": "Champions du monde"
+    }
+   ],
    "gp": [
     {
      "epreuve": "+40 ans",
@@ -4499,9 +5982,9 @@
    "equipe": {
     "cat": "+50 ans",
     "col": "#c9ccd4",
-    "lib": "Qualifiée pour les 1/2 finales",
-    "etat": "encours",
-    "v": 7,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 9,
     "d": 1,
     "g": 27,
     "f": 37,
@@ -4603,13 +6086,173 @@
        "f": 5,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "1/2 finale",
+      "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Angleterre",
+      "score": "13–11",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 10,
+     "g": 32,
+     "f": 52,
+     "pct": 62,
+     "cg": 0,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 27,
+     "f": 37,
+     "pct": 73,
+     "cg": 0,
+     "rencontres": 8,
+     "rang_eq": 1,
+     "nb_eq": 6,
+     "rang_cg": null,
+     "rang_comp": [
+      1,
+      12
+     ],
+     "parfaites": 2,
+     "serie": [
+      {
+       "adv": "Australie",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Irlande",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 2,
+     "p": 6,
+     "pct": 25,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "2e tour",
+       "adv": "Munsamy",
+       "a": 2,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 3,
+     "p": 4,
+     "pct": 43,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Rybak",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "François Debois repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +50 ans.",
+    "analyse": [
+     "Par équipes, il remporte 27 de ses 37 manches (73 %) en 8 rencontres, le meilleur pourcentage de l'équipe de France +50 ans, et se classe 1er sur 12 joueurs de l'épreuve.",
+     "Sa meilleure rencontre : France – Afrique du Sud (21/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
+     "En simple, il s'incline d'entrée (2–6 contre Basil Munsamy).",
+     "En double avec Laurent Lecomte, il s'incline d'entrée (3–4 contre Raphael Rybak / Christophe Wailly)."
     ]
    }
   },
   "anthony-thomas": {
    "nom": "Anthony Thomas",
-   "medailles": [],
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes +50 ans",
+     "lib": "Champions du monde"
+    }
+   ],
    "gp": [
     {
      "epreuve": "+40 ans",
@@ -4674,9 +6317,9 @@
    "equipe": {
     "cat": "+50 ans",
     "col": "#c9ccd4",
-    "lib": "Qualifiée pour les 1/2 finales",
-    "etat": "encours",
-    "v": 7,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 9,
     "d": 1,
     "g": 23,
     "f": 38,
@@ -4778,13 +6421,189 @@
        "f": 5,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "1/2 finale",
+      "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Angleterre",
+      "score": "13–11",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 12,
+     "g": 38,
+     "f": 68,
+     "pct": 56,
+     "cg": 0,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 23,
+     "f": 38,
+     "pct": 61,
+     "cg": 0,
+     "rencontres": 8,
+     "rang_eq": 4,
+     "nb_eq": 6,
+     "rang_cg": null,
+     "rang_comp": [
+      4,
+      12
+     ],
+     "parfaites": 1,
+     "serie": [
+      {
+       "adv": "Australie",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 3,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": true
+      },
+      {
+       "adv": "Irlande",
+       "date": "jeu 22/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 15,
+     "p": 11,
+     "pct": 58,
+     "v": 2,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "2e tour",
+       "adv": "Witton",
+       "a": 6,
+       "b": 3,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Munsamy",
+       "a": 7,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Pillay(C.P)",
+       "a": 2,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 0,
+     "p": 4,
+     "pct": 0,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Maharaj",
+       "a": 0,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Anthony Thomas repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +50 ans.",
+    "analyse": [
+     "Par équipes, il remporte 23 de ses 38 manches (61 %) en 8 rencontres, et se classe 4e sur 12 joueurs de l'épreuve.",
+     "Sa meilleure rencontre : France – Afrique du Sud (21/10), avec 4 manches sur 5.",
+     "En simple, il remporte 2 matchs avant de s'arrêter en 1/4 de finale (2–6 contre Chris Pillay(C.P)).",
+     "En double avec Alain Gerbault, il s'incline d'entrée (0–4 contre Yadesh Maharaj / Chris Pillay)."
     ]
    }
   },
   "alain-gerbault": {
    "nom": "Alain Gerbault",
-   "medailles": [],
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes +50 ans",
+     "lib": "Champions du monde"
+    }
+   ],
    "gp": [
     {
      "epreuve": "+40 ans",
@@ -4833,9 +6652,9 @@
    "equipe": {
     "cat": "+50 ans",
     "col": "#c9ccd4",
-    "lib": "Qualifiée pour les 1/2 finales",
-    "etat": "encours",
-    "v": 7,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 9,
     "d": 1,
     "g": 7,
     "f": 21,
@@ -4937,13 +6756,171 @@
        "f": 2,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "1/2 finale",
+      "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Angleterre",
+      "score": "13–11",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 10,
+     "g": 9,
+     "f": 33,
+     "pct": 27,
+     "cg": 0,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 7,
+     "f": 21,
+     "pct": 33,
+     "cg": 0,
+     "rencontres": 8,
+     "rang_eq": 6,
+     "nb_eq": 6,
+     "rang_cg": null,
+     "rang_comp": [
+      10,
+      12
+     ],
+     "parfaites": 0,
+     "serie": [
+      {
+       "adv": "Australie",
+       "date": "mar 20/10",
+       "g": 1,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 0,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": true
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 0,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 0,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande",
+       "date": "lun 26/10",
+       "g": 1,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 1,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 2,
+     "p": 6,
+     "pct": 25,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "2e tour",
+       "adv": "Connolly",
+       "a": 2,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 0,
+     "p": 4,
+     "pct": 0,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Maharaj",
+       "a": 0,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Alain Gerbault repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +50 ans.",
+    "analyse": [
+     "Par équipes, il remporte 7 de ses 21 manches (33 %) en 8 rencontres, et se classe 10e sur 12 joueurs de l'épreuve.",
+     "En simple, il s'incline d'entrée (2–6 contre Joe Connolly).",
+     "En double avec Anthony Thomas, il s'incline d'entrée (0–4 contre Yadesh Maharaj / Chris Pillay)."
     ]
    }
   },
   "christophe-wailly": {
    "nom": "Christophe Wailly",
    "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes +50 ans",
+     "lib": "Champions du monde"
+    },
     {
      "m": "argent",
      "epreuve": "Simple +50 ans",
@@ -5031,9 +7008,9 @@
    "equipe": {
     "cat": "+50 ans",
     "col": "#c9ccd4",
-    "lib": "Qualifiée pour les 1/2 finales",
-    "etat": "encours",
-    "v": 7,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 9,
     "d": 1,
     "g": 26,
     "f": 39,
@@ -5135,7 +7112,201 @@
        "f": 5,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–12",
+      "res": "victoire",
+      "phase": "1/2 finale",
+      "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Angleterre",
+      "score": "13–11",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 15,
+     "g": 54,
+     "f": 88,
+     "pct": 61,
+     "cg": 0,
+     "medailles": 2
+    },
+    "equipe": {
+     "g": 26,
+     "f": 39,
+     "pct": 67,
+     "cg": 0,
+     "rencontres": 8,
+     "rang_eq": 3,
+     "nb_eq": 6,
+     "rang_cg": null,
+     "rang_comp": [
+      3,
+      12
+     ],
+     "parfaites": 1,
+     "serie": [
+      {
+       "adv": "Australie",
+       "date": "mar 20/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande",
+       "date": "lun 26/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 24,
+     "p": 14,
+     "pct": 63,
+     "v": 4,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "2e tour",
+       "adv": "Maharaj",
+       "a": 6,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Appleton",
+       "a": 6,
+       "b": 3,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Lynch",
+       "a": 6,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Pillay(C.P)",
+       "a": 6,
+       "b": 3,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "Finale",
+       "adv": "Pilkington",
+       "a": 0,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 4,
+     "p": 7,
+     "pct": 36,
+     "v": 1,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 1,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Debois",
+       "a": 4,
+       "b": 3,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Maharaj",
+       "a": 0,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Christophe Wailly repart de Londres avec 2 médailles : champion du monde par équipes avec l'équipe de France +50 ans et vice-champion du monde en simple.",
+    "analyse": [
+     "Par équipes, il remporte 26 de ses 39 manches (67 %) en 8 rencontres, le 3e meilleur pourcentage de l'équipe de France +50 ans, et se classe 3e sur 12 joueurs de l'épreuve.",
+     "Sa meilleure rencontre : France – Irlande (22/10), avec 4 manches sur 4.",
+     "En simple, il gagne 24 manches pour 14 concédées sur l'ensemble du tableau.",
+     "En double avec Raphaël Rybak, il remporte 1 match avant de s'arrêter en 1/4 de finale (0–4 contre Yadesh Maharaj / Chris Pillay), dont 1 match gagné à la manche décisive."
     ]
    }
   },
@@ -5145,6 +7316,11 @@
     {
      "m": "or",
      "epreuve": "Double Espoirs U23",
+     "lib": "Champions du monde"
+    },
+    {
+     "m": "or",
+     "epreuve": "Équipes Espoirs U23",
      "lib": "Champions du monde"
     },
     {
@@ -5249,9 +7425,9 @@
    "equipe": {
     "cat": "Espoirs U23",
     "col": "#8a3dff",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
-    "v": 9,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 13,
     "f": 18,
@@ -5349,13 +7525,188 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "8–3",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 13,
+     "g": 45,
+     "f": 65,
+     "pct": 69,
+     "cg": 0,
+     "medailles": 3
+    },
+    "equipe": {
+     "g": 13,
+     "f": 18,
+     "pct": 72,
+     "cg": 0,
+     "rencontres": 5,
+     "rang_eq": 3,
+     "nb_eq": 4,
+     "rang_cg": null,
+     "rang_comp": [
+      4,
+      7
+     ],
+     "parfaites": 0,
+     "serie": [
+      {
+       "adv": "Afrique du Sud",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": true
+      },
+      {
+       "adv": "Malte",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Malte",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 16,
+     "p": 10,
+     "pct": 62,
+     "v": 3,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 1,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Foulds",
+       "a": 5,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Kirwin",
+       "a": 5,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Aitken",
+       "a": 5,
+       "b": 4,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Moreira",
+       "a": 1,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 16,
+     "p": 5,
+     "pct": 76,
+     "v": 4,
+     "d": 0,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Els",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Fitzgerald",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Joly",
+       "a": 4,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "Finale",
+       "adv": "Castaldi",
+       "a": 4,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Thibault Couzigou repart de Londres avec 3 médailles : champion du monde en double avec Théo Schneider, champion du monde par équipes avec l'équipe de France Espoirs U23 et médaille de bronze en simple.",
+    "analyse": [
+     "Par équipes, il remporte 13 de ses 18 manches (72 %) en 5 rencontres, le 3e meilleur pourcentage de l'équipe de France Espoirs U23, et se classe 4e sur 7 joueurs de l'épreuve.",
+     "Sa meilleure rencontre : France – Afrique du Sud (20/10), avec 3 manches sur 4.",
+     "En simple, il gagne 16 manches pour 10 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive.",
+     "En double avec Théo Schneider, il gagne 16 manches pour 5 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
     ]
    }
   },
   "damien-joly": {
    "nom": "Damien Joly",
    "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes Espoirs U23",
+     "lib": "Champions du monde"
+    },
     {
      "m": "bronze",
      "epreuve": "Double Espoirs U23",
@@ -5432,9 +7783,9 @@
    "equipe": {
     "cat": "Espoirs U23",
     "col": "#8a3dff",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
-    "v": 9,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 14,
     "f": 20,
@@ -5532,7 +7883,145 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "8–3",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 9,
+     "g": 28,
+     "f": 43,
+     "pct": 65,
+     "cg": 2,
+     "medailles": 2
+    },
+    "equipe": {
+     "g": 14,
+     "f": 20,
+     "pct": 70,
+     "cg": 2,
+     "rencontres": 5,
+     "rang_eq": 4,
+     "nb_eq": 4,
+     "rang_cg": 1,
+     "rang_comp": [
+      3,
+      7
+     ],
+     "parfaites": 2,
+     "serie": [
+      {
+       "adv": "Afrique du Sud",
+       "date": "mar 20/10",
+       "g": 1,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Malte",
+       "date": "mer 21/10",
+       "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Australie",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Malte",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 8,
+     "p": 5,
+     "pct": 62,
+     "v": 1,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Zantedeschi",
+       "a": 5,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Aitken",
+       "a": 3,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 6,
+     "p": 4,
+     "pct": 60,
+     "v": 1,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1/4 de finale",
+       "adv": "Tyne",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Schneider",
+       "a": 2,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Damien Joly repart de Londres avec 2 médailles : champion du monde par équipes avec l'équipe de France Espoirs U23 et médaille de bronze en double avec Léonardo Moreira.",
+    "analyse": [
+     "Par équipes, il remporte 14 de ses 20 manches (70 %) en 5 rencontres, et se classe 3e sur 7 joueurs de l'épreuve. Il signe 2 « casse et gagne », le meilleur total de l'équipe.",
+     "Sa meilleure rencontre : France – Angleterre (21/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
+     "En simple, il remporte 1 match avant de s'arrêter en 1/8 de finale (3–5 contre Luke Aitken), dont 1 victoire sans perdre une manche.",
+     "En double avec Léonardo Moreira, il gagne 6 manches pour 4 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
     ]
    }
   },
@@ -5543,6 +8032,11 @@
      "m": "or",
      "epreuve": "Simple Espoirs U23",
      "lib": "Champion du monde"
+    },
+    {
+     "m": "or",
+     "epreuve": "Équipes Espoirs U23",
+     "lib": "Champions du monde"
     },
     {
      "m": "bronze",
@@ -5644,9 +8138,9 @@
    "equipe": {
     "cat": "Espoirs U23",
     "col": "#8a3dff",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
-    "v": 9,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 14,
     "f": 19,
@@ -5744,7 +8238,169 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "8–3",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 12,
+     "g": 45,
+     "f": 64,
+     "pct": 70,
+     "cg": 2,
+     "medailles": 3
+    },
+    "equipe": {
+     "g": 14,
+     "f": 19,
+     "pct": 74,
+     "cg": 2,
+     "rencontres": 5,
+     "rang_eq": 1,
+     "nb_eq": 4,
+     "rang_cg": 1,
+     "rang_comp": [
+      2,
+      7
+     ],
+     "parfaites": 1,
+     "serie": [
+      {
+       "adv": "Afrique du Sud",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Malte",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": true
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 3,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Malte",
+       "date": "dim 25/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 25,
+     "p": 10,
+     "pct": 71,
+     "v": 5,
+     "d": 0,
+     "blanc": 1,
+     "serres_v": 2,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Naidoo",
+       "a": 5,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Vella",
+       "a": 5,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Edenpark)",
+       "a": 5,
+       "b": 4,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Couzigou",
+       "a": 5,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "Finale",
+       "adv": "Castaldi",
+       "a": 5,
+       "b": 4,
+       "blanc": false,
+       "decisif": true
+      }
+     ]
+    },
+    "double": {
+     "g": 6,
+     "p": 4,
+     "pct": 60,
+     "v": 1,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1/4 de finale",
+       "adv": "Tyne",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Schneider",
+       "a": 2,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Léonardo Moreira repart de Londres avec 3 médailles : champion du monde en simple, champion du monde par équipes avec l'équipe de France Espoirs U23 et médaille de bronze en double avec Damien Joly.",
+    "analyse": [
+     "Par équipes, il remporte 14 de ses 19 manches (74 %) en 5 rencontres, le meilleur pourcentage de l'équipe de France Espoirs U23, et se classe 2e sur 7 joueurs de l'épreuve. Il signe 2 « casse et gagne », le meilleur total de l'équipe.",
+     "Sa meilleure rencontre : France – Malte (21/10), avec 4 manches sur 5.",
+     "En simple, il gagne 25 manches pour 10 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 2 matchs gagnés à la manche décisive.",
+     "En double avec Damien Joly, il gagne 6 manches pour 4 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
     ]
    }
   },
@@ -5754,6 +8410,11 @@
     {
      "m": "or",
      "epreuve": "Double Espoirs U23",
+     "lib": "Champions du monde"
+    },
+    {
+     "m": "or",
+     "epreuve": "Équipes Espoirs U23",
      "lib": "Champions du monde"
     }
    ],
@@ -5838,9 +8499,9 @@
    "equipe": {
     "cat": "Espoirs U23",
     "col": "#8a3dff",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
-    "v": 9,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 13,
     "f": 18,
@@ -5938,13 +8599,180 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "8–3",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 12,
+     "g": 41,
+     "f": 61,
+     "pct": 67,
+     "cg": 2,
+     "medailles": 2
+    },
+    "equipe": {
+     "g": 13,
+     "f": 18,
+     "pct": 72,
+     "cg": 2,
+     "rencontres": 5,
+     "rang_eq": 2,
+     "nb_eq": 4,
+     "rang_cg": 1,
+     "rang_comp": [
+      1,
+      7
+     ],
+     "parfaites": 2,
+     "serie": [
+      {
+       "adv": "Afrique du Sud",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 3,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Malte",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Malte",
+       "date": "dim 25/10",
+       "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 12,
+     "p": 10,
+     "pct": 55,
+     "v": 2,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Hayward",
+       "a": 5,
+       "b": 3,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Mcira",
+       "a": 5,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Williams",
+       "a": 2,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 16,
+     "p": 5,
+     "pct": 76,
+     "v": 4,
+     "d": 0,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Els",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Fitzgerald",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Joly",
+       "a": 4,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "Finale",
+       "adv": "Castaldi",
+       "a": 4,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Théo Schneider repart de Londres avec 2 médailles : champion du monde en double avec Thibault Couzigou et champion du monde par équipes avec l'équipe de France Espoirs U23.",
+    "analyse": [
+     "Par équipes, il remporte 13 de ses 18 manches (72 %) en 5 rencontres, le 2e meilleur pourcentage de l'équipe de France Espoirs U23, et se classe 1er sur 7 joueurs de l'épreuve. Il signe 2 « casse et gagne », le meilleur total de l'équipe.",
+     "Sa meilleure rencontre : France – Malte (21/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
+     "En simple, il remporte 2 matchs avant de s'arrêter en 1/4 de finale (2–5 contre Irfaan Williams).",
+     "En double avec Thibault Couzigou, il gagne 16 manches pour 5 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
     ]
    }
   },
   "nicolas-grandemange-denizot": {
    "nom": "Nicolas Grandemange-Denizot",
    "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes +40 ans",
+     "lib": "Champions du monde"
+    },
     {
      "m": "argent",
      "epreuve": "Double +40 ans",
@@ -6015,9 +8843,9 @@
    "equipe": {
     "cat": "+40 ans",
     "col": "#e1262d",
-    "lib": "Qualifiée pour les 1/2 finales",
-    "etat": "encours",
-    "v": 8,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 20,
     "f": 30,
@@ -6119,7 +8947,177 @@
        "f": 4,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–5",
+      "res": "victoire",
+      "phase": "1/2 finale",
+      "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "13–8",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 12,
+     "g": 34,
+     "f": 59,
+     "pct": 58,
+     "cg": 1,
+     "medailles": 2
+    },
+    "equipe": {
+     "g": 20,
+     "f": 30,
+     "pct": 67,
+     "cg": 1,
+     "rencontres": 8,
+     "rang_eq": 4,
+     "nb_eq": 6,
+     "rang_cg": 5,
+     "rang_comp": [
+      4,
+      11
+     ],
+     "parfaites": 2,
+     "serie": [
+      {
+       "adv": "Australie",
+       "date": "mar 20/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Singapour",
+       "date": "mer 21/10",
+       "g": 1,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 3,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Singapour",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 5,
+     "p": 6,
+     "pct": 45,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Williams",
+       "a": 5,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 9,
+     "p": 9,
+     "pct": 50,
+     "v": 2,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 1,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1/4 de finale",
+       "adv": "Ferry",
+       "a": 4,
+       "b": 3,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Nydoo",
+       "a": 4,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "Finale",
+       "adv": "Coldrick",
+       "a": 1,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Nicolas Grandemange-Denizot repart de Londres avec 2 médailles : champion du monde par équipes avec l'équipe de France +40 ans et vice-champion du monde en double avec Élie Christidis.",
+    "analyse": [
+     "Par équipes, il remporte 20 de ses 30 manches (67 %) en 8 rencontres, et se classe 4e sur 11 joueurs de l'épreuve. Il signe 1 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Australie (20/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
+     "En simple, il s'incline d'entrée (5–6 contre John Williams).",
+     "En double avec Élie Christidis, il gagne 9 manches pour 9 concédées sur l'ensemble du tableau, dont 1 match gagné à la manche décisive."
     ]
    }
   },
@@ -6130,6 +9128,11 @@
      "m": "or",
      "epreuve": "Simple +40 ans",
      "lib": "Champion du monde"
+    },
+    {
+     "m": "or",
+     "epreuve": "Équipes +40 ans",
+     "lib": "Champions du monde"
     },
     {
      "m": "argent",
@@ -6233,9 +9236,9 @@
    "equipe": {
     "cat": "+40 ans",
     "col": "#e1262d",
-    "lib": "Qualifiée pour les 1/2 finales",
-    "etat": "encours",
-    "v": 8,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 25,
     "f": 35,
@@ -6337,7 +9340,209 @@
        "f": 3,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–5",
+      "res": "victoire",
+      "phase": "1/2 finale",
+      "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "13–8",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 16,
+     "g": 64,
+     "f": 96,
+     "pct": 67,
+     "cg": 4,
+     "medailles": 3
+    },
+    "equipe": {
+     "g": 25,
+     "f": 35,
+     "pct": 71,
+     "cg": 4,
+     "rencontres": 8,
+     "rang_eq": 1,
+     "nb_eq": 6,
+     "rang_cg": 1,
+     "rang_comp": [
+      1,
+      11
+     ],
+     "parfaites": 3,
+     "serie": [
+      {
+       "adv": "Australie",
+       "date": "mar 20/10",
+       "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Singapour",
+       "date": "mer 21/10",
+       "g": 5,
+       "f": 5,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 5,
+       "f": 5,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 5,
+       "f": 5,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Singapour",
+       "date": "dim 25/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 30,
+     "p": 13,
+     "pct": 70,
+     "v": 5,
+     "d": 0,
+     "blanc": 1,
+     "serres_v": 1,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Soon",
+       "a": 6,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Williams-Jones",
+       "a": 6,
+       "b": 3,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Williams",
+       "a": 6,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Williams",
+       "a": 6,
+       "b": 5,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "Finale",
+       "adv": "Daniels",
+       "a": 6,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 9,
+     "p": 9,
+     "pct": 50,
+     "v": 2,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 1,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1/4 de finale",
+       "adv": "Ferry",
+       "a": 4,
+       "b": 3,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Nydoo",
+       "a": 4,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "Finale",
+       "adv": "Coldrick",
+       "a": 1,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Élie Christidis repart de Londres avec 3 médailles : champion du monde en simple, champion du monde par équipes avec l'équipe de France +40 ans et vice-champion du monde en double avec Nicolas Grandemange-Denizot.",
+    "analyse": [
+     "Par équipes, il remporte 25 de ses 35 manches (71 %) en 8 rencontres, le meilleur pourcentage de l'équipe de France +40 ans, et se classe 1er sur 11 joueurs de l'épreuve. Il signe 4 « casse et gagne », le meilleur total de l'équipe.",
+     "Sa meilleure rencontre : France – Singapour (21/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
+     "En simple, il gagne 30 manches pour 13 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive.",
+     "En double avec Nicolas Grandemange-Denizot, il gagne 9 manches pour 9 concédées sur l'ensemble du tableau, dont 1 match gagné à la manche décisive."
     ]
    }
   },
@@ -6347,6 +9552,11 @@
     {
      "m": "or",
      "epreuve": "Double +40 ans",
+     "lib": "Champions du monde"
+    },
+    {
+     "m": "or",
+     "epreuve": "Équipes +40 ans",
      "lib": "Champions du monde"
     }
    ],
@@ -6422,9 +9632,9 @@
    "equipe": {
     "cat": "+40 ans",
     "col": "#e1262d",
-    "lib": "Qualifiée pour les 1/2 finales",
-    "etat": "encours",
-    "v": 8,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 20,
     "f": 32,
@@ -6522,13 +9732,189 @@
        "f": 5,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–5",
+      "res": "victoire",
+      "phase": "1/2 finale",
+      "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "13–8",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 12,
+     "g": 40,
+     "f": 63,
+     "pct": 63,
+     "cg": 2,
+     "medailles": 2
+    },
+    "equipe": {
+     "g": 20,
+     "f": 32,
+     "pct": 62,
+     "cg": 2,
+     "rencontres": 7,
+     "rang_eq": 6,
+     "nb_eq": 6,
+     "rang_cg": 4,
+     "rang_comp": [
+      6,
+      11
+     ],
+     "parfaites": 0,
+     "serie": [
+      {
+       "adv": "Australie",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Singapour",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": true
+      },
+      {
+       "adv": "Singapour",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 4,
+     "p": 6,
+     "pct": 40,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Pillay",
+       "a": 4,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 16,
+     "p": 5,
+     "pct": 76,
+     "v": 4,
+     "d": 0,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Love",
+       "a": 4,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Landsbough",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Southall",
+       "a": 4,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "Finale",
+       "adv": "Grandemange-Denizot",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Christophe Faurie repart de Londres avec 2 médailles : champion du monde en double avec Paul Coldrick et champion du monde par équipes avec l'équipe de France +40 ans.",
+    "analyse": [
+     "Par équipes, il remporte 20 de ses 32 manches (62 %) en 7 rencontres, et se classe 6e sur 11 joueurs de l'épreuve. Il signe 2 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Angleterre (22/10), avec 4 manches sur 5.",
+     "En simple, il s'incline d'entrée (4–6 contre Shane Pillay).",
+     "En double avec Paul Coldrick, il gagne 16 manches pour 5 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
     ]
    }
   },
   "frederic-moreau": {
    "nom": "Frédéric Moreau",
-   "medailles": [],
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes +40 ans",
+     "lib": "Champions du monde"
+    }
+   ],
    "gp": [
     {
      "epreuve": "+40 ans",
@@ -6585,9 +9971,9 @@
    "equipe": {
     "cat": "+40 ans",
     "col": "#e1262d",
-    "lib": "Qualifiée pour les 1/2 finales",
-    "etat": "encours",
-    "v": 8,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 23,
     "f": 33,
@@ -6689,7 +10075,169 @@
        "f": 5,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–5",
+      "res": "victoire",
+      "phase": "1/2 finale",
+      "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "13–8",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 11,
+     "g": 33,
+     "f": 54,
+     "pct": 61,
+     "cg": 3,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 23,
+     "f": 33,
+     "pct": 70,
+     "cg": 3,
+     "rencontres": 8,
+     "rang_eq": 3,
+     "nb_eq": 6,
+     "rang_cg": 2,
+     "rang_comp": [
+      3,
+      11
+     ],
+     "parfaites": 1,
+     "serie": [
+      {
+       "adv": "Australie",
+       "date": "mar 20/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Singapour",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 0,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Singapour",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 3,
+     "p": 6,
+     "pct": 33,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Daniels",
+       "a": 3,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 7,
+     "p": 5,
+     "pct": 58,
+     "v": 1,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Pillay",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Grandemange-Denizot",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Frédéric Moreau repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +40 ans.",
+    "analyse": [
+     "Par équipes, il remporte 23 de ses 33 manches (70 %) en 8 rencontres, le 3e meilleur pourcentage de l'équipe de France +40 ans, et se classe 3e sur 11 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Singapour (25/10), avec 4 manches sur 4.",
+     "En simple, il s'incline d'entrée (3–6 contre Mahier Daniels).",
+     "En double avec Jérôme Ferry, il remporte 1 match avant de s'arrêter en 1/4 de finale (3–4 contre Nicolas Grandemange-Denizot / Elie Christidis)."
     ]
    }
   },
@@ -6699,6 +10247,11 @@
     {
      "m": "or",
      "epreuve": "Double +40 ans",
+     "lib": "Champions du monde"
+    },
+    {
+     "m": "or",
+     "epreuve": "Équipes +40 ans",
      "lib": "Champions du monde"
     }
    ],
@@ -6782,9 +10335,9 @@
    "equipe": {
     "cat": "+40 ans",
     "col": "#e1262d",
-    "lib": "Qualifiée pour les 1/2 finales",
-    "etat": "encours",
-    "v": 8,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 24,
     "f": 34,
@@ -6886,13 +10439,205 @@
        "f": 4,
        "cg": 1
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–5",
+      "res": "victoire",
+      "phase": "1/2 finale",
+      "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "13–8",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 14,
+     "g": 51,
+     "f": 73,
+     "pct": 70,
+     "cg": 3,
+     "medailles": 2
+    },
+    "equipe": {
+     "g": 24,
+     "f": 34,
+     "pct": 71,
+     "cg": 3,
+     "rencontres": 8,
+     "rang_eq": 2,
+     "nb_eq": 6,
+     "rang_cg": 2,
+     "rang_comp": [
+      2,
+      11
+     ],
+     "parfaites": 2,
+     "serie": [
+      {
+       "adv": "Australie",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Singapour",
+       "date": "mer 21/10",
+       "g": 1,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Singapour",
+       "date": "dim 25/10",
+       "g": 5,
+       "f": 5,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 11,
+     "p": 7,
+     "pct": 61,
+     "v": 1,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Chew",
+       "a": 6,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Love",
+       "a": 5,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 16,
+     "p": 5,
+     "pct": 76,
+     "v": 4,
+     "d": 0,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Love",
+       "a": 4,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Landsbough",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Southall",
+       "a": 4,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "Finale",
+       "adv": "Grandemange-Denizot",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Paul Coldrick repart de Londres avec 2 médailles : champion du monde en double avec Christophe Faurie et champion du monde par équipes avec l'équipe de France +40 ans.",
+    "analyse": [
+     "Par équipes, il remporte 24 de ses 34 manches (71 %) en 8 rencontres, le 2e meilleur pourcentage de l'équipe de France +40 ans, et se classe 2e sur 11 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Singapour (25/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
+     "En simple, il remporte 1 match avant de s'arrêter en 1/8 de finale (5–6 contre Daniel Love).",
+     "En double avec Christophe Faurie, il gagne 16 manches pour 5 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
     ]
    }
   },
   "jerome-ferry": {
    "nom": "Jerome Ferry",
-   "medailles": [],
+   "medailles": [
+    {
+     "m": "or",
+     "epreuve": "Équipes +40 ans",
+     "lib": "Champions du monde"
+    }
+   ],
    "gp": [
     {
      "epreuve": "+40 ans",
@@ -6949,9 +10694,9 @@
    "equipe": {
     "cat": "+40 ans",
     "col": "#e1262d",
-    "lib": "Qualifiée pour les 1/2 finales",
-    "etat": "encours",
-    "v": 8,
+    "lib": "Champions du monde",
+    "etat": "or",
+    "v": 10,
     "d": 0,
     "g": 23,
     "f": 36,
@@ -7053,7 +10798,169 @@
        "f": 4,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–5",
+      "res": "victoire",
+      "phase": "1/2 finale",
+      "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "13–8",
+      "res": "victoire",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 11,
+     "g": 34,
+     "f": 58,
+     "pct": 59,
+     "cg": 1,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 23,
+     "f": 36,
+     "pct": 64,
+     "cg": 1,
+     "rencontres": 8,
+     "rang_eq": 5,
+     "nb_eq": 6,
+     "rang_cg": 5,
+     "rang_comp": [
+      5,
+      11
+     ],
+     "parfaites": 1,
+     "serie": [
+      {
+       "adv": "Australie",
+       "date": "mar 20/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Singapour",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 5,
+       "f": 5,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Singapour",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 1,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mar 27/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 4,
+     "p": 6,
+     "pct": 40,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Southall",
+       "a": 4,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 7,
+     "p": 5,
+     "pct": 58,
+     "v": 1,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Pillay",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Grandemange-Denizot",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Jerome Ferry repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +40 ans.",
+    "analyse": [
+     "Par équipes, il remporte 23 de ses 36 manches (64 %) en 8 rencontres, et se classe 5e sur 11 joueurs de l'épreuve. Il signe 1 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Afrique du Sud (21/10), avec 5 manches sur 5.",
+     "En simple, il s'incline d'entrée (4–6 contre Chris Southall).",
+     "En double avec Frédéric Moreau, il remporte 1 match avant de s'arrêter en 1/4 de finale (3–4 contre Nicolas Grandemange-Denizot / Elie Christidis)."
     ]
    }
   },
@@ -7063,6 +10970,11 @@
     {
      "m": "bronze",
      "epreuve": "Simple +60 ans",
+     "lib": "Médaille de bronze"
+    },
+    {
+     "m": "bronze",
+     "epreuve": "Équipes +60 ans",
      "lib": "Médaille de bronze"
     }
    ],
@@ -7112,9 +11024,9 @@
    "equipe": {
     "cat": "+60 ans",
     "col": "#c07a3a",
-    "lib": "Qualifiée pour le match de la 3e place",
-    "etat": "encours",
-    "v": 5,
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "v": 6,
     "d": 7,
     "g": 36,
     "f": 55,
@@ -7260,13 +11172,193 @@
        "f": 5,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–9",
+      "res": "victoire",
+      "phase": "Match pour la 3e place",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 15,
+     "g": 51,
+     "f": 84,
+     "pct": 61,
+     "cg": 2,
+     "medailles": 2
+    },
+    "equipe": {
+     "g": 36,
+     "f": 55,
+     "pct": 65,
+     "cg": 2,
+     "rencontres": 11,
+     "rang_eq": 1,
+     "nb_eq": 5,
+     "rang_cg": 1,
+     "rang_comp": [
+      2,
+      11
+     ],
+     "parfaites": 0,
+     "serie": [
+      {
+       "adv": "Angleterre",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": true
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "sam 24/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mar 27/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 15,
+     "p": 14,
+     "pct": 52,
+     "v": 3,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 1,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Adams",
+       "a": 5,
+       "b": 3,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Robinson",
+       "a": 5,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Harmston",
+       "a": 5,
+       "b": 4,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Brewer",
+       "a": 0,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": null,
+    "titre": "Dafydd Hughes repart de Londres avec 2 médailles : médaille de bronze en simple et médaille de bronze par équipes avec l'équipe de France +60 ans.",
+    "analyse": [
+     "Par équipes, il remporte 36 de ses 55 manches (65 %) en 11 rencontres, le meilleur pourcentage de l'équipe de France +60 ans, et se classe 2e sur 11 joueurs de l'épreuve. Il signe 2 « casse et gagne », le meilleur total de l'équipe.",
+     "Sa meilleure rencontre : France – Australie (21/10), avec 4 manches sur 5.",
+     "En simple, il gagne 15 manches pour 14 concédées sur l'ensemble du tableau, dont 1 match gagné à la manche décisive."
     ]
    }
   },
   "yvan-morales": {
    "nom": "Yvan Morales",
-   "medailles": [],
+   "medailles": [
+    {
+     "m": "bronze",
+     "epreuve": "Équipes +60 ans",
+     "lib": "Médaille de bronze"
+    }
+   ],
    "gp": [],
    "simple": {
     "cat": "+60 ans",
@@ -7308,9 +11400,9 @@
    "equipe": {
     "cat": "+60 ans",
     "col": "#c07a3a",
-    "lib": "Qualifiée pour le match de la 3e place",
-    "etat": "encours",
-    "v": 5,
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "v": 6,
     "d": 7,
     "g": 19,
     "f": 55,
@@ -7456,13 +11548,189 @@
        "f": 5,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–9",
+      "res": "victoire",
+      "phase": "Match pour la 3e place",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 13,
+     "g": 20,
+     "f": 65,
+     "pct": 31,
+     "cg": 0,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 19,
+     "f": 55,
+     "pct": 35,
+     "cg": 0,
+     "rencontres": 11,
+     "rang_eq": 4,
+     "nb_eq": 5,
+     "rang_cg": null,
+     "rang_comp": [
+      10,
+      11
+     ],
+     "parfaites": 0,
+     "serie": [
+      {
+       "adv": "Angleterre",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 0,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "jeu 22/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "sam 24/10",
+       "g": 0,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "lun 26/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mar 27/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": true
+      }
+     ]
+    },
+    "simple": {
+     "g": 0,
+     "p": 5,
+     "pct": 0,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Jones",
+       "a": 0,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 1,
+     "p": 4,
+     "pct": 20,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Jones",
+       "a": 1,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Yvan Morales repart de Londres avec une médaille : médaille de bronze par équipes avec l'équipe de France +60 ans.",
+    "analyse": [
+     "Par équipes, il remporte 19 de ses 55 manches (35 %) en 11 rencontres, et se classe 10e sur 11 joueurs de l'épreuve.",
+     "Sa meilleure rencontre : France – Australie (27/10), avec 4 manches sur 5.",
+     "En simple, il s'incline d'entrée (0–5 contre Neil Jones).",
+     "En double avec Alain Sanchez, il s'incline d'entrée (1–4 contre Neil Jones / Tony Hazledine)."
     ]
    }
   },
   "alain-sanchez": {
    "nom": "Alain Sanchez",
-   "medailles": [],
+   "medailles": [
+    {
+     "m": "bronze",
+     "epreuve": "Équipes +60 ans",
+     "lib": "Médaille de bronze"
+    }
+   ],
    "gp": [],
    "simple": {
     "cat": "+60 ans",
@@ -7512,9 +11780,9 @@
    "equipe": {
     "cat": "+60 ans",
     "col": "#c07a3a",
-    "lib": "Qualifiée pour le match de la 3e place",
-    "etat": "encours",
-    "v": 5,
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "v": 6,
     "d": 7,
     "g": 23,
     "f": 55,
@@ -7660,7 +11928,185 @@
        "f": 5,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–9",
+      "res": "victoire",
+      "phase": "Match pour la 3e place",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 14,
+     "g": 29,
+     "f": 70,
+     "pct": 41,
+     "cg": 0,
+     "medailles": 1
+    },
+    "equipe": {
+     "g": 23,
+     "f": 55,
+     "pct": 42,
+     "cg": 0,
+     "rencontres": 11,
+     "rang_eq": 3,
+     "nb_eq": 5,
+     "rang_cg": null,
+     "rang_comp": [
+      9,
+      11
+     ],
+     "parfaites": 0,
+     "serie": [
+      {
+       "adv": "Angleterre",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": true
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "sam 24/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "lun 26/10",
+       "g": 0,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mar 27/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 5,
+     "p": 5,
+     "pct": 50,
+     "v": 1,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Goodwin",
+       "a": 5,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Richardson",
+       "a": 0,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 1,
+     "p": 4,
+     "pct": 20,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Jones",
+       "a": 1,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Alain Sanchez repart de Londres avec une médaille : médaille de bronze par équipes avec l'équipe de France +60 ans.",
+    "analyse": [
+     "Par équipes, il remporte 23 de ses 55 manches (42 %) en 11 rencontres, le 3e meilleur pourcentage de l'équipe de France +60 ans, et se classe 9e sur 11 joueurs de l'épreuve.",
+     "Sa meilleure rencontre : France – Afrique du Sud (21/10), avec 4 manches sur 5.",
+     "En simple, il remporte 1 match avant de s'arrêter en 1/8 de finale (0–5 contre Stu Richardson), dont 1 victoire sans perdre une manche.",
+     "En double avec Yvan Morales, il s'incline d'entrée (1–4 contre Neil Jones / Tony Hazledine)."
     ]
    }
   },
@@ -7670,6 +12116,11 @@
     {
      "m": "bronze",
      "epreuve": "Double +60 ans",
+     "lib": "Médaille de bronze"
+    },
+    {
+     "m": "bronze",
+     "epreuve": "Équipes +60 ans",
      "lib": "Médaille de bronze"
     }
    ],
@@ -7722,9 +12173,9 @@
    "equipe": {
     "cat": "+60 ans",
     "col": "#c07a3a",
-    "lib": "Qualifiée pour le match de la 3e place",
-    "etat": "encours",
-    "v": 5,
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "v": 6,
     "d": 7,
     "g": 14,
     "f": 55,
@@ -7870,7 +12321,185 @@
        "f": 5,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–9",
+      "res": "victoire",
+      "phase": "Match pour la 3e place",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 14,
+     "g": 24,
+     "f": 76,
+     "pct": 32,
+     "cg": 1,
+     "medailles": 2
+    },
+    "equipe": {
+     "g": 14,
+     "f": 55,
+     "pct": 25,
+     "cg": 1,
+     "rencontres": 11,
+     "rang_eq": 5,
+     "nb_eq": 5,
+     "rang_cg": 2,
+     "rang_comp": [
+      11,
+      11
+     ],
+     "parfaites": 0,
+     "serie": [
+      {
+       "adv": "Angleterre",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": true
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 21/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "jeu 22/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "sam 24/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 0,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "lun 26/10",
+       "g": 0,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mar 27/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 3,
+     "p": 5,
+     "pct": 38,
+     "v": 0,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Richardson",
+       "a": 3,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 7,
+     "p": 6,
+     "pct": 54,
+     "v": 1,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1/4 de finale",
+       "adv": "Brewer",
+       "a": 4,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Goodwin",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Patrick Lapert repart de Londres avec 2 médailles : médaille de bronze en double avec Olivier Martre et médaille de bronze par équipes avec l'équipe de France +60 ans.",
+    "analyse": [
+     "Par équipes, il remporte 14 de ses 55 manches (25 %) en 11 rencontres. Il signe 1 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Angleterre (20/10), avec 3 manches sur 5.",
+     "En simple, il s'incline d'entrée (3–5 contre Stu Richardson).",
+     "En double avec Olivier Martre, il gagne 7 manches pour 6 concédées sur l'ensemble du tableau."
     ]
    }
   },
@@ -7880,6 +12509,11 @@
     {
      "m": "bronze",
      "epreuve": "Double +60 ans",
+     "lib": "Médaille de bronze"
+    },
+    {
+     "m": "bronze",
+     "epreuve": "Équipes +60 ans",
      "lib": "Médaille de bronze"
     }
    ],
@@ -7948,9 +12582,9 @@
    "equipe": {
     "cat": "+60 ans",
     "col": "#c07a3a",
-    "lib": "Qualifiée pour le match de la 3e place",
-    "etat": "encours",
-    "v": 5,
+    "lib": "Médaille de bronze",
+    "etat": "bronze",
+    "v": 6,
     "d": 7,
     "g": 30,
     "f": 55,
@@ -8096,13 +12730,212 @@
        "f": 5,
        "cg": 0
       }
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Australie",
+      "score": "13–9",
+      "res": "victoire",
+      "phase": "Match pour la 3e place",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 16,
+     "g": 50,
+     "f": 93,
+     "pct": 54,
+     "cg": 0,
+     "medailles": 2
+    },
+    "equipe": {
+     "g": 30,
+     "f": 55,
+     "pct": 55,
+     "cg": 0,
+     "rencontres": 11,
+     "rang_eq": 2,
+     "nb_eq": 5,
+     "rang_cg": null,
+     "rang_comp": [
+      6,
+      11
+     ],
+     "parfaites": 1,
+     "serie": [
+      {
+       "adv": "Angleterre",
+       "date": "mar 20/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 21/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "jeu 22/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "sam 24/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "sam 24/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mar 27/10",
+       "g": 5,
+       "f": 5,
+       "parfait": true,
+       "best": true
+      }
+     ]
+    },
+    "simple": {
+     "g": 13,
+     "p": 12,
+     "pct": 52,
+     "v": 2,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 1,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Johnson",
+       "a": 5,
+       "b": 4,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Saaiman",
+       "a": 5,
+       "b": 3,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Wilkinson",
+       "a": 3,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 7,
+     "p": 6,
+     "pct": 54,
+     "v": 1,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1/4 de finale",
+       "adv": "Brewer",
+       "a": 4,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Goodwin",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Olivier Martre repart de Londres avec 2 médailles : médaille de bronze en double avec Patrick Lapert et médaille de bronze par équipes avec l'équipe de France +60 ans.",
+    "analyse": [
+     "Par équipes, il remporte 30 de ses 55 manches (55 %) en 11 rencontres, le 2e meilleur pourcentage de l'équipe de France +60 ans, et se classe 6e sur 11 joueurs de l'épreuve.",
+     "Sa meilleure rencontre : France – Australie (27/10), avec 5 manches sur 5.",
+     "En simple, il remporte 2 matchs avant de s'arrêter en 1/4 de finale (3–5 contre Ian Wilkinson), dont 1 match gagné à la manche décisive.",
+     "En double avec Patrick Lapert, il gagne 7 manches pour 6 concédées sur l'ensemble du tableau."
     ]
    }
   },
   "arthur-crespin": {
    "nom": "Arthur Crespin",
    "medailles": [
+    {
+     "m": "argent",
+     "epreuve": "Équipes Juniors U18",
+     "lib": "Vice-champions du monde"
+    },
     {
      "m": "bronze",
      "epreuve": "Double Juniors U18",
@@ -8189,10 +13022,10 @@
    "equipe": {
     "cat": "Juniors U18",
     "col": "#18c4d8",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
+    "lib": "Vice-champions du monde",
+    "etat": "argent",
     "v": 11,
-    "d": 0,
+    "d": 1,
     "g": 27,
     "f": 38,
     "cg": 2,
@@ -8325,13 +13158,212 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "7–8",
+      "res": "défaite",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 16,
+     "g": 51,
+     "f": 74,
+     "pct": 69,
+     "cg": 2,
+     "medailles": 2
+    },
+    "equipe": {
+     "g": 27,
+     "f": 38,
+     "pct": 71,
+     "cg": 2,
+     "rencontres": 10,
+     "rang_eq": 3,
+     "nb_eq": 4,
+     "rang_cg": 4,
+     "rang_comp": [
+      3,
+      19
+     ],
+     "parfaites": 2,
+     "serie": [
+      {
+       "adv": "Afrique du Sud",
+       "date": "mar 20/10",
+       "g": 5,
+       "f": 5,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Inde",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande (U15)",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Malte",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud (U15)",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie (U15)",
+       "date": "sam 24/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Mexique",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre (U15)",
+       "date": "lun 26/10",
+       "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 13,
+     "p": 6,
+     "pct": 68,
+     "v": 2,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "bell",
+       "a": 5,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Roberts",
+       "a": 5,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Naidoo",
+       "a": 3,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 11,
+     "p": 6,
+     "pct": 65,
+     "v": 2,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Bruce",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Joubert",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Castaldi",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Arthur Crespin repart de Londres avec 2 médailles : vice-champion du monde par équipes avec l'équipe de France Juniors U18 et médaille de bronze en double avec Calvin Créach.",
+    "analyse": [
+     "Par équipes, il remporte 27 de ses 38 manches (71 %) en 10 rencontres, le 3e meilleur pourcentage de l'équipe de France Juniors U18, et se classe 3e sur 19 joueurs de l'épreuve. Il signe 2 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Afrique du Sud (20/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
+     "En simple, il remporte 2 matchs avant de s'arrêter en 1/4 de finale (3–5 contre Shannon Adam Naidoo), dont 1 victoire sans perdre une manche.",
+     "En double avec Calvin Créach, il gagne 11 manches pour 6 concédées sur l'ensemble du tableau."
     ]
    }
   },
   "aymeric-luneau": {
    "nom": "Aymeric Luneau",
    "medailles": [
+    {
+     "m": "argent",
+     "epreuve": "Équipes Juniors U18",
+     "lib": "Vice-champions du monde"
+    },
     {
      "m": "bronze",
      "epreuve": "Simple Juniors U18",
@@ -8431,10 +13463,10 @@
    "equipe": {
     "cat": "Juniors U18",
     "col": "#18c4d8",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
+    "lib": "Vice-champions du monde",
+    "etat": "argent",
     "v": 11,
-    "d": 0,
+    "d": 1,
     "g": 21,
     "f": 33,
     "cg": 3,
@@ -8563,7 +13595,201 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "7–8",
+      "res": "défaite",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 16,
+     "g": 48,
+     "f": 73,
+     "pct": 66,
+     "cg": 3,
+     "medailles": 3
+    },
+    "equipe": {
+     "g": 21,
+     "f": 33,
+     "pct": 64,
+     "cg": 3,
+     "rencontres": 9,
+     "rang_eq": 4,
+     "nb_eq": 4,
+     "rang_cg": 2,
+     "rang_comp": [
+      5,
+      19
+     ],
+     "parfaites": 1,
+     "serie": [
+      {
+       "adv": "Australie",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Inde",
+       "date": "mer 21/10",
+       "g": 1,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande (U15)",
+       "date": "mer 21/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Malte",
+       "date": "jeu 22/10",
+       "g": 0,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud (U15)",
+       "date": "jeu 22/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie (U15)",
+       "date": "sam 24/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Mexique",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Angleterre",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre (U15)",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 19,
+     "p": 9,
+     "pct": 68,
+     "v": 3,
+     "d": 1,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Garcia",
+       "a": 5,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Thicthener",
+       "a": 5,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Willemse",
+       "a": 5,
+       "b": 3,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Naidoo",
+       "a": 4,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 8,
+     "p": 4,
+     "pct": 67,
+     "v": 2,
+     "d": 1,
+     "blanc": 2,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Garcia",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Navin",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Fink",
+       "a": 0,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Aymeric Luneau repart de Londres avec 3 médailles : vice-champion du monde par équipes avec l'équipe de France Juniors U18, médaille de bronze en simple et médaille de bronze en double avec Louka Bournot.",
+    "analyse": [
+     "Par équipes, il remporte 21 de ses 33 manches (64 %) en 9 rencontres, et se classe 5e sur 19 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Mexique (25/10), avec 4 manches sur 4.",
+     "En simple, il gagne 19 manches pour 9 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche.",
+     "En double avec Louka Bournot, il gagne 8 manches pour 4 concédées sur l'ensemble du tableau, dont 2 victoires sans perdre une manche."
     ]
    }
   },
@@ -8574,6 +13800,11 @@
      "m": "or",
      "epreuve": "Simple Juniors U18",
      "lib": "Champion du monde"
+    },
+    {
+     "m": "argent",
+     "epreuve": "Équipes Juniors U18",
+     "lib": "Vice-champions du monde"
     },
     {
      "m": "bronze",
@@ -8677,10 +13908,10 @@
    "equipe": {
     "cat": "Juniors U18",
     "col": "#18c4d8",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
+    "lib": "Vice-champions du monde",
+    "etat": "argent",
     "v": 11,
-    "d": 0,
+    "d": 1,
     "g": 31,
     "f": 40,
     "cg": 8,
@@ -8813,7 +14044,217 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "7–8",
+      "res": "défaite",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 18,
+     "g": 67,
+     "f": 87,
+     "pct": 77,
+     "cg": 8,
+     "medailles": 3
+    },
+    "equipe": {
+     "g": 31,
+     "f": 40,
+     "pct": 78,
+     "cg": 8,
+     "rencontres": 10,
+     "rang_eq": 1,
+     "nb_eq": 4,
+     "rang_cg": 1,
+     "rang_comp": [
+      1,
+      19
+     ],
+     "parfaites": 4,
+     "serie": [
+      {
+       "adv": "Afrique du Sud",
+       "date": "mar 20/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 21/10",
+       "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Inde",
+       "date": "mer 21/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Irlande (U15)",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Malte",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud (U15)",
+       "date": "jeu 22/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Australie (U15)",
+       "date": "sam 24/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Mexique",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 3,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre (U15)",
+       "date": "lun 26/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 25,
+     "p": 5,
+     "pct": 83,
+     "v": 5,
+     "d": 0,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Edwards",
+       "a": 5,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Castaldi",
+       "a": 5,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Seshadri",
+       "a": 5,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Joubert",
+       "a": 5,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "Finale",
+       "adv": "Naidoo",
+       "a": 5,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 11,
+     "p": 6,
+     "pct": 65,
+     "v": 2,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Bruce",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Joubert",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Castaldi",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Calvin Créach repart de Londres avec 3 médailles : champion du monde en simple, vice-champion du monde par équipes avec l'équipe de France Juniors U18 et médaille de bronze en double avec Arthur Crespin.",
+    "analyse": [
+     "Par équipes, il remporte 31 de ses 40 manches (78 %) en 10 rencontres, le meilleur pourcentage de l'équipe de France Juniors U18, et se classe 1er sur 19 joueurs de l'épreuve. Il signe 8 « casse et gagne », le meilleur total de l'équipe.",
+     "Sa meilleure rencontre : France – Inde (21/10), avec 4 manches sur 4, et 4 rencontres sans perdre une manche.",
+     "En simple, il gagne 25 manches pour 5 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche.",
+     "En double avec Arthur Crespin, il gagne 11 manches pour 6 concédées sur l'ensemble du tableau."
     ]
    }
   },
@@ -8824,6 +14265,11 @@
      "m": "argent",
      "epreuve": "Simple U15",
      "lib": "Vice-champion du monde"
+    },
+    {
+     "m": "argent",
+     "epreuve": "Équipes Juniors U18",
+     "lib": "Vice-champions du monde"
     },
     {
      "m": "bronze",
@@ -8927,10 +14373,10 @@
    "equipe": {
     "cat": "Juniors U18",
     "col": "#18c4d8",
-    "lib": "Qualifiée pour la finale",
-    "etat": "encours",
+    "lib": "Vice-champions du monde",
+    "etat": "argent",
     "v": 11,
-    "d": 0,
+    "d": 1,
     "g": 28,
     "f": 39,
     "cg": 3,
@@ -9063,7 +14509,217 @@
       "res": "victoire",
       "phase": "1/2 finale",
       "lui": null
+     },
+     {
+      "date": "mer 28/10",
+      "adv": "Afrique du Sud",
+      "score": "7–8",
+      "res": "défaite",
+      "phase": "Finale",
+      "lui": null
      }
+    ]
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 18,
+     "g": 58,
+     "f": 87,
+     "pct": 67,
+     "cg": 3,
+     "medailles": 3
+    },
+    "equipe": {
+     "g": 28,
+     "f": 39,
+     "pct": 72,
+     "cg": 3,
+     "rencontres": 10,
+     "rang_eq": 2,
+     "nb_eq": 4,
+     "rang_cg": 2,
+     "rang_comp": [
+      2,
+      19
+     ],
+     "parfaites": 2,
+     "serie": [
+      {
+       "adv": "Afrique du Sud",
+       "date": "mar 20/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Inde",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Irlande (U15)",
+       "date": "mer 21/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Malte",
+       "date": "jeu 22/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud (U15)",
+       "date": "jeu 22/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie (U15)",
+       "date": "sam 24/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Mexique",
+       "date": "dim 25/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Angleterre",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre (U15)",
+       "date": "lun 26/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      }
+     ]
+    },
+    "simple": {
+     "g": 22,
+     "p": 14,
+     "pct": 61,
+     "v": 4,
+     "d": 1,
+     "blanc": 0,
+     "serres_v": 1,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Tsikouris",
+       "a": 5,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/8 de finale",
+       "adv": "Denston",
+       "a": 5,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Galloway",
+       "a": 5,
+       "b": 4,
+       "blanc": false,
+       "decisif": true
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Marrone",
+       "a": 5,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "Finale",
+       "adv": "Jackson",
+       "a": 2,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": {
+     "g": 8,
+     "p": 4,
+     "pct": 67,
+     "v": 2,
+     "d": 1,
+     "blanc": 2,
+     "serres_v": 0,
+     "serres_d": 0,
+     "serie": [
+      {
+       "tour": "1er tour",
+       "adv": "Garcia",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/4 de finale",
+       "adv": "Navin",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Fink",
+       "a": 0,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "titre": "Louka Bournot repart de Londres avec 3 médailles : vice-champion du monde en simple, vice-champion du monde par équipes avec l'équipe de France Juniors U18 et médaille de bronze en double avec Aymeric Luneau.",
+    "analyse": [
+     "Par équipes, il remporte 28 de ses 39 manches (72 %) en 10 rencontres, le 2e meilleur pourcentage de l'équipe de France Juniors U18, et se classe 2e sur 19 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
+     "Sa meilleure rencontre : France – Mexique (25/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
+     "En simple, il gagne 22 manches pour 14 concédées sur l'ensemble du tableau, dont 1 match gagné à la manche décisive.",
+     "En double avec Aymeric Luneau, il gagne 8 manches pour 4 concédées sur l'ensemble du tableau, dont 2 victoires sans perdre une manche."
     ]
    }
   },
@@ -9136,6 +14792,91 @@
     ],
     "v": 3,
     "d": 4
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 7,
+     "g": 20,
+     "f": 41,
+     "pct": 49,
+     "cg": 0,
+     "medailles": 0
+    },
+    "equipe": null,
+    "simple": {
+     "g": 20,
+     "p": 21,
+     "pct": 49,
+     "v": 3,
+     "d": 4,
+     "blanc": 1,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "poule · 1re journée",
+       "adv": "Dolan",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "poule · 2e journée",
+       "adv": "Gillen",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "poule · 3e journée",
+       "adv": "Beaumont",
+       "a": 2,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "poule · 4e journée",
+       "adv": "Abubaker",
+       "a": 4,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "poule · 5e journée",
+       "adv": "Rossouw",
+       "a": 4,
+       "b": 0,
+       "blanc": true,
+       "decisif": false
+      },
+      {
+       "tour": "1/2 finale",
+       "adv": "Kimberley",
+       "a": 0,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "match pour la 3e place",
+       "adv": "Beaumont",
+       "a": 3,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": null,
+    "titre": null,
+    "analyse": [
+     "Yvan Carric a disputé 7 matchs à Londres sous le maillot de l'équipe de France.",
+     "En simple, il remporte 3 matchs avant de s'arrêter en match pour la 3e place (3–5 contre Dave Beaumont), dont 1 victoire sans perdre une manche."
+    ]
    }
   },
   "sebastien-hentry": {
@@ -9183,6 +14924,67 @@
     ],
     "v": 1,
     "d": 3
+   },
+   "stats": {
+    "kpi": {
+     "matchs": 4,
+     "g": 9,
+     "f": 22,
+     "pct": 41,
+     "cg": 0,
+     "medailles": 0
+    },
+    "equipe": null,
+    "simple": {
+     "g": 9,
+     "p": 13,
+     "pct": 41,
+     "v": 1,
+     "d": 3,
+     "blanc": 0,
+     "serres_v": 0,
+     "serres_d": 1,
+     "serie": [
+      {
+       "tour": "poule · 2e journée",
+       "adv": "Kimberley",
+       "a": 0,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "poule · 3e journée",
+       "adv": "Welsh",
+       "a": 3,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "poule · 4e journée",
+       "adv": "Southern",
+       "a": 2,
+       "b": 4,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "poule · 5e journée",
+       "adv": "Adams",
+       "a": 4,
+       "b": 1,
+       "blanc": false,
+       "decisif": false
+      }
+     ]
+    },
+    "double": null,
+    "titre": null,
+    "analyse": [
+     "Sébastien Hentry a disputé 4 matchs à Londres sous le maillot de l'équipe de France.",
+     "En simple, il remporte 1 match avant de s'arrêter en poule · 5e journée (4–1 contre Gary Adams)."
+    ]
    }
   }
  }
