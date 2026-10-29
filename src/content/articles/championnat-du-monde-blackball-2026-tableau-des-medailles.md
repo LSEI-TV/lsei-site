@@ -1,16 +1,16 @@
 ---
-title: "Championnat du monde de Blackball 2026 : la France termine 1re nation au tableau des médailles"
-seoTitle: "Mondial blackball 2026 : la France 1re au tableau des médailles"
+title: "Championnat du monde de Blackball 2026 : la France de la FFBillard termine 1re nation au tableau des médailles"
+seoTitle: "Mondial blackball 2026 : la France (FFBillard) 1re au tableau des médailles"
 seoDescription: "Mondial de billard blackball à Londres : 20 nations engagées, 26 épreuves, 94 médailles. La France termine 1re avec 11 titres, 7 argent et 10 bronze."
 date: 2026-10-29
-excerpt: "20 nations engagées, 26 épreuves, 94 médailles : au tableau des médailles du Championnat du monde WPA de blackball 2026, la France termine 1re nation avec 11 titres, 7 médailles d'argent et 10 de bronze, devant l'Angleterre et l'Afrique du Sud."
+excerpt: "La France de la Fédération Française de Billard termine 1re nation du Mondial de blackball 2026 à Londres : 11 titres, 7 médailles d'argent et 10 de bronze, devant l'Angleterre et l'Afrique du Sud. 20 nations étaient engagées dans 26 épreuves."
 cover: /uploads/cdm-blackball-2026-medailles-nations-couverture.jpg
 coverFrame: default
 discipline: billard
 author: La rédaction LSEI
 draft: false
 ---
-<p><strong>La France termine 1re nation du Mondial&nbsp;!</strong> Le <strong>Championnat du monde WPA Blackball 2026</strong> s'est achevé le 28 octobre à Londres. <strong>20 nations</strong> et 2 délégations britanniques étaient engagées dans <strong>26 épreuves</strong>, et <strong>94 médailles</strong> ont été décernées. Au tableau des médailles, les équipes de France de la <strong>Fédération Française de Billard</strong> occupent la première place.</p>
+<p><strong>La <a href="https://www.ffbillard.com" target="_blank" rel="noopener">Fédération Française de Billard (FFBillard)</a> termine 1re nation du Mondial&nbsp;!</strong> Le <strong>Championnat du monde WPA Blackball 2026</strong> s'est achevé le 28 octobre à Londres. <strong>20 nations</strong> et 2 délégations britanniques étaient engagées dans <strong>26 épreuves</strong>, et <strong>94 médailles</strong> ont été décernées. Au tableau des médailles, les équipes de France de la FFBillard occupent la première place.</p>
 
 <img src="/uploads/cdm-blackball-2026-medailles-par-nation.jpg" alt="Tableau des médailles du Championnat du monde de blackball 2026 : la France 1re nation avec 11 titres, 7 médailles d'argent et 10 de bronze" loading="lazy" />
 
@@ -33,4 +33,5 @@ draft: false
 
 <h2>Retrouvez tout le Mondial des Bleus</h2>
 <p>Le parcours de chaque joueur et de chaque joueuse de l'équipe de France est à retrouver sur sa fiche, dans la section «&nbsp;International&nbsp;». Des articles équipe par équipe suivront dans les prochains jours. Tous nos articles sont réunis dans le <a href="/billard/championnat-du-monde-blackball-2026">dossier du Championnat du monde de billard blackball 2026</a>.</p>
+<p>Retrouvez toute l'actualité des équipes de France sur le site de la <a href="https://www.ffbillard.com" target="_blank" rel="noopener">Fédération Française de Billard</a>.</p>
 <p><strong>🇫🇷 Bravo les Bleus&nbsp;!</strong></p>
