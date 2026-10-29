@@ -10,7 +10,7 @@ discipline: billard
 author: La rédaction LSEI
 draft: false
 ---
-<p><strong>La France termine 1re nation du Mondial&nbsp;!</strong> Le <strong>Championnat du monde WPA Blackball 2026</strong> s'est achevé le 28 octobre à Londres. <strong>20 nations</strong> étaient engagées dans <strong>26 épreuves</strong>, et <strong>94 médailles</strong> ont été décernées. Au tableau des médailles, les équipes de France de la <strong>Fédération Française de Billard</strong> occupent la première place.</p>
+<p><strong>La France termine 1re nation du Mondial&nbsp;!</strong> Le <strong>Championnat du monde WPA Blackball 2026</strong> s'est achevé le 28 octobre à Londres. <strong>20 nations</strong> et 2 délégations britanniques étaient engagées dans <strong>26 épreuves</strong>, et <strong>94 médailles</strong> ont été décernées. Au tableau des médailles, les équipes de France de la <strong>Fédération Française de Billard</strong> occupent la première place.</p>
 
 <img src="/uploads/cdm-blackball-2026-medailles-par-nation.jpg" alt="Tableau des médailles du Championnat du monde de blackball 2026 : la France 1re nation avec 11 titres, 7 médailles d'argent et 10 de bronze" loading="lazy" />
 
@@ -20,7 +20,10 @@ draft: false
 <li>🥈 <strong>Angleterre</strong>&nbsp;: 9 titres, 5 médailles d'argent et 11 de bronze (25 médailles)</li>
 <li>🥉 <strong>Afrique du Sud</strong>&nbsp;: 4 titres, 7 médailles d'argent et 10 de bronze (21 médailles)</li>
 </ul>
-<p>Suivent la <strong>Grande-Bretagne</strong> (1 or, 1 argent, 1 bronze, en para-billard fauteuil), l'<strong>Irlande du Nord</strong> (1 titre), <strong>Malte</strong> (3 argent, 3 bronze), l'<strong>Australie</strong> (2 argent, 1 bronze), le <strong>Maroc</strong> (1 argent, 1 bronze), l'<strong>Irlande</strong> (4 bronze) et l'<strong>Armée britannique</strong> (1 bronze, par équipes Hommes B).</p>
+<p>Suivent l'<strong>Irlande du Nord</strong> (1 titre), <strong>Malte</strong> (3 argent, 3 bronze), l'<strong>Australie</strong> (2 argent, 1 bronze), le <strong>Maroc</strong> (1 argent, 1 bronze) et l'<strong>Irlande</strong> (4 bronze).</p>
+
+<h2>Deux délégations britanniques hors nations</h2>
+<p>Le tableau compte aussi deux délégations qui ne sont pas des nations&nbsp;: les joueurs inscrits sous le drapeau du <strong>Royaume-Uni</strong>, qui ont pris l'or, l'argent et le bronze en para-billard fauteuil, et l'équipe de l'<strong>Armée britannique</strong>, médaillée de bronze par équipes Hommes B. C'est pourquoi le tableau compte 22 lignes pour 20 nations engagées.</p>
 
 <h2>Les nations engagées sans médaille</h2>
 <p>Douze autres nations ont pris part au Mondial&nbsp;: Chypre, la Grèce, l'Inde, l'Italie, la Libye, Madagascar, le Malawi, Maurice, le Mexique, le Pays de Galles, Singapour et la Thaïlande.</p>
