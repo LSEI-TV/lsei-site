@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-28T20:01:54.060Z",
+  "updated": "2026-10-29T15:23:21.721Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/classement",
   "pool": "Poule B",
   "rows": [
@@ -48,8 +48,19 @@
       "diff": 3
     },
     {
-      "slug": "tarbes",
+      "slug": "chartres",
       "rank": 5,
+      "pts": 12,
+      "played": 8,
+      "w": 4,
+      "l": 4,
+      "pf": 639,
+      "pa": 665,
+      "diff": -26
+    },
+    {
+      "slug": "tarbes",
+      "rank": 6,
       "pts": 11,
       "played": 6,
       "w": 5,
@@ -59,8 +70,19 @@
       "diff": 41
     },
     {
+      "slug": "bordeaux",
+      "rank": 7,
+      "pts": 11,
+      "played": 9,
+      "w": 2,
+      "l": 7,
+      "pf": 660,
+      "pa": 694,
+      "diff": -34
+    },
+    {
       "slug": "fougeres",
-      "rank": 6,
+      "rank": 8,
       "pts": 11,
       "played": 7,
       "w": 4,
@@ -71,7 +93,7 @@
     },
     {
       "slug": "toulouse",
-      "rank": 7,
+      "rank": 9,
       "pts": 10,
       "played": 6,
       "w": 4,
@@ -82,7 +104,7 @@
     },
     {
       "slug": "sables",
-      "rank": 8,
+      "rank": 10,
       "pts": 10,
       "played": 7,
       "w": 3,
@@ -93,7 +115,7 @@
     },
     {
       "slug": "angers",
-      "rank": 9,
+      "rank": 11,
       "pts": 10,
       "played": 7,
       "w": 3,
@@ -104,7 +126,7 @@
     },
     {
       "slug": "vitre",
-      "rank": 10,
+      "rank": 12,
       "pts": 10,
       "played": 7,
       "w": 3,
@@ -112,28 +134,6 @@
       "pf": 516,
       "pa": 541,
       "diff": -25
-    },
-    {
-      "slug": "bordeaux",
-      "rank": 11,
-      "pts": 10,
-      "played": 8,
-      "w": 2,
-      "l": 6,
-      "pf": 582,
-      "pa": 611,
-      "diff": -29
-    },
-    {
-      "slug": "chartres",
-      "rank": 12,
-      "pts": 10,
-      "played": 7,
-      "w": 3,
-      "l": 4,
-      "pf": 556,
-      "pa": 587,
-      "diff": -31
     },
     {
       "slug": "laval",

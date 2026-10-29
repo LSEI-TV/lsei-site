@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-28T20:01:54.693Z",
+  "updated": "2026-10-29T15:23:22.549Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
   "pool": "Poule B",
   "matches": [
@@ -375,6 +375,8 @@
       "date": "2026-10-28",
       "homeSlug": "bordeaux",
       "awaySlug": "chartres",
+      "homeScore": 78,
+      "awayScore": 83,
       "journee": 1
     },
     {
