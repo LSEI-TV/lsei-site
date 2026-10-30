@@ -1,5 +1,5 @@
 {
- "maj": "28/10/2026 à 21h45",
+ "maj": "30/10/2026 à 14h48",
  "fini": true,
  "joueurs": {
   "killian-ballon": {
@@ -5225,11 +5225,6 @@
      "m": "or",
      "epreuve": "Équipes +50 ans",
      "lib": "Champions du monde"
-    },
-    {
-     "m": "bronze",
-     "epreuve": "Simple +50 ans",
-     "lib": "Médaille de bronze"
     }
    ],
    "gp": [
@@ -5243,8 +5238,8 @@
    "simple": {
     "cat": "+50 ans",
     "col": "#c9ccd4",
-    "lib": "Médaille de bronze",
-    "etat": "bronze",
+    "lib": "4e place",
+    "etat": "fini",
     "matchs": [
      {
       "tour": "2e tour",
@@ -5277,10 +5272,18 @@
       "score": "4–6",
       "res": "défaite",
       "date": "mar 27/10"
+     },
+     {
+      "tour": "match pour la 3e place",
+      "adv": "Chris Pillay(C.P)",
+      "pays": "Afrique du Sud",
+      "score": "1–6",
+      "res": "défaite",
+      "date": "mar 27/10"
      }
     ],
     "v": 3,
-    "d": 1
+    "d": 2
    },
    "double": {
     "cat": "+50 ans",
@@ -5437,12 +5440,12 @@
    },
    "stats": {
     "kpi": {
-     "matchs": 14,
-     "g": 52,
-     "f": 86,
-     "pct": 60,
+     "matchs": 15,
+     "g": 53,
+     "f": 93,
+     "pct": 57,
      "cg": 0,
-     "medailles": 2
+     "medailles": 1
     },
     "equipe": {
      "g": 26,
@@ -5526,11 +5529,11 @@
      ]
     },
     "simple": {
-     "g": 22,
-     "p": 15,
-     "pct": 59,
+     "g": 23,
+     "p": 21,
+     "pct": 52,
      "v": 3,
-     "d": 1,
+     "d": 2,
      "blanc": 0,
      "serres_v": 1,
      "serres_d": 0,
@@ -5566,6 +5569,14 @@
        "b": 6,
        "blanc": false,
        "decisif": false
+      },
+      {
+       "tour": "match pour la 3e place",
+       "adv": "Pillay(C.P)",
+       "a": 1,
+       "b": 6,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
@@ -5597,11 +5608,11 @@
       }
      ]
     },
-    "titre": "Raphaël Rybak repart de Londres avec 2 médailles : champion du monde par équipes avec l'équipe de France +50 ans et médaille de bronze en simple.",
+    "titre": "Raphaël Rybak repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +50 ans.",
     "analyse": [
      "Par équipes, il remporte 26 de ses 38 manches (68 %) en 8 rencontres, le 2e meilleur pourcentage de l'équipe de France +50 ans, et se classe 2e sur 12 joueurs de l'épreuve.",
      "Sa meilleure rencontre : France – Australie (20/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
-     "En simple, il gagne 22 manches pour 15 concédées sur l'ensemble du tableau, dont 1 match gagné à la manche décisive.",
+     "En simple, il remporte 3 matchs avant de s'arrêter en match pour la 3e place (1–6 contre Chris Pillay(C.P)), dont 1 match gagné à la manche décisive.",
      "En double avec Christophe Wailly, il remporte 1 match avant de s'arrêter en 1/4 de finale (0–4 contre Yadesh Maharaj / Chris Pillay), dont 1 match gagné à la manche décisive."
     ]
    }
@@ -7322,11 +7333,6 @@
      "m": "or",
      "epreuve": "Équipes Espoirs U23",
      "lib": "Champions du monde"
-    },
-    {
-     "m": "bronze",
-     "epreuve": "Simple Espoirs U23",
-     "lib": "Médaille de bronze"
     }
    ],
    "gp": [
@@ -7340,8 +7346,8 @@
    "simple": {
     "cat": "Espoirs U23",
     "col": "#8a3dff",
-    "lib": "Médaille de bronze",
-    "etat": "bronze",
+    "lib": "4e place",
+    "etat": "fini",
     "matchs": [
      {
       "tour": "1er tour",
@@ -7374,10 +7380,18 @@
       "score": "1–5",
       "res": "défaite",
       "date": "mar 27/10"
+     },
+     {
+      "tour": "match pour la 3e place",
+      "adv": "Irfaan Williams",
+      "pays": "Afrique du Sud",
+      "score": "4–5",
+      "res": "défaite",
+      "date": "mar 27/10"
      }
     ],
     "v": 3,
-    "d": 1
+    "d": 2
    },
    "double": {
     "cat": "Espoirs U23",
@@ -7538,12 +7552,12 @@
    },
    "stats": {
     "kpi": {
-     "matchs": 13,
-     "g": 45,
-     "f": 65,
-     "pct": 69,
+     "matchs": 14,
+     "g": 49,
+     "f": 74,
+     "pct": 66,
      "cg": 0,
-     "medailles": 3
+     "medailles": 2
     },
     "equipe": {
      "g": 13,
@@ -7603,14 +7617,14 @@
      ]
     },
     "simple": {
-     "g": 16,
-     "p": 10,
-     "pct": 62,
+     "g": 20,
+     "p": 15,
+     "pct": 57,
      "v": 3,
-     "d": 1,
+     "d": 2,
      "blanc": 1,
      "serres_v": 1,
-     "serres_d": 0,
+     "serres_d": 1,
      "serie": [
       {
        "tour": "1er tour",
@@ -7640,6 +7654,14 @@
        "tour": "1/2 finale",
        "adv": "Moreira",
        "a": 1,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "match pour la 3e place",
+       "adv": "Williams",
+       "a": 4,
        "b": 5,
        "blanc": false,
        "decisif": false
@@ -7690,11 +7712,11 @@
       }
      ]
     },
-    "titre": "Thibault Couzigou repart de Londres avec 3 médailles : champion du monde en double avec Théo Schneider, champion du monde par équipes avec l'équipe de France Espoirs U23 et médaille de bronze en simple.",
+    "titre": "Thibault Couzigou repart de Londres avec 2 médailles : champion du monde en double avec Théo Schneider et champion du monde par équipes avec l'équipe de France Espoirs U23.",
     "analyse": [
      "Par équipes, il remporte 13 de ses 18 manches (72 %) en 5 rencontres, le 3e meilleur pourcentage de l'équipe de France Espoirs U23, et se classe 4e sur 7 joueurs de l'épreuve.",
      "Sa meilleure rencontre : France – Afrique du Sud (20/10), avec 3 manches sur 4.",
-     "En simple, il gagne 16 manches pour 10 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive.",
+     "En simple, il remporte 3 matchs avant de s'arrêter en match pour la 3e place (4–5 contre Irfaan Williams), dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive.",
      "En double avec Théo Schneider, il gagne 16 manches pour 5 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
     ]
    }
@@ -11016,9 +11038,17 @@
       "score": "0–5",
       "res": "défaite",
       "date": "mar 27/10"
+     },
+     {
+      "tour": "match pour la 3e place",
+      "adv": "Ian Wilkinson",
+      "pays": "Angleterre",
+      "score": "5–2",
+      "res": "victoire",
+      "date": "mar 27/10"
      }
     ],
-    "v": 3,
+    "v": 4,
     "d": 1
    },
    "equipe": {
@@ -11185,10 +11215,10 @@
    },
    "stats": {
     "kpi": {
-     "matchs": 15,
-     "g": 51,
-     "f": 84,
-     "pct": 61,
+     "matchs": 16,
+     "g": 56,
+     "f": 91,
+     "pct": 62,
      "cg": 2,
      "medailles": 2
     },
@@ -11298,10 +11328,10 @@
      ]
     },
     "simple": {
-     "g": 15,
-     "p": 14,
-     "pct": 52,
-     "v": 3,
+     "g": 20,
+     "p": 16,
+     "pct": 56,
+     "v": 4,
      "d": 1,
      "blanc": 0,
      "serres_v": 1,
@@ -11338,6 +11368,14 @@
        "b": 5,
        "blanc": false,
        "decisif": false
+      },
+      {
+       "tour": "match pour la 3e place",
+       "adv": "Wilkinson",
+       "a": 5,
+       "b": 2,
+       "blanc": false,
+       "decisif": false
       }
      ]
     },
@@ -11346,7 +11384,7 @@
     "analyse": [
      "Par équipes, il remporte 36 de ses 55 manches (65 %) en 11 rencontres, le meilleur pourcentage de l'équipe de France +60 ans, et se classe 2e sur 11 joueurs de l'épreuve. Il signe 2 « casse et gagne », le meilleur total de l'équipe.",
      "Sa meilleure rencontre : France – Australie (21/10), avec 4 manches sur 5.",
-     "En simple, il gagne 15 manches pour 14 concédées sur l'ensemble du tableau, dont 1 match gagné à la manche décisive."
+     "En simple, il gagne 20 manches pour 16 concédées sur l'ensemble du tableau, dont 1 match gagné à la manche décisive."
     ]
    }
   },
@@ -13366,11 +13404,6 @@
     },
     {
      "m": "bronze",
-     "epreuve": "Simple Juniors U18",
-     "lib": "Médaille de bronze"
-    },
-    {
-     "m": "bronze",
      "epreuve": "Double Juniors U18",
      "lib": "Médaille de bronze"
     }
@@ -13386,8 +13419,8 @@
    "simple": {
     "cat": "Juniors U18",
     "col": "#18c4d8",
-    "lib": "Médaille de bronze",
-    "etat": "bronze",
+    "lib": "4e place",
+    "etat": "fini",
     "matchs": [
      {
       "tour": "1er tour",
@@ -13420,10 +13453,18 @@
       "score": "4–5",
       "res": "défaite",
       "date": "mar 27/10"
+     },
+     {
+      "tour": "match pour la 3e place",
+      "adv": "Theolandre Joubert",
+      "pays": "Afrique du Sud",
+      "score": "3–5",
+      "res": "défaite",
+      "date": "mar 27/10"
      }
     ],
     "v": 3,
-    "d": 1
+    "d": 2
    },
    "double": {
     "cat": "Juniors U18",
@@ -13608,12 +13649,12 @@
    },
    "stats": {
     "kpi": {
-     "matchs": 16,
-     "g": 48,
-     "f": 73,
-     "pct": 66,
+     "matchs": 17,
+     "g": 51,
+     "f": 81,
+     "pct": 63,
      "cg": 3,
-     "medailles": 3
+     "medailles": 2
     },
     "equipe": {
      "g": 21,
@@ -13705,11 +13746,11 @@
      ]
     },
     "simple": {
-     "g": 19,
-     "p": 9,
-     "pct": 68,
+     "g": 22,
+     "p": 14,
+     "pct": 61,
      "v": 3,
-     "d": 1,
+     "d": 2,
      "blanc": 1,
      "serres_v": 0,
      "serres_d": 1,
@@ -13742,6 +13783,14 @@
        "tour": "1/2 finale",
        "adv": "Naidoo",
        "a": 4,
+       "b": 5,
+       "blanc": false,
+       "decisif": false
+      },
+      {
+       "tour": "match pour la 3e place",
+       "adv": "Joubert",
+       "a": 3,
        "b": 5,
        "blanc": false,
        "decisif": false
@@ -13784,11 +13833,11 @@
       }
      ]
     },
-    "titre": "Aymeric Luneau repart de Londres avec 3 médailles : vice-champion du monde par équipes avec l'équipe de France Juniors U18, médaille de bronze en simple et médaille de bronze en double avec Louka Bournot.",
+    "titre": "Aymeric Luneau repart de Londres avec 2 médailles : vice-champion du monde par équipes avec l'équipe de France Juniors U18 et médaille de bronze en double avec Louka Bournot.",
     "analyse": [
      "Par équipes, il remporte 21 de ses 33 manches (64 %) en 9 rencontres, et se classe 5e sur 19 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
      "Sa meilleure rencontre : France – Mexique (25/10), avec 4 manches sur 4.",
-     "En simple, il gagne 19 manches pour 9 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche.",
+     "En simple, il remporte 3 matchs avant de s'arrêter en match pour la 3e place (3–5 contre Theolandre Joubert), dont 1 victoire sans perdre une manche.",
      "En double avec Louka Bournot, il gagne 8 manches pour 4 concédées sur l'ensemble du tableau, dont 2 victoires sans perdre une manche."
     ]
    }

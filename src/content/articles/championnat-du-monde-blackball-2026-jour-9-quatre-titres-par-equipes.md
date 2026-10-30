@@ -1,9 +1,10 @@
 ---
 title: "Championnat du monde de Blackball 2026 : quatre titres mondiaux par équipes pour clore le Mondial"
 seoTitle: "Mondial de billard blackball : 4 titres par équipes pour la France"
-seoDescription: "Mondial de billard blackball à Londres, 28 octobre 2026 : la France championne du monde par équipes chez les Femmes, +40 ans, +50 ans et Espoirs U23. Bilan : 28 médailles."
+seoDescription: "Mondial de billard blackball à Londres, 28 octobre 2026 : la France championne du monde par équipes chez les Femmes, +40 ans, +50 ans et Espoirs U23. Bilan : 25 médailles."
+updated: 2026-10-30
 date: 2026-10-28
-excerpt: "Dernière journée en or à Londres : les équipes de France Femmes, +40 ans, +50 ans et Espoirs U23 sont championnes du monde, les Juniors U18 vice-champions et les +60 ans médaillés de bronze. La France termine le Mondial avec 11 titres et 28 médailles."
+excerpt: "Dernière journée en or à Londres : les équipes de France Femmes, +40 ans, +50 ans et Espoirs U23 sont championnes du monde, les Juniors U18 vice-champions et les +60 ans médaillés de bronze. La France termine le Mondial avec 11 titres et 25 médailles."
 cover: /uploads/cdm-blackball-2026-bleus-28-10.jpg
 coverFrame: default
 discipline: billard
@@ -33,9 +34,10 @@ draft: false
 <h2>Le staff technique à l'honneur</h2>
 <p>Ces résultats sont aussi ceux du staff technique&nbsp;: <strong>Nicolas Henric</strong>, sélectionneur des équipes de France, <strong>Clément Goudin</strong>, coach de l'équipe de France Femmes championne du monde, et <strong>Émilie Fesquet</strong>, coach de l'équipe de France Juniors U18 vice-championne du monde.</p>
 
-<h2>Le bilan du Mondial&nbsp;: 11 titres et 28 médailles</h2>
-<p>Avec les 7 titres individuels conquis la veille, la France termine ce Championnat du monde avec <strong>11 titres de champion du monde</strong> et <strong>28 médailles</strong>&nbsp;: <strong>11 en or, 7 en argent et 10 en bronze</strong> (22 en individuel, 6 par équipes, hors World Grand Prix). Par équipes, le bilan est de <strong>65 victoires pour 12 défaites</strong> depuis le 20 octobre, et trois équipes de France (Femmes, +40 ans et Espoirs U23) n'ont perdu aucune rencontre.</p>
+<h2>Le bilan du Mondial&nbsp;: 11 titres et 25 médailles</h2>
+<p>Avec les 7 titres individuels conquis la veille, la France termine ce Championnat du monde avec <strong>11 titres de champion du monde</strong> et <strong>25 médailles</strong>&nbsp;: <strong>11 en or, 7 en argent et 7 en bronze</strong> (19 en individuel, 6 par équipes, hors World Grand Prix). Par équipes, le bilan est de <strong>65 victoires pour 12 défaites</strong> depuis le 20 octobre, et trois équipes de France (Femmes, +40 ans et Espoirs U23) n'ont perdu aucune rencontre.</p>
 
+<p><em>Mise à jour du 30 octobre 2026&nbsp;: le décompte des médailles de bronze en simple a été corrigé. En simple, une seule médaille de bronze est attribuée, au vainqueur du match pour la 3e place.</em></p>
 <h2>D'autres articles à suivre</h2>
 <p>Dans les prochains jours, retrouvez le bilan complet de chaque équipe de France dans des articles dédiés, équipe par équipe&nbsp;: Hommes, Femmes, +40 ans, +50 ans, +60 ans, Espoirs U23, Juniors U18 et para-billard. Retrouvez tous nos articles dans le <a href="/billard/championnat-du-monde-blackball-2026">dossier du Championnat du monde de billard blackball 2026</a>.</p>
 <p><strong>🇫🇷 Bravo les Bleus&nbsp;!</strong></p>

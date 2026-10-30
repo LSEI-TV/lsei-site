@@ -1,7 +1,8 @@
 ---
 title: "Championnat du monde de Blackball 2026 : sept titres de champion du monde pour les Bleus"
 seoTitle: "Mondial de billard blackball : 7 titres mondiaux pour les Bleus"
-seoDescription: "Mondial de billard blackball à Londres, 27 octobre 2026 : 7 titres de champion du monde sur 16 pour la France, 22 médailles dont 6 en argent et 9 en bronze."
+seoDescription: "Mondial de billard blackball à Londres, 27 octobre 2026 : 7 titres de champion du monde sur 16 pour la France, 19 médailles dont 6 en argent et 6 en bronze."
+updated: 2026-10-30
 date: 2026-10-27
 excerpt: "Journée historique à Londres : la France remporte 7 des 16 titres mondiaux en jeu le jour des finales, avec Marion Jude, Calvin Créach, Léonardo Moreira et Élie Christidis en simple, et trois paires en double. Au total, 22 médailles françaises."
 cover: /uploads/cdm-blackball-2026-bleus-27-10.jpg
@@ -10,7 +11,7 @@ discipline: billard
 author: La rédaction LSEI
 draft: false
 ---
-<p><strong>Une journée historique pour le billard français&nbsp;!</strong> Le mardi 27 octobre, jour des finales individuelles du <strong>Championnat du monde WPA Blackball 2026</strong> à Londres, les sélections de la <strong>Fédération Française de Billard</strong> ont remporté <strong>7 des 16 titres de champion du monde</strong> en jeu&nbsp;: 4 en simple et 3 en double. Avec <strong>6 titres de vice-champion</strong> et <strong>9 médailles de bronze</strong>, la France repart de cette journée avec <strong>22 médailles</strong>. Par équipes, le bilan du jour est de <strong>5 victoires pour 3 défaites</strong>, soit <strong>55 victoires et 11 défaites</strong> depuis le 20 octobre.</p>
+<p><strong>Une journée historique pour le billard français&nbsp;!</strong> Le mardi 27 octobre, jour des finales individuelles du <strong>Championnat du monde WPA Blackball 2026</strong> à Londres, les sélections de la <strong>Fédération Française de Billard</strong> ont remporté <strong>7 des 16 titres de champion du monde</strong> en jeu&nbsp;: 4 en simple et 3 en double. Avec <strong>6 titres de vice-champion</strong> et <strong>6 médailles de bronze</strong>, la France repart de cette journée avec <strong>19 médailles</strong>. Par équipes, le bilan du jour est de <strong>5 victoires pour 3 défaites</strong>, soit <strong>55 victoires et 11 défaites</strong> depuis le 20 octobre.</p>
 
 <h2>Les sept champions du monde</h2>
 <ul>
@@ -33,13 +34,14 @@ draft: false
 <li><strong>Double +40 ans</strong>&nbsp;: Nicolas Grandemange-Denizot et Élie Christidis (1-4 contre Coldrick / Faurie)</li>
 </ul>
 
-<h2>Neuf médailles de bronze</h2>
-<p>Battus en demi-finale, ces Bleus montent sur la troisième marche du podium&nbsp;:</p>
+<h2>Six médailles de bronze</h2>
+<p>En simple, la médaille de bronze se joue dans un match pour la 3e place. En double, il n'y en a pas&nbsp;: les deux paires battues en demi-finale montent sur la troisième marche du podium.</p>
 <ul>
-<li><strong>En simple</strong>&nbsp;: Raphaël Rybak (+50 ans, 4-6 contre Glen Pilkington), Thibault Couzigou (Espoirs U23, 1-5 contre Léonardo Moreira), <a href="/billard/joueur/dafydd-hughes/">Dafydd Hughes</a> (+60 ans, 0-5 contre Keith Brewer) et Aymeric Luneau (Juniors U18, 4-5 contre Shannon Adam Naidoo)</li>
+<li><strong>En simple</strong>&nbsp;: <a href="/billard/joueur/dafydd-hughes/">Dafydd Hughes</a> (+60 ans), battu 0-5 par Keith Brewer en demi-finale, remporte le match pour la 3e place <strong>5-2</strong> contre l'Anglais Ian Wilkinson. Raphaël Rybak (+50 ans, 1-6 contre Chris Pillay), Thibault Couzigou (Espoirs U23, 4-5 contre Irfaan Williams) et Aymeric Luneau (Juniors U18, 3-5 contre Theolandre Joubert) s'inclinent dans leur match pour la 3e place et terminent 4es du championnat du monde</li>
 <li><strong>En double</strong>&nbsp;: Brunet / Jude (Femmes, 3-4 contre l'Irlande du Nord), <a href="/billard/joueur/damien-joly/">Joly</a> / Moreira (Espoirs U23, 2-4 contre Schneider / Couzigou), Créach / <a href="/billard/joueur/arthur-crespin/">Crespin</a> (Juniors U18, 3-4 contre Malte), Bournot / Luneau (Juniors U18, 0-4 contre l'Afrique du Sud) et Lapert / Martre (+60 ans, 3-4 contre l'Angleterre)</li>
 </ul>
 
+<p><em>Mise à jour du 30 octobre 2026&nbsp;: le décompte des médailles de bronze en simple a été corrigé. En simple, une seule médaille de bronze est attribuée, au vainqueur du match pour la 3e place.</em></p>
 <h2>Les épreuves par équipes du mardi 27 octobre</h2>
 <ul>
 <li><strong>Hommes</strong>&nbsp;: défaite <strong>12-13</strong> contre le Maroc, victoire <strong>18-7</strong> contre l'Inde, puis élimination en quart de finale, <strong>11-13</strong> contre le Pays de Galles</li>
