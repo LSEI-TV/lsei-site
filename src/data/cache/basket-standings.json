@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-04T21:00:41.756Z",
+  "updated": "2026-11-05T16:38:52.093Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/classement",
   "pool": "Poule B",
   "rows": [
@@ -39,13 +39,13 @@
     {
       "slug": "toulouse",
       "rank": 4,
-      "pts": 12,
-      "played": 7,
+      "pts": 13,
+      "played": 8,
       "w": 5,
-      "l": 2,
-      "pf": 571,
-      "pa": 530,
-      "diff": 41
+      "l": 3,
+      "pf": 648,
+      "pa": 621,
+      "diff": 27
     },
     {
       "slug": "tarbes",
@@ -138,13 +138,13 @@
     {
       "slug": "laval",
       "rank": 13,
-      "pts": 9,
-      "played": 8,
-      "w": 1,
+      "pts": 11,
+      "played": 9,
+      "w": 2,
       "l": 7,
-      "pf": 570,
-      "pa": 657,
-      "diff": -87
+      "pf": 661,
+      "pa": 734,
+      "diff": -73
     }
   ]
 }
