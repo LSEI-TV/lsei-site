@@ -5,11 +5,10 @@ import SeasonHero from '../../../../components/SeasonHero.astro';
 import { seasonNext } from '../../../../lib/seasonNext';
 import PlayerSearch from '../../../../components/PlayerSearch.astro';
 import AffichesTournois from '../../../../components/AffichesTournois.astro';
-import PodiumTournoi from '../../../../components/PodiumTournoi.astro';
 import VideoPlayer from '../../../../components/VideoPlayer.astro';
 import { getReplays } from '../../../../lib/youtube';
 import { getDiscipline } from '../../../../data/site';
-import { photoOf, fromPov, seasonHighlights, playerSlugs } from '../../../../lib/billardStats';
+import { photoOf, fromPov, seasonHighlights, playerSlugs, tournamentPodiumById } from '../../../../lib/billardStats';
 import { getFemmesSeasons, getFemmesPalmares, FEMMES_DEFAULT_SEASON } from '../../../../data/billard/seasonsFemmes';
 const { slugOf } = playerSlugs(getFemmesSeasons());
 import type { Season } from '../../../../data/billard/seasons';
@@ -105,24 +104,48 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
             {calSeason.calendar.map((e, i) => {
               const href = bracketHref(e);
               const st = nextIdx < 0 || i < nextIdx ? ' is-past' : i === nextIdx ? ' is-next' : '';
-              const inner = (
+              const etTour = hasData ? (R.tournaments as any[]).find((t) => t.level === e.short || (e.kind === 'france' && t.kind === 'france')) : null;
+              const pod = etTour ? tournamentPodiumById(R, etTour.id) : [];
+              const row = (
                 <>
                   <span class="et-num">{e.short}{i === nextIdx && <em class="et-jx">{nextJx}</em>}</span>
                   <span class="et-city">{e.place}</span>
                   <span class="et-date">{evDate(e.date)}</span>
-                  {e.winner && (href
-                    ? <span class="et-winner">🏆 {e.winner.name}</span>
-                    : <a class="et-winner" href={`/femmes/joueur/${slugOf(e.winner.id)}`} title={`Vainqueur : ${e.winner.name}`}>🏆 {e.winner.name}</a>)}
-                  {href && <span class="et-go">Tableau <i class="et-go-ar">→</i></span>}
+                  {e.winner && <span class="et-winner">{e.winner.name}</span>}
                 </>
               );
+              if (pod.length > 0) {
+                return (
+                  <div class={`etape k-${e.kind}${st} etape--acc`} title={e.name}>
+                    <button type="button" class="et-row" data-accordion aria-expanded="false">
+                      {row}
+                      <span class="et-chev car-schev" aria-hidden="true">▾</span>
+                    </button>
+                    <div class="et-pod" hidden>
+                      <div class="et-pod-grid">
+                        {pod.map(({ player: p, place }) => {
+                          const ph = photoOf(p, season.slug);
+                          return (
+                            <a href={`/femmes/joueur/${slugOf(p.id)}`} class={`et-pod-card r${place}`}>
+                              <span class="et-pod-ph"><span class="bavatar">{p.name.slice(0, 1)}</span>{ph && <img src={ph} alt={p.name} loading="lazy" onerror="this.remove()" />}<span class="et-pod-rk">{place}</span></span>
+                              <span class="et-pod-lab">{place === 1 ? 'Vainqueur' : place === 2 ? 'Finaliste' : 'Demi-finaliste'}</span>
+                              <span class="et-pod-name">{p.name}</span>
+                            </a>
+                          );
+                        })}
+                      </div>
+                      {href && <a href={href} class="et-tableau">Voir le tableau du tournoi <i>→</i></a>}
+                    </div>
+                  </div>
+                );
+              }
+              const tail = href && <span class="et-go">Tableau <i class="et-go-ar">→</i></span>;
               return href
-                ? <a class={`etape k-${e.kind} etape--link${st}`} href={href} title={`${e.name} — voir le tableau`}>{inner}</a>
-                : <div class={`etape k-${e.kind}${st}`} title={e.name}>{inner}</div>;
+                ? <a class={`etape k-${e.kind} etape--link${st}`} href={href} title={`${e.name} — voir le tableau`}>{row}{tail}</a>
+                : <div class={`etape k-${e.kind}${st}`} title={e.name}>{row}{tail}</div>;
             })}
           </div>
         </div>
-        <PodiumTournoi results={R} seasonSlug={season.slug} hrefBase="/femmes/joueur/" slugOf={slugOf} />
       </div>
 
       <aside class="hub-side">
@@ -146,7 +169,7 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
               </a>
             );
           })}
-          <a href={`${base}/comparateur`} class="hub-card-cta">⚔ Comparer deux joueuses</a>
+          <a href={`${base}/comparateur`} class="hub-card-cta">Comparer deux joueuses</a>
         </div>
 
         <div class="hub-card">
@@ -185,37 +208,31 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
         <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">En chiffres</div><h2>Les <em>faits marquants</em> de la saison</h2></div></div>
         <div class="facts">
           <div class="fact">
-            <div class="fact-ic">🎯</div>
             <div class="fact-lab">Plus large victoire</div>
             <div class="fact-val">{hi.biggest.sw}–{hi.biggest.sl}</div>
             <div class="fact-sub"><a href={`/femmes/joueur/${slugOf(hi.biggest.winId)}`}>{hi.biggest.winName}</a> contre {hi.biggest.loseName}</div>
           </div>
           <div class="fact">
-            <div class="fact-ic">🔥</div>
             <div class="fact-lab">Plus longue série</div>
             <div class="fact-val">{hi.streak.n} victoires</div>
             <div class="fact-sub">d'affilée · <a href={`/femmes/joueur/${slugOf(hi.streak.id)}`}>{hi.streak.name}</a></div>
           </div>
           <div class="fact">
-            <div class="fact-ic">🏆</div>
             <div class="fact-lab">Plus de victoires</div>
             <div class="fact-val">{hi.topWins.wins} matchs</div>
             <div class="fact-sub">gagnés · <a href={`/femmes/joueur/${slugOf(hi.topWins.id)}`}>{hi.topWins.name}</a></div>
           </div>
           <div class="fact">
-            <div class="fact-ic">📈</div>
             <div class="fact-lab">Meilleur pourcentage</div>
             <div class="fact-val">{hi.bestPct.winPct}%</div>
             <div class="fact-sub">de victoires · <a href={`/femmes/joueur/${slugOf(hi.bestPct.id)}`}>{hi.bestPct.name}</a></div>
           </div>
           <div class="fact">
-            <div class="fact-ic">⚡</div>
             <div class="fact-lab">La plus active</div>
             <div class="fact-val">{hi.mostActive.played} matchs</div>
             <div class="fact-sub">disputés · <a href={`/femmes/joueur/${slugOf(hi.mostActive.id)}`}>{hi.mostActive.name}</a></div>
           </div>
           <div class="fact">
-            <div class="fact-ic">💡</div>
             <div class="fact-lab">Le saviez-vous</div>
             <div class="fact-val">{hi.totalManches} manches</div>
             <div class="fact-sub">jouées en {hi.totalMatches} matchs cette saison</div>
@@ -231,27 +248,39 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
       <div class="wrap">
         <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Histoire</div><h2>Le <em>palmarès</em> du Blackball Femmes</h2></div></div>
         <div class="palmares">
-          {palmares.map((p) => (
+          {palmares.map((p) => {
+            const champPhoto = photoOf(p.champ as any, (p as any).slug);
+            const cdfPhoto = p.cdf ? photoOf(p.cdf as any, (p as any).slug) : null;
+            return (
             <div class="palm-row">
               <div class="palm-season">{p.label}</div>
               <a href={`/femmes/joueur/${slugOf(p.champ.id)}`} class="palm-card palm-champ">
-                <span class="palm-lab">Championne de saison</span>
-                <span class="palm-name">{p.champ.name}</span>
-                <span class="palm-sub">{p.champ.points} pts</span>
+                <span class="palm-ph"><span class="bavatar">{p.champ.name.slice(0, 1)}</span>{champPhoto && <img src={champPhoto} alt={p.champ.name} loading="lazy" onerror="this.remove()" />}</span>
+                <span class="palm-body">
+                  <span class="palm-lab">Championne de saison</span>
+                  <span class="palm-name">{p.champ.name}</span>
+                  <span class="palm-sub">{p.champ.points} pts</span>
+                </span>
               </a>
               {p.cdf ? (
                 <a href={`/femmes/joueur/${slugOf(p.cdf.id)}`} class="palm-card palm-cdf">
-                  <span class="palm-lab">🏆 Championne de France</span>
-                  <span class="palm-name">{p.cdf.name}</span>
+                  <span class="palm-ph"><span class="bavatar">{p.cdf.name.slice(0, 1)}</span>{cdfPhoto && <img src={cdfPhoto} alt={p.cdf.name} loading="lazy" onerror="this.remove()" />}</span>
+                  <span class="palm-body">
+                    <span class="palm-lab">Championne de France</span>
+                    <span class="palm-name">{p.cdf.name}</span>
+                  </span>
                 </a>
               ) : (
                 <div class="palm-card palm-cdf palm-empty">
-                  <span class="palm-lab">Championne de France</span>
-                  <span class="palm-name">—</span>
+                  <span class="palm-body">
+                    <span class="palm-lab">Championne de France</span>
+                    <span class="palm-name">—</span>
+                  </span>
                 </div>
               )}
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
@@ -272,4 +301,52 @@ const evDate = (s: string) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? fmtShort(s) : s);
   a.etape--link:hover .et-go { background: var(--c-billard); color: #fff; border-color: var(--c-billard); }
   a.etape--link:hover .et-go-ar { animation: none; transform: translateX(3px); }
   @media (prefers-reduced-motion: reduce) { a.etape--link::after, .et-go-ar { animation: none; } }
+
+  /* ===== Calendrier = agenda vertical ; chaque étape jouée se déplie sur son podium ===== */
+  .parcours-grid { display: flex; flex-direction: column; gap: 8px; }
+  .etape { position: relative; display: flex; flex-direction: column; border: 1px solid var(--line); border-left: 4px solid var(--c-billard);
+    border-radius: 8px; background: var(--surface); padding: 0; transition: border-color .15s, box-shadow .15s; }
+  .etape.k-mondial { border-left-color: #C79A1E; } .etape.k-coupe { border-left-color: var(--c-subbuteo); } .etape.k-france { border-left-color: var(--live); }
+  .etape:not(.etape--acc) { flex-direction: row; align-items: center; gap: 14px; padding: 11px 16px; }
+  .etape--acc > .et-row { display: flex; align-items: center; gap: 14px; width: 100%; padding: 11px 16px; background: none; border: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+  .etape .et-num { flex: none; display: inline-flex; align-items: center; font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: .03em;
+    color: #fff; background: var(--c-billard); padding: 2px 11px; border-radius: 6px; }
+  .etape.k-mondial .et-num { background: #C79A1E; color: #3a2a05; } .etape.k-coupe .et-num { background: var(--c-subbuteo); } .etape.k-france .et-num { background: var(--live); }
+  .et-jx { font-style: normal; margin-left: 7px; font-size: 10px; font-weight: 800; color: var(--c-billard); background: #fff; padding: 1px 7px; border-radius: 100px; }
+  .et-city { flex: 1; min-width: 0; margin: 0; font-size: 14px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .et-date { flex: none; min-width: 112px; margin: 0; text-align: right; font-size: 11.5px; color: var(--ink-faint); font-family: var(--mono); }
+  .et-winner { flex: none; margin: 0; padding: 0; border: 0; font-size: 11.5px; font-weight: 700; color: #C79A1E; white-space: nowrap; }
+  .et-go { flex: none; margin: 0; align-self: center; }
+  .et-chev { flex: none; color: var(--ink-faint); font-size: 12px; }
+  a.etape--link::after { display: none; }
+  .etape.is-next { border-color: var(--c-billard); box-shadow: inset 0 0 0 1px var(--c-billard); background: color-mix(in srgb, var(--c-billard) 6%, var(--surface)); }
+  .etape.etape--link:hover, .etape.etape--acc:hover { border-color: color-mix(in srgb, var(--c-billard) 50%, var(--line)); box-shadow: 0 4px 14px color-mix(in srgb, var(--c-billard) 12%, transparent); }
+  .etape--acc > .et-row:hover .et-city, .etape--acc > .et-row[aria-expanded="true"] .et-city { color: var(--c-billard); }
+  .etape--acc > .et-row[aria-expanded="true"] .et-chev { color: var(--c-billard); }
+  .et-pod { padding: 2px 16px 16px; border-top: 1px dashed var(--line); }
+  .et-pod-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+  .et-pod-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 3px; padding: 13px 6px 11px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); text-decoration: none; transition: border-color .15s, transform .15s; }
+  .et-pod-card:hover { transform: translateY(-3px); border-color: var(--c-billard); }
+  .et-pod-card.r1 { border-color: color-mix(in srgb, #E8B008 55%, var(--line)); background: color-mix(in srgb, #E8B008 8%, var(--surface)); }
+  .et-pod-ph { position: relative; width: 52px; height: 52px; border-radius: 50%; overflow: hidden; background: var(--surface-2); border: 2px solid var(--line); display: grid; place-items: center; }
+  .et-pod-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .et-pod-card.r1 .et-pod-ph { border-color: #E8B008; }
+  .et-pod-ph .bavatar { font-family: var(--display); font-weight: 800; font-size: 18px; color: var(--ink-faint); }
+  .et-pod-rk { position: absolute; right: -2px; bottom: -2px; width: 19px; height: 19px; display: grid; place-items: center; border-radius: 50%; font-size: 10.5px; font-weight: 800; color: #fff; background: var(--c-billard); border: 2px solid var(--surface); }
+  .et-pod-card.r1 .et-pod-rk { background: #E8B008; }
+  .et-pod-lab { font-size: 10px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; color: var(--c-billard); }
+  .et-pod-card.r1 .et-pod-lab { color: #b08400; }
+  .et-pod-name { font-size: 12px; font-weight: 700; color: var(--ink); line-height: 1.15; }
+  .et-tableau { display: inline-block; margin-top: 12px; font-size: 12px; font-weight: 700; color: var(--c-billard); text-decoration: none; }
+  .et-tableau i { font-style: normal; }
+  .et-tableau:hover { text-decoration: underline; }
+  @media (max-width: 560px) { .et-pod-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .et-date { min-width: 0; } }
+
+  /* palmarès : photo du champion sur la carte */
+  .palm-card { flex-direction: row; align-items: center; gap: 12px; }
+  .palm-ph { position: relative; width: 46px; height: 46px; border-radius: 50%; overflow: hidden; background: var(--surface-2); border: 2px solid var(--line); display: grid; place-items: center; flex: none; }
+  .palm-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .palm-ph .bavatar { font-family: var(--display); font-weight: 800; font-size: 17px; color: var(--ink-faint); }
+  .palm-champ .palm-ph { border-color: color-mix(in srgb, #E8B008 55%, var(--line)); }
+  .palm-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 </style>

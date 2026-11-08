@@ -209,6 +209,26 @@ export function tournamentPodium(R: SeasonData | null | undefined): TournamentPo
   return null;
 }
 
+// Podium (1er / 2e / demi-finalistes) d'UN tournoi précis (par id) — même logique que
+// tournamentPodium mais ciblée, pour afficher le podium de chaque étape du calendrier.
+export function tournamentPodiumById(R: SeasonData | null | undefined, tid: string): PodiumPlace[] {
+  if (!R || !R.matches?.length) return [];
+  const byId = new Map((R.players as PodiumPlayer[]).map((p) => [p.id, p]));
+  const rn = (s: string) => (s || '').toLowerCase().replace(/[^a-z]/g, '');
+  const isFinal = (r: string) => rn(r) === 'final' || rn(r) === 'finale';
+  const isSemi = (r: string) => rn(r).startsWith('semifinal') || rn(r).startsWith('demifinale');
+  const winLose = (m: Match) => (m.sA > m.sB ? [m.aId, m.bId] : [m.bId, m.aId]);
+  const ms = R.matches.filter((m) => m.tid === tid);
+  const finalM = ms.find((m) => isFinal(m.round));
+  if (!finalM) return [];
+  const [champ, vice] = winLose(finalM);
+  const thirds = ms.filter((m) => isSemi(m.round)).map((m) => winLose(m)[1]);
+  const order = [{ id: champ, place: 1 }, { id: vice, place: 2 }, ...thirds.map((id) => ({ id, place: 3 }))];
+  const places: PodiumPlace[] = []; const seen = new Set<number>();
+  for (const o of order) { if (seen.has(o.id)) continue; const p = byId.get(o.id); if (p) { places.push({ player: p, place: o.place }); seen.add(o.id); } }
+  return places;
+}
+
 export const getPlayer = (data: SeasonData, id: number) => data.players.find((p) => p.id === id);
 export const tournamentById = (data: SeasonData, tid: string) => data.tournaments.find((t) => t.id === tid);
 

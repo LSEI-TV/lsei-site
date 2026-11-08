@@ -114,6 +114,7 @@ export const roster2627: RosterEntry[] = [
 // Clé = slug de l'étape (cf. cal2627). Spécifique au Masters (pas Femmes/Para).
 export const mastersGuests2627: Record<string, string[]> = {
   tn1: ['Kevin Lefrançois', 'Arthur Crespin', 'Fabien Langlet', 'Frédéric Moreau'],
+  tn2: ['Christophe Lechat', 'Amine Bounif', 'Adlaine Abdou', 'Thomas Robert'],
 };
 
 // La plus récente en premier.

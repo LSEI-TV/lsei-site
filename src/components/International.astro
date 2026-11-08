@@ -8,7 +8,7 @@ interface Props { slug: string; nom: string }
 const { slug, nom } = Astro.props;
 const j = mondialDe(slug, nom);
 
-const ICO: Record<string, string> = { or: '🥇', argent: '🥈', bronze: '🥉' };
+const ICO: Record<string, string> = { or: '', argent: '', bronze: '' };
 const blocs = j ? [
   j.equipe && { k: 'Par équipes', b: j.equipe, sous: `Équipe de France ${j.equipe.cat}` },
   j.simple && { k: 'En simple', b: j.simple, sous: j.simple.cat },

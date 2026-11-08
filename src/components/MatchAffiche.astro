@@ -39,7 +39,7 @@ const [L, R] = a.sides;
         </Fragment>
       ))}
     </div>
-    {(when || place) && <div class="ma-when">{when}{when && place ? ' · ' : ''}{place && `📍 ${place}`}</div>}
+    {(when || place) && <div class="ma-when">{when}{when && place ? ' · ' : ''}{place && `${place}`}</div>}
   </div>
 </section>
 

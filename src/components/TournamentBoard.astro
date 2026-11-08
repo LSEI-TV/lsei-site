@@ -151,7 +151,7 @@ const champPath = matches
       <input type="radio" name="tnview" id="tnv-parcours" class="tv-radio" />
       <input type="radio" name="tnview" id="tnv-tableau" class="tv-radio" checked />
       <div class="tv-switch" role="tablist">
-        <label for="tnv-tableau" class="tv-lab tv-lab--t"><span>🏆 Tableau</span></label>
+        <label for="tnv-tableau" class="tv-lab tv-lab--t"><span>Tableau</span></label>
         <label for="tnv-parcours" class="tv-lab tv-lab--p"><span>🧗 Parcours</span></label>
       </div>
 
@@ -198,7 +198,6 @@ const champPath = matches
       <div class="tv-panel tv-parcours">
         <div class="fil-champ">
           <span class="fil-champ-ph"><span class="bavatar">{champName.slice(0, 1)}</span>{champPhoto && <img src={champPhoto} alt={champName} onerror="this.remove()" />}</span>
-          <span class="fil-champ-crown">🏆</span>
           <div class="fil-champ-lab">Vainqueur</div>
           <a href={`${ficheBase}${slugOf(champId)}`} class="fil-champ-nm">{champName}</a>
         </div>
@@ -237,7 +236,7 @@ const champPath = matches
           })}
           <div class="fil-start">Entrée en lice · {t.level}</div>
         </div>
-        <p class="fil-hint">💡 Dépliez « Le parcours de … » pour remonter tout le tableau, match après match.</p>
+        <p class="fil-hint">Dépliez « Le parcours de … » pour remonter tout le tableau, match après match.</p>
       </div>
     </div>
   </section>
@@ -257,7 +256,7 @@ const champPath = matches
         <div class="cf-rec"><span class="cf-rec-a"></span><b class="cf-rec-aw"></b><span class="cf-rec-dash">—</span><b class="cf-rec-bw"></b><span class="cf-rec-b"></span></div>
         <div class="cf-list"></div>
       </div>
-      <a class="cf-cmp" href="#">⚔ Comparer les deux joueurs en détail →</a>
+      <a class="cf-cmp" href="#">Comparer les deux joueurs en détail →</a>
     </div>
   </dialog>
 

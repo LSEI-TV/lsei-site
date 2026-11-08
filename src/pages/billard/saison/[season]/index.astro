@@ -9,12 +9,11 @@ import { getReplays } from '../../../../lib/youtube';
 import { getCollection } from 'astro:content';
 import { getDiscipline } from '../../../../data/site';
 import { articleCover } from '../../../../lib/articles';
-import { photoOf, fromPov, seasonHighlights, playerSlugs, photoOnlySeasons, playersByPhotoKey } from '../../../../lib/billardStats';
+import { photoOf, fromPov, seasonHighlights, playerSlugs, photoOnlySeasons, playersByPhotoKey, tournamentPodiumById } from '../../../../lib/billardStats';
 import SportIcon from '../../../../components/SportIcon.astro';
 import PlayerSearch from '../../../../components/PlayerSearch.astro';
 import { getSeasons, getPalmares, DEFAULT_SEASON, mastersGuests2627, type Season } from '../../../../data/billard/seasons';
 import AffichesTournois from '../../../../components/AffichesTournois.astro';
-import PodiumTournoi from '../../../../components/PodiumTournoi.astro';
 import rmixte2526 from '../../../../data/billard/results-mixte-2025-2026.json';
 import rmixte2425 from '../../../../data/billard/results-mixte-2024-2025.json';
 import rmixte2324 from '../../../../data/billard/results-mixte-2023-2024.json';
@@ -76,15 +75,19 @@ const palmares = getPalmares();
 // Chaque nom est relié à la fiche du joueur (retrouvé par nom dans le classement de la saison).
 const _gn = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
 const _guestId = new Map((players as any[]).map((p) => [_gn(p.name), p.id]));
+const _guestSlug = (nm: string) => nm.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const guestsView = calSeason.calendar
   .filter((e) => e.slug && mastersGuests2627[e.slug]?.length)
   .map((e) => ({
     short: e.short, name: e.name, place: e.place,
     names: mastersGuests2627[e.slug!].map((nm) => {
       const id = _guestId.get(_gn(nm));
-      return { label: nm, link: id != null ? `/billard/joueur/${slugOf(id)}` : null };
+      // Photo cherchée PAR LE NOM (le headshot peut exister même si l'invité n'est pas encore
+      // dans les joueurs du Masters — ex. venu du Mixte). Pas de photo → avatar-initiale.
+      return { label: nm, link: `/billard/joueur/${id != null ? slugOf(id) : _guestSlug(nm)}`, photo: photoOf({ name: nm } as any, season.slug), initial: nm.slice(0, 1) };
     }),
   }));
+const guestsByShort = new Map(guestsView.map((g) => [g.short, g.names])); // invités par étape, pour le dépli du calendrier
 
 
 // Lien « tableau » (bracket) d'une étape du calendrier : cliquable seulement si le
@@ -188,7 +191,7 @@ if (!hasData) {
         link: back ? `/billard/joueur/${slugOf(bid!)}` : `/billard/joueur/${p.id}`,
         badge: back
           ? '↩ De retour au Masters'
-          : (feederCdFKey === _n(p.name) ? '🏆 Champion de France Mixte' : (p.rank === 1 ? '⭐ 1er du Mixte National' : null)),
+          : (feederCdFKey === _n(p.name) ? 'Champion de France Mixte' : (p.rank === 1 ? '1er du Mixte National' : null)),
         prov: `Mixte National · ${feederLabel}`,
         rank: p.rank, points: p.points, wins: p.wins, losses: p.losses, tourns: p.tourns,
         mixteProv: null,
@@ -219,7 +222,7 @@ if (!hasData) {
         name: p.name, url: photoOf(p, season.slug), link: `/billard/joueur/${slugOf(p.id)}`,
         badge: back
           ? '↩ De retour au Masters'
-          : (p.rank === 1 ? '⭐ Champion pour ses débuts' : (p.rank <= 5 ? `🔥 ${p.rank}ᵉ pour ses débuts` : null)),
+          : (p.rank === 1 ? 'Champion pour ses débuts' : (p.rank <= 5 ? `${p.rank}ᵉ pour ses débuts` : null)),
         prov: back ? 'Retour au Blackball Master' : 'Débuts au Blackball Master',
         rank: p.rank, points: p.points, wins: p.wins, losses: p.losses, tourns: p.tourns,
         mixteProv: mx ? `Venait du Mixte National ${feederLabel} · ${mx.rank}${mx.rank === 1 ? 'er' : 'ᵉ'} (${mx.wins}-${mx.losses})` : null,
@@ -265,45 +268,73 @@ if (!hasData) {
               {calSeason.calendar.map((e, i) => {
                 const href = bracketHref(e);
                 const st = nextIdx < 0 || i < nextIdx ? ' is-past' : i === nextIdx ? ' is-next' : '';
-                const inner = (
+                const etTour = hasData ? (R.tournaments as any[]).find((t) => t.level === e.short || (e.kind === 'france' && t.kind === 'france')) : null;
+                const pod = etTour ? tournamentPodiumById(R, etTour.id) : [];
+                const inv = guestsByShort.get(e.short) || [];
+                const expandable = pod.length > 0 || inv.length > 0;
+                const row = (
                   <>
                     <span class="et-num">{e.short}{i === nextIdx && <em class="et-jx">{nextJx}</em>}</span>
                     <span class="et-city">{e.place}</span>
                     <span class="et-date">{evDate(e.date)}</span>
-                    {e.winner && (href
-                      ? <span class="et-winner">🏆 {e.winner.name}</span>
-                      : <a class="et-winner" href={`/billard/joueur/${slugOf(e.winner.id)}`} title={`Vainqueur : ${e.winner.name}`}>🏆 {e.winner.name}</a>)}
-                    {href && <span class="et-go">Tableau <i class="et-go-ar">→</i></span>}
+                    {e.winner && <span class="et-winner">{e.winner.name}</span>}
                   </>
                 );
+                if (expandable) {
+                  return (
+                    <div class={`etape k-${e.kind}${st} etape--acc`} title={e.name}>
+                      <button type="button" class="et-row" data-accordion aria-expanded="false">
+                        {row}
+                        <span class="et-chev car-schev" aria-hidden="true">▾</span>
+                      </button>
+                      <div class="et-pod" hidden>
+                        {pod.length > 0 && (
+                          <div class="et-pod-grid">
+                            {pod.map(({ player: p, place }) => {
+                              const ph = photoOf(p, season.slug);
+                              return (
+                                <a href={`/billard/joueur/${slugOf(p.id)}`} class={`et-pod-card r${place}`}>
+                                  <span class="et-pod-ph"><span class="bavatar">{p.name.slice(0, 1)}</span>{ph && <img src={ph} alt={p.name} loading="lazy" onerror="this.remove()" />}<span class="et-pod-rk">{place}</span></span>
+                                  <span class="et-pod-lab">{place === 1 ? 'Vainqueur' : place === 2 ? 'Finaliste' : 'Demi-finaliste'}</span>
+                                  <span class="et-pod-name">{p.name}</span>
+                                </a>
+                              );
+                            })}
+                          </div>
+                        )}
+                        {inv.length > 0 && (
+                          <div class="et-inv">
+                            <div class="et-inv-h">Invités · venus du Mixte National</div>
+                            <div class="et-inv-grid">
+                              {inv.map((n) => {
+                                const body = (
+                                  <>
+                                    <span class="et-pod-ph"><span class="bavatar">{n.initial}</span>{n.photo && <img src={n.photo} alt={n.label} loading="lazy" onerror="this.remove()" />}<span class="et-inv-star">★</span></span>
+                                    <span class="et-pod-lab et-inv-lab">Invité</span>
+                                    <span class="et-pod-name">{n.label}</span>
+                                  </>
+                                );
+                                return n.link
+                                  ? <a href={n.link} class="et-pod-card et-inv-card">{body}</a>
+                                  : <div class="et-pod-card et-inv-card">{body}</div>;
+                              })}
+                            </div>
+                          </div>
+                        )}
+                        {href && <a href={href} class="et-tableau">Voir le tableau du tournoi <i>→</i></a>}
+                      </div>
+                    </div>
+                  );
+                }
+                const tail = href && <span class="et-go">Tableau <i class="et-go-ar">→</i></span>;
                 return href
-                  ? <a class={`etape k-${e.kind} etape--link${st}`} href={href} title={`${e.name} — voir le tableau`}>{inner}</a>
-                  : <div class={`etape k-${e.kind}${st}`} title={e.name}>{inner}</div>;
+                  ? <a class={`etape k-${e.kind} etape--link${st}`} href={href} title={`${e.name} — voir le tableau`}>{row}{tail}</a>
+                  : <div class={`etape k-${e.kind}${st}`} title={e.name}>{row}{tail}</div>;
               })}
             </div>
           </div>
         )}
 
-        <PodiumTournoi results={R} seasonSlug={season.slug} hrefBase="/billard/joueur/" slugOf={slugOf} />
-
-        {guests.length > 0 && (
-          <div class="hub-podium hub-guests">
-            <div class="hub-pod-h">Les invités · venus du Mixte National</div>
-            <div class="hub-pod-grid">
-              {guests.map((p: any) => {
-                const ph = photoOf(p, season.slug);
-                return (
-                  <a href={`/billard/joueur/${slugOf(p.id)}`} class="hub-pod-card hub-pod-card--inv">
-                    <span class="hub-pod-ph"><span class="bavatar">{p.name.slice(0, 1)}</span>{ph && <img src={ph} alt={p.name} loading="lazy" onerror="this.remove()" />}<span class="hub-pod-rk hub-pod-rk--inv">★</span></span>
-                    <span class="hub-pod-lab">Invité</span>
-                    <span class="hub-pod-name">{p.name}</span>
-                    <span class="hub-pod-pts">{p.mixteRank ? <>{p.mixteRank}<sup>{p.mixteRank === 1 ? 'er' : 'e'}</sup> au Mixte</> : 'Mixte National'}</span>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        )}
       </div>
 
       <aside class="hub-side">
@@ -326,7 +357,7 @@ if (!hasData) {
                   </a>
                 );
               })}
-              <a href={`${base}/comparateur`} class="hub-card-cta">⚔ Comparer deux joueurs</a>
+              <a href={`${base}/comparateur`} class="hub-card-cta">Comparer deux joueurs</a>
             </div>
 
             <div class="hub-card">
@@ -412,60 +443,37 @@ if (!hasData) {
     </section>
   )}
 
-  {guestsView.length > 0 && (
-    <section class="section" style="padding-top:0">
-      <div class="wrap">
-        <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Les invités</div><h2>Les <em>invités</em> par étape</h2></div></div>
-        <p class="fj-help" style="margin-top:0">Chaque Tournoi National Masters accueille <b>4 invités</b> en plus des permanents. Ils changent à chaque étape.</p>
-        <div class="guests-list">
-          {guestsView.map((g) => (
-            <div class="guests-row">
-              <div class="guests-ev"><span class="guests-tn">{g.short}</span><span class="guests-place">{g.place}</span></div>
-              <div class="guests-names">{g.names.map((n) => (n.link ? <a class="guest-chip guest-chip--link" href={n.link}>{n.label}</a> : <span class="guest-chip">{n.label}</span>))}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )}
-
   {hi && (
     <section class="section sz-facts-sec">
       <div class="wrap">
         <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">En chiffres</div><h2>Les <em>faits marquants</em> de la saison</h2></div></div>
         <div class="facts">
           <div class="fact">
-            <div class="fact-ic">🎯</div>
             <div class="fact-lab">Plus large victoire</div>
             <div class="fact-val">{hi.biggest.sw}–{hi.biggest.sl}</div>
             <div class="fact-sub"><a href={`/billard/joueur/${slugOf(hi.biggest.winId)}`}>{hi.biggest.winName}</a> contre {hi.biggest.loseName}</div>
           </div>
           <div class="fact">
-            <div class="fact-ic">🔥</div>
             <div class="fact-lab">Plus longue série</div>
             <div class="fact-val">{hi.streak.n} victoires</div>
             <div class="fact-sub">d'affilée · <a href={`/billard/joueur/${slugOf(hi.streak.id)}`}>{hi.streak.name}</a></div>
           </div>
           <div class="fact">
-            <div class="fact-ic">🏆</div>
             <div class="fact-lab">Plus de victoires</div>
             <div class="fact-val">{hi.topWins.wins} matchs</div>
             <div class="fact-sub">gagnés · <a href={`/billard/joueur/${slugOf(hi.topWins.id)}`}>{hi.topWins.name}</a></div>
           </div>
           <div class="fact">
-            <div class="fact-ic">📈</div>
             <div class="fact-lab">Meilleur pourcentage</div>
             <div class="fact-val">{hi.bestPct.winPct}%</div>
             <div class="fact-sub">de victoires · <a href={`/billard/joueur/${slugOf(hi.bestPct.id)}`}>{hi.bestPct.name}</a></div>
           </div>
           <div class="fact">
-            <div class="fact-ic">⚡</div>
             <div class="fact-lab">Le plus actif</div>
             <div class="fact-val">{hi.mostActive.played} matchs</div>
             <div class="fact-sub">disputés · <a href={`/billard/joueur/${slugOf(hi.mostActive.id)}`}>{hi.mostActive.name}</a></div>
           </div>
           <div class="fact">
-            <div class="fact-ic">💡</div>
             <div class="fact-lab">Le saviez-vous</div>
             <div class="fact-val">{hi.totalManches} manches</div>
             <div class="fact-sub">jouées en {hi.totalMatches} matchs cette saison</div>
@@ -511,27 +519,39 @@ if (!hasData) {
       <div class="wrap">
         <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Histoire</div><h2>Le <em>palmarès</em> du Blackball Master</h2></div></div>
         <div class="palmares">
-          {palmares.map((p) => (
+          {palmares.map((p) => {
+            const champPhoto = photoOf(p.champ as any, (p as any).slug);
+            const cdfPhoto = p.cdf ? photoOf(p.cdf as any, (p as any).slug) : null;
+            return (
             <div class="palm-row">
               <div class="palm-season">{p.label}</div>
               <a href={`/billard/joueur/${slugOf(p.champ.id)}`} class="palm-card palm-champ">
-                <span class="palm-lab">Champion de saison</span>
-                <span class="palm-name">{p.champ.name}</span>
-                <span class="palm-sub">{p.champ.points} pts</span>
+                <span class="palm-ph"><span class="bavatar">{p.champ.name.slice(0, 1)}</span>{champPhoto && <img src={champPhoto} alt={p.champ.name} loading="lazy" onerror="this.remove()" />}</span>
+                <span class="palm-body">
+                  <span class="palm-lab">Champion de saison</span>
+                  <span class="palm-name">{p.champ.name}</span>
+                  <span class="palm-sub">{p.champ.points} pts</span>
+                </span>
               </a>
               {p.cdf ? (
                 <a href={`/billard/joueur/${slugOf(p.cdf.id)}`} class="palm-card palm-cdf">
-                  <span class="palm-lab">🏆 Champion de France</span>
-                  <span class="palm-name">{p.cdf.name}</span>
+                  <span class="palm-ph"><span class="bavatar">{p.cdf.name.slice(0, 1)}</span>{cdfPhoto && <img src={cdfPhoto} alt={p.cdf.name} loading="lazy" onerror="this.remove()" />}</span>
+                  <span class="palm-body">
+                    <span class="palm-lab">Champion de France</span>
+                    <span class="palm-name">{p.cdf.name}</span>
+                  </span>
                 </a>
               ) : (
                 <div class="palm-card palm-cdf palm-empty">
-                  <span class="palm-lab">Champion de France</span>
-                  <span class="palm-name">—</span>
+                  <span class="palm-body">
+                    <span class="palm-lab">Champion de France</span>
+                    <span class="palm-name">—</span>
+                  </span>
                 </div>
               )}
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
@@ -645,4 +665,63 @@ if (!hasData) {
   a.guest-chip--link:hover { color: var(--c-billard); border-color: var(--c-billard); background: color-mix(in srgb, var(--c-billard) 8%, var(--surface-2)); }
   /* Badge « Invité » (wildcard d'une étape, pas un permanent) */
   .inv-tag { margin-left: 6px; font-size: 9.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #7a4e00; background: #F6C454; vertical-align: middle; border-radius: 5px; padding: 1px 5px; }
+
+  /* ===== Calendrier = agenda vertical ; chaque étape jouée se déplie sur son podium ===== */
+  .parcours-grid { display: flex; flex-direction: column; gap: 8px; }
+  .etape { position: relative; display: flex; flex-direction: column; border: 1px solid var(--line); border-left: 4px solid var(--c-billard);
+    border-radius: 8px; background: var(--surface); padding: 0; transition: border-color .15s, box-shadow .15s; }
+  .etape.k-mondial { border-left-color: #C79A1E; } .etape.k-coupe { border-left-color: var(--c-subbuteo); } .etape.k-france { border-left-color: var(--live); }
+  /* étape simple (lien/div) OU en-tête cliquable (.et-row) = ligne horizontale */
+  .etape:not(.etape--acc) { flex-direction: row; align-items: center; gap: 14px; padding: 11px 16px; }
+  .etape--acc > .et-row { display: flex; align-items: center; gap: 14px; width: 100%; padding: 11px 16px; background: none; border: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+  .etape .et-num { flex: none; display: inline-flex; align-items: center; font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: .03em;
+    color: #fff; background: var(--c-billard); padding: 2px 11px; border-radius: 6px; }
+  .etape.k-mondial .et-num { background: #C79A1E; color: #3a2a05; } .etape.k-coupe .et-num { background: var(--c-subbuteo); } .etape.k-france .et-num { background: var(--live); }
+  .et-jx { font-style: normal; margin-left: 7px; font-size: 10px; font-weight: 800; color: var(--c-billard); background: #fff; padding: 1px 7px; border-radius: 100px; }
+  .et-city { flex: 1; min-width: 0; margin: 0; font-size: 14px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .et-date { flex: none; min-width: 112px; margin: 0; text-align: right; font-size: 11.5px; color: var(--ink-faint); font-family: var(--mono); }
+  .et-winner { flex: none; margin: 0; padding: 0; border: 0; font-size: 11.5px; font-weight: 700; color: #C79A1E; white-space: nowrap; }
+  .et-go { flex: none; margin: 0; align-self: center; }
+  .et-chev { flex: none; color: var(--ink-faint); font-size: 12px; }
+  a.etape--link::after { display: none; }
+  .etape.is-next { border-color: var(--c-billard); box-shadow: inset 0 0 0 1px var(--c-billard); background: color-mix(in srgb, var(--c-billard) 6%, var(--surface)); }
+  .etape.etape--link:hover, .etape.etape--acc:hover { border-color: color-mix(in srgb, var(--c-billard) 50%, var(--line)); box-shadow: 0 4px 14px color-mix(in srgb, var(--c-billard) 12%, transparent); }
+  .etape--acc > .et-row:hover .et-city, .etape--acc > .et-row[aria-expanded="true"] .et-city { color: var(--c-billard); }
+  .etape--acc > .et-row[aria-expanded="true"] .et-chev { color: var(--c-billard); }
+  /* panneau déplié = podium du tournoi (vainqueur · finaliste · demi-finalistes) */
+  .et-pod { padding: 2px 16px 16px; border-top: 1px dashed var(--line); }
+  .et-pod-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+  .et-pod-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 3px; padding: 13px 6px 11px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); text-decoration: none; transition: border-color .15s, transform .15s; }
+  .et-pod-card:hover { transform: translateY(-3px); border-color: var(--c-billard); }
+  .et-pod-card.r1 { border-color: color-mix(in srgb, #E8B008 55%, var(--line)); background: color-mix(in srgb, #E8B008 8%, var(--surface)); }
+  .et-pod-ph { position: relative; width: 52px; height: 52px; border-radius: 50%; overflow: hidden; background: var(--surface-2); border: 2px solid var(--line); display: grid; place-items: center; }
+  .et-pod-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .et-pod-card.r1 .et-pod-ph { border-color: #E8B008; }
+  .et-pod-ph .bavatar { font-family: var(--display); font-weight: 800; font-size: 18px; color: var(--ink-faint); }
+  .et-pod-rk { position: absolute; right: -2px; bottom: -2px; width: 19px; height: 19px; display: grid; place-items: center; border-radius: 50%; font-size: 10.5px; font-weight: 800; color: #fff; background: var(--c-billard); border: 2px solid var(--surface); }
+  .et-pod-card.r1 .et-pod-rk { background: #E8B008; }
+  .et-pod-lab { font-size: 10px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; color: var(--c-billard); }
+  .et-pod-card.r1 .et-pod-lab { color: #b08400; }
+  .et-pod-name { font-size: 12px; font-weight: 700; color: var(--ink); line-height: 1.15; }
+  .et-tableau { display: inline-block; margin-top: 12px; font-size: 12px; font-weight: 700; color: var(--c-billard); text-decoration: none; }
+  .et-tableau i { font-style: normal; }
+  .et-tableau:hover { text-decoration: underline; }
+  /* invités (wildcards) de l'étape, dans le dépli — cartes avec photo */
+  .et-inv { margin-top: 16px; }
+  .et-inv-h { font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #b08400; margin-bottom: 10px; }
+  .et-inv-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .et-inv-card.et-pod-card { border-color: color-mix(in srgb, #F6C454 42%, var(--line)); background: color-mix(in srgb, #F6C454 5%, var(--surface)); }
+  .et-inv-card .et-pod-ph { border-color: color-mix(in srgb, #F6C454 55%, var(--line)); }
+  .et-inv-lab { color: #b08400; }
+  .et-inv-star { position: absolute; right: -2px; bottom: -2px; width: 19px; height: 19px; display: grid; place-items: center; border-radius: 50%; font-size: 10px; font-weight: 800; background: #F6C454; color: #7a4e00; border: 2px solid var(--surface); }
+  @media (max-width: 560px) { .et-pod-grid, .et-inv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .et-date { min-width: 0; } }
+
+  /* palmarès : photo du champion sur la carte */
+  .palm-card { flex-direction: row; align-items: center; gap: 12px; }
+  .palm-ph { position: relative; width: 46px; height: 46px; border-radius: 50%; overflow: hidden; background: var(--surface-2); border: 2px solid var(--line); display: grid; place-items: center; flex: none; }
+  .palm-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .palm-ph .bavatar { font-family: var(--display); font-weight: 800; font-size: 17px; color: var(--ink-faint); }
+  .palm-champ .palm-ph { border-color: color-mix(in srgb, #E8B008 55%, var(--line)); }
+  .palm-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
 </style>
