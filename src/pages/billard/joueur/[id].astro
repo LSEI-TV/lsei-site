@@ -9,7 +9,7 @@ import { getReplays } from '../../../lib/youtube';
 import { parseProgTitle } from '../../../lib/programmeTitle';
 import { titleMatchesPlayer } from '../../../lib/videoMatch';
 import { playerVideos as playerVideosFor } from '../../../lib/playerVideos';
-import { getSeasons, getPalmares, mastersGuests2627 } from '../../../data/billard/seasons';
+import { getSeasons, getPalmares } from '../../../data/billard/seasons';
 import clubLogos from '../../../data/billard/club-logos.json';
 import playerCutouts from '../../../data/billard/player-cutouts.json';
 import playerColors from '../../../data/billard/player-colors.json';
@@ -59,36 +59,8 @@ export function getStaticPaths() {
     }
   }
 
-  // --- INVITÉS (wildcards) nommés dans mastersGuests, pas encore joueurs du Masters : fiche « invité ».
-  // Chaque invité annoncé a sa fiche dès maintenant (façon « fiche à venir », avec son bilan Mixte si
-  // trouvé). Dès qu'il joue (même id Cuescore), elle devient automatiquement une fiche carrière complète.
-  // Photo détectée automatiquement par le pipeline dès qu'un headshot est présent.
-  const cur2627 = getSeasons().find((s) => s.slug === '2026-2027');
-  const invSeen = new Set<string>();
-  for (const [etSlug, gNames] of Object.entries(mastersGuests2627)) {
-    const ev = (cur2627?.calendar as any[] | undefined)?.find((e) => e.slug === etSlug);
-    const etLabel = ev ? `${ev.short} · ${ev.place}` : etSlug.toUpperCase();
-    for (const gName of gNames as string[]) {
-      const nk = norm(gName);
-      if (knownNames.has(nk) || invSeen.has(nk)) continue;   // déjà joueur connu (fiche existe) ou déjà traité
-      invSeen.add(nk);
-      const s0 = slugify(gName);
-      if (used.has(s0)) continue;
-      let mix: any = null, mixLabel = '';
-      for (const [key, R] of Object.entries(MIXTE)) {
-        const p = (R.players as any[]).find((x) => norm(x.name) === nk);
-        if (p) { mix = p; mixLabel = key.replace('-', ' / '); break; }
-      }
-      const nc = {
-        id: -1, name: gName, invite: etLabel,
-        mastersLabel: cur2627?.label || '2026 / 2027', mastersSlug: cur2627?.slug || '2026-2027',
-        feederLabel: mix ? mixLabel : '', rank: mix?.rank ?? null, points: mix?.points ?? 0,
-        wins: mix?.wins ?? 0, losses: mix?.losses ?? 0, tourns: mix?.tourns ?? 0, played: mix?.played ?? 0, streak: 0,
-      };
-      used.add(s0);
-      paths.push({ params: { id: s0 }, props: { pid: -1, nc, slug: s0 } });
-    }
-  }
+  // NB : les invités (venus du Mixte National) n'ont PAS de fiche Masters auto-générée ici.
+  // Leur fiche = la fiche Mixte (/mixte/joueur/<slug>) ; les cartes invités du calendrier y pointent.
   return paths;
 }
 

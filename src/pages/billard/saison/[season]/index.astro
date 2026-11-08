@@ -73,18 +73,16 @@ const palmares = getPalmares();
 // Invités (wildcards) par étape du Masters : 4 par Tournoi National, en plus des
 // permanents. On ne les montre que là où ils sont renseignés (slug d'étape).
 // Chaque nom est relié à la fiche du joueur (retrouvé par nom dans le classement de la saison).
-const _gn = (s: string) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
-const _guestId = new Map((players as any[]).map((p) => [_gn(p.name), p.id]));
 const _guestSlug = (nm: string) => nm.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const guestsView = calSeason.calendar
   .filter((e) => e.slug && mastersGuests2627[e.slug]?.length)
   .map((e) => ({
     short: e.short, name: e.name, place: e.place,
     names: mastersGuests2627[e.slug!].map((nm) => {
-      const id = _guestId.get(_gn(nm));
       // Photo cherchée PAR LE NOM (le headshot peut exister même si l'invité n'est pas encore
       // dans les joueurs du Masters — ex. venu du Mixte). Pas de photo → avatar-initiale.
-      return { label: nm, link: `/billard/joueur/${id != null ? slugOf(id) : _guestSlug(nm)}`, photo: photoOf({ name: nm } as any, season.slug), initial: nm.slice(0, 1) };
+      // Un invité est un joueur du Mixte National : sa fiche = la fiche Mixte (pas une fiche Masters).
+      return { label: nm, link: `/mixte/joueur/${_guestSlug(nm)}`, photo: photoOf({ name: nm } as any, season.slug), initial: nm.slice(0, 1) };
     }),
   }));
 const guestsByShort = new Map(guestsView.map((g) => [g.short, g.names])); // invités par étape, pour le dépli du calendrier
