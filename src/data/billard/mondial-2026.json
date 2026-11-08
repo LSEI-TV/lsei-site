@@ -1,5 +1,5 @@
 {
- "maj": "30/10/2026 à 14h48",
+ "maj": "08/11/2026 à 14h12",
  "fini": true,
  "joueurs": {
   "killian-ballon": {
@@ -103,8 +103,8 @@
     "etat": "fini",
     "v": 9,
     "d": 3,
-    "g": 27,
-    "f": 42,
+    "g": 30,
+    "f": 47,
     "cg": 9,
     "pct": 64,
     "rencontres": [
@@ -253,15 +253,15 @@
    "stats": {
     "kpi": {
      "matchs": 18,
-     "g": 54,
-     "f": 90,
+     "g": 57,
+     "f": 95,
      "pct": 60,
      "cg": 9,
      "medailles": 1
     },
     "equipe": {
-     "g": 27,
-     "f": 42,
+     "g": 30,
+     "f": 47,
      "pct": 64,
      "cg": 9,
      "rencontres": 11,
@@ -269,7 +269,7 @@
      "nb_eq": 6,
      "rang_cg": 2,
      "rang_comp": [
-      10,
+      11,
       47
      ],
      "parfaites": 2,
@@ -446,7 +446,7 @@
     },
     "titre": "Killian Ballon repart de Londres avec une médaille : champion du monde en double avec Yannick Beaufils.",
     "analyse": [
-     "Par équipes, il remporte 27 de ses 42 manches (64 %) en 11 rencontres, et se classe 10e sur 47 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 30 de ses 47 manches (64 %), et se classe 11e sur 47 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
      "Sa meilleure rencontre : France – Madagascar (20/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
      "En simple, il s'incline d'entrée (3–6 contre Gareth Hibbott).",
      "En double avec Yannick Beaufils, il gagne 24 manches pour 15 concédées sur l'ensemble du tableau, dont 4 matchs gagnés à la manche décisive."
@@ -541,10 +541,10 @@
     "etat": "fini",
     "v": 9,
     "d": 3,
-    "g": 33,
-    "f": 48,
-    "cg": 3,
-    "pct": 69,
+    "g": 34,
+    "f": 52,
+    "cg": 4,
+    "pct": 65,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -691,23 +691,23 @@
    "stats": {
     "kpi": {
      "matchs": 18,
-     "g": 61,
-     "f": 90,
-     "pct": 68,
-     "cg": 3,
+     "g": 62,
+     "f": 94,
+     "pct": 66,
+     "cg": 4,
      "medailles": 0
     },
     "equipe": {
-     "g": 33,
-     "f": 48,
-     "pct": 69,
-     "cg": 3,
+     "g": 34,
+     "f": 52,
+     "pct": 65,
+     "cg": 4,
      "rencontres": 11,
-     "rang_eq": 3,
+     "rang_eq": 4,
      "nb_eq": 6,
      "rang_cg": 6,
      "rang_comp": [
-      7,
+      9,
       47
      ],
      "parfaites": 3,
@@ -885,7 +885,7 @@
     "titre": null,
     "analyse": [
      "Christophe Thébeault a disputé 18 matchs à Londres sous le maillot de l'équipe de France Hommes.",
-     "Par équipes, il remporte 33 de ses 48 manches (69 %) en 11 rencontres, le 3e meilleur pourcentage de l'équipe de France Hommes, et se classe 7e sur 47 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 34 de ses 52 manches (65 %), et se classe 9e sur 47 joueurs de l'épreuve. Il signe 4 « casse et gagne ».",
      "Sa meilleure rencontre : France – Mexique (25/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
      "En simple, il remporte 2 matchs avant de s'arrêter au 3e tour (4–6 contre Clint I'Anson), dont 1 victoire sans perdre une manche.",
      "En double avec Alexis Klinka, il remporte 3 matchs avant de s'arrêter en 1/4 de finale (0–4 contre Oussama Masskini / Houssam El Amari), dont 1 victoire sans perdre une manche."
@@ -1031,10 +1031,10 @@
     "etat": "fini",
     "v": 9,
     "d": 3,
-    "g": 34,
-    "f": 46,
+    "g": 37,
+    "f": 51,
     "cg": 13,
-    "pct": 74,
+    "pct": 73,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -1181,16 +1181,16 @@
    "stats": {
     "kpi": {
      "matchs": 23,
-     "g": 89,
-     "f": 130,
+     "g": 92,
+     "f": 135,
      "pct": 68,
      "cg": 13,
      "medailles": 2
     },
     "equipe": {
-     "g": 34,
-     "f": 46,
-     "pct": 74,
+     "g": 37,
+     "f": 51,
+     "pct": 73,
      "cg": 13,
      "rencontres": 11,
      "rang_eq": 1,
@@ -1414,7 +1414,7 @@
     },
     "titre": "Christophe Lambert repart de Londres avec 2 médailles : vice-champion du monde en simple et vice-champion du monde en double avec Alexandre Buscetti.",
     "analyse": [
-     "Par équipes, il remporte 34 de ses 46 manches (74 %) en 11 rencontres, le meilleur pourcentage de l'équipe de France Hommes, et se classe 2e sur 47 joueurs de l'épreuve. Il signe 13 « casse et gagne », le meilleur total de l'équipe.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 37 de ses 51 manches (73 %), le meilleur pourcentage de l'équipe de France Hommes, et se classe 2e sur 47 joueurs de l'épreuve. Il signe 13 « casse et gagne », le meilleur total de l'équipe.",
      "Sa meilleure rencontre : France – Malte (26/10), avec 5 manches sur 5, et 5 rencontres sans perdre une manche.",
      "En simple, il gagne 37 manches pour 17 concédées sur l'ensemble du tableau, dont 2 victoires sans perdre une manche.",
      "En double avec Alexandre Buscetti, il gagne 18 manches pour 12 concédées sur l'ensemble du tableau, dont 2 matchs gagnés à la manche décisive."
@@ -1669,11 +1669,11 @@
      "pct": 67,
      "cg": 8,
      "rencontres": 11,
-     "rang_eq": 4,
+     "rang_eq": 3,
      "nb_eq": 6,
      "rang_cg": 5,
      "rang_comp": [
-      8,
+      7,
       47
      ],
      "parfaites": 2,
@@ -1842,7 +1842,7 @@
     },
     "titre": "Alexandre Buscetti repart de Londres avec une médaille : vice-champion du monde en double avec Christophe Lambert.",
     "analyse": [
-     "Par équipes, il remporte 29 de ses 43 manches (67 %) en 11 rencontres, et se classe 8e sur 47 joueurs de l'épreuve. Il signe 8 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 29 de ses 43 manches (67 %), le 3e meilleur pourcentage de l'équipe de France Hommes, et se classe 7e sur 47 joueurs de l'épreuve. Il signe 8 « casse et gagne ».",
      "Sa meilleure rencontre : France – Mexique (25/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
      "En simple, il s'incline d'entrée (4–6 contre Clayton Castaldi).",
      "En double avec Christophe Lambert, il gagne 18 manches pour 12 concédées sur l'ensemble du tableau, dont 2 matchs gagnés à la manche décisive."
@@ -1966,10 +1966,10 @@
     "etat": "fini",
     "v": 9,
     "d": 3,
-    "g": 35,
-    "f": 48,
+    "g": 36,
+    "f": 53,
     "cg": 9,
-    "pct": 73,
+    "pct": 68,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -2116,23 +2116,23 @@
    "stats": {
     "kpi": {
      "matchs": 20,
-     "g": 72,
-     "f": 109,
-     "pct": 66,
+     "g": 73,
+     "f": 114,
+     "pct": 64,
      "cg": 9,
      "medailles": 1
     },
     "equipe": {
-     "g": 35,
-     "f": 48,
-     "pct": 73,
+     "g": 36,
+     "f": 53,
+     "pct": 68,
      "cg": 9,
      "rencontres": 11,
      "rang_eq": 2,
      "nb_eq": 6,
      "rang_cg": 2,
      "rang_comp": [
-      3,
+      6,
       47
      ],
      "parfaites": 3,
@@ -2325,7 +2325,7 @@
     },
     "titre": "Yannick Beaufils repart de Londres avec une médaille : champion du monde en double avec Killian Ballon.",
     "analyse": [
-     "Par équipes, il remporte 35 de ses 48 manches (73 %) en 11 rencontres, le 2e meilleur pourcentage de l'équipe de France Hommes, et se classe 3e sur 47 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 36 de ses 53 manches (68 %), le 2e meilleur pourcentage de l'équipe de France Hommes, et se classe 6e sur 47 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
      "Sa meilleure rencontre : France – Madagascar (20/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
      "En simple, il remporte 2 matchs avant de s'arrêter au 3e tour (1–6 contre Alexis Klinka), dont 1 victoire sans perdre une manche.",
      "En double avec Killian Ballon, il gagne 24 manches pour 15 concédées sur l'ensemble du tableau, dont 4 matchs gagnés à la manche décisive."
@@ -2449,8 +2449,8 @@
     "etat": "fini",
     "v": 9,
     "d": 3,
-    "g": 28,
-    "f": 48,
+    "g": 31,
+    "f": 53,
     "cg": 9,
     "pct": 58,
     "rencontres": [
@@ -2599,15 +2599,15 @@
    "stats": {
     "kpi": {
      "matchs": 20,
-     "g": 68,
-     "f": 108,
+     "g": 71,
+     "f": 113,
      "pct": 63,
      "cg": 9,
      "medailles": 0
     },
     "equipe": {
-     "g": 28,
-     "f": 48,
+     "g": 31,
+     "f": 53,
      "pct": 58,
      "cg": 9,
      "rencontres": 11,
@@ -2615,7 +2615,7 @@
      "nb_eq": 6,
      "rang_cg": 2,
      "rang_comp": [
-      14,
+      13,
       47
      ],
      "parfaites": 1,
@@ -2809,7 +2809,7 @@
     "titre": null,
     "analyse": [
      "Alexis Klinka a disputé 20 matchs à Londres sous le maillot de l'équipe de France Hommes.",
-     "Par équipes, il remporte 28 de ses 48 manches (58 %) en 11 rencontres, et se classe 14e sur 47 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 31 de ses 53 manches (58 %), et se classe 13e sur 47 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
      "Sa meilleure rencontre : France – Mexique (25/10), avec 4 manches sur 4.",
      "En simple, il remporte 4 matchs avant de s'arrêter en 1/4 de finale (4–6 contre Kevin Martin), dont 1 victoire sans perdre une manche.",
      "En double avec Christophe Thébeault, il remporte 3 matchs avant de s'arrêter en 1/4 de finale (0–4 contre Oussama Masskini / Houssam El Amari), dont 1 victoire sans perdre une manche."
@@ -2915,8 +2915,8 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 26,
-    "f": 33,
+    "g": 31,
+    "f": 39,
     "cg": 2,
     "pct": 79,
     "rencontres": [
@@ -3037,19 +3037,19 @@
    "stats": {
     "kpi": {
      "matchs": 14,
-     "g": 51,
-     "f": 70,
-     "pct": 73,
+     "g": 56,
+     "f": 76,
+     "pct": 74,
      "cg": 2,
      "medailles": 1
     },
     "equipe": {
-     "g": 26,
-     "f": 33,
+     "g": 31,
+     "f": 39,
      "pct": 79,
      "cg": 2,
      "rencontres": 8,
-     "rang_eq": 2,
+     "rang_eq": 3,
      "nb_eq": 6,
      "rang_cg": 2,
      "rang_comp": [
@@ -3198,7 +3198,7 @@
     },
     "titre": "Collette Henriksen repart de Londres avec une médaille : championne du monde par équipes avec l'équipe de France Femmes.",
     "analyse": [
-     "Par équipes, elle remporte 26 de ses 33 manches (79 %) en 8 rencontres, le 2e meilleur pourcentage de l'équipe de France Femmes, et se classe 2e sur 23 joueuses de l'épreuve. Elle signe 2 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), elle remporte 31 de ses 39 manches (79 %), le 3e meilleur pourcentage de l'équipe de France Femmes, et se classe 2e sur 23 joueuses de l'épreuve. Elle signe 2 « casse et gagne ».",
      "Sa meilleure rencontre : France – Afrique du Sud (21/10), avec 4 manches sur 4, et 3 rencontres sans perdre une manche.",
      "En simple, elle remporte 2 matchs avant de s'arrêter en 1/8 de finale (5–6 contre Kim O’Brien), dont 1 victoire sans perdre une manche.",
      "En double avec Ophélie Laval, elle remporte 2 matchs avant de s'arrêter en 1/4 de finale (0–4 contre Emma Cunningham / Mika Roonay), dont 1 victoire sans perdre une manche."
@@ -3338,10 +3338,10 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 27,
-    "f": 35,
+    "g": 31,
+    "f": 40,
     "cg": 1,
-    "pct": 77,
+    "pct": 78,
     "rencontres": [
      {
       "date": "mer 21/10",
@@ -3460,23 +3460,23 @@
    "stats": {
     "kpi": {
      "matchs": 17,
-     "g": 69,
-     "f": 99,
+     "g": 73,
+     "f": 104,
      "pct": 70,
      "cg": 1,
      "medailles": 3
     },
     "equipe": {
-     "g": 27,
-     "f": 35,
-     "pct": 77,
+     "g": 31,
+     "f": 40,
+     "pct": 78,
      "cg": 1,
      "rencontres": 8,
-     "rang_eq": 3,
+     "rang_eq": 4,
      "nb_eq": 6,
      "rang_cg": 3,
      "rang_comp": [
-      3,
+      4,
       23
      ],
      "parfaites": 2,
@@ -3645,7 +3645,7 @@
     },
     "titre": "Sabrilla Brunet repart de Londres avec 3 médailles : championne du monde par équipes avec l'équipe de France Femmes, vice-championne du monde en simple et médaille de bronze en double avec Marion Jude.",
     "analyse": [
-     "Par équipes, elle remporte 27 de ses 35 manches (77 %) en 8 rencontres, le 3e meilleur pourcentage de l'équipe de France Femmes, et se classe 3e sur 23 joueuses de l'épreuve. Elle signe 1 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), elle remporte 31 de ses 40 manches (78 %), et se classe 4e sur 23 joueuses de l'épreuve. Elle signe 1 « casse et gagne ».",
      "Sa meilleure rencontre : France – Mexique (22/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
      "En simple, elle gagne 31 manches pour 15 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive.",
      "En double avec Marion Jude, elle gagne 11 manches pour 7 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive."
@@ -3751,10 +3751,10 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 26,
-    "f": 34,
+    "g": 31,
+    "f": 39,
     "cg": 1,
-    "pct": 76,
+    "pct": 79,
     "rencontres": [
      {
       "date": "mer 21/10",
@@ -3873,23 +3873,23 @@
    "stats": {
     "kpi": {
      "matchs": 14,
-     "g": 47,
-     "f": 68,
-     "pct": 69,
+     "g": 52,
+     "f": 73,
+     "pct": 71,
      "cg": 1,
      "medailles": 1
     },
     "equipe": {
-     "g": 26,
-     "f": 34,
-     "pct": 76,
+     "g": 31,
+     "f": 39,
+     "pct": 79,
      "cg": 1,
      "rencontres": 8,
-     "rang_eq": 4,
+     "rang_eq": 2,
      "nb_eq": 6,
      "rang_cg": 3,
      "rang_comp": [
-      4,
+      3,
       23
      ],
      "parfaites": 3,
@@ -4034,7 +4034,7 @@
     },
     "titre": "Ophélie Laval repart de Londres avec une médaille : championne du monde par équipes avec l'équipe de France Femmes.",
     "analyse": [
-     "Par équipes, elle remporte 26 de ses 34 manches (76 %) en 8 rencontres, et se classe 4e sur 23 joueuses de l'épreuve. Elle signe 1 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), elle remporte 31 de ses 39 manches (79 %), le 2e meilleur pourcentage de l'équipe de France Femmes, et se classe 3e sur 23 joueuses de l'épreuve. Elle signe 1 « casse et gagne ».",
      "Sa meilleure rencontre : France – Australie (25/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
      "En simple, elle remporte 2 matchs avant de s'arrêter en 1/8 de finale (1–6 contre Marion Jude), dont 1 victoire sans perdre une manche.",
      "En double avec Collette Henriksen, elle remporte 2 matchs avant de s'arrêter en 1/4 de finale (0–4 contre Emma Cunningham / Mika Roonay), dont 1 victoire sans perdre une manche."
@@ -4174,10 +4174,10 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 29,
-    "f": 35,
-    "cg": 3,
-    "pct": 83,
+    "g": 36,
+    "f": 42,
+    "cg": 5,
+    "pct": 86,
     "rencontres": [
      {
       "date": "mer 21/10",
@@ -4296,17 +4296,17 @@
    "stats": {
     "kpi": {
      "matchs": 17,
-     "g": 76,
-     "f": 98,
-     "pct": 78,
-     "cg": 3,
+     "g": 83,
+     "f": 105,
+     "pct": 79,
+     "cg": 5,
      "medailles": 3
     },
     "equipe": {
-     "g": 29,
-     "f": 35,
-     "pct": 83,
-     "cg": 3,
+     "g": 36,
+     "f": 42,
+     "pct": 86,
+     "cg": 5,
      "rencontres": 8,
      "rang_eq": 1,
      "nb_eq": 6,
@@ -4481,7 +4481,7 @@
     },
     "titre": "Marion Jude repart de Londres avec 3 médailles : championne du monde en simple, championne du monde par équipes avec l'équipe de France Femmes et médaille de bronze en double avec Sabrilla Brunet.",
     "analyse": [
-     "Par équipes, elle remporte 29 de ses 35 manches (83 %) en 8 rencontres, le meilleur pourcentage de l'équipe de France Femmes, et se classe 1re sur 23 joueuses de l'épreuve. Elle signe 3 « casse et gagne », le meilleur total de l'équipe.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), elle remporte 36 de ses 42 manches (86 %), le meilleur pourcentage de l'équipe de France Femmes, et se classe 1re sur 23 joueuses de l'épreuve. Elle signe 5 « casse et gagne », le meilleur total de l'équipe.",
      "Sa meilleure rencontre : France – Australie (25/10), avec 5 manches sur 5, et 4 rencontres sans perdre une manche.",
      "En simple, elle gagne 36 manches pour 9 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche.",
      "En double avec Sabrilla Brunet, elle gagne 11 manches pour 7 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive."
@@ -4587,8 +4587,8 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 23,
-    "f": 34,
+    "g": 27,
+    "f": 40,
     "cg": 1,
     "pct": 68,
     "rencontres": [
@@ -4709,15 +4709,15 @@
    "stats": {
     "kpi": {
      "matchs": 14,
-     "g": 52,
-     "f": 84,
+     "g": 56,
+     "f": 90,
      "pct": 62,
      "cg": 1,
      "medailles": 1
     },
     "equipe": {
-     "g": 23,
-     "f": 34,
+     "g": 27,
+     "f": 40,
      "pct": 68,
      "cg": 1,
      "rencontres": 8,
@@ -4870,7 +4870,7 @@
     },
     "titre": "Émilie Carneiro repart de Londres avec une médaille : championne du monde par équipes avec l'équipe de France Femmes.",
     "analyse": [
-     "Par équipes, elle remporte 23 de ses 34 manches (68 %) en 8 rencontres, et se classe 5e sur 23 joueuses de l'épreuve. Elle signe 1 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), elle remporte 27 de ses 40 manches (68 %), et se classe 5e sur 23 joueuses de l'épreuve. Elle signe 1 « casse et gagne ».",
      "Sa meilleure rencontre : France – Irlande du Nord (26/10), avec 4 manches sur 5.",
      "En simple, elle remporte 3 matchs avant de s'arrêter en 1/4 de finale (4–6 contre Marion Jude), dont 1 victoire sans perdre une manche.",
      "En double avec Floriane Niollet, elle remporte 1 match avant de s'arrêter en 1/8 de finale (3–4 contre Sabrilla Brunet / Marion Jude), dont 1 match gagné à la manche décisive."
@@ -4952,10 +4952,10 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 18,
-    "f": 29,
+    "g": 19,
+    "f": 31,
     "cg": 0,
-    "pct": 62,
+    "pct": 61,
     "rencontres": [
      {
       "date": "mer 21/10",
@@ -5074,16 +5074,16 @@
    "stats": {
     "kpi": {
      "matchs": 11,
-     "g": 29,
-     "f": 53,
+     "g": 30,
+     "f": 55,
      "pct": 55,
      "cg": 0,
      "medailles": 1
     },
     "equipe": {
-     "g": 18,
-     "f": 29,
-     "pct": 62,
+     "g": 19,
+     "f": 31,
+     "pct": 61,
      "cg": 0,
      "rencontres": 8,
      "rang_eq": 6,
@@ -5211,7 +5211,7 @@
     },
     "titre": "Floriane Niollet repart de Londres avec une médaille : championne du monde par équipes avec l'équipe de France Femmes.",
     "analyse": [
-     "Par équipes, elle remporte 18 de ses 29 manches (62 %) en 8 rencontres, et se classe 6e sur 23 joueuses de l'épreuve.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), elle remporte 19 de ses 31 manches (61 %), et se classe 6e sur 23 joueuses de l'épreuve.",
      "Sa meilleure rencontre : France – Australie (25/10), avec 4 manches sur 4.",
      "En simple, elle s'incline d'entrée (4–6 contre Emilie Carneiro).",
      "En double avec Émilie Carneiro, elle remporte 1 match avant de s'arrêter en 1/8 de finale (3–4 contre Sabrilla Brunet / Marion Jude), dont 1 match gagné à la manche décisive."
@@ -5319,10 +5319,10 @@
     "etat": "or",
     "v": 9,
     "d": 1,
-    "g": 26,
-    "f": 38,
+    "g": 32,
+    "f": 48,
     "cg": 0,
-    "pct": 68,
+    "pct": 67,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -5441,23 +5441,23 @@
    "stats": {
     "kpi": {
      "matchs": 15,
-     "g": 53,
-     "f": 93,
+     "g": 59,
+     "f": 103,
      "pct": 57,
      "cg": 0,
      "medailles": 1
     },
     "equipe": {
-     "g": 26,
-     "f": 38,
-     "pct": 68,
+     "g": 32,
+     "f": 48,
+     "pct": 67,
      "cg": 0,
      "rencontres": 8,
-     "rang_eq": 2,
+     "rang_eq": 3,
      "nb_eq": 6,
      "rang_cg": null,
      "rang_comp": [
-      2,
+      3,
       12
      ],
      "parfaites": 2,
@@ -5610,7 +5610,7 @@
     },
     "titre": "Raphaël Rybak repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +50 ans.",
     "analyse": [
-     "Par équipes, il remporte 26 de ses 38 manches (68 %) en 8 rencontres, le 2e meilleur pourcentage de l'équipe de France +50 ans, et se classe 2e sur 12 joueurs de l'épreuve.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 32 de ses 48 manches (67 %), le 3e meilleur pourcentage de l'équipe de France +50 ans, et se classe 3e sur 12 joueurs de l'épreuve.",
      "Sa meilleure rencontre : France – Australie (20/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
      "En simple, il remporte 3 matchs avant de s'arrêter en match pour la 3e place (1–6 contre Chris Pillay(C.P)), dont 1 match gagné à la manche décisive.",
      "En double avec Christophe Wailly, il remporte 1 match avant de s'arrêter en 1/4 de finale (0–4 contre Yadesh Maharaj / Chris Pillay), dont 1 match gagné à la manche décisive."
@@ -5678,10 +5678,10 @@
     "etat": "or",
     "v": 9,
     "d": 1,
-    "g": 11,
-    "f": 27,
+    "g": 13,
+    "f": 35,
     "cg": 0,
-    "pct": 41,
+    "pct": 37,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -5800,23 +5800,23 @@
    "stats": {
     "kpi": {
      "matchs": 10,
-     "g": 15,
-     "f": 41,
-     "pct": 37,
+     "g": 17,
+     "f": 49,
+     "pct": 35,
      "cg": 0,
      "medailles": 1
     },
     "equipe": {
-     "g": 11,
-     "f": 27,
-     "pct": 41,
+     "g": 13,
+     "f": 35,
+     "pct": 37,
      "cg": 0,
      "rencontres": 8,
      "rang_eq": 5,
      "nb_eq": 6,
      "rang_cg": null,
      "rang_comp": [
-      7,
+      8,
       12
      ],
      "parfaites": 1,
@@ -5929,7 +5929,7 @@
     },
     "titre": "Laurent Lecomte repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +50 ans.",
     "analyse": [
-     "Par équipes, il remporte 11 de ses 27 manches (41 %) en 8 rencontres, et se classe 7e sur 12 joueurs de l'épreuve.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 13 de ses 35 manches (37 %), et se classe 8e sur 12 joueurs de l'épreuve.",
      "Sa meilleure rencontre : France – Irlande (22/10), avec 5 manches sur 5.",
      "En simple, il s'incline d'entrée (1–6 contre Raphael Rybak).",
      "En double avec François Debois, il s'incline d'entrée (3–4 contre Raphael Rybak / Christophe Wailly)."
@@ -5997,10 +5997,10 @@
     "etat": "or",
     "v": 9,
     "d": 1,
-    "g": 27,
-    "f": 37,
+    "g": 33,
+    "f": 47,
     "cg": 0,
-    "pct": 73,
+    "pct": 70,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -6119,16 +6119,16 @@
    "stats": {
     "kpi": {
      "matchs": 10,
-     "g": 32,
-     "f": 52,
-     "pct": 62,
+     "g": 38,
+     "f": 62,
+     "pct": 61,
      "cg": 0,
      "medailles": 1
     },
     "equipe": {
-     "g": 27,
-     "f": 37,
-     "pct": 73,
+     "g": 33,
+     "f": 47,
+     "pct": 70,
      "cg": 0,
      "rencontres": 8,
      "rang_eq": 1,
@@ -6248,7 +6248,7 @@
     },
     "titre": "François Debois repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +50 ans.",
     "analyse": [
-     "Par équipes, il remporte 27 de ses 37 manches (73 %) en 8 rencontres, le meilleur pourcentage de l'équipe de France +50 ans, et se classe 1er sur 12 joueurs de l'épreuve.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 33 de ses 47 manches (70 %), le meilleur pourcentage de l'équipe de France +50 ans, et se classe 1er sur 12 joueurs de l'épreuve.",
      "Sa meilleure rencontre : France – Afrique du Sud (21/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
      "En simple, il s'incline d'entrée (2–6 contre Basil Munsamy).",
      "En double avec Laurent Lecomte, il s'incline d'entrée (3–4 contre Raphael Rybak / Christophe Wailly)."
@@ -6332,10 +6332,10 @@
     "etat": "or",
     "v": 9,
     "d": 1,
-    "g": 23,
-    "f": 38,
+    "g": 28,
+    "f": 48,
     "cg": 0,
-    "pct": 61,
+    "pct": 58,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -6454,16 +6454,16 @@
    "stats": {
     "kpi": {
      "matchs": 12,
-     "g": 38,
-     "f": 68,
-     "pct": 56,
+     "g": 43,
+     "f": 78,
+     "pct": 55,
      "cg": 0,
      "medailles": 1
     },
     "equipe": {
-     "g": 23,
-     "f": 38,
-     "pct": 61,
+     "g": 28,
+     "f": 48,
+     "pct": 58,
      "cg": 0,
      "rencontres": 8,
      "rang_eq": 4,
@@ -6599,7 +6599,7 @@
     },
     "titre": "Anthony Thomas repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +50 ans.",
     "analyse": [
-     "Par équipes, il remporte 23 de ses 38 manches (61 %) en 8 rencontres, et se classe 4e sur 12 joueurs de l'épreuve.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 28 de ses 48 manches (58 %), et se classe 4e sur 12 joueurs de l'épreuve.",
      "Sa meilleure rencontre : France – Afrique du Sud (21/10), avec 4 manches sur 5.",
      "En simple, il remporte 2 matchs avant de s'arrêter en 1/4 de finale (2–6 contre Chris Pillay(C.P)).",
      "En double avec Alain Gerbault, il s'incline d'entrée (0–4 contre Yadesh Maharaj / Chris Pillay)."
@@ -6668,9 +6668,9 @@
     "v": 9,
     "d": 1,
     "g": 7,
-    "f": 21,
+    "f": 23,
     "cg": 0,
-    "pct": 33,
+    "pct": 30,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -6790,15 +6790,15 @@
     "kpi": {
      "matchs": 10,
      "g": 9,
-     "f": 33,
-     "pct": 27,
+     "f": 35,
+     "pct": 26,
      "cg": 0,
      "medailles": 1
     },
     "equipe": {
      "g": 7,
-     "f": 21,
-     "pct": 33,
+     "f": 23,
+     "pct": 30,
      "cg": 0,
      "rencontres": 8,
      "rang_eq": 6,
@@ -6918,7 +6918,7 @@
     },
     "titre": "Alain Gerbault repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +50 ans.",
     "analyse": [
-     "Par équipes, il remporte 7 de ses 21 manches (33 %) en 8 rencontres, et se classe 10e sur 12 joueurs de l'épreuve.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 7 de ses 23 manches (30 %), et se classe 10e sur 12 joueurs de l'épreuve.",
      "En simple, il s'incline d'entrée (2–6 contre Joe Connolly).",
      "En double avec Anthony Thomas, il s'incline d'entrée (0–4 contre Yadesh Maharaj / Chris Pillay)."
     ]
@@ -7023,10 +7023,10 @@
     "etat": "or",
     "v": 9,
     "d": 1,
-    "g": 26,
-    "f": 39,
+    "g": 33,
+    "f": 48,
     "cg": 0,
-    "pct": 67,
+    "pct": 69,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -7145,23 +7145,23 @@
    "stats": {
     "kpi": {
      "matchs": 15,
-     "g": 54,
-     "f": 88,
-     "pct": 61,
+     "g": 61,
+     "f": 97,
+     "pct": 63,
      "cg": 0,
      "medailles": 2
     },
     "equipe": {
-     "g": 26,
-     "f": 39,
-     "pct": 67,
+     "g": 33,
+     "f": 48,
+     "pct": 69,
      "cg": 0,
      "rencontres": 8,
-     "rang_eq": 3,
+     "rang_eq": 2,
      "nb_eq": 6,
      "rang_cg": null,
      "rang_comp": [
-      3,
+      2,
       12
      ],
      "parfaites": 1,
@@ -7314,7 +7314,7 @@
     },
     "titre": "Christophe Wailly repart de Londres avec 2 médailles : champion du monde par équipes avec l'équipe de France +50 ans et vice-champion du monde en simple.",
     "analyse": [
-     "Par équipes, il remporte 26 de ses 39 manches (67 %) en 8 rencontres, le 3e meilleur pourcentage de l'équipe de France +50 ans, et se classe 3e sur 12 joueurs de l'épreuve.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 33 de ses 48 manches (69 %), le 2e meilleur pourcentage de l'équipe de France +50 ans, et se classe 2e sur 12 joueurs de l'épreuve.",
      "Sa meilleure rencontre : France – Irlande (22/10), avec 4 manches sur 4.",
      "En simple, il gagne 24 manches pour 14 concédées sur l'ensemble du tableau.",
      "En double avec Raphaël Rybak, il remporte 1 match avant de s'arrêter en 1/4 de finale (0–4 contre Yadesh Maharaj / Chris Pillay), dont 1 match gagné à la manche décisive."
@@ -7443,10 +7443,10 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 13,
-    "f": 18,
+    "g": 20,
+    "f": 32,
     "cg": 0,
-    "pct": 72,
+    "pct": 62,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -7553,19 +7553,19 @@
    "stats": {
     "kpi": {
      "matchs": 14,
-     "g": 49,
-     "f": 74,
-     "pct": 66,
+     "g": 56,
+     "f": 88,
+     "pct": 64,
      "cg": 0,
      "medailles": 2
     },
     "equipe": {
-     "g": 13,
-     "f": 18,
-     "pct": 72,
+     "g": 20,
+     "f": 32,
+     "pct": 62,
      "cg": 0,
      "rencontres": 5,
-     "rang_eq": 3,
+     "rang_eq": 4,
      "nb_eq": 4,
      "rang_cg": null,
      "rang_comp": [
@@ -7714,7 +7714,7 @@
     },
     "titre": "Thibault Couzigou repart de Londres avec 2 médailles : champion du monde en double avec Théo Schneider et champion du monde par équipes avec l'équipe de France Espoirs U23.",
     "analyse": [
-     "Par équipes, il remporte 13 de ses 18 manches (72 %) en 5 rencontres, le 3e meilleur pourcentage de l'équipe de France Espoirs U23, et se classe 4e sur 7 joueurs de l'épreuve.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 20 de ses 32 manches (62 %), et se classe 4e sur 7 joueurs de l'épreuve.",
      "Sa meilleure rencontre : France – Afrique du Sud (20/10), avec 3 manches sur 4.",
      "En simple, il remporte 3 matchs avant de s'arrêter en match pour la 3e place (4–5 contre Irfaan Williams), dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive.",
      "En double avec Théo Schneider, il gagne 16 manches pour 5 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
@@ -7809,10 +7809,10 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 14,
-    "f": 20,
-    "cg": 2,
-    "pct": 70,
+    "g": 25,
+    "f": 36,
+    "cg": 3,
+    "pct": 69,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -7919,21 +7919,21 @@
    "stats": {
     "kpi": {
      "matchs": 9,
-     "g": 28,
-     "f": 43,
-     "pct": 65,
-     "cg": 2,
+     "g": 39,
+     "f": 59,
+     "pct": 66,
+     "cg": 3,
      "medailles": 2
     },
     "equipe": {
-     "g": 14,
-     "f": 20,
-     "pct": 70,
-     "cg": 2,
+     "g": 25,
+     "f": 36,
+     "pct": 69,
+     "cg": 3,
      "rencontres": 5,
-     "rang_eq": 4,
+     "rang_eq": 3,
      "nb_eq": 4,
-     "rang_cg": 1,
+     "rang_cg": 2,
      "rang_comp": [
       3,
       7
@@ -8040,7 +8040,7 @@
     },
     "titre": "Damien Joly repart de Londres avec 2 médailles : champion du monde par équipes avec l'équipe de France Espoirs U23 et médaille de bronze en double avec Léonardo Moreira.",
     "analyse": [
-     "Par équipes, il remporte 14 de ses 20 manches (70 %) en 5 rencontres, et se classe 3e sur 7 joueurs de l'épreuve. Il signe 2 « casse et gagne », le meilleur total de l'équipe.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 25 de ses 36 manches (69 %), le 3e meilleur pourcentage de l'équipe de France Espoirs U23, et se classe 3e sur 7 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
      "Sa meilleure rencontre : France – Angleterre (21/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
      "En simple, il remporte 1 match avant de s'arrêter en 1/8 de finale (3–5 contre Luke Aitken), dont 1 victoire sans perdre une manche.",
      "En double avec Léonardo Moreira, il gagne 6 manches pour 4 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
@@ -8164,9 +8164,9 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 14,
-    "f": 19,
-    "cg": 2,
+    "g": 29,
+    "f": 39,
+    "cg": 3,
     "pct": 74,
     "rencontres": [
      {
@@ -8274,21 +8274,21 @@
    "stats": {
     "kpi": {
      "matchs": 12,
-     "g": 45,
-     "f": 64,
-     "pct": 70,
-     "cg": 2,
+     "g": 60,
+     "f": 84,
+     "pct": 71,
+     "cg": 3,
      "medailles": 3
     },
     "equipe": {
-     "g": 14,
-     "f": 19,
+     "g": 29,
+     "f": 39,
      "pct": 74,
-     "cg": 2,
+     "cg": 3,
      "rencontres": 5,
-     "rang_eq": 1,
+     "rang_eq": 2,
      "nb_eq": 4,
-     "rang_cg": 1,
+     "rang_cg": 2,
      "rang_comp": [
       2,
       7
@@ -8419,7 +8419,7 @@
     },
     "titre": "Léonardo Moreira repart de Londres avec 3 médailles : champion du monde en simple, champion du monde par équipes avec l'équipe de France Espoirs U23 et médaille de bronze en double avec Damien Joly.",
     "analyse": [
-     "Par équipes, il remporte 14 de ses 19 manches (74 %) en 5 rencontres, le meilleur pourcentage de l'équipe de France Espoirs U23, et se classe 2e sur 7 joueurs de l'épreuve. Il signe 2 « casse et gagne », le meilleur total de l'équipe.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 29 de ses 39 manches (74 %), le 2e meilleur pourcentage de l'équipe de France Espoirs U23, et se classe 2e sur 7 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
      "Sa meilleure rencontre : France – Malte (21/10), avec 4 manches sur 5.",
      "En simple, il gagne 25 manches pour 10 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 2 matchs gagnés à la manche décisive.",
      "En double avec Damien Joly, il gagne 6 manches pour 4 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
@@ -8525,10 +8525,10 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 13,
-    "f": 18,
-    "cg": 2,
-    "pct": 72,
+    "g": 29,
+    "f": 36,
+    "cg": 5,
+    "pct": 81,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -8635,19 +8635,19 @@
    "stats": {
     "kpi": {
      "matchs": 12,
-     "g": 41,
-     "f": 61,
-     "pct": 67,
-     "cg": 2,
+     "g": 57,
+     "f": 79,
+     "pct": 72,
+     "cg": 5,
      "medailles": 2
     },
     "equipe": {
-     "g": 13,
-     "f": 18,
-     "pct": 72,
-     "cg": 2,
+     "g": 29,
+     "f": 36,
+     "pct": 81,
+     "cg": 5,
      "rencontres": 5,
-     "rang_eq": 2,
+     "rang_eq": 1,
      "nb_eq": 4,
      "rang_cg": 1,
      "rang_comp": [
@@ -8780,7 +8780,7 @@
     },
     "titre": "Théo Schneider repart de Londres avec 2 médailles : champion du monde en double avec Thibault Couzigou et champion du monde par équipes avec l'équipe de France Espoirs U23.",
     "analyse": [
-     "Par équipes, il remporte 13 de ses 18 manches (72 %) en 5 rencontres, le 2e meilleur pourcentage de l'équipe de France Espoirs U23, et se classe 1er sur 7 joueurs de l'épreuve. Il signe 2 « casse et gagne », le meilleur total de l'équipe.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 29 de ses 36 manches (81 %), le meilleur pourcentage de l'équipe de France Espoirs U23, et se classe 1er sur 7 joueurs de l'épreuve. Il signe 5 « casse et gagne », le meilleur total de l'équipe.",
      "Sa meilleure rencontre : France – Malte (21/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
      "En simple, il remporte 2 matchs avant de s'arrêter en 1/4 de finale (2–5 contre Irfaan Williams).",
      "En double avec Thibault Couzigou, il gagne 16 manches pour 5 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
@@ -8869,10 +8869,10 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 20,
-    "f": 30,
+    "g": 23,
+    "f": 34,
     "cg": 1,
-    "pct": 67,
+    "pct": 68,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -8991,16 +8991,16 @@
    "stats": {
     "kpi": {
      "matchs": 12,
-     "g": 34,
-     "f": 59,
-     "pct": 58,
+     "g": 37,
+     "f": 63,
+     "pct": 59,
      "cg": 1,
      "medailles": 2
     },
     "equipe": {
-     "g": 20,
-     "f": 30,
-     "pct": 67,
+     "g": 23,
+     "f": 34,
+     "pct": 68,
      "cg": 1,
      "rencontres": 8,
      "rang_eq": 4,
@@ -9136,7 +9136,7 @@
     },
     "titre": "Nicolas Grandemange-Denizot repart de Londres avec 2 médailles : champion du monde par équipes avec l'équipe de France +40 ans et vice-champion du monde en double avec Élie Christidis.",
     "analyse": [
-     "Par équipes, il remporte 20 de ses 30 manches (67 %) en 8 rencontres, et se classe 4e sur 11 joueurs de l'épreuve. Il signe 1 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 23 de ses 34 manches (68 %), et se classe 4e sur 11 joueurs de l'épreuve. Il signe 1 « casse et gagne ».",
      "Sa meilleure rencontre : France – Australie (20/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
      "En simple, il s'incline d'entrée (5–6 contre John Williams).",
      "En double avec Élie Christidis, il gagne 9 manches pour 9 concédées sur l'ensemble du tableau, dont 1 match gagné à la manche décisive."
@@ -9262,10 +9262,10 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 25,
-    "f": 35,
+    "g": 28,
+    "f": 41,
     "cg": 4,
-    "pct": 71,
+    "pct": 68,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -9384,23 +9384,23 @@
    "stats": {
     "kpi": {
      "matchs": 16,
-     "g": 64,
-     "f": 96,
-     "pct": 67,
+     "g": 67,
+     "f": 102,
+     "pct": 66,
      "cg": 4,
      "medailles": 3
     },
     "equipe": {
-     "g": 25,
-     "f": 35,
-     "pct": 71,
+     "g": 28,
+     "f": 41,
+     "pct": 68,
      "cg": 4,
      "rencontres": 8,
-     "rang_eq": 1,
+     "rang_eq": 2,
      "nb_eq": 6,
      "rang_cg": 1,
      "rang_comp": [
-      1,
+      2,
       11
      ],
      "parfaites": 3,
@@ -9561,7 +9561,7 @@
     },
     "titre": "Élie Christidis repart de Londres avec 3 médailles : champion du monde en simple, champion du monde par équipes avec l'équipe de France +40 ans et vice-champion du monde en double avec Nicolas Grandemange-Denizot.",
     "analyse": [
-     "Par équipes, il remporte 25 de ses 35 manches (71 %) en 8 rencontres, le meilleur pourcentage de l'équipe de France +40 ans, et se classe 1er sur 11 joueurs de l'épreuve. Il signe 4 « casse et gagne », le meilleur total de l'équipe.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 28 de ses 41 manches (68 %), le 2e meilleur pourcentage de l'équipe de France +40 ans, et se classe 2e sur 11 joueurs de l'épreuve. Il signe 4 « casse et gagne », le meilleur total de l'équipe.",
      "Sa meilleure rencontre : France – Singapour (21/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
      "En simple, il gagne 30 manches pour 13 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive.",
      "En double avec Nicolas Grandemange-Denizot, il gagne 9 manches pour 9 concédées sur l'ensemble du tableau, dont 1 match gagné à la manche décisive."
@@ -9658,10 +9658,10 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 20,
-    "f": 32,
-    "cg": 2,
-    "pct": 62,
+    "g": 28,
+    "f": 41,
+    "cg": 4,
+    "pct": 68,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -9776,23 +9776,23 @@
    "stats": {
     "kpi": {
      "matchs": 12,
-     "g": 40,
-     "f": 63,
-     "pct": 63,
-     "cg": 2,
+     "g": 48,
+     "f": 72,
+     "pct": 67,
+     "cg": 4,
      "medailles": 2
     },
     "equipe": {
-     "g": 20,
-     "f": 32,
-     "pct": 62,
-     "cg": 2,
+     "g": 28,
+     "f": 41,
+     "pct": 68,
+     "cg": 4,
      "rencontres": 7,
-     "rang_eq": 6,
+     "rang_eq": 3,
      "nb_eq": 6,
-     "rang_cg": 4,
+     "rang_cg": 1,
      "rang_comp": [
-      6,
+      3,
       11
      ],
      "parfaites": 0,
@@ -9921,7 +9921,7 @@
     },
     "titre": "Christophe Faurie repart de Londres avec 2 médailles : champion du monde en double avec Paul Coldrick et champion du monde par équipes avec l'équipe de France +40 ans.",
     "analyse": [
-     "Par équipes, il remporte 20 de ses 32 manches (62 %) en 7 rencontres, et se classe 6e sur 11 joueurs de l'épreuve. Il signe 2 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 28 de ses 41 manches (68 %), le 3e meilleur pourcentage de l'équipe de France +40 ans, et se classe 3e sur 11 joueurs de l'épreuve. Il signe 4 « casse et gagne », le meilleur total de l'équipe.",
      "Sa meilleure rencontre : France – Angleterre (22/10), avec 4 manches sur 5.",
      "En simple, il s'incline d'entrée (4–6 contre Shane Pillay).",
      "En double avec Paul Coldrick, il gagne 16 manches pour 5 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
@@ -9997,10 +9997,10 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 23,
-    "f": 33,
+    "g": 26,
+    "f": 39,
     "cg": 3,
-    "pct": 70,
+    "pct": 67,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -10119,23 +10119,23 @@
    "stats": {
     "kpi": {
      "matchs": 11,
-     "g": 33,
-     "f": 54,
-     "pct": 61,
+     "g": 36,
+     "f": 60,
+     "pct": 60,
      "cg": 3,
      "medailles": 1
     },
     "equipe": {
-     "g": 23,
-     "f": 33,
-     "pct": 70,
+     "g": 26,
+     "f": 39,
+     "pct": 67,
      "cg": 3,
      "rencontres": 8,
-     "rang_eq": 3,
+     "rang_eq": 5,
      "nb_eq": 6,
-     "rang_cg": 2,
+     "rang_cg": 4,
      "rang_comp": [
-      3,
+      5,
       11
      ],
      "parfaites": 1,
@@ -10256,7 +10256,7 @@
     },
     "titre": "Frédéric Moreau repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +40 ans.",
     "analyse": [
-     "Par équipes, il remporte 23 de ses 33 manches (70 %) en 8 rencontres, le 3e meilleur pourcentage de l'équipe de France +40 ans, et se classe 3e sur 11 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 26 de ses 39 manches (67 %), et se classe 5e sur 11 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
      "Sa meilleure rencontre : France – Singapour (25/10), avec 4 manches sur 4.",
      "En simple, il s'incline d'entrée (3–6 contre Mahier Daniels).",
      "En double avec Jérôme Ferry, il remporte 1 match avant de s'arrêter en 1/4 de finale (3–4 contre Nicolas Grandemange-Denizot / Elie Christidis)."
@@ -10361,9 +10361,9 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 24,
-    "f": 34,
-    "cg": 3,
+    "g": 30,
+    "f": 42,
+    "cg": 4,
     "pct": 71,
     "rencontres": [
      {
@@ -10483,23 +10483,23 @@
    "stats": {
     "kpi": {
      "matchs": 14,
-     "g": 51,
-     "f": 73,
+     "g": 57,
+     "f": 81,
      "pct": 70,
-     "cg": 3,
+     "cg": 4,
      "medailles": 2
     },
     "equipe": {
-     "g": 24,
-     "f": 34,
+     "g": 30,
+     "f": 42,
      "pct": 71,
-     "cg": 3,
+     "cg": 4,
      "rencontres": 8,
-     "rang_eq": 2,
+     "rang_eq": 1,
      "nb_eq": 6,
-     "rang_cg": 2,
+     "rang_cg": 1,
      "rang_comp": [
-      2,
+      1,
       11
      ],
      "parfaites": 2,
@@ -10644,7 +10644,7 @@
     },
     "titre": "Paul Coldrick repart de Londres avec 2 médailles : champion du monde en double avec Christophe Faurie et champion du monde par équipes avec l'équipe de France +40 ans.",
     "analyse": [
-     "Par équipes, il remporte 24 de ses 34 manches (71 %) en 8 rencontres, le 2e meilleur pourcentage de l'équipe de France +40 ans, et se classe 2e sur 11 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 30 de ses 42 manches (71 %), le meilleur pourcentage de l'équipe de France +40 ans, et se classe 1er sur 11 joueurs de l'épreuve. Il signe 4 « casse et gagne », le meilleur total de l'équipe.",
      "Sa meilleure rencontre : France – Singapour (25/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
      "En simple, il remporte 1 match avant de s'arrêter en 1/8 de finale (5–6 contre Daniel Love).",
      "En double avec Christophe Faurie, il gagne 16 manches pour 5 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
@@ -10720,10 +10720,10 @@
     "etat": "or",
     "v": 10,
     "d": 0,
-    "g": 23,
-    "f": 36,
+    "g": 26,
+    "f": 42,
     "cg": 1,
-    "pct": 64,
+    "pct": 62,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -10842,23 +10842,23 @@
    "stats": {
     "kpi": {
      "matchs": 11,
-     "g": 34,
-     "f": 58,
-     "pct": 59,
+     "g": 37,
+     "f": 64,
+     "pct": 58,
      "cg": 1,
      "medailles": 1
     },
     "equipe": {
-     "g": 23,
-     "f": 36,
-     "pct": 64,
+     "g": 26,
+     "f": 42,
+     "pct": 62,
      "cg": 1,
      "rencontres": 8,
-     "rang_eq": 5,
+     "rang_eq": 6,
      "nb_eq": 6,
      "rang_cg": 5,
      "rang_comp": [
-      5,
+      6,
       11
      ],
      "parfaites": 1,
@@ -10979,7 +10979,7 @@
     },
     "titre": "Jerome Ferry repart de Londres avec une médaille : champion du monde par équipes avec l'équipe de France +40 ans.",
     "analyse": [
-     "Par équipes, il remporte 23 de ses 36 manches (64 %) en 8 rencontres, et se classe 5e sur 11 joueurs de l'épreuve. Il signe 1 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 26 de ses 42 manches (62 %), et se classe 6e sur 11 joueurs de l'épreuve. Il signe 1 « casse et gagne ».",
      "Sa meilleure rencontre : France – Afrique du Sud (21/10), avec 5 manches sur 5.",
      "En simple, il s'incline d'entrée (4–6 contre Chris Southall).",
      "En double avec Frédéric Moreau, il remporte 1 match avant de s'arrêter en 1/4 de finale (3–4 contre Nicolas Grandemange-Denizot / Elie Christidis)."
@@ -11058,10 +11058,10 @@
     "etat": "bronze",
     "v": 6,
     "d": 7,
-    "g": 36,
-    "f": 55,
+    "g": 41,
+    "f": 65,
     "cg": 2,
-    "pct": 65,
+    "pct": 63,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -11216,16 +11216,16 @@
    "stats": {
     "kpi": {
      "matchs": 16,
-     "g": 56,
-     "f": 91,
-     "pct": 62,
+     "g": 61,
+     "f": 101,
+     "pct": 60,
      "cg": 2,
      "medailles": 2
     },
     "equipe": {
-     "g": 36,
-     "f": 55,
-     "pct": 65,
+     "g": 41,
+     "f": 65,
+     "pct": 63,
      "cg": 2,
      "rencontres": 11,
      "rang_eq": 1,
@@ -11382,7 +11382,7 @@
     "double": null,
     "titre": "Dafydd Hughes repart de Londres avec 2 médailles : médaille de bronze en simple et médaille de bronze par équipes avec l'équipe de France +60 ans.",
     "analyse": [
-     "Par équipes, il remporte 36 de ses 55 manches (65 %) en 11 rencontres, le meilleur pourcentage de l'équipe de France +60 ans, et se classe 2e sur 11 joueurs de l'épreuve. Il signe 2 « casse et gagne », le meilleur total de l'équipe.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 41 de ses 65 manches (63 %), le meilleur pourcentage de l'équipe de France +60 ans, et se classe 2e sur 11 joueurs de l'épreuve. Il signe 2 « casse et gagne », le meilleur total de l'équipe.",
      "Sa meilleure rencontre : France – Australie (21/10), avec 4 manches sur 5.",
      "En simple, il gagne 20 manches pour 16 concédées sur l'ensemble du tableau, dont 1 match gagné à la manche décisive."
     ]
@@ -11442,10 +11442,10 @@
     "etat": "bronze",
     "v": 6,
     "d": 7,
-    "g": 19,
-    "f": 55,
+    "g": 25,
+    "f": 64,
     "cg": 0,
-    "pct": 35,
+    "pct": 39,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -11600,19 +11600,19 @@
    "stats": {
     "kpi": {
      "matchs": 13,
-     "g": 20,
-     "f": 65,
-     "pct": 31,
+     "g": 26,
+     "f": 74,
+     "pct": 35,
      "cg": 0,
      "medailles": 1
     },
     "equipe": {
-     "g": 19,
-     "f": 55,
-     "pct": 35,
+     "g": 25,
+     "f": 64,
+     "pct": 39,
      "cg": 0,
      "rencontres": 11,
-     "rang_eq": 4,
+     "rang_eq": 3,
      "nb_eq": 5,
      "rang_cg": null,
      "rang_comp": [
@@ -11753,7 +11753,7 @@
     },
     "titre": "Yvan Morales repart de Londres avec une médaille : médaille de bronze par équipes avec l'équipe de France +60 ans.",
     "analyse": [
-     "Par équipes, il remporte 19 de ses 55 manches (35 %) en 11 rencontres, et se classe 10e sur 11 joueurs de l'épreuve.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 25 de ses 64 manches (39 %), le 3e meilleur pourcentage de l'équipe de France +60 ans, et se classe 10e sur 11 joueurs de l'épreuve.",
      "Sa meilleure rencontre : France – Australie (27/10), avec 4 manches sur 5.",
      "En simple, il s'incline d'entrée (0–5 contre Neil Jones).",
      "En double avec Alain Sanchez, il s'incline d'entrée (1–4 contre Neil Jones / Tony Hazledine)."
@@ -11822,10 +11822,10 @@
     "etat": "bronze",
     "v": 6,
     "d": 7,
-    "g": 23,
-    "f": 55,
+    "g": 25,
+    "f": 64,
     "cg": 0,
-    "pct": 42,
+    "pct": 39,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -11980,19 +11980,19 @@
    "stats": {
     "kpi": {
      "matchs": 14,
-     "g": 29,
-     "f": 70,
-     "pct": 41,
+     "g": 31,
+     "f": 79,
+     "pct": 39,
      "cg": 0,
      "medailles": 1
     },
     "equipe": {
-     "g": 23,
-     "f": 55,
-     "pct": 42,
+     "g": 25,
+     "f": 64,
+     "pct": 39,
      "cg": 0,
      "rencontres": 11,
-     "rang_eq": 3,
+     "rang_eq": 4,
      "nb_eq": 5,
      "rang_cg": null,
      "rang_comp": [
@@ -12141,7 +12141,7 @@
     },
     "titre": "Alain Sanchez repart de Londres avec une médaille : médaille de bronze par équipes avec l'équipe de France +60 ans.",
     "analyse": [
-     "Par équipes, il remporte 23 de ses 55 manches (42 %) en 11 rencontres, le 3e meilleur pourcentage de l'équipe de France +60 ans, et se classe 9e sur 11 joueurs de l'épreuve.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 25 de ses 64 manches (39 %), et se classe 9e sur 11 joueurs de l'épreuve.",
      "Sa meilleure rencontre : France – Afrique du Sud (21/10), avec 4 manches sur 5.",
      "En simple, il remporte 1 match avant de s'arrêter en 1/8 de finale (0–5 contre Stu Richardson), dont 1 victoire sans perdre une manche.",
      "En double avec Yvan Morales, il s'incline d'entrée (1–4 contre Neil Jones / Tony Hazledine)."
@@ -12215,10 +12215,10 @@
     "etat": "bronze",
     "v": 6,
     "d": 7,
-    "g": 14,
-    "f": 55,
+    "g": 17,
+    "f": 64,
     "cg": 1,
-    "pct": 25,
+    "pct": 27,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -12373,16 +12373,16 @@
    "stats": {
     "kpi": {
      "matchs": 14,
-     "g": 24,
-     "f": 76,
+     "g": 27,
+     "f": 85,
      "pct": 32,
      "cg": 1,
      "medailles": 2
     },
     "equipe": {
-     "g": 14,
-     "f": 55,
-     "pct": 25,
+     "g": 17,
+     "f": 64,
+     "pct": 27,
      "cg": 1,
      "rencontres": 11,
      "rang_eq": 5,
@@ -12534,7 +12534,7 @@
     },
     "titre": "Patrick Lapert repart de Londres avec 2 médailles : médaille de bronze en double avec Olivier Martre et médaille de bronze par équipes avec l'équipe de France +60 ans.",
     "analyse": [
-     "Par équipes, il remporte 14 de ses 55 manches (25 %) en 11 rencontres. Il signe 1 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 17 de ses 64 manches (27 %). Il signe 1 « casse et gagne ».",
      "Sa meilleure rencontre : France – Angleterre (20/10), avec 3 manches sur 5.",
      "En simple, il s'incline d'entrée (3–5 contre Stu Richardson).",
      "En double avec Olivier Martre, il gagne 7 manches pour 6 concédées sur l'ensemble du tableau."
@@ -12624,8 +12624,8 @@
     "etat": "bronze",
     "v": 6,
     "d": 7,
-    "g": 30,
-    "f": 55,
+    "g": 36,
+    "f": 65,
     "cg": 0,
     "pct": 55,
     "rencontres": [
@@ -12782,15 +12782,15 @@
    "stats": {
     "kpi": {
      "matchs": 16,
-     "g": 50,
-     "f": 93,
+     "g": 56,
+     "f": 103,
      "pct": 54,
      "cg": 0,
      "medailles": 2
     },
     "equipe": {
-     "g": 30,
-     "f": 55,
+     "g": 36,
+     "f": 65,
      "pct": 55,
      "cg": 0,
      "rencontres": 11,
@@ -12959,7 +12959,7 @@
     },
     "titre": "Olivier Martre repart de Londres avec 2 médailles : médaille de bronze en double avec Patrick Lapert et médaille de bronze par équipes avec l'équipe de France +60 ans.",
     "analyse": [
-     "Par équipes, il remporte 30 de ses 55 manches (55 %) en 11 rencontres, le 2e meilleur pourcentage de l'équipe de France +60 ans, et se classe 6e sur 11 joueurs de l'épreuve.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 36 de ses 65 manches (55 %), le 2e meilleur pourcentage de l'équipe de France +60 ans, et se classe 6e sur 11 joueurs de l'épreuve.",
      "Sa meilleure rencontre : France – Australie (27/10), avec 5 manches sur 5.",
      "En simple, il remporte 2 matchs avant de s'arrêter en 1/4 de finale (3–5 contre Ian Wilkinson), dont 1 match gagné à la manche décisive.",
      "En double avec Patrick Lapert, il gagne 7 manches pour 6 concédées sur l'ensemble du tableau."
@@ -13064,10 +13064,10 @@
     "etat": "argent",
     "v": 11,
     "d": 1,
-    "g": 27,
-    "f": 38,
+    "g": 32,
+    "f": 46,
     "cg": 2,
-    "pct": 71,
+    "pct": 70,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -13210,24 +13210,24 @@
    "stats": {
     "kpi": {
      "matchs": 16,
-     "g": 51,
-     "f": 74,
-     "pct": 69,
+     "g": 56,
+     "f": 82,
+     "pct": 68,
      "cg": 2,
      "medailles": 2
     },
     "equipe": {
-     "g": 27,
-     "f": 38,
-     "pct": 71,
+     "g": 32,
+     "f": 46,
+     "pct": 70,
      "cg": 2,
      "rencontres": 10,
-     "rang_eq": 3,
+     "rang_eq": 2,
      "nb_eq": 4,
      "rang_cg": 4,
      "rang_comp": [
       3,
-      19
+      18
      ],
      "parfaites": 2,
      "serie": [
@@ -13387,7 +13387,7 @@
     },
     "titre": "Arthur Crespin repart de Londres avec 2 médailles : vice-champion du monde par équipes avec l'équipe de France Juniors U18 et médaille de bronze en double avec Calvin Créach.",
     "analyse": [
-     "Par équipes, il remporte 27 de ses 38 manches (71 %) en 10 rencontres, le 3e meilleur pourcentage de l'équipe de France Juniors U18, et se classe 3e sur 19 joueurs de l'épreuve. Il signe 2 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 32 de ses 46 manches (70 %), le 2e meilleur pourcentage de l'équipe de France Juniors U18, et se classe 3e sur 18 joueurs de l'épreuve. Il signe 2 « casse et gagne ».",
      "Sa meilleure rencontre : France – Afrique du Sud (20/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
      "En simple, il remporte 2 matchs avant de s'arrêter en 1/4 de finale (3–5 contre Shannon Adam Naidoo), dont 1 victoire sans perdre une manche.",
      "En double avec Calvin Créach, il gagne 11 manches pour 6 concédées sur l'ensemble du tableau."
@@ -13508,10 +13508,10 @@
     "etat": "argent",
     "v": 11,
     "d": 1,
-    "g": 21,
-    "f": 33,
-    "cg": 3,
-    "pct": 64,
+    "g": 25,
+    "f": 40,
+    "cg": 4,
+    "pct": 62,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -13650,24 +13650,24 @@
    "stats": {
     "kpi": {
      "matchs": 17,
-     "g": 51,
-     "f": 81,
-     "pct": 63,
-     "cg": 3,
+     "g": 55,
+     "f": 88,
+     "pct": 62,
+     "cg": 4,
      "medailles": 2
     },
     "equipe": {
-     "g": 21,
-     "f": 33,
-     "pct": 64,
-     "cg": 3,
+     "g": 25,
+     "f": 40,
+     "pct": 62,
+     "cg": 4,
      "rencontres": 9,
      "rang_eq": 4,
      "nb_eq": 4,
      "rang_cg": 2,
      "rang_comp": [
       5,
-      19
+      18
      ],
      "parfaites": 1,
      "serie": [
@@ -13835,7 +13835,7 @@
     },
     "titre": "Aymeric Luneau repart de Londres avec 2 médailles : vice-champion du monde par équipes avec l'équipe de France Juniors U18 et médaille de bronze en double avec Louka Bournot.",
     "analyse": [
-     "Par équipes, il remporte 21 de ses 33 manches (64 %) en 9 rencontres, et se classe 5e sur 19 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 25 de ses 40 manches (62 %), et se classe 5e sur 18 joueurs de l'épreuve. Il signe 4 « casse et gagne ».",
      "Sa meilleure rencontre : France – Mexique (25/10), avec 4 manches sur 4.",
      "En simple, il remporte 3 matchs avant de s'arrêter en match pour la 3e place (3–5 contre Theolandre Joubert), dont 1 victoire sans perdre une manche.",
      "En double avec Louka Bournot, il gagne 8 manches pour 4 concédées sur l'ensemble du tableau, dont 2 victoires sans perdre une manche."
@@ -13961,10 +13961,10 @@
     "etat": "argent",
     "v": 11,
     "d": 1,
-    "g": 31,
-    "f": 40,
+    "g": 35,
+    "f": 49,
     "cg": 8,
-    "pct": 78,
+    "pct": 71,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -14107,16 +14107,16 @@
    "stats": {
     "kpi": {
      "matchs": 18,
-     "g": 67,
-     "f": 87,
-     "pct": 77,
+     "g": 71,
+     "f": 96,
+     "pct": 74,
      "cg": 8,
      "medailles": 3
     },
     "equipe": {
-     "g": 31,
-     "f": 40,
-     "pct": 78,
+     "g": 35,
+     "f": 49,
+     "pct": 71,
      "cg": 8,
      "rencontres": 10,
      "rang_eq": 1,
@@ -14124,7 +14124,7 @@
      "rang_cg": 1,
      "rang_comp": [
       1,
-      19
+      18
      ],
      "parfaites": 4,
      "serie": [
@@ -14300,7 +14300,7 @@
     },
     "titre": "Calvin Créach repart de Londres avec 3 médailles : champion du monde en simple, vice-champion du monde par équipes avec l'équipe de France Juniors U18 et médaille de bronze en double avec Arthur Crespin.",
     "analyse": [
-     "Par équipes, il remporte 31 de ses 40 manches (78 %) en 10 rencontres, le meilleur pourcentage de l'équipe de France Juniors U18, et se classe 1er sur 19 joueurs de l'épreuve. Il signe 8 « casse et gagne », le meilleur total de l'équipe.",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 35 de ses 49 manches (71 %), le meilleur pourcentage de l'équipe de France Juniors U18, et se classe 1er sur 18 joueurs de l'épreuve. Il signe 8 « casse et gagne », le meilleur total de l'équipe.",
      "Sa meilleure rencontre : France – Inde (21/10), avec 4 manches sur 4, et 4 rencontres sans perdre une manche.",
      "En simple, il gagne 25 manches pour 5 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche.",
      "En double avec Arthur Crespin, il gagne 11 manches pour 6 concédées sur l'ensemble du tableau."
@@ -14426,10 +14426,10 @@
     "etat": "argent",
     "v": 11,
     "d": 1,
-    "g": 28,
-    "f": 39,
+    "g": 30,
+    "f": 44,
     "cg": 3,
-    "pct": 72,
+    "pct": 68,
     "rencontres": [
      {
       "date": "mar 20/10",
@@ -14572,24 +14572,24 @@
    "stats": {
     "kpi": {
      "matchs": 18,
-     "g": 58,
-     "f": 87,
-     "pct": 67,
+     "g": 60,
+     "f": 92,
+     "pct": 65,
      "cg": 3,
      "medailles": 3
     },
     "equipe": {
-     "g": 28,
-     "f": 39,
-     "pct": 72,
+     "g": 30,
+     "f": 44,
+     "pct": 68,
      "cg": 3,
      "rencontres": 10,
-     "rang_eq": 2,
+     "rang_eq": 3,
      "nb_eq": 4,
-     "rang_cg": 2,
+     "rang_cg": 3,
      "rang_comp": [
-      2,
-      19
+      4,
+      18
      ],
      "parfaites": 2,
      "serie": [
@@ -14765,7 +14765,7 @@
     },
     "titre": "Louka Bournot repart de Londres avec 3 médailles : vice-champion du monde en simple, vice-champion du monde par équipes avec l'équipe de France Juniors U18 et médaille de bronze en double avec Aymeric Luneau.",
     "analyse": [
-     "Par équipes, il remporte 28 de ses 39 manches (72 %) en 10 rencontres, le 2e meilleur pourcentage de l'équipe de France Juniors U18, et se classe 2e sur 19 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
+     "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 30 de ses 44 manches (68 %), le 3e meilleur pourcentage de l'équipe de France Juniors U18, et se classe 4e sur 18 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
      "Sa meilleure rencontre : France – Mexique (25/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
      "En simple, il gagne 22 manches pour 14 concédées sur l'ensemble du tableau, dont 1 match gagné à la manche décisive.",
      "En double avec Aymeric Luneau, il gagne 8 manches pour 4 concédées sur l'ensemble du tableau, dont 2 victoires sans perdre une manche."
