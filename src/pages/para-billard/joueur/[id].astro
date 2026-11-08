@@ -203,7 +203,7 @@ const playerVideos = playerVideosFor(name, await getReplays({ discipline: 'billa
 <Base title={`${name} — Fiche carrière · Blackball Para-billard fauteuil`} description={`Fiche carrière de ${name} au Para-billard fauteuil : palmarès, statistiques et confrontations sur ${bySeason.length} saison${bySeason.length > 1 ? 's' : ''}.`} image={`/og/joueur/${Astro.params.id}.jpg`} canonical={`/para-billard/joueur/${slug}/`} active="disciplines">
   <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'Person', name, url: new URL(Astro.url.pathname, Astro.site).href, ...(photo ? { image: new URL(photo, Astro.site).href } : {}), description: `${name}, joueur de para-billard blackball (fauteuil), suivi par LSEI — Le Sport en Image.`, memberOf: { '@type': 'SportsOrganization', name: 'Para-billard fauteuil' } })} />
   <HubNav season={latest.slug} active="joueurs" root="/para-billard" brand="Para-billard" sub="· Fauteuil" joueursLabel="Joueurs" videosHref="/disciplines/billard/categorie/para-billard" />
-  <section class="section jfiche">
+  <section class="section jfiche" style={`--pc:${heroBand.c1};--pc-d:${heroBand.c2}`}>
     <div class="jhead" style={`--jh-c1:${heroBand.c1};--jh-c2:${heroBand.c2};--jh-eband:${heroBand.eband}`}>
       <section class="jh">
         <div class="jh-geo" aria-hidden="true">
@@ -273,8 +273,8 @@ const playerVideos = playerVideosFor(name, await getReplays({ discipline: 'billa
       </div>
 
       {showProfil && (
-        <>
-          <div id="profil" class="sec-head jt-anchor" style="margin-top:30px"><div><div class="eyebrow" style="color:var(--c-billard)">Profil</div><h2>Le joueur en un coup d'œil</h2></div></div>
+        <section class="fpanel">
+          <div id="profil" class="sec-head jt-anchor" style="margin-top:30px"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span><div><div class="eyebrow" style="color:var(--c-billard)">Profil</div><h2>Le joueur en un coup d'œil</h2></div></div>
           <div class="prof-grid">
             {rankSeries.length >= 2 && (
               <div class="prof-card prof-rank">
@@ -314,7 +314,7 @@ const playerVideos = playerVideosFor(name, await getReplays({ discipline: 'billa
               </div>
             )}
           </div>
-        </>
+        </section>
       )}
 
       <p class="fj-help"><b>Pour aller vite :</b> cette fiche résume la carrière du joueur. Pour le détail d'une saison — parcours étape par étape, tous les résultats — cliquez sur la saison voulue ci-dessous.</p>
@@ -333,7 +333,8 @@ const playerVideos = playerVideosFor(name, await getReplays({ discipline: 'billa
         </div>
       )}
 
-      <div id="saisons" class="sec-head jt-anchor" style="margin-top:34px"><div><div class="eyebrow" style="color:var(--c-billard)">Parcours</div><h2>Saison par saison</h2></div></div>
+      <section class="fpanel">
+      <div id="saisons" class="sec-head jt-anchor" style="margin-top:34px"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V4M3 20h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></span><div><div class="eyebrow" style="color:var(--c-billard)">Parcours</div><h2>Saison par saison</h2></div></div>
       <p class="fj-help" style="margin-top:0">Cliquez sur une saison pour dérouler son parcours étape par étape.</p>
       <div class="car-seasons">
         {bySeason.map((x, i) => (
@@ -388,12 +389,13 @@ const playerVideos = playerVideosFor(name, await getReplays({ discipline: 'billa
           </div>
         ))}
       </div>
+      </section>
 
       <International slug={slug} nom={name} />
 
       {playerVideos.length > 0 && (
-        <>
-          <div id="videos" class="sec-head jt-anchor" style="margin-top:34px"><div><div class="eyebrow" style="color:var(--c-billard)">Vidéos</div><h2>Ses matchs en vidéo</h2></div></div>
+        <section class="fpanel">
+          <div id="videos" class="sec-head jt-anchor" style="margin-top:34px"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor" stroke="none"/></svg></span><div><div class="eyebrow" style="color:var(--c-billard)">Vidéos</div><h2>Ses matchs en vidéo</h2></div></div>
           <div class="pv-grid">
             {playerVideos.slice(0, 12).map((v) => (
               <a href={`/replay/${v.id}`} class="pv-card">
@@ -421,12 +423,12 @@ const playerVideos = playerVideosFor(name, await getReplays({ discipline: 'billa
               </div>
             </details>
           )}
-        </>
+        </section>
       )}
 
       {arts.length > 0 && (
-        <>
-          <div class="sec-head" style="margin-top:34px"><div><div class="eyebrow" style="color:var(--c-billard)">Le mag</div><h2>Dans l'actualité</h2></div></div>
+        <section class="fpanel">
+          <div class="sec-head" style="margin-top:34px"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h12v14H5a1 1 0 0 1-1-1z"/><path d="M16 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1"/><path d="M7 8.5h6M7 12h6M7 15.5h4"/></svg></span><div><div class="eyebrow" style="color:var(--c-billard)">Le mag</div><h2>Dans l'actualité</h2></div></div>
           <div class="car-arts">
             {arts.map((a) => (
               <a href={`/actualites/${a.id}`} class="car-art">
@@ -435,7 +437,7 @@ const playerVideos = playerVideosFor(name, await getReplays({ discipline: 'billa
               </a>
             ))}
           </div>
-        </>
+        </section>
       )}
 
       <div id="confrontations" class="secgroup-lab jt-anchor">Confrontations &amp; résultats</div>

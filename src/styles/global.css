@@ -2419,3 +2419,99 @@ a.nbh-row:hover { background: var(--surface-2); }
     .sz-lead-n { font-size: 22px; }
     .sz .parcours-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
+
+/* =====================================================================================
+   FICHE JOUEUR — habillage « broadcast » sombre aux couleurs du maillot (5 compétitions)
+   Scopé .jfiche, piloté par --pc (couleur du maillot, injectée inline depuis heroBand).
+   Design = A (sombre) + B (cockpit) + timeline. Markup requis par gabarit : .fpanel + .sh-ic svg.
+   ===================================================================================== */
+  .jfiche {
+    --pc: #1d5176; --pc-d: #103349;                         /* couleur du maillot (surchargée inline par joueur) */
+    --pc-lite: color-mix(in srgb, var(--pc) 42%, #e6f0ff);  /* version claire pour textes/accents lisibles */
+    --pc-deep: color-mix(in srgb, var(--pc) 18%, #080b12);  /* « plancher sombre » : toujours foncé quelle que soit la couleur */
+    --c-billard: var(--pc);                                 /* toute la fiche adopte la couleur du joueur */
+    --ink: #eef3fb; --ink-soft: #b7c3d6; --ink-faint: #8191a8;
+    --surface: rgba(255,255,255,.05); --surface-2: rgba(255,255,255,.09);
+    --line: rgba(255,255,255,.12); --line-strong: rgba(255,255,255,.22);
+    color: var(--ink); /* force le texte hérité en clair (titres de composants comme International inclus) */
+    background:
+      radial-gradient(1000px 440px at 72% -10%, color-mix(in srgb, var(--pc) 24%, transparent), transparent 58%),
+      linear-gradient(180deg, var(--pc-deep) 0%, #070a10 76%);
+  }
+  /* onglets lisibles sur fond sombre */
+  .jfiche .jtabs { border-bottom-color: rgba(255,255,255,.12); }
+  .jfiche .jtab { color: rgba(255,255,255,.62); }
+  .jfiche .jtab:hover, .jfiche .jtab:first-child { color: #fff; }
+  .jfiche .jtab-last { color: var(--pc-lite); }
+  /* retrait du cadre derrière la photo du joueur (vignette .framed) : fond, ombre et coins */
+  .jfiche .jh-ph.framed { background: transparent; box-shadow: none; border-radius: 0; }
+
+  /* panneaux = cartes de verre, liseré or, en-tête translucide à accents lumineux */
+  .jfiche .fpanel { background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.1);
+    border-top: 2px solid color-mix(in srgb, var(--jh-gold, #e9c45a) 72%, transparent); border-radius: 16px;
+    padding: 0 22px 22px; margin-top: 18px; overflow: hidden; box-shadow: 0 14px 34px rgba(0,0,0,.4); }
+  .jfiche .fpanel .sec-head { align-items: center; justify-content: flex-start; gap: 13px; margin: 0 -22px 20px !important;
+    padding: 15px 22px 13px; background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.015));
+    border-bottom: 1px solid rgba(255,255,255,.1); }
+  .jfiche .fpanel .sec-head > .link { margin-left: auto; color: var(--pc-lite); }
+  .jfiche .fpanel .sec-head .eyebrow { color: var(--pc-lite); font-weight: 800; letter-spacing: .14em; }
+  .jfiche .fpanel .sec-head h2 { color: #fff; padding-bottom: 0; font-size: 21px; letter-spacing: -.01em; }
+  .jfiche .sec-head h2::after { display: none; }
+  .jfiche .fpanel .sh-ic { flex: none; width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; color: var(--pc-lite);
+    background: color-mix(in srgb, var(--pc) 22%, transparent); border: 1px solid color-mix(in srgb, var(--pc) 45%, transparent); box-shadow: 0 0 16px color-mix(in srgb, var(--pc) 42%, transparent); }
+  .jfiche .sh-ic svg { width: 20px; height: 20px; display: block; }
+
+  /* DATA lumineuse */
+  .jfiche .btiles { gap: 13px; }
+  .jfiche .btiles:not(.car-sd-tiles) .bt-num { font-size: 38px; color: #fff; text-shadow: 0 0 18px color-mix(in srgb, var(--pc) 35%, transparent); }
+  .jfiche .btile { background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.1); transition: transform .15s, box-shadow .15s; }
+  .jfiche .btile:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.4); border-color: color-mix(in srgb, var(--c-billard) 45%, transparent); }
+  .jfiche .btiles:not(.car-sd-tiles) .btile:nth-child(2) .bt-num { color: #ffcf4a; text-shadow: 0 0 18px rgba(255,190,70,.35); }
+  /* carte phare = taux de victoires : bloc lumineux discipline */
+  .jfiche .btile:has(.bt-ring) { background: linear-gradient(162deg, color-mix(in srgb, var(--pc) 90%, #000), color-mix(in srgb, var(--pc-d) 72%, #06101c));
+    border-color: color-mix(in srgb, var(--c-billard) 55%, transparent); color: #fff;
+    box-shadow: 0 0 34px color-mix(in srgb, var(--c-billard) 45%, transparent), inset 0 0 0 1px rgba(255,255,255,.08); }
+  .jfiche .btile:has(.bt-ring) .bt-lab { color: rgba(255,255,255,.88); }
+  .jfiche .btile:has(.bt-ring) .bt-ring { width: 76px; height: 76px; }
+  .jfiche .btile:has(.bt-ring) .bt-ring-bg { stroke: rgba(255,255,255,.22); }
+  .jfiche .btile:has(.bt-ring) .bt-ring-fg { stroke: #fff; }
+  .jfiche .btile:has(.bt-ring) .bt-ring-val { color: #fff; }
+  .jfiche .btile:has(.bt-ring) .bt-ring-val small { color: rgba(255,255,255,.85); }
+
+  /* composants codés en clair (#fff) dans les <style> scopés des gabarits → forcés en verre sombre
+     (!important nécessaire : les styles scopés du composant se chargent après global.css) */
+  .jfiche .prof-card { background: rgba(255,255,255,.05) !important; border-color: rgba(255,255,255,.12) !important; }
+  .jfiche .prof-badge { background: rgba(255,255,255,.08) !important; color: var(--ink); border-color: rgba(255,255,255,.16) !important; }
+  .jfiche .prof-vs-av { background: rgba(255,255,255,.08) !important; color: var(--ink); }
+  .jfiche .prof-vs-av.bad { background: rgba(214,69,69,.2) !important; color: #ff9b9b !important; }
+  .jfiche .prof-vs-av.good { background: rgba(27,156,99,.2) !important; color: #7fe3b0 !important; }
+  .jfiche .prof-tag.bad { background: rgba(214,69,69,.22) !important; color: #ff9b9b !important; }
+  .jfiche .prof-tag.good { background: rgba(27,156,99,.22) !important; color: #7fe3b0 !important; }
+  .jfiche .car-palm-item { background: rgba(255,255,255,.05) !important; border-color: rgba(255,255,255,.14) !important; }
+  .jfiche .car-art, .jfiche .car-sitem, .jfiche .car-srow, .jfiche .secbar { background: rgba(255,255,255,.04); }
+  .jfiche .pv-more > summary { background: color-mix(in srgb, var(--pc) 16%, transparent) !important; border-color: color-mix(in srgb, var(--pc) 40%, transparent) !important; color: var(--pc-lite) !important; }
+
+  /* COCKPIT : la rangée de stats carrière devient le rail gauche collant, sections à droite */
+  @media (min-width: 900px) {
+    .jfiche .wrap { display: grid; grid-template-columns: 288px 1fr; column-gap: 26px; align-items: start; }
+    .jfiche .wrap > * { grid-column: 2; min-width: 0; }
+    .jfiche .wrap > .btiles { grid-column: 1; grid-row: 1 / 999; align-self: start; position: sticky; top: 16px;
+      grid-template-columns: 1fr; gap: 10px; margin-top: 0; }
+    .jfiche .wrap > .btiles::before { content: "En bref"; font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--pc-lite); font-weight: 800; margin-bottom: 2px; }
+    .jfiche .wrap > .btiles .btile { flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; text-align: left; padding: 13px 15px; }
+    .jfiche .wrap > .btiles .bt-lab { margin-top: 0; }
+    .jfiche .wrap > .btiles:not(.car-sd-tiles) .bt-num { font-size: 28px; }
+    .jfiche .wrap > .btiles .btile:has(.bt-ring) .bt-ring { width: 56px; height: 56px; }
+    .jfiche .wrap > .car-scope { margin-top: 0; }
+  }
+  /* sous 900px : pas de rail, stats en grille simple */
+  @media (max-width: 899px) { .jfiche .wrap > .btiles { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 560px) { .jfiche .wrap > .btiles { grid-template-columns: repeat(2, 1fr); } }
+  /* TIMELINE : « Saison par saison » en file verticale à jalons */
+  .jfiche .car-seasons { position: relative; padding-left: 28px; margin-top: 6px; }
+  .jfiche .car-seasons::before { content: ""; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 2px;
+    background: linear-gradient(180deg, var(--pc), transparent); }
+  .jfiche .car-seasons .car-sitem { position: relative; }
+  .jfiche .car-seasons .car-sitem::before { content: ""; position: absolute; left: -25px; top: 19px; width: 12px; height: 12px;
+    border-radius: 50%; background: var(--pc); box-shadow: 0 0 0 4px color-mix(in srgb, var(--pc) 25%, transparent), 0 0 12px color-mix(in srgb, var(--pc) 55%, transparent); }

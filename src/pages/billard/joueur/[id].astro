@@ -315,7 +315,7 @@ const personLd = {
 <Base title={nc ? `${name} — Nouveau au Blackball Master ${nc.mastersLabel}` : `${name} — Fiche carrière · Blackball Master`} description={nc ? `${name} accède au Blackball Master ${nc.mastersLabel}, promu du Mixte National ${nc.feederLabel}.` : `Fiche carrière de ${name} au Blackball Master : palmarès, statistiques et confrontations sur ${bySeason.length} saison${bySeason.length > 1 ? 's' : ''}.`} image={`/og/joueur/${Astro.params.id}.jpg`} canonical={`/billard/joueur/${slug}/`} active="disciplines">
   <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
   <HubNav season={nc ? nc.mastersSlug : latest.slug} active="joueurs" archivesHref="/billard/archives" />
-  <section class="section jfiche">
+  <section class="section jfiche" style={`--pc:${heroBand.c1};--pc-d:${heroBand.c2}`}>
     {!nc && (
       <div class="jhead" style={`--jh-c1:${heroBand.c1};--jh-c2:${heroBand.c2};--jh-eband:${heroBand.eband}`}>
       <section class="jh">
@@ -428,8 +428,8 @@ const personLd = {
       </div>
 
       {showProfil && (
-        <>
-          <div id="profil" class="sec-head jt-anchor" style="margin-top:30px"><div><div class="eyebrow" style="color:var(--c-billard)">Profil</div><h2>Le joueur en un coup d'œil</h2></div></div>
+        <section class="fpanel">
+          <div id="profil" class="sec-head jt-anchor" style="margin-top:30px"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span><div><div class="eyebrow" style="color:var(--c-billard)">Profil</div><h2>Le joueur en un coup d'œil</h2></div></div>
           <div class="prof-grid">
             {rankSeries.length >= 2 && (
               <div class="prof-card prof-rank">
@@ -469,7 +469,7 @@ const personLd = {
               </div>
             )}
           </div>
-        </>
+        </section>
       )}
 
       {guestOrigin && (
@@ -503,17 +503,18 @@ const personLd = {
       )}
 
       {distinctions.length > 0 && (
-        <>
-          <div class="sec-head" style="margin-top:30px"><div><div class="eyebrow" style="color:var(--c-billard)">Records</div><h2>Distinctions par saison</h2></div></div>
+        <section class="fpanel">
+          <div class="sec-head" style="margin-top:30px"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="5"/><path d="M8.5 10.8 6 3M15.5 10.8 18 3M9 4h6"/></svg></span><div><div class="eyebrow" style="color:var(--c-billard)">Records</div><h2>Distinctions par saison</h2></div></div>
           <div class="car-dists">
             {distinctions.map((d) => (
               <span class="car-dist"><b>{d.label}</b> — {d.value} <em>· {d.seasonLabel}</em></span>
             ))}
           </div>
-        </>
+        </section>
       )}
 
-      <div id="saisons" class="sec-head jt-anchor" style="margin-top:34px"><div><div class="eyebrow" style="color:var(--c-billard)">Parcours</div><h2>Saison par saison</h2></div></div>
+      <section class="fpanel">
+      <div id="saisons" class="sec-head jt-anchor" style="margin-top:34px"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V4M3 20h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></span><div><div class="eyebrow" style="color:var(--c-billard)">Parcours</div><h2>Saison par saison</h2></div></div>
       <p class="fj-help" style="margin-top:0">Cliquez sur une saison pour dérouler son parcours étape par étape.</p>
       <div class="car-seasons">
         {bySeason.map((x, i) => (
@@ -580,12 +581,13 @@ const personLd = {
           </div>
         ))}
       </div>
+      </section>
 
       <International slug={slug} nom={name} />
 
       {playerVideos.length > 0 && (
-        <>
-          <div id="videos" class="sec-head jt-anchor" style="margin-top:34px"><div><div class="eyebrow" style="color:var(--c-billard)">Vidéos</div><h2>Ses matchs en vidéo</h2></div></div>
+        <section class="fpanel">
+          <div id="videos" class="sec-head jt-anchor" style="margin-top:34px"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor" stroke="none"/></svg></span><div><div class="eyebrow" style="color:var(--c-billard)">Vidéos</div><h2>Ses matchs en vidéo</h2></div></div>
           <div class="pv-grid">
             {playerVideos.slice(0, 12).map((v) => (
               <a href={`/replay/${v.id}`} class="pv-card">
@@ -613,12 +615,12 @@ const personLd = {
               </div>
             </details>
           )}
-        </>
+        </section>
       )}
 
       {arts.length > 0 && (
-        <>
-          <div class="sec-head" style="margin-top:34px"><div><div class="eyebrow" style="color:var(--c-billard)">Le mag</div><h2>Dans l'actualité</h2></div></div>
+        <section class="fpanel">
+          <div class="sec-head" style="margin-top:34px"><span class="sh-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h12v14H5a1 1 0 0 1-1-1z"/><path d="M16 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1"/><path d="M7 8.5h6M7 12h6M7 15.5h4"/></svg></span><div><div class="eyebrow" style="color:var(--c-billard)">Le mag</div><h2>Dans l'actualité</h2></div></div>
           <div class="car-arts">
             {arts.map((a) => (
               <a href={`/actualites/${a.id}`} class="car-art">
@@ -627,7 +629,7 @@ const personLd = {
               </a>
             ))}
           </div>
-        </>
+        </section>
       )}
 
       <div id="confrontations" class="secgroup-lab jt-anchor">Confrontations &amp; résultats</div>
@@ -864,4 +866,5 @@ const personLd = {
   @supports (width: 1cqi) {
     .jh-name { font-size: min(var(--jn), calc(100cqi / (var(--lw, 6) * .8)), calc(100cqi / (var(--fw, 6) * .74))); }
   }
+
 </style>
