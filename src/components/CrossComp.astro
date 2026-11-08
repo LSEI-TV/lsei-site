@@ -1,0 +1,37 @@
+---
+// Bande « Aussi présent en … » : liens vers la fiche de la MÊME personne dans les autres
+// compétitions Blackball (Masters, Mixte, Femmes, Espoir, Para). Un même id Cuescore relie
+// les catégories — utile surtout pour les Espoirs qui jouent aussi en Mixte / montent au Masters.
+import { otherCompetitions } from '../lib/crossComp';
+interface Props { pid: number; root: string }
+const { pid, root } = Astro.props;
+const others = pid != null && pid > 0 ? otherCompetitions(pid, root) : [];
+---
+{others.length > 0 && (
+  <div class="xcomp" style="--dc:var(--c-billard)">
+    <div class="wrap xcomp-in">
+      <span class="xcomp-lab">Aussi présent en</span>
+      <nav class="xcomp-nav" aria-label="Fiches de ce joueur dans les autres compétitions">
+        {others.map((o) => (
+          <a href={o.href} class="xcomp-link">
+            {o.label}
+            <span class="xcomp-n">{o.seasons} saison{o.seasons > 1 ? 's' : ''}</span>
+          </a>
+        ))}
+      </nav>
+    </div>
+  </div>
+)}
+
+<style>
+  .xcomp { background: color-mix(in srgb, var(--dc) 7%, var(--surface)); border-bottom: 1px solid var(--line); }
+  .xcomp-in { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 10px 0; }
+  .xcomp-lab { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+  .xcomp-nav { display: flex; flex-wrap: wrap; gap: 8px; }
+  .xcomp-link { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px; border-radius: 100px; text-decoration: none;
+    font-size: 13px; font-weight: 700; color: var(--ink); background: var(--surface); border: 1px solid color-mix(in srgb, var(--dc) 35%, var(--line));
+    transition: background .18s, color .18s, border-color .18s, transform .18s; }
+  .xcomp-link:hover { transform: translateY(-1px); background: var(--dc); color: #fff; border-color: var(--dc); }
+  .xcomp-n { font-size: 11px; font-weight: 700; opacity: .7; }
+  .xcomp-link:hover .xcomp-n { opacity: .9; }
+</style>

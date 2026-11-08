@@ -10,6 +10,7 @@ import { assetUrl } from '../../lib/publicAssets';
 import { photoOf, playerSlugs } from '../../lib/billardStats';
 import { femmesShowcaseSeason, getFemmesPalmares, getFemmesSeasons } from '../../data/billard/seasonsFemmes';
 import { mixteShowcaseSeason, getMixtePalmares, getMixteSeasons } from '../../data/billard/seasonsMixte';
+import { espoirShowcaseSeason, getEspoirPalmares, getEspoirSeasons } from '../../data/billard/seasonsEspoir';
 import { paraShowcaseSeason, getParaPalmares, getParaSeasons } from '../../data/billard/seasonsPara';
 import { paraMvShowcaseSeason, getParaMvPalmares, getParaMvSeasons } from '../../data/billard/seasonsParaMalvoyants';
 
@@ -30,11 +31,13 @@ const nextJx = nextEv?.start ? (daysTo(nextEv.start) > 0 ? `J-${daysTo(nextEv.st
 const m = showcaseSeason();
 const f = femmesShowcaseSeason();
 const mx = mixteShowcaseSeason();
+const es = espoirShowcaseSeason();
 const pa = paraShowcaseSeason();
 const pamv = paraMvShowcaseSeason();
 const mPalm = getPalmares().find((p) => p.slug === m.slug);
 const fPalm = getFemmesPalmares().find((p) => p.slug === f.slug);
 const mxPalm = getMixtePalmares().find((p) => p.slug === mx.slug);
+const esPalm = getEspoirPalmares().find((p) => p.slug === es.slug);
 const paPalm = getParaPalmares().find((p) => p.slug === pa.slug);
 const pamvPalm = getParaMvPalmares().find((p) => p.slug === pamv.slug);
 
@@ -74,6 +77,18 @@ const comps = [
     R: mx.results!, season: mx.label, slug: mx.slug,
     champSeasonLabel: 'Champion de saison', champFranceLabel: 'Champion de France',
     palm: mxPalm,
+  },
+  {
+    href: `/espoir`,
+    ficheBase: '/espoir/joueur/', slugs: playerSlugs(getEspoirSeasons()),
+    accent: '#2E9E5B', accentInk: '#ffffff', // vert (Espoir) — la catégorie des jeunes
+    eyebrow: 'Compétition',
+    title: 'Espoir',
+    noun: 'joueurs',
+    desc: 'La catégorie des jeunes de la FFB : les Tournois Nationaux Espoir. Beaucoup deviennent ensuite les joueurs du Mixte National et du Masters.',
+    R: es.results!, season: es.label, slug: es.slug,
+    champSeasonLabel: 'Champion de saison', champFranceLabel: 'Champion de France',
+    palm: esPalm,
   },
   {
     href: `/para-billard`,
@@ -130,7 +145,7 @@ const arbitres = (arbitresData as { slug: string; file: string; seasons: string[
   .sort((a, b) => Number(b.active) - Number(a.active) || a.name.localeCompare(b.name, 'fr'));
 const nbActive = arbitres.filter((a) => a.active).length;
 ---
-<Base title="Billard — Le hub Blackball" description="Le hub Blackball de LSEI : choisissez la compétition Masters (hommes), Femmes, Para-billard fauteuil ou Para-billard malvoyants." preloadImage="/billard/blackball-hero.webp" active="disciplines">
+<Base title="Billard — Le hub Blackball" description="Le hub Blackball de LSEI : choisissez la compétition Masters (hommes), Femmes, Mixte National, Espoir (jeunes), Para-billard fauteuil ou Para-billard malvoyants." preloadImage="/billard/blackball-hero.webp" active="disciplines">
   <HubSwitch />
 
   <section class="bb-hero">
@@ -139,7 +154,7 @@ const nbActive = arbitres.filter((a) => a.active).length;
       <div>
         <div class="bb-crumb"><a href="/disciplines/">Disciplines</a><span aria-hidden="true">›</span><a href="/billard/hub">Billard</a><span aria-hidden="true">›</span>Blackball</div>
         <h1 class="bb-h">Blackball<span>Le hub des compétitions</span></h1>
-        <p class="bb-p">Quatre circuits nationaux de la FFB, un même univers. Choisissez celui que vous voulez suivre : classements, joueurs, fiches carrière et confrontations.</p>
+        <p class="bb-p">Les circuits nationaux de la FFB, un même univers. Choisissez celui que vous voulez suivre : classements, joueurs, fiches carrière et confrontations.</p>
         <div class="bb-kpis">
           <div><b>{comps.length}</b><span>compétitions</span></div>
           <div><b>{cal2627.length}</b><span>rendez-vous en 26/27</span></div>

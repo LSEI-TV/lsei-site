@@ -3,6 +3,7 @@ import Base from '../../../layouts/Base.astro';
 import International from '../../../components/International.astro';
 import { titresMondiaux, mondialDe } from '../../../lib/mondial2026';
 import HubNav from '../../../components/HubNav.astro';
+import CrossComp from '../../../components/CrossComp.astro';
 import { getCollection } from 'astro:content';
 import { photoOf, fromPov, fmtDate, frRound, playersInText, playerSlugs, seasonSuperlatives } from '../../../lib/billardStats';
 import { getReplays } from '../../../lib/youtube';
@@ -318,6 +319,7 @@ const personLd = {
 <Base title={nc ? `${name} — Nouveau au Blackball Master ${nc.mastersLabel}` : `${name} — Fiche carrière · Blackball Master`} description={nc ? `${name} accède au Blackball Master ${nc.mastersLabel}, promu du Mixte National ${nc.feederLabel}.` : `Fiche carrière de ${name} au Blackball Master : palmarès, statistiques et confrontations sur ${bySeason.length} saison${bySeason.length > 1 ? 's' : ''}.`} image={`/og/joueur/${Astro.params.id}.jpg`} canonical={`/billard/joueur/${slug}/`} active="disciplines">
   <script type="application/ld+json" set:html={JSON.stringify(personLd)} />
   <HubNav season={nc ? nc.mastersSlug : latest.slug} active="joueurs" archivesHref="/billard/archives" />
+  <CrossComp pid={pid} root="/billard" />
   <section class="section jfiche" style={`--pc:${heroBand.c1};--pc-d:${heroBand.c2}`}>
     {!nc && (
       <div class="jhead" style={`--jh-c1:${heroBand.c1};--jh-c2:${heroBand.c2};--jh-eband:${heroBand.eband}`}>
