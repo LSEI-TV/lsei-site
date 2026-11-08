@@ -100,6 +100,34 @@ today = today.charAt(0).toUpperCase() + today.slice(1);
     } catch (e) {}
   })();
 
+  // Thème NOUVEL AN — passage 2026 → 2027. Publié d'avance, s'allume le 30/12 et bascule
+  // toute seule à 00:01 le 01/01 (calcul navigateur, aucun redéploiement).
+  // Aperçu : ?nouvelan=1 (après minuit, « Bonne année 2027 ») · ?nouvelan=0 (avant, « 2026 ➜ 2027 »)
+  (function () {
+    try {
+      var START = new Date('2026-12-30T00:00:00');  // allumage : mardi 30/12 à minuit
+      var END = new Date('2027-01-04T06:00:00');     // extinction : dimanche 04/01 au matin
+      var PIVOT = new Date('2027-01-01T00:01:00');   // bascule 2026 → 2027
+      var s = location.search;
+      var pv1 = /[?&]nouvelan=1(?:&|$)/.test(s);     // aperçu « après »
+      var pv0 = /[?&]nouvelan=0(?:&|$)/.test(s);     // aperçu « avant »
+      var on = pv1 || pv0 || (Date.now() >= START.getTime() && Date.now() < END.getTime());
+      if (!on) return;
+      var root = document.documentElement;
+      root.setAttribute('data-ny', '1');
+      function apply() {
+        var after = pv1 || (!pv0 && Date.now() >= PIVOT.getTime());
+        root.setAttribute('data-ny-phase', after ? 'after' : 'before');
+      }
+      apply();
+      // bascule en direct à 00:01 pour les pages restées ouvertes (sans rechargement)
+      if (!pv0 && !pv1) {
+        var ms = PIVOT.getTime() - Date.now();
+        if (ms > 0 && ms < 2147483647) setTimeout(apply, ms + 500);
+      }
+    } catch (e) {}
+  })();
+
   // Date du jour, calculée dans le navigateur → toujours à jour (pas figée au build).
   (function () {
     var el = document.getElementById('js-today');
@@ -328,4 +356,51 @@ today = today.charAt(0).toUpperCase() + today.slice(1);
   @media (prefers-reduced-motion: reduce) { :root[data-xmas="1"] .xmas-garland span, :root[data-xmas="1"] .xb, :root[data-xmas="1"] .xs { animation: none; } }
   @media (prefers-reduced-motion: reduce) { :root[data-xmas="1"] .xmas-snow, :root[data-xmas="1"] .vl-light, :root[data-xmas="1"] .xmas-stars { animation: none; } }
   @media (max-width: 900px) { :root[data-xmas="1"] .xmas-village { height: 48%; } }
+
+  /* ================= Thème NOUVEL AN (data-ny="1" ; phase before/after ; aperçu ?nouvelan=0 / =1) =================
+     Publié d'avance : s'allume le 30/12, bascule « 2026 ➜ 2027 » vers « Bonne année 2027 » à 00:01 le 01/01. */
+  .ny-scene { display: none; }
+  :root[data-ny="1"] .util { background: linear-gradient(90deg, #0b1437 0%, #241247 100%); color: #ffe9a8; border-bottom: 1px solid #3a2d5e; }
+  :root[data-ny="1"] .util .left { color: #ffe9a8; }
+  :root[data-ny="1"] .util .left b { color: #ffd54a; }
+  :root[data-ny="1"] .util .right { color: #ffe9a8; }
+  :root[data-ny="1"] .util .right a:hover { color: #ffd54a; }
+  :root[data-ny-phase="before"] .util .left::after { content: "🎆 2026 ➜ 2027, ça approche !"; font-weight: 700; color: #ffd54a; white-space: nowrap; }
+  :root[data-ny-phase="after"]  .util .left::after { content: "🎆 Bonne année 2027 !"; font-weight: 700; color: #ffd54a; white-space: nowrap; }
+  :root[data-ny="1"] .util .right::before { content: "✨"; font-size: 13px; }
+  :root[data-ny="1"] .masthead::before, :root[data-ny="1"] .masthead::after { content: "✨"; position: absolute; top: 2px; font-size: 18px; color: #ffe08a; opacity: .6; pointer-events: none; z-index: 1; }
+  :root[data-ny="1"] .masthead::before { left: 6px; } :root[data-ny="1"] .masthead::after { right: 6px; }
+  :root[data-ny="1"] .masthead .btn, :root[data-ny="1"] .btn-live { background: linear-gradient(180deg, #f3c23b, #d99a1e); color: #2a1e04; box-shadow: 0 0 0 1px rgba(243,194,59,.5), 0 6px 16px rgba(220,160,20,.4); }
+  :root[data-ny="1"] .masthead .btn:hover, :root[data-ny="1"] .btn-live:hover { background: linear-gradient(180deg, #ffd24a, #c88c15); }
+  :root[data-ny="1"] nav.main a.active { border-color: #f3c23b; }
+
+  /* scène hero : feux d'artifice qui éclatent + badge année */
+  :root[data-ny="1"] .ny-scene { display: block; position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  :root[data-ny="1"] .ny-fw { position: absolute; width: 3px; height: 3px; border-radius: 50%; opacity: 0;
+    box-shadow: 3px 0 0 1px, 2.6px 1.5px 0 1px, 1.5px 2.6px 0 1px, 0 3px 0 1px, -1.5px 2.6px 0 1px, -2.6px 1.5px 0 1px, -3px 0 0 1px, -2.6px -1.5px 0 1px, -1.5px -2.6px 0 1px, 0 -3px 0 1px, 1.5px -2.6px 0 1px, 2.6px -1.5px 0 1px;
+    animation: ny-burst 2.8s ease-out infinite; }
+  :root[data-ny="1"] .ny-fw-1 { left: 16%; top: 24%; color: #ffd24a; animation-delay: 0s; }
+  :root[data-ny="1"] .ny-fw-2 { left: 40%; top: 15%; color: #ff6a6a; animation-delay: .9s; }
+  :root[data-ny="1"] .ny-fw-3 { left: 30%; top: 44%; color: #5db7ff; animation-delay: 1.7s; }
+  :root[data-ny="1"] .ny-fw-4 { left: 9%;  top: 52%; color: #7ee0a0; animation-delay: 2.3s; }
+  :root[data-ny="1"] .ny-fw-5 { left: 48%; top: 34%; color: #ffb14a; animation-delay: 1.3s; }
+  @keyframes ny-burst { 0% { transform: scale(.2); opacity: 0; } 10% { opacity: 1; } 65% { opacity: .85; } 100% { transform: scale(24); opacity: 0; } }
+
+  /* badge année, centré en haut du hero (texte selon la phase) */
+  :root[data-ny="1"] .ny-badge { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); z-index: 2; pointer-events: none;
+    display: flex; flex-direction: column; align-items: center; gap: 1px; text-align: center; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+  :root[data-ny="1"] .ny-label { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #ffe9a8; text-shadow: 0 1px 6px rgba(0,0,0,.5); }
+  :root[data-ny-phase="before"] .ny-label::after { content: "Bonne année bientôt"; }
+  :root[data-ny-phase="after"]  .ny-label::after { content: "✨ Bonne année ✨"; }
+  :root[data-ny="1"] .ny-years { display: inline-flex; align-items: baseline; gap: 10px; line-height: 1; font-weight: 800;
+    color: #ffd24a; text-shadow: 0 0 18px rgba(255,200,70,.6), 0 2px 10px rgba(0,0,0,.55); }
+  :root[data-ny="1"] .ny-old, :root[data-ny="1"] .ny-arrow, :root[data-ny="1"] .ny-new { display: inline-block; }
+  :root[data-ny="1"] .ny-old { font-size: 26px; opacity: .55; }
+  :root[data-ny="1"] .ny-arrow { font-size: 22px; opacity: .7; color: #ffe9a8; }
+  :root[data-ny="1"] .ny-new { font-size: 48px; }
+  :root[data-ny-phase="after"] .ny-old, :root[data-ny-phase="after"] .ny-arrow { display: none; }
+  :root[data-ny-phase="after"] .ny-new { font-size: 58px; }
+
+  @media (prefers-reduced-motion: reduce) { :root[data-ny="1"] .ny-fw { animation: none; opacity: 0; } }
+  @media (max-width: 900px) { :root[data-ny="1"] .ny-fw { display: none; } :root[data-ny="1"] .ny-new { font-size: 40px; } :root[data-ny-phase="after"] .ny-new { font-size: 46px; } }
 </style>
