@@ -1,5 +1,5 @@
 {
- "maj": "08/11/2026 à 14h12",
+ "maj": "08/11/2026 à 15h43",
  "fini": true,
  "joueurs": {
   "killian-ballon": {
@@ -246,13 +246,17 @@
       "score": "11–13",
       "res": "défaite",
       "phase": "1/4 de finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 18,
+     "matchs": 19,
      "g": 57,
      "f": 95,
      "pct": 60,
@@ -264,7 +268,7 @@
      "f": 47,
      "pct": 64,
      "cg": 9,
-     "rencontres": 11,
+     "rencontres": 12,
      "rang_eq": 5,
      "nb_eq": 6,
      "rang_cg": 2,
@@ -356,6 +360,14 @@
       },
       {
        "adv": "Inde",
+       "date": "mar 27/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Pays de Galles",
        "date": "mar 27/10",
        "g": 3,
        "f": 5,
@@ -684,13 +696,17 @@
       "score": "11–13",
       "res": "défaite",
       "phase": "1/4 de finale",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 4,
+       "cg": 1
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 18,
+     "matchs": 19,
      "g": 62,
      "f": 94,
      "pct": 66,
@@ -702,7 +718,7 @@
      "f": 52,
      "pct": 65,
      "cg": 4,
-     "rencontres": 11,
+     "rencontres": 12,
      "rang_eq": 4,
      "nb_eq": 6,
      "rang_cg": 6,
@@ -799,6 +815,14 @@
        "f": 4,
        "parfait": true,
        "best": false
+      },
+      {
+       "adv": "Pays de Galles",
+       "date": "mar 27/10",
+       "g": 1,
+       "f": 4,
+       "parfait": false,
+       "best": false
       }
      ]
     },
@@ -884,7 +908,7 @@
     },
     "titre": null,
     "analyse": [
-     "Christophe Thébeault a disputé 18 matchs à Londres sous le maillot de l'équipe de France Hommes.",
+     "Christophe Thébeault a disputé 19 matchs à Londres sous le maillot de l'équipe de France Hommes.",
      "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 34 de ses 52 manches (65 %), et se classe 9e sur 47 joueurs de l'épreuve. Il signe 4 « casse et gagne ».",
      "Sa meilleure rencontre : France – Mexique (25/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
      "En simple, il remporte 2 matchs avant de s'arrêter au 3e tour (4–6 contre Clint I'Anson), dont 1 victoire sans perdre une manche.",
@@ -1174,13 +1198,17 @@
       "score": "11–13",
       "res": "défaite",
       "phase": "1/4 de finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 23,
+     "matchs": 24,
      "g": 92,
      "f": 135,
      "pct": 68,
@@ -1192,7 +1220,7 @@
      "f": 51,
      "pct": 73,
      "cg": 13,
-     "rencontres": 11,
+     "rencontres": 12,
      "rang_eq": 1,
      "nb_eq": 6,
      "rang_cg": 1,
@@ -1288,6 +1316,14 @@
        "g": 3,
        "f": 3,
        "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Pays de Galles",
+       "date": "mar 27/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
        "best": false
       }
      ]
@@ -2109,13 +2145,17 @@
       "score": "11–13",
       "res": "défaite",
       "phase": "1/4 de finale",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 20,
+     "matchs": 21,
      "g": 73,
      "f": 114,
      "pct": 64,
@@ -2127,7 +2167,7 @@
      "f": 53,
      "pct": 68,
      "cg": 9,
-     "rencontres": 11,
+     "rencontres": 12,
      "rang_eq": 2,
      "nb_eq": 6,
      "rang_cg": 2,
@@ -2222,6 +2262,14 @@
        "date": "mar 27/10",
        "g": 3,
        "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Pays de Galles",
+       "date": "mar 27/10",
+       "g": 1,
+       "f": 5,
        "parfait": false,
        "best": false
       }
@@ -2592,13 +2640,17 @@
       "score": "11–13",
       "res": "défaite",
       "phase": "1/4 de finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 20,
+     "matchs": 21,
      "g": 71,
      "f": 113,
      "pct": 63,
@@ -2610,7 +2662,7 @@
      "f": 53,
      "pct": 58,
      "cg": 9,
-     "rencontres": 11,
+     "rencontres": 12,
      "rang_eq": 6,
      "nb_eq": 6,
      "rang_cg": 2,
@@ -2705,6 +2757,14 @@
        "date": "mar 27/10",
        "g": 1,
        "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Pays de Galles",
+       "date": "mar 27/10",
+       "g": 3,
+       "f": 5,
        "parfait": false,
        "best": false
       }
@@ -2808,7 +2868,7 @@
     },
     "titre": null,
     "analyse": [
-     "Alexis Klinka a disputé 20 matchs à Londres sous le maillot de l'équipe de France Hommes.",
+     "Alexis Klinka a disputé 21 matchs à Londres sous le maillot de l'équipe de France Hommes.",
      "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 31 de ses 53 manches (58 %), et se classe 13e sur 47 joueurs de l'épreuve. Il signe 9 « casse et gagne ».",
      "Sa meilleure rencontre : France – Mexique (25/10), avec 4 manches sur 4.",
      "En simple, il remporte 4 matchs avant de s'arrêter en 1/4 de finale (4–6 contre Kevin Martin), dont 1 victoire sans perdre une manche.",
@@ -3022,7 +3082,11 @@
       "score": "13–2",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -3030,13 +3094,17 @@
       "score": "13–3",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 14,
+     "matchs": 16,
      "g": 56,
      "f": 76,
      "pct": 74,
@@ -3048,7 +3116,7 @@
      "f": 39,
      "pct": 79,
      "cg": 2,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 3,
      "nb_eq": 6,
      "rang_cg": 2,
@@ -3056,7 +3124,7 @@
       2,
       23
      ],
-     "parfaites": 3,
+     "parfaites": 4,
      "serie": [
       {
        "adv": "Afrique du Sud",
@@ -3119,6 +3187,22 @@
        "date": "mar 27/10",
        "g": 2,
        "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 3,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 3,
        "parfait": false,
        "best": false
       }
@@ -3199,7 +3283,7 @@
     "titre": "Collette Henriksen repart de Londres avec une médaille : championne du monde par équipes avec l'équipe de France Femmes.",
     "analyse": [
      "Par équipes, sur l'ensemble du Mondial (phases finales comprises), elle remporte 31 de ses 39 manches (79 %), le 3e meilleur pourcentage de l'équipe de France Femmes, et se classe 2e sur 23 joueuses de l'épreuve. Elle signe 2 « casse et gagne ».",
-     "Sa meilleure rencontre : France – Afrique du Sud (21/10), avec 4 manches sur 4, et 3 rencontres sans perdre une manche.",
+     "Sa meilleure rencontre : France – Afrique du Sud (21/10), avec 4 manches sur 4, et 4 rencontres sans perdre une manche.",
      "En simple, elle remporte 2 matchs avant de s'arrêter en 1/8 de finale (5–6 contre Kim O’Brien), dont 1 victoire sans perdre une manche.",
      "En double avec Ophélie Laval, elle remporte 2 matchs avant de s'arrêter en 1/4 de finale (0–4 contre Emma Cunningham / Mika Roonay), dont 1 victoire sans perdre une manche."
     ]
@@ -3445,7 +3529,11 @@
       "score": "13–2",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -3453,13 +3541,17 @@
       "score": "13–3",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 2,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 17,
+     "matchs": 19,
      "g": 73,
      "f": 104,
      "pct": 70,
@@ -3471,7 +3563,7 @@
      "f": 40,
      "pct": 78,
      "cg": 1,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 4,
      "nb_eq": 6,
      "rang_cg": 3,
@@ -3479,7 +3571,7 @@
       4,
       23
      ],
-     "parfaites": 2,
+     "parfaites": 3,
      "serie": [
       {
        "adv": "Afrique du Sud",
@@ -3542,6 +3634,22 @@
        "date": "mar 27/10",
        "g": 3,
        "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 3,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 1,
+       "f": 2,
        "parfait": false,
        "best": false
       }
@@ -3646,7 +3754,7 @@
     "titre": "Sabrilla Brunet repart de Londres avec 3 médailles : championne du monde par équipes avec l'équipe de France Femmes, vice-championne du monde en simple et médaille de bronze en double avec Marion Jude.",
     "analyse": [
      "Par équipes, sur l'ensemble du Mondial (phases finales comprises), elle remporte 31 de ses 40 manches (78 %), et se classe 4e sur 23 joueuses de l'épreuve. Elle signe 1 « casse et gagne ».",
-     "Sa meilleure rencontre : France – Mexique (22/10), avec 5 manches sur 5, et 2 rencontres sans perdre une manche.",
+     "Sa meilleure rencontre : France – Mexique (22/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
      "En simple, elle gagne 31 manches pour 15 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive.",
      "En double avec Marion Jude, elle gagne 11 manches pour 7 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive."
     ]
@@ -3858,7 +3966,11 @@
       "score": "13–2",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 2,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -3866,13 +3978,17 @@
       "score": "13–3",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 14,
+     "matchs": 16,
      "g": 52,
      "f": 73,
      "pct": 71,
@@ -3884,7 +4000,7 @@
      "f": 39,
      "pct": 79,
      "cg": 1,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 2,
      "nb_eq": 6,
      "rang_cg": 3,
@@ -3892,7 +4008,7 @@
       3,
       23
      ],
-     "parfaites": 3,
+     "parfaites": 4,
      "serie": [
       {
        "adv": "Afrique du Sud",
@@ -3956,6 +4072,22 @@
        "g": 2,
        "f": 5,
        "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 3,
+       "parfait": true,
        "best": false
       }
      ]
@@ -4035,7 +4167,7 @@
     "titre": "Ophélie Laval repart de Londres avec une médaille : championne du monde par équipes avec l'équipe de France Femmes.",
     "analyse": [
      "Par équipes, sur l'ensemble du Mondial (phases finales comprises), elle remporte 31 de ses 39 manches (79 %), le 2e meilleur pourcentage de l'équipe de France Femmes, et se classe 3e sur 23 joueuses de l'épreuve. Elle signe 1 « casse et gagne ».",
-     "Sa meilleure rencontre : France – Australie (25/10), avec 5 manches sur 5, et 3 rencontres sans perdre une manche.",
+     "Sa meilleure rencontre : France – Australie (25/10), avec 5 manches sur 5, et 4 rencontres sans perdre une manche.",
      "En simple, elle remporte 2 matchs avant de s'arrêter en 1/8 de finale (1–6 contre Marion Jude), dont 1 victoire sans perdre une manche.",
      "En double avec Collette Henriksen, elle remporte 2 matchs avant de s'arrêter en 1/4 de finale (0–4 contre Emma Cunningham / Mika Roonay), dont 1 victoire sans perdre une manche."
     ]
@@ -4281,7 +4413,11 @@
       "score": "13–2",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -4289,13 +4425,17 @@
       "score": "13–3",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 2
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 17,
+     "matchs": 19,
      "g": 83,
      "f": 105,
      "pct": 79,
@@ -4307,7 +4447,7 @@
      "f": 42,
      "pct": 86,
      "cg": 5,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 1,
      "nb_eq": 6,
      "rang_cg": 1,
@@ -4315,7 +4455,7 @@
       1,
       23
      ],
-     "parfaites": 4,
+     "parfaites": 6,
      "serie": [
       {
        "adv": "Afrique du Sud",
@@ -4376,6 +4516,22 @@
       {
        "adv": "Angleterre",
        "date": "mar 27/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 3,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
        "g": 4,
        "f": 4,
        "parfait": true,
@@ -4482,7 +4638,7 @@
     "titre": "Marion Jude repart de Londres avec 3 médailles : championne du monde en simple, championne du monde par équipes avec l'équipe de France Femmes et médaille de bronze en double avec Sabrilla Brunet.",
     "analyse": [
      "Par équipes, sur l'ensemble du Mondial (phases finales comprises), elle remporte 36 de ses 42 manches (86 %), le meilleur pourcentage de l'équipe de France Femmes, et se classe 1re sur 23 joueuses de l'épreuve. Elle signe 5 « casse et gagne », le meilleur total de l'équipe.",
-     "Sa meilleure rencontre : France – Australie (25/10), avec 5 manches sur 5, et 4 rencontres sans perdre une manche.",
+     "Sa meilleure rencontre : France – Australie (25/10), avec 5 manches sur 5, et 6 rencontres sans perdre une manche.",
      "En simple, elle gagne 36 manches pour 9 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche.",
      "En double avec Sabrilla Brunet, elle gagne 11 manches pour 7 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 1 match gagné à la manche décisive."
     ]
@@ -4694,7 +4850,11 @@
       "score": "13–2",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -4702,13 +4862,17 @@
       "score": "13–3",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 14,
+     "matchs": 16,
      "g": 56,
      "f": 90,
      "pct": 62,
@@ -4720,7 +4884,7 @@
      "f": 40,
      "pct": 68,
      "cg": 1,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 5,
      "nb_eq": 6,
      "rang_cg": 3,
@@ -4791,6 +4955,22 @@
        "date": "mar 27/10",
        "g": 4,
        "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 3,
        "parfait": false,
        "best": false
       }
@@ -5059,7 +5239,11 @@
       "score": "13–2",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 0,
+       "f": 1,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -5067,13 +5251,17 @@
       "score": "13–3",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 1,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 11,
+     "matchs": 13,
      "g": 30,
      "f": 55,
      "pct": 55,
@@ -5085,7 +5273,7 @@
      "f": 31,
      "pct": 61,
      "cg": 0,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 6,
      "nb_eq": 6,
      "rang_cg": null,
@@ -5156,6 +5344,22 @@
        "date": "mar 27/10",
        "g": 3,
        "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 0,
+       "f": 1,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 1,
+       "f": 1,
        "parfait": false,
        "best": false
       }
@@ -5426,7 +5630,11 @@
       "score": "13–12",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -5434,13 +5642,17 @@
       "score": "13–11",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 15,
+     "matchs": 17,
      "g": 59,
      "f": 103,
      "pct": 57,
@@ -5452,7 +5664,7 @@
      "f": 48,
      "pct": 67,
      "cg": 0,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 3,
      "nb_eq": 6,
      "rang_cg": null,
@@ -5524,6 +5736,22 @@
        "g": 5,
        "f": 5,
        "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
        "best": false
       }
      ]
@@ -5785,7 +6013,11 @@
       "score": "13–12",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -5793,13 +6025,17 @@
       "score": "13–11",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 0,
+       "f": 3,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 10,
+     "matchs": 12,
      "g": 17,
      "f": 49,
      "pct": 35,
@@ -5811,7 +6047,7 @@
      "f": 35,
      "pct": 37,
      "cg": 0,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 5,
      "nb_eq": 6,
      "rang_cg": null,
@@ -5880,6 +6116,22 @@
       {
        "adv": "Angleterre",
        "date": "mar 27/10",
+       "g": 0,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
        "g": 0,
        "f": 3,
        "parfait": false,
@@ -6104,7 +6356,11 @@
       "score": "13–12",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -6112,13 +6368,17 @@
       "score": "13–11",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 10,
+     "matchs": 12,
      "g": 38,
      "f": 62,
      "pct": 61,
@@ -6130,7 +6390,7 @@
      "f": 47,
      "pct": 70,
      "cg": 0,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 1,
      "nb_eq": 6,
      "rang_cg": null,
@@ -6199,6 +6459,22 @@
       {
        "adv": "Angleterre",
        "date": "mar 27/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
        "g": 4,
        "f": 5,
        "parfait": false,
@@ -6439,7 +6715,11 @@
       "score": "13–12",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 5,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -6447,13 +6727,17 @@
       "score": "13–11",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 12,
+     "matchs": 14,
      "g": 43,
      "f": 78,
      "pct": 55,
@@ -6465,7 +6749,7 @@
      "f": 48,
      "pct": 58,
      "cg": 0,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 4,
      "nb_eq": 6,
      "rang_cg": null,
@@ -6535,6 +6819,22 @@
        "adv": "Angleterre",
        "date": "mar 27/10",
        "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 3,
        "f": 5,
        "parfait": false,
        "best": false
@@ -6782,13 +7082,17 @@
       "score": "13–11",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 0,
+       "f": 2,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 10,
+     "matchs": 11,
      "g": 9,
      "f": 35,
      "pct": 26,
@@ -6800,7 +7104,7 @@
      "f": 23,
      "pct": 30,
      "cg": 0,
-     "rencontres": 8,
+     "rencontres": 9,
      "rang_eq": 6,
      "nb_eq": 6,
      "rang_cg": null,
@@ -6870,6 +7174,14 @@
        "adv": "Angleterre",
        "date": "mar 27/10",
        "g": 1,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 0,
        "f": 2,
        "parfait": false,
        "best": false
@@ -7130,7 +7442,11 @@
       "score": "13–12",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -7138,13 +7454,17 @@
       "score": "13–11",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 15,
+     "matchs": 17,
      "g": 61,
      "f": 97,
      "pct": 63,
@@ -7156,7 +7476,7 @@
      "f": 48,
      "pct": 69,
      "cg": 0,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 2,
      "nb_eq": 6,
      "rang_cg": null,
@@ -7227,6 +7547,22 @@
        "date": "mar 27/10",
        "g": 4,
        "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 4,
        "parfait": false,
        "best": false
       }
@@ -7502,7 +7838,11 @@
       "score": "10–5",
       "res": "victoire",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
      },
      {
       "date": "dim 25/10",
@@ -7522,7 +7862,11 @@
       "score": "13–2",
       "res": "victoire",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
      },
      {
       "date": "lun 26/10",
@@ -7530,7 +7874,11 @@
       "score": "10–5",
       "res": "victoire",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -7538,7 +7886,11 @@
       "score": "8–4",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 2,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -7546,13 +7898,17 @@
       "score": "8–3",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 0,
+       "f": 1,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 14,
+     "matchs": 19,
      "g": 56,
      "f": 88,
      "pct": 64,
@@ -7564,7 +7920,7 @@
      "f": 32,
      "pct": 62,
      "cg": 0,
-     "rencontres": 5,
+     "rencontres": 10,
      "rang_eq": 4,
      "nb_eq": 4,
      "rang_cg": null,
@@ -7607,10 +7963,50 @@
        "best": false
       },
       {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
        "adv": "Malte",
        "date": "dim 25/10",
        "g": 3,
        "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 1,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 0,
+       "f": 1,
        "parfait": false,
        "best": false
       }
@@ -7868,7 +8264,11 @@
       "score": "10–5",
       "res": "victoire",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 4,
+       "cg": 0
+      }
      },
      {
       "date": "dim 25/10",
@@ -7888,7 +8288,11 @@
       "score": "13–2",
       "res": "victoire",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
      },
      {
       "date": "lun 26/10",
@@ -7896,7 +8300,11 @@
       "score": "10–5",
       "res": "victoire",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
      },
      {
       "date": "mer 28/10",
@@ -7904,7 +8312,11 @@
       "score": "8–4",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -7912,13 +8324,17 @@
       "score": "8–3",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 9,
+     "matchs": 14,
      "g": 39,
      "f": 59,
      "pct": 66,
@@ -7930,7 +8346,7 @@
      "f": 36,
      "pct": 69,
      "cg": 3,
-     "rencontres": 5,
+     "rencontres": 10,
      "rang_eq": 3,
      "nb_eq": 4,
      "rang_cg": 2,
@@ -7938,7 +8354,7 @@
       3,
       7
      ],
-     "parfaites": 2,
+     "parfaites": 4,
      "serie": [
       {
        "adv": "Afrique du Sud",
@@ -7973,10 +8389,50 @@
        "best": false
       },
       {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 1,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
        "adv": "Malte",
        "date": "dim 25/10",
        "g": 4,
        "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "lun 26/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 3,
        "parfait": false,
        "best": false
       }
@@ -8041,7 +8497,7 @@
     "titre": "Damien Joly repart de Londres avec 2 médailles : champion du monde par équipes avec l'équipe de France Espoirs U23 et médaille de bronze en double avec Léonardo Moreira.",
     "analyse": [
      "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 25 de ses 36 manches (69 %), le 3e meilleur pourcentage de l'équipe de France Espoirs U23, et se classe 3e sur 7 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
-     "Sa meilleure rencontre : France – Angleterre (21/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
+     "Sa meilleure rencontre : France – Angleterre (21/10), avec 4 manches sur 4, et 4 rencontres sans perdre une manche.",
      "En simple, il remporte 1 match avant de s'arrêter en 1/8 de finale (3–5 contre Luke Aitken), dont 1 victoire sans perdre une manche.",
      "En double avec Léonardo Moreira, il gagne 6 manches pour 4 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
     ]
@@ -8223,7 +8679,11 @@
       "score": "10–5",
       "res": "victoire",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
      },
      {
       "date": "dim 25/10",
@@ -8243,7 +8703,11 @@
       "score": "13–2",
       "res": "victoire",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 1
+      }
      },
      {
       "date": "lun 26/10",
@@ -8251,7 +8715,11 @@
       "score": "10–5",
       "res": "victoire",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 1
+      }
      },
      {
       "date": "mer 28/10",
@@ -8259,7 +8727,11 @@
       "score": "8–4",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -8267,13 +8739,17 @@
       "score": "8–3",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 12,
+     "matchs": 17,
      "g": 60,
      "f": 84,
      "pct": 71,
@@ -8285,7 +8761,7 @@
      "f": 39,
      "pct": 74,
      "cg": 3,
-     "rencontres": 5,
+     "rencontres": 10,
      "rang_eq": 2,
      "nb_eq": 4,
      "rang_cg": 2,
@@ -8293,7 +8769,7 @@
       2,
       7
      ],
-     "parfaites": 1,
+     "parfaites": 3,
      "serie": [
       {
        "adv": "Afrique du Sud",
@@ -8309,7 +8785,7 @@
        "g": 4,
        "f": 5,
        "parfait": false,
-       "best": true
+       "best": false
       },
       {
        "adv": "Angleterre",
@@ -8328,12 +8804,52 @@
        "best": false
       },
       {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
        "adv": "Malte",
        "date": "dim 25/10",
        "g": 2,
        "f": 3,
        "parfait": false,
        "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 3,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": true
       }
      ]
     },
@@ -8420,7 +8936,7 @@
     "titre": "Léonardo Moreira repart de Londres avec 3 médailles : champion du monde en simple, champion du monde par équipes avec l'équipe de France Espoirs U23 et médaille de bronze en double avec Damien Joly.",
     "analyse": [
      "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 29 de ses 39 manches (74 %), le 2e meilleur pourcentage de l'équipe de France Espoirs U23, et se classe 2e sur 7 joueurs de l'épreuve. Il signe 3 « casse et gagne ».",
-     "Sa meilleure rencontre : France – Malte (21/10), avec 4 manches sur 5.",
+     "Sa meilleure rencontre : France – Afrique du Sud (28/10), avec 4 manches sur 4, et 3 rencontres sans perdre une manche.",
      "En simple, il gagne 25 manches pour 10 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche et 2 matchs gagnés à la manche décisive.",
      "En double avec Damien Joly, il gagne 6 manches pour 4 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
     ]
@@ -8584,7 +9100,11 @@
       "score": "10–5",
       "res": "victoire",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 1
+      }
      },
      {
       "date": "dim 25/10",
@@ -8604,7 +9124,11 @@
       "score": "13–2",
       "res": "victoire",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
      },
      {
       "date": "lun 26/10",
@@ -8612,7 +9136,11 @@
       "score": "10–5",
       "res": "victoire",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 1
+      }
      },
      {
       "date": "mer 28/10",
@@ -8620,7 +9148,11 @@
       "score": "8–4",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 3,
+       "cg": 1
+      }
      },
      {
       "date": "mer 28/10",
@@ -8628,13 +9160,17 @@
       "score": "8–3",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 12,
+     "matchs": 17,
      "g": 57,
      "f": 79,
      "pct": 72,
@@ -8646,7 +9182,7 @@
      "f": 36,
      "pct": 81,
      "cg": 5,
-     "rencontres": 5,
+     "rencontres": 10,
      "rang_eq": 1,
      "nb_eq": 4,
      "rang_cg": 1,
@@ -8654,7 +9190,7 @@
       1,
       7
      ],
-     "parfaites": 2,
+     "parfaites": 4,
      "serie": [
       {
        "adv": "Afrique du Sud",
@@ -8689,9 +9225,49 @@
        "best": false
       },
       {
+       "adv": "Afrique du Sud",
+       "date": "dim 25/10",
+       "g": 3,
+       "f": 3,
+       "parfait": true,
+       "best": false
+      },
+      {
        "adv": "Malte",
        "date": "dim 25/10",
        "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "lun 26/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "lun 26/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 3,
+       "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 2,
        "f": 3,
        "parfait": false,
        "best": false
@@ -8781,7 +9357,7 @@
     "titre": "Théo Schneider repart de Londres avec 2 médailles : champion du monde en double avec Thibault Couzigou et champion du monde par équipes avec l'équipe de France Espoirs U23.",
     "analyse": [
      "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 29 de ses 36 manches (81 %), le meilleur pourcentage de l'équipe de France Espoirs U23, et se classe 1er sur 7 joueurs de l'épreuve. Il signe 5 « casse et gagne », le meilleur total de l'équipe.",
-     "Sa meilleure rencontre : France – Malte (21/10), avec 4 manches sur 4, et 2 rencontres sans perdre une manche.",
+     "Sa meilleure rencontre : France – Malte (21/10), avec 4 manches sur 4, et 4 rencontres sans perdre une manche.",
      "En simple, il remporte 2 matchs avant de s'arrêter en 1/4 de finale (2–5 contre Irfaan Williams).",
      "En double avec Thibault Couzigou, il gagne 16 manches pour 5 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
     ]
@@ -8976,7 +9552,11 @@
       "score": "13–5",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 2,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -8984,13 +9564,17 @@
       "score": "13–8",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 2,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 12,
+     "matchs": 14,
      "g": 37,
      "f": 63,
      "pct": 59,
@@ -9002,7 +9586,7 @@
      "f": 34,
      "pct": 68,
      "cg": 1,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 4,
      "nb_eq": 6,
      "rang_cg": 5,
@@ -9073,6 +9657,22 @@
        "date": "mar 27/10",
        "g": 2,
        "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 1,
+       "f": 2,
        "parfait": false,
        "best": false
       }
@@ -9369,7 +9969,11 @@
       "score": "13–5",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 2,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -9377,13 +9981,17 @@
       "score": "13–8",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 16,
+     "matchs": 18,
      "g": 67,
      "f": 102,
      "pct": 66,
@@ -9395,7 +10003,7 @@
      "f": 41,
      "pct": 68,
      "cg": 4,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 2,
      "nb_eq": 6,
      "rang_cg": 1,
@@ -9466,6 +10074,22 @@
        "date": "mar 27/10",
        "g": 1,
        "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 1,
+       "f": 2,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 4,
        "parfait": false,
        "best": false
       }
@@ -9761,7 +10385,11 @@
       "score": "13–5",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 4,
+       "f": 4,
+       "cg": 1
+      }
      },
      {
       "date": "mer 28/10",
@@ -9769,13 +10397,17 @@
       "score": "13–8",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 1
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 12,
+     "matchs": 14,
      "g": 48,
      "f": 72,
      "pct": 67,
@@ -9787,7 +10419,7 @@
      "f": 41,
      "pct": 68,
      "cg": 4,
-     "rencontres": 7,
+     "rencontres": 9,
      "rang_eq": 3,
      "nb_eq": 6,
      "rang_cg": 1,
@@ -9795,7 +10427,7 @@
       3,
       11
      ],
-     "parfaites": 0,
+     "parfaites": 1,
      "serie": [
       {
        "adv": "Australie",
@@ -9827,7 +10459,7 @@
        "g": 4,
        "f": 5,
        "parfait": false,
-       "best": true
+       "best": false
       },
       {
        "adv": "Singapour",
@@ -9849,6 +10481,22 @@
        "adv": "Angleterre",
        "date": "mar 27/10",
        "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 4,
+       "f": 4,
+       "parfait": true,
+       "best": true
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 4,
        "f": 5,
        "parfait": false,
        "best": false
@@ -9922,7 +10570,7 @@
     "titre": "Christophe Faurie repart de Londres avec 2 médailles : champion du monde en double avec Paul Coldrick et champion du monde par équipes avec l'équipe de France +40 ans.",
     "analyse": [
      "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 28 de ses 41 manches (68 %), le 3e meilleur pourcentage de l'équipe de France +40 ans, et se classe 3e sur 11 joueurs de l'épreuve. Il signe 4 « casse et gagne », le meilleur total de l'équipe.",
-     "Sa meilleure rencontre : France – Angleterre (22/10), avec 4 manches sur 5.",
+     "Sa meilleure rencontre : France – Australie (28/10), avec 4 manches sur 4.",
      "En simple, il s'incline d'entrée (4–6 contre Shane Pillay).",
      "En double avec Paul Coldrick, il gagne 16 manches pour 5 concédées sur l'ensemble du tableau, dont 1 victoire sans perdre une manche."
     ]
@@ -10104,7 +10752,11 @@
       "score": "13–5",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -10112,13 +10764,17 @@
       "score": "13–8",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 11,
+     "matchs": 13,
      "g": 36,
      "f": 60,
      "pct": 60,
@@ -10130,7 +10786,7 @@
      "f": 39,
      "pct": 67,
      "cg": 3,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 5,
      "nb_eq": 6,
      "rang_cg": 4,
@@ -10201,6 +10857,22 @@
        "date": "mar 27/10",
        "g": 4,
        "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 1,
+       "f": 3,
        "parfait": false,
        "best": false
       }
@@ -10468,7 +11140,11 @@
       "score": "13–5",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -10476,13 +11152,17 @@
       "score": "13–8",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 1
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 14,
+     "matchs": 16,
      "g": 57,
      "f": 81,
      "pct": 70,
@@ -10494,7 +11174,7 @@
      "f": 42,
      "pct": 71,
      "cg": 4,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 1,
      "nb_eq": 6,
      "rang_cg": 1,
@@ -10563,6 +11243,22 @@
       {
        "adv": "Angleterre",
        "date": "mar 27/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
        "g": 3,
        "f": 4,
        "parfait": false,
@@ -10827,7 +11523,11 @@
       "score": "13–5",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -10835,13 +11535,17 @@
       "score": "13–8",
       "res": "victoire",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 11,
+     "matchs": 13,
      "g": 37,
      "f": 64,
      "pct": 58,
@@ -10853,7 +11557,7 @@
      "f": 42,
      "pct": 62,
      "cg": 1,
-     "rencontres": 8,
+     "rencontres": 10,
      "rang_eq": 6,
      "nb_eq": 6,
      "rang_cg": 5,
@@ -10924,6 +11628,22 @@
        "date": "mar 27/10",
        "g": 3,
        "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 3,
        "parfait": false,
        "best": false
       }
@@ -11189,7 +11909,11 @@
       "score": "9–16",
       "res": "défaite",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 4,
+       "f": 5,
+       "cg": 0
+      }
      },
      {
       "date": "mar 27/10",
@@ -11209,13 +11933,17 @@
       "score": "13–9",
       "res": "victoire",
       "phase": "Match pour la 3e place",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 16,
+     "matchs": 18,
      "g": 61,
      "f": 101,
      "pct": 60,
@@ -11227,7 +11955,7 @@
      "f": 65,
      "pct": 63,
      "cg": 2,
-     "rencontres": 11,
+     "rencontres": 13,
      "rang_eq": 1,
      "nb_eq": 5,
      "rang_cg": 1,
@@ -11318,8 +12046,24 @@
        "best": false
       },
       {
+       "adv": "Afrique du Sud",
+       "date": "mar 27/10",
+       "g": 4,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
        "adv": "Australie",
        "date": "mar 27/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
        "g": 3,
        "f": 5,
        "parfait": false,
@@ -11573,7 +12317,11 @@
       "score": "9–16",
       "res": "défaite",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
      },
      {
       "date": "mar 27/10",
@@ -11593,13 +12341,17 @@
       "score": "13–9",
       "res": "victoire",
       "phase": "Match pour la 3e place",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 13,
+     "matchs": 15,
      "g": 26,
      "f": 74,
      "pct": 35,
@@ -11611,7 +12363,7 @@
      "f": 64,
      "pct": 39,
      "cg": 0,
-     "rencontres": 11,
+     "rencontres": 13,
      "rang_eq": 3,
      "nb_eq": 5,
      "rang_cg": null,
@@ -11702,12 +12454,28 @@
        "best": false
       },
       {
+       "adv": "Afrique du Sud",
+       "date": "mar 27/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
        "adv": "Australie",
        "date": "mar 27/10",
        "g": 4,
        "f": 5,
        "parfait": false,
        "best": true
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
       }
      ]
     },
@@ -11953,7 +12721,11 @@
       "score": "9–16",
       "res": "défaite",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
      },
      {
       "date": "mar 27/10",
@@ -11973,13 +12745,17 @@
       "score": "13–9",
       "res": "victoire",
       "phase": "Match pour la 3e place",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 4,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 14,
+     "matchs": 16,
      "g": 31,
      "f": 79,
      "pct": 39,
@@ -11991,7 +12767,7 @@
      "f": 64,
      "pct": 39,
      "cg": 0,
-     "rencontres": 11,
+     "rencontres": 13,
      "rang_eq": 4,
      "nb_eq": 5,
      "rang_cg": null,
@@ -12082,10 +12858,26 @@
        "best": false
       },
       {
+       "adv": "Afrique du Sud",
+       "date": "mar 27/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
        "adv": "Australie",
        "date": "mar 27/10",
        "g": 2,
        "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 1,
+       "f": 4,
        "parfait": false,
        "best": false
       }
@@ -12346,7 +13138,11 @@
       "score": "9–16",
       "res": "défaite",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 0,
+       "f": 5,
+       "cg": 0
+      }
      },
      {
       "date": "mar 27/10",
@@ -12366,13 +13162,17 @@
       "score": "13–9",
       "res": "victoire",
       "phase": "Match pour la 3e place",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 14,
+     "matchs": 16,
      "g": 27,
      "f": 85,
      "pct": 32,
@@ -12384,7 +13184,7 @@
      "f": 64,
      "pct": 27,
      "cg": 1,
-     "rencontres": 11,
+     "rencontres": 13,
      "rang_eq": 5,
      "nb_eq": 5,
      "rang_cg": 2,
@@ -12400,7 +13200,7 @@
        "g": 3,
        "f": 5,
        "parfait": false,
-       "best": true
+       "best": false
       },
       {
        "adv": "Afrique du Sud",
@@ -12475,12 +13275,28 @@
        "best": false
       },
       {
+       "adv": "Afrique du Sud",
+       "date": "mar 27/10",
+       "g": 0,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
        "adv": "Australie",
        "date": "mar 27/10",
        "g": 1,
        "f": 5,
        "parfait": false,
        "best": false
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": true
       }
      ]
     },
@@ -12535,7 +13351,7 @@
     "titre": "Patrick Lapert repart de Londres avec 2 médailles : médaille de bronze en double avec Olivier Martre et médaille de bronze par équipes avec l'équipe de France +60 ans.",
     "analyse": [
      "Par équipes, sur l'ensemble du Mondial (phases finales comprises), il remporte 17 de ses 64 manches (27 %). Il signe 1 « casse et gagne ».",
-     "Sa meilleure rencontre : France – Angleterre (20/10), avec 3 manches sur 5.",
+     "Sa meilleure rencontre : France – Australie (28/10), avec 3 manches sur 4.",
      "En simple, il s'incline d'entrée (3–5 contre Stu Richardson).",
      "En double avec Olivier Martre, il gagne 7 manches pour 6 concédées sur l'ensemble du tableau."
     ]
@@ -12755,7 +13571,11 @@
       "score": "9–16",
       "res": "défaite",
       "phase": "Poule",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
      },
      {
       "date": "mar 27/10",
@@ -12775,13 +13595,17 @@
       "score": "13–9",
       "res": "victoire",
       "phase": "Match pour la 3e place",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 5,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 16,
+     "matchs": 18,
      "g": 56,
      "f": 103,
      "pct": 54,
@@ -12793,7 +13617,7 @@
      "f": 65,
      "pct": 55,
      "cg": 0,
-     "rencontres": 11,
+     "rencontres": 13,
      "rang_eq": 2,
      "nb_eq": 5,
      "rang_cg": null,
@@ -12884,12 +13708,28 @@
        "best": false
       },
       {
+       "adv": "Afrique du Sud",
+       "date": "mar 27/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
+      },
+      {
        "adv": "Australie",
        "date": "mar 27/10",
        "g": 5,
        "f": 5,
        "parfait": true,
        "best": true
+      },
+      {
+       "adv": "Australie",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 5,
+       "parfait": false,
+       "best": false
       }
      ]
     },
@@ -13195,7 +14035,11 @@
       "score": "8–6",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 4,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -13203,13 +14047,17 @@
       "score": "7–8",
       "res": "défaite",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 16,
+     "matchs": 18,
      "g": 56,
      "f": 82,
      "pct": 68,
@@ -13221,7 +14069,7 @@
      "f": 46,
      "pct": 70,
      "cg": 2,
-     "rencontres": 10,
+     "rencontres": 12,
      "rang_eq": 2,
      "nb_eq": 4,
      "rang_cg": 4,
@@ -13308,6 +14156,22 @@
        "date": "lun 26/10",
        "g": 1,
        "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 4,
        "parfait": false,
        "best": false
       }
@@ -13635,7 +14499,11 @@
       "score": "8–6",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 3,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -13643,13 +14511,17 @@
       "score": "7–8",
       "res": "défaite",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 1
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 17,
+     "matchs": 19,
      "g": 55,
      "f": 88,
      "pct": 62,
@@ -13661,7 +14533,7 @@
      "f": 40,
      "pct": 62,
      "cg": 4,
-     "rencontres": 9,
+     "rencontres": 11,
      "rang_eq": 4,
      "nb_eq": 4,
      "rang_cg": 2,
@@ -13738,6 +14610,22 @@
       {
        "adv": "Angleterre (U15)",
        "date": "lun 26/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 1,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
        "g": 3,
        "f": 4,
        "parfait": false,
@@ -14092,7 +14980,11 @@
       "score": "8–6",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 3,
+       "f": 4,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -14100,13 +14992,17 @@
       "score": "7–8",
       "res": "défaite",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 1,
+       "f": 5,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 18,
+     "matchs": 20,
      "g": 71,
      "f": 96,
      "pct": 74,
@@ -14118,7 +15014,7 @@
      "f": 49,
      "pct": 71,
      "cg": 8,
-     "rencontres": 10,
+     "rencontres": 12,
      "rang_eq": 1,
      "nb_eq": 4,
      "rang_cg": 1,
@@ -14206,6 +15102,22 @@
        "g": 4,
        "f": 4,
        "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 3,
+       "f": 4,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 1,
+       "f": 5,
+       "parfait": false,
        "best": false
       }
      ]
@@ -14557,7 +15469,11 @@
       "score": "8–6",
       "res": "victoire",
       "phase": "1/2 finale",
-      "lui": null
+      "lui": {
+       "g": 2,
+       "f": 3,
+       "cg": 0
+      }
      },
      {
       "date": "mer 28/10",
@@ -14565,13 +15481,17 @@
       "score": "7–8",
       "res": "défaite",
       "phase": "Finale",
-      "lui": null
+      "lui": {
+       "g": 0,
+       "f": 2,
+       "cg": 0
+      }
      }
     ]
    },
    "stats": {
     "kpi": {
-     "matchs": 18,
+     "matchs": 20,
      "g": 60,
      "f": 92,
      "pct": 65,
@@ -14583,7 +15503,7 @@
      "f": 44,
      "pct": 68,
      "cg": 3,
-     "rencontres": 10,
+     "rencontres": 12,
      "rang_eq": 3,
      "nb_eq": 4,
      "rang_cg": 3,
@@ -14671,6 +15591,22 @@
        "g": 4,
        "f": 4,
        "parfait": true,
+       "best": false
+      },
+      {
+       "adv": "Angleterre",
+       "date": "mer 28/10",
+       "g": 2,
+       "f": 3,
+       "parfait": false,
+       "best": false
+      },
+      {
+       "adv": "Afrique du Sud",
+       "date": "mer 28/10",
+       "g": 0,
+       "f": 2,
+       "parfait": false,
        "best": false
       }
      ]
