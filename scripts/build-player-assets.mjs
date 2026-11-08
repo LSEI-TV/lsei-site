@@ -97,11 +97,17 @@ const CATROSTER = {
 const usedSlugs = new Set(Object.values(cutouts));
 let okExtra = 0; const ambig = [];
 for (const cat of Object.keys(CATROSTER)) {
-  const rost = []; const seen = new Set();
+  const rost = []; const byId = new Map();
   for (const f of readdirSync(DATA)) {
     if (!CATROSTER[cat].some((r) => r.test(f))) continue;
+    const fSeason = (f.match(/(\d{4}-\d{4})/) || [])[1] || '';
     let R; try { R = JSON.parse(readFileSync(join(DATA, f), 'utf8')); } catch { continue; }
-    for (const p of R.players || []) { if (p.id == null || seen.has(p.id)) continue; seen.add(p.id); rost.push({ id: p.id, slug: p.slug || nk(p.name).replace(/ /g, '-'), t: toks(p.name) }); }
+    for (const p of R.players || []) {
+      if (p.id == null) continue;
+      let e = byId.get(p.id);
+      if (!e) { e = { id: p.id, slug: p.slug || nk(p.name).replace(/ /g, '-'), t: toks(p.name), last: fSeason }; byId.set(p.id, e); rost.push(e); }
+      else if (fSeason > e.last) e.last = fSeason;   // dernière saison connue de cet id
+    }
   }
   const base = join(HS, cat); if (!existsSync(base)) continue;
   // Photo la plus RÉCENTE par JOUEUR (et non par nom de fichier) : un même joueur peut changer
@@ -113,8 +119,13 @@ for (const cat of Object.keys(CATROSTER)) {
     for (const file of readdirSync(sd)) {
       if (!IMG.test(file)) continue;
       const key = nk(file.replace(/\.[^.]+$/, '')), ht = toks(key);
-      const cand = rost.filter((p) => subset(ht, p.t) && sharedLong(ht, p.t));
-      if (cand.length !== 1) { if (cand.length > 1 && !ambig.includes(`${cat}:${key}`)) ambig.push(`${cat}:${key}`); continue; }
+      let cand = rost.filter((p) => subset(ht, p.t) && sharedLong(ht, p.t));
+      if (cand.length > 1) {
+        // Même personne dont l'id Cuescore a changé (même slug) → on garde l'id le plus récent (celui de la fiche actuelle).
+        if (new Set(cand.map((c) => c.slug)).size === 1) cand = [cand.slice().sort((a, b) => (b.last || '').localeCompare(a.last || ''))[0]];
+        else { if (!ambig.includes(`${cat}:${key}`)) ambig.push(`${cat}:${key}`); continue; } // vrais homonymes distincts → manuel
+      }
+      if (cand.length !== 1) continue;
       const id = String(cand[0].id), cur = best.get(id);
       if (!cur || season >= cur.season) best.set(id, { season, path: join(sd, file), cand: cand[0] });   // saisons triées : la plus récente gagne
     }
@@ -123,6 +134,16 @@ for (const cat of Object.keys(CATROSTER)) {
     if (cutouts[id]) continue;                      // déjà couvert par le roster
     let slug = cand.slug; if (usedSlugs.has(slug)) slug = `${slug}-${id}`;
     try { await addCutout(id, slug, path); usedSlugs.add(slug); okExtra++; } catch {}
+  }
+  // Propagation aux id « jumeaux » (même slug = même personne dont l'id Cuescore a changé) :
+  // la fiche peut utiliser l'ancien OU le nouvel id → on garantit cutout + couleur sur tous.
+  const bySlug = new Map();
+  for (const p of rost) { const g = bySlug.get(p.slug) || []; g.push(String(p.id)); bySlug.set(p.slug, g); }
+  for (const ids of bySlug.values()) {
+    if (ids.length < 2) continue;
+    const src = ids.find((id) => cutouts[id]);
+    if (!src) continue;
+    for (const id of ids) { if (!cutouts[id]) cutouts[id] = cutouts[src]; if (!colors[id] && colors[src]) colors[id] = colors[src]; }
   }
 }
 
