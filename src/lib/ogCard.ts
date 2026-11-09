@@ -25,6 +25,22 @@ export async function renderPlayerCard(name: string, photo: string | null, subti
     } catch { /* pas de photo -> carte texte seule */ }
   }
 
+  // Logo de la Fédération Française de Billard, en haut à gauche (sur pastille blanche pour la lisibilité).
+  let ffbTag = '';
+  try {
+    const ffb = readFileSync(join('public', 'partenaires', 'ffbillard.webp'));
+    const png = await sharp(ffb).resize(100, 100, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } }).png().toBuffer();
+    ffbTag = `<rect x="72" y="40" width="120" height="120" rx="24" fill="#ffffff"/><image x="82" y="50" width="100" height="100" xlink:href="data:image/png;base64,${png.toString('base64')}"/>`;
+  } catch { /* logo indisponible -> ignoré */ }
+
+  // Logo officiel LSEI (version blanche), juste avant le wordmark « LSEI.TV » en bas à gauche.
+  let lseiBars = '';
+  try {
+    const lsei = readFileSync(join('public', 'LOGO LSEI', 'LOGO LSEI EN 300 DPI - EN VERTICAL - LE SPORT EN IMAGE  EN BLANC.png'));
+    const png = await sharp(lsei).resize(110, 110, { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } }).png().toBuffer();
+    lseiBars = `<image x="68" y="458" width="110" height="110" xlink:href="data:image/png;base64,${png.toString('base64')}"/>`;
+  } catch { /* logo indisponible -> ignoré */ }
+
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}">
   <rect width="${W}" height="${H}" fill="#0A0E1A"/>
   ${photoTag}
@@ -33,10 +49,11 @@ export async function renderPlayerCard(name: string, photo: string | null, subti
     <stop offset="0.40" stop-color="#0A0E1A"/>
     <stop offset="0.74" stop-color="#0A0E1A" stop-opacity="0"/>
   </linearGradient></defs>
+  ${ffbTag}
   <rect x="72" y="250" width="56" height="6" rx="3" fill="#1E7BE0"/>
   <text x="72" y="358" font-family="Arial, sans-serif" font-size="${size}" font-weight="800" letter-spacing="-1" fill="#ffffff">${esc(upper)}</text>
   <text x="72" y="408" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#7E93FF">${esc(subtitle)}</text>
-  <text x="72" y="556" font-family="Arial, sans-serif" font-size="24" font-weight="800" letter-spacing="2" fill="#ffffff">LSEI<tspan fill="#7E93FF">.TV</tspan></text>
+  ${lseiBars}
 </svg>`;
 
   return await sharp(Buffer.from(svg)).jpeg({ quality: 86 }).toBuffer();
