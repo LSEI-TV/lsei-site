@@ -53,7 +53,7 @@ const categoryOptions = [
   ...catCounts.map((c) => ({ label: `${c.category} · ${c.count}`, value: `/disciplines/billard/categorie/${categorySlug(c.category)}` })),
 ];
 ---
-<Base title={club ? club.name : disc.name} description={club ? club.blurb : disc.blurb} preloadImage={club?.hero ?? (assetExists(disc.hero) ? disc.hero : undefined)} active="disciplines" image={videos[0]?.thumb}>
+<Base title={club ? club.name : disc.name} description={club ? club.blurb : disc.blurb} preloadImage={club?.hero ?? (assetExists(disc.hero) ? disc.hero : undefined)} active="disciplines" image={`/og/discipline/${disc.slug}.jpg`}>
   {disc.slug === 'billard' && <HubNav season={LANDING_SEASON} dataSeason={DEFAULT_SEASON} active="videos" />}
 
   {club ? (

@@ -160,7 +160,7 @@ const arbitres = (arbitresData as { slug: string; file: string; seasons: string[
   .sort((a, b) => Number(b.active) - Number(a.active) || a.name.localeCompare(b.name, 'fr'));
 const nbActive = arbitres.filter((a) => a.active).length;
 ---
-<Base title="Billard — Le hub Blackball" description="Le hub Blackball de LSEI : choisissez la compétition Masters (hommes), Femmes, Mixte National, Espoir, Junior (jeunes), Para-billard fauteuil ou Para-billard malvoyants." preloadImage="/billard/blackball-hero.webp" active="disciplines">
+<Base title="Billard — Le hub Blackball" description="Le hub Blackball de LSEI : choisissez la compétition Masters (hommes), Femmes, Mixte National, Espoir, Junior (jeunes), Para-billard fauteuil ou Para-billard malvoyants." preloadImage="/billard/blackball-hero.webp" active="disciplines" image="/og/discipline/billard.jpg">
   <HubSwitch />
 
   <section class="bb-hero">

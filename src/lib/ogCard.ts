@@ -42,6 +42,65 @@ export async function renderPlayerCard(name: string, photo: string | null, subti
   return await sharp(Buffer.from(svg)).jpeg({ quality: 86 }).toBuffer();
 }
 
+// Carte de partage « marque » LSEI (home) : fond navy + barres de marque, logo-mot LSEI.TV.
+export async function renderSiteCard(title: string, sub: string): Promise<Buffer> {
+  const upper = (title || 'LSEI').toUpperCase();
+  const size = fitSize(upper, 760, 150);
+  const subSize = fitSize(sub || '', 760, 34, 0.5);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
+  <rect width="${W}" height="${H}" fill="#0A0E1A"/>
+  <rect width="${W}" height="${H}" fill="url(#bg)" opacity="0.6"/>
+  <defs><radialGradient id="bg" cx="0.8" cy="0.2" r="0.9">
+    <stop offset="0" stop-color="#17407a"/><stop offset="1" stop-color="#0A0E1A"/>
+  </radialGradient></defs>
+  <g opacity="0.9" transform="translate(900,150)">
+    <rect x="0"   y="70"  width="48" height="330" fill="#3AAA35"/>
+    <rect x="66"  y="0"   width="48" height="450" fill="#009FE3"/>
+    <rect x="132" y="26"  width="48" height="400" fill="#E6007E"/>
+    <rect x="198" y="100" width="48" height="270" fill="#F39200"/>
+  </g>
+  <rect width="${W}" height="8" fill="url(#bar)"/>
+  <defs><linearGradient id="bar" x1="0" x2="1">
+    <stop offset="0" stop-color="#3AAA35"/><stop offset="0.34" stop-color="#009FE3"/>
+    <stop offset="0.67" stop-color="#E6007E"/><stop offset="1" stop-color="#F39200"/>
+  </linearGradient></defs>
+  <text x="72" y="250" font-family="Arial, sans-serif" font-size="24" font-weight="800" letter-spacing="3" fill="#7fb2ff">LA WEB TV DU SPORT EN IMAGE</text>
+  <text x="72" y="392" font-family="Arial, sans-serif" font-size="${size}" font-weight="800" letter-spacing="-3" fill="#ffffff">${esc(upper)}<tspan fill="#009FE3">.TV</tspan></text>
+  <text x="72" y="452" font-family="Arial, sans-serif" font-size="${subSize}" font-weight="600" fill="#ffffff" opacity="0.82">${esc(sub || '')}</text>
+</svg>`;
+  return await sharp(Buffer.from(svg)).jpeg({ quality: 88 }).toBuffer();
+}
+
+// Carte de partage d'une DISCIPLINE (sport) : fond navy teinté de la couleur du sport,
+// motif des barres de marque LSEI, nom + sous-titre à gauche. Sert pour tous les sports filmés.
+export async function renderDisciplineCard(name: string, sub: string, color: string = '#1E7BE0'): Promise<Buffer> {
+  const upper = (name || '').toUpperCase();
+  const size = fitSize(upper, 720, 104);
+  const subSize = fitSize(sub || '', 700, 34, 0.5);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#0A0E1A"/>
+    <stop offset="0.5" stop-color="#0A0E1A"/>
+    <stop offset="1" stop-color="${esc(color)}"/>
+  </linearGradient></defs>
+  <rect width="${W}" height="${H}" fill="#0A0E1A"/>
+  <rect width="${W}" height="${H}" fill="url(#bg)" opacity="0.85"/>
+  <circle cx="1040" cy="150" r="260" fill="${esc(color)}" opacity="0.28"/>
+  <g opacity="0.14" transform="translate(905,150)">
+    <rect x="0"   y="70"  width="42" height="300" fill="#3AAA35"/>
+    <rect x="60"  y="0"   width="42" height="410" fill="#009FE3"/>
+    <rect x="120" y="26"  width="42" height="356" fill="#E6007E"/>
+    <rect x="180" y="100" width="42" height="228" fill="#F39200"/>
+  </g>
+  <rect width="${W}" height="8" fill="${esc(color)}"/>
+  <text x="72" y="250" font-family="Arial, sans-serif" font-size="24" font-weight="800" letter-spacing="3" fill="${esc(color)}">LSEI · LE SPORT EN IMAGE</text>
+  <text x="72" y="368" font-family="Arial, sans-serif" font-size="${size}" font-weight="800" letter-spacing="-2" fill="#ffffff">${esc(upper)}</text>
+  <text x="72" y="430" font-family="Arial, sans-serif" font-size="${subSize}" font-weight="600" fill="#ffffff" opacity="0.82">${esc(sub || '')}</text>
+  <text x="72" y="560" font-family="Arial, sans-serif" font-size="24" font-weight="800" letter-spacing="2" fill="#ffffff">LSEI<tspan fill="${esc(color)}">.TV</tspan></text>
+</svg>`;
+  return await sharp(Buffer.from(svg)).jpeg({ quality: 86 }).toBuffer();
+}
+
 // Carte de partage d'un CLUB de basket : fond navy teinté de la couleur du club,
 // logo sur une pastille blanche à droite, nom + ville + kicker à gauche, marque LSEI.
 export async function renderClubCard(name: string, subtitle: string, city: string, logo: string | null, color: string = '#1E7BE0'): Promise<Buffer> {
