@@ -2443,6 +2443,12 @@ a.nbh-row:hover { background: var(--surface-2); }
   .jfiche .jtab { color: rgba(255,255,255,.62); }
   .jfiche .jtab:hover, .jfiche .jtab:first-child { color: #fff; }
   .jfiche .jtab-last { color: var(--pc-lite); }
+  /* Badge de CATÉGORIE (sur quelle compétition on est) : couleur propre à la compétition (--cc),
+     INDÉPENDANTE de la couleur du maillot (--pc) qui, elle, pilote tout le reste du héros. */
+  .jfiche .jh-cat { display: inline-block; padding: 2px 10px; border-radius: 6px; background: var(--cc, var(--pc)); color: #fff; font-weight: 800; letter-spacing: .05em; }
+  /* Dans la liste des catégories (jh-key), la catégorie courante ressort (couleur inline),
+     les autres sont atténuées. */
+  .jfiche .jh-key .jh-k-dim { opacity: .5; }
   /* retrait du cadre derrière la photo du joueur (vignette .framed) : fond, ombre et coins */
   .jfiche .jh-ph.framed { background: transparent; box-shadow: none; border-radius: 0; }
 

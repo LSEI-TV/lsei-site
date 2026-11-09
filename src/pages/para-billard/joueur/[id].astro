@@ -6,7 +6,7 @@ import HubNav from '../../../components/HubNav.astro';
 import CrossComp from '../../../components/CrossComp.astro';
 import { getCollection } from 'astro:content';
 import { photoOf, fromPov, fmtDate, frRound, playersInText, playerSlugs } from '../../../lib/billardStats';
-import { currentCategoriesEpi } from '../../../lib/crossComp';
+import { categoryTag, currentCategoriesInfo } from '../../../lib/crossComp';
 import { getParaSeasons, getParaPalmares } from '../../../data/billard/seasonsPara';
 import clubLogos from '../../../data/billard/club-logos.json';
 import playerCutouts from '../../../data/billard/player-cutouts.json';
@@ -158,7 +158,9 @@ const showProfil = rankSeries.length >= 2 || !!beteOk || !!clientOk;
 // En-tête « héros » : épithète (statut) + habillage (photo détourée, logo club, couleur du polo).
 const cdfCount = titles.filter((t) => t.kind === 'france').length;
 const seasonChampCount = titles.filter((t) => t.kind === 'saison').length;
-const _catLabel = currentCategoriesEpi(pid).join(' · ') || 'Para-billard fauteuil';
+const _cat = categoryTag('/para-billard');
+const _catsInfo = currentCategoriesInfo(pid, '/para-billard');
+const _catLabel = _catsInfo.length ? _catsInfo.map((c) => c.text).join(' · ') : _cat.epi;
 const _ep: string[] = [];
 if (cdfCount) _ep.push(cdfCount > 1 ? `Champion de France ×${cdfCount}` : 'Champion de France');
 else if (seasonChampCount) _ep.push(seasonChampCount > 1 ? `Champion de saison ×${seasonChampCount}` : 'Champion de saison');
@@ -230,9 +232,9 @@ const playerVideos = playerVideosFor(name, await getReplays({ discipline: 'billa
           </div>
           <div class="jh-txt">
             {clubLogo && <img class="jh-crest" src={clubLogo} alt="Club du joueur" />}
-            <div class="jh-eye">{bySeason.length} saison{bySeason.length > 1 ? "s" : ""} · {_statusTxt}</div>
+            <div class="jh-eye"><span class="jh-cat" style={`--cc:${_cat.color}`}>{_cat.epi}</span> · {bySeason.length} saison{bySeason.length > 1 ? "s" : ""} · {_statusTxt}</div>
             <h1 class="jh-name" style={heroFit}>{heroFirst}<b>{heroLast}</b></h1>
-            <span class="jh-key">{epithet}</span>
+            <span class="jh-key">{_catsInfo.length ? _catsInfo.map((c, i) => (<Fragment>{i > 0 ? ' · ' : ''}<span class={c.current ? undefined : 'jh-k-dim'} style={c.current ? `color:${c.color}` : undefined}>{c.text}</span></Fragment>)) : _cat.epi}</span>
           </div>
         </div>
       </section>
