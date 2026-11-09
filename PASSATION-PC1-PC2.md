@@ -59,8 +59,9 @@
 - **API** : `https://api.cuescore.com/tournament/?id=<id>` (standings + matchs), `…/ranking/?id=<id>` (rang + points officiels). L'id du classement officiel d'une saison est dans le champ `tournoi.rankings` (un par saison). Page org : `cuescore.com/ffb?season=YYYY`.
 - **Saison FFB** = septembre → « saison 2023 » = 2023-2024. Le Blackball FFB sur Cuescore **débute en 2023-2024** (pas d'antériorité), sauf **Prestige Vétéran** qui est **neuf en 2026-2027**.
 - **Import historique** : `scripts/import-category.mjs --cat <junior|veteran|prestige> --out <dir> --audit` (générique ; forfaits 0-0 exclus ; audit = comparaison nb matchs vs Cuescore, viser **0 écart**). Puis `cp results-<cat>-*.json` dans `src/data/billard/`.
-- **Auto-refresh (saison en cours)** : `scripts/import-blackball.mjs`, tableau `COMPETITIONS` (une entrée par catégorie avec `tnRe`, `cdfRe`, `rankingId` courant). rankingId courants 2026-2027 : Masters 88637449, Femmes 88637419, Mixte 88637443, Espoir 88637410, Junior 88637407, **Vétéran 88637422, Prestige 88637437**.
-  - ⚠️ Le `tnRe` Vétéran `-\s*V[ée]t[ée]ran\s*-` exclut « Prestige Vétéran » grâce au tiret devant ; Prestige a son propre `tnRe`.
+- **Auto-refresh (saison en cours)** : `scripts/import-blackball.mjs`, tableau `COMPETITIONS` (une entrée par catégorie avec `tnRe`, `cdfRe`, `rankingId` courant). Couvre **les 9 compétitions**. rankingId courants 2026-2027 : Masters 88637449, Femmes 88637419, Mixte 88637443, Espoir 88637410, Junior 88637407, Vétéran 88637422, Prestige 88637437, **Para fauteuil 88638310, Para malvoyants null** (à renseigner si CHF). Supporte `--only <clé[,clé…]>` pour un run manuel ciblé.
+  - ⚠️ Le `tnRe` Vétéran `-\s*V[ée]t[ée]ran\s*-` exclut « Prestige Vétéran » grâce au tiret devant ; Prestige a son propre `tnRe`. Para fauteuil = `-\s*Para-?Billard\s*-` (nom 2026-2027).
+  - **Para = montage « auto-promotion »** : au 09/11/2026 le circuit Para 2026-2027 n'a encore **aucun résultat** sur Cuescore. Fichiers **graines vides** `results-para-2026-2027.json` / `results-paramv-2026-2027.json` + flag `has2627` dans `seasonsPara`/`seasonsParaMalvoyants` qui calcule `status`/`results` dynamiquement : 2025-2026 reste « current » tant que vide ; la saison 2026-2027 devient vitrine **automatiquement au prochain build** dès le 1er match para validé. (Patron réutilisable pour toute catégorie à démarrage différé.)
 - **Audits réalisés (0 écart)** : Mixte (33 tournois / 5910 matchs), Junior, Vétéran (251+275+370+31 matchs), Prestige (15 matchs).
 - **Photos multi-catégories** : `node scripts/propagate-photos.mjs` (dry-run) puis `--apply` → copie la photo d'un joueur présent dans ≥2 catégories dans les dossiers (catégorie, saison) manquants. Puis `npm run assets`, puis build. Dossiers photos : `public/billard/blackball/<CAT>/<saison>/`.
 
@@ -75,7 +76,8 @@
   - Vétéran `/veteran` (bleu roi #3457D5) : 4 saisons, audit 0 écart, 534 fiches.
   - Prestige Vétéran `/prestige` (or #C79A2E) : **catégorie neuve, 1 seule saison 2026-2027** (`seasonsPrestige.ts` à une entrée).
   - Câblage complet : HubSwitch, HubNav, cartes hub Blackball (**9 compétitions**) + hub Billard, crossComp, cartes OG, auto-refresh (import-blackball + refresh-data.yml), photos propagées (9 + 2).
-- **État git en fin de session** : `main` = `065c1fe`, poussé, déploiement OVH lancé. Aucun travail local non committé (hors fichiers PC2 interdits volontairement untracked).
+- **Auto-refresh Para fauteuil + malvoyants** (commit `fd2f568`) : les 2 Para rejoignent le robot d'import avec montage auto-promotion (voir §4) → **les 9 compétitions** sont couvertes par la maj auto 2×/jour.
+- **État git en fin de session** : `main` = **`fd2f568`** (+ ce document), poussé, déploiement OVH lancé. Aucun travail local non committé (hors fichiers PC2 interdits volontairement untracked).
 
 **Recette pour ajouter une future catégorie** : voir le détail dans la mémoire `billard-nouvelles-categories-todo` (reproduite ci-dessous §7). En bref : `import-category.mjs --audit` → `seasons<Cat>.ts` → `cp -r src/pages/veteran src/pages/<cat>` + sed → câbler (blackball.astro, hub.astro, HubSwitch, HubNav, crossComp DEFS, build-player-assets, ogPlayers, propagate-photos, import-blackball + refresh-data.yml, dossiers photos) → propagate-photos → assets → build.
 
@@ -111,6 +113,6 @@
 ---
 
 ### Pour reprendre sur le PC2
-1. `cd "D:\LSEI - NEW SITE"` (adapter si le chemin diffère sur PC2), `git pull` pour récupérer `065c1fe`.
+1. `cd "D:\LSEI - NEW SITE"` (adapter si le chemin diffère sur PC2), `git pull` pour récupérer le dernier commit.
 2. Lire ce fichier (ou le coller en début de conversation) + respecter le §1.
 3. `npm.cmd install` si besoin, puis `npm.cmd run dev` pour prévisualiser.
