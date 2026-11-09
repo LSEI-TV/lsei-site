@@ -49,7 +49,7 @@ jobs:
       - name: Récupérer les posts YouTube (actualités, page communautaire)
         run: node scripts/fetch-youtube-posts.mjs || echo "Posts YouTube non mis à jour (page indisponible) — contenu précédent conservé."
 
-      - name: Importer les TN Blackball (Master + Femme, auto-découverte Cuescore)
+      - name: Importer les TN Blackball (Master, Femme, Mixte, Espoir, Junior — auto-découverte Cuescore)
         run: node scripts/import-blackball.mjs || echo "Import Blackball non mis à jour (Cuescore indisponible) — résultats précédents conservés."
 
       - name: Rafraîchir la liste complète des vidéos billard de la chaîne
@@ -85,7 +85,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/cache/ src/content/social/ src/data/billard/results-2026-2027.json src/data/billard/results-femmes-2026-2027.json src/data/billard/channel-billard.json
+          git add src/data/cache/ src/content/social/ src/data/billard/results-2026-2027.json src/data/billard/results-femmes-2026-2027.json src/data/billard/results-mixte-2026-2027.json src/data/billard/results-espoir-2026-2027.json src/data/billard/results-junior-2026-2027.json src/data/billard/channel-billard.json
           if git diff --staged --quiet; then
             echo "Rien de nouveau, aucun commit."
           else

@@ -12,6 +12,7 @@ import { getSeasons, type Season } from '../data/billard/seasons';
 import { getFemmesSeasons } from '../data/billard/seasonsFemmes';
 import { getMixteSeasons } from '../data/billard/seasonsMixte';
 import { getEspoirSeasons } from '../data/billard/seasonsEspoir';
+import { getJuniorSeasons } from '../data/billard/seasonsJunior';
 import { getParaSeasons } from '../data/billard/seasonsPara';
 import { getParaMvSeasons } from '../data/billard/seasonsParaMalvoyants';
 import { playerSlugs } from './billardStats';
@@ -21,6 +22,7 @@ const DEFS: { root: string; label: string; seasons: () => Season[] }[] = [
   { root: '/femmes', label: 'Femmes', seasons: getFemmesSeasons },
   { root: '/mixte', label: 'Mixte National', seasons: getMixteSeasons },
   { root: '/espoir', label: 'Espoir', seasons: getEspoirSeasons },
+  { root: '/junior', label: 'Junior', seasons: getJuniorSeasons },
   { root: '/para-billard', label: 'Para-billard fauteuil', seasons: getParaSeasons },
   { root: '/para-billard-malvoyants', label: 'Para-billard malvoyants', seasons: getParaMvSeasons },
 ];

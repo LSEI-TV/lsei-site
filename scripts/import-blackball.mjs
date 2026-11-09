@@ -73,6 +73,21 @@ const COMPETITIONS = [
     // officiel Cuescore (rankingId) ; ce barème ne sert qu'à un éventuel joueur absent du classement.
     PTS: { 'Last thirtytwo': 60, 'Last sixteen': 90, 'Quarter final': 130, 'Semi final': 180, 'Final': 240 }, CHAMP: 320,
   },
+  {
+    key: 'espoir',
+    tnRe: /-\s*Espoir\s*-/i,
+    cdfRe: /Championnat\s+de\s+France\s*-\s*Espoir\s*-/i,
+    out: 'results-espoir-2026-2027.json', competition: 'Espoir', rankingId: 88637410, hasInvites: false,
+    // Points OFFICIELS via rankingId ; barème de secours seulement.
+    PTS: { 'Round 1': 60, 'Last sixteen': 80, 'Quarter final': 104, 'Semi final': 132 }, CHAMP: 164,
+  },
+  {
+    key: 'junior',
+    tnRe: /-\s*Junior\s*-/i,
+    cdfRe: /Championnat\s+de\s+France\s*-\s*Junior\s*-/i,
+    out: 'results-junior-2026-2027.json', competition: 'Junior', rankingId: 88637407, hasInvites: false,
+    PTS: { 'Round 1': 60, 'Last sixteen': 80, 'Quarter final': 104, 'Semi final': 132 }, CHAMP: 164,
+  },
 ];
 
 // Liste des tournois de l'organisation FF Billard (id → nom).
@@ -128,7 +143,7 @@ async function importCompetition(cfg, allTournaments) {
     const api = await fetch(`https://api.cuescore.com/tournament/?id=${t.id}`).then((r) => r.json());
     const date = (api.starttime || '').slice(0, 10);
     if (date && (date < SEASON_START || date > SEASON_END)) continue;
-    const finished = (api.matches || []).filter((m) => m.matchstatusCode === 2 && !isWalkOver(m.playerA) && !isWalkOver(m.playerB));
+    const finished = (api.matches || []).filter((m) => m.matchstatusCode === 2 && !isWalkOver(m.playerA) && !isWalkOver(m.playerB) && !((m.scoreA ?? 0) === 0 && (m.scoreB ?? 0) === 0));
     if (!finished.length) continue;
 
     const name = api.name || t.name;
