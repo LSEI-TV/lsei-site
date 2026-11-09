@@ -4,9 +4,9 @@
 
 | | |
 |---|---|
-| **Dernière mise à jour** | 2026-11-09 ~20h30 (heure de Paris) |
+| **Dernière mise à jour** | 2026-11-09 ~20h45 (heure de Paris) |
 | **Machine** | PC1 |
-| **Dernier commit déployé** | `eae9313` sur `main` (+ `fd2f568`, `065c1fe`, `604e21c`, `c6c510f`) |
+| **Dernier commit déployé** | `b5be2a6` sur `main` + ce push (bootstrap mémoire dans CLAUDE.md) |
 | **État déploiement** | poussé sur `main` → GitHub Actions « Build & Deploy OVH » en cours/terminé |
 | **Build local** | OK (5576 pages) |
 
@@ -15,6 +15,7 @@
 2. **Catégorie Prestige Vétéran** (`/prestige`, or `#C79A2E`) créée : catégorie **neuve, 1 seule saison 2026-2027** (16 joueurs, 15 matchs, audit OK), leader François Debois. *(commit `065c1fe`)*
 3. **Auto-refresh étendu aux 2 Para** (fauteuil + malvoyants) avec montage « auto-promotion » : la saison 2026-2027 Para apparaîtra d'elle-même dès le 1er résultat para validé sur Cuescore (aujourd'hui 0 résultat → reste sur 2025-2026). *(commit `fd2f568`)*
 4. **Documents de suivi** : `PASSATION-PC1-PC2.md` (passation de fond), `CLAUDE.md` (règles + consigne), et ce fichier d'état vivant.
+5. **Bootstrap mémoire** ajouté à `CLAUDE.md` : au 1er démarrage sur une machine sans la mémoire LSEI (ex. PC2), Claude lit la passation + cet état et recrée ses fiches mémoire internes → chaque PC finit avec la même mémoire « riche ».
 
 → Le hub Blackball compte désormais **9 compétitions** ; le hub Billard affiche « 9 compétitions ».
 
