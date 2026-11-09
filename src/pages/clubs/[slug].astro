@@ -68,7 +68,7 @@ const nextOppLogo = nextOpp ? logoOf(nextOpp.slug) : null;
 const daysToNext = nextMatch ? Math.round((Date.parse(nextMatch.date + 'T12:00:00Z') - Date.parse(todayISO + 'T12:00:00Z')) / 86400000) : 0;
 const nextJx = daysToNext > 1 ? `J-${daysToNext}` : daysToNext === 1 ? 'Demain' : "Aujourd'hui";
 ---
-<Base chrome="bare" title={`${club.name} — Basket ${NM1_LABEL} (NM1)`} description={fiche?.blurb ?? `${club.name} (${club.city}) — ${NM1_LABEL} ${NM1_POOL} ${SEASON} : effectif, classement et vidéos du club, filmés par LSEI.`} active="disciplines" preloadImage={heroImg ?? undefined}>
+<Base chrome="bare" title={`${club.name} — Basket ${NM1_LABEL} (NM1)`} description={fiche?.blurb ?? `${club.name} (${club.city}) — ${NM1_LABEL} ${NM1_POOL} ${SEASON} : effectif, classement et vidéos du club, filmés par LSEI.`} active="disciplines" image={`/og/club/${slug}.jpg`} preloadImage={heroImg ?? undefined}>
   <div class="cs" style={`--cc:${cc};--cc2:${club.color2 ?? cc}`} id="top">
 
     <!-- EN-TÊTE CLUB (chrome propre) -->

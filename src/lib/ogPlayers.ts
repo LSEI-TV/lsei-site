@@ -3,6 +3,9 @@
 // image de partage (/og/joueur/[id].jpg). Évite toute divergence entre les deux.
 import { getSeasons } from '../data/billard/seasons';
 import { getFemmesSeasons } from '../data/billard/seasonsFemmes';
+import { getMixteSeasons } from '../data/billard/seasonsMixte';
+import { getEspoirSeasons } from '../data/billard/seasonsEspoir';
+import { getJuniorSeasons } from '../data/billard/seasonsJunior';
 import { getParaSeasons } from '../data/billard/seasonsPara';
 import { getParaMvSeasons } from '../data/billard/seasonsParaMalvoyants';
 import { playerSlugs, photoOf } from './billardStats';
@@ -49,8 +52,8 @@ export function playerPaths(): { params: { id: string }; props: { pid: number; n
     }
   }
 
-  // --- Femmes, Para-billard, Para-malvoyants : mêmes slugs que leurs fiches. ---
-  for (const getCat of [getFemmesSeasons, getParaSeasons, getParaMvSeasons]) {
+  // --- Femmes, Mixte, Espoir, Junior, Para-billard, Para-malvoyants : mêmes slugs que leurs fiches. ---
+  for (const getCat of [getFemmesSeasons, getMixteSeasons, getEspoirSeasons, getJuniorSeasons, getParaSeasons, getParaMvSeasons]) {
     for (const { id, slug } of playerSlugs(getCat()).entries) { add(slug, id); add(String(id), id); }
   }
 
@@ -61,6 +64,9 @@ export function playerPaths(): { params: { id: string }; props: { pid: number; n
 const CAT_LABEL: [() => any[], string][] = [
   [getSeasons, 'Blackball Master'],
   [getFemmesSeasons, 'Blackball Femmes'],
+  [getMixteSeasons, 'Mixte National'],
+  [getEspoirSeasons, 'Espoir'],
+  [getJuniorSeasons, 'Junior'],
   [getParaSeasons, 'Para-billard fauteuil'],
   [getParaMvSeasons, 'Para-billard malvoyants'],
 ];
