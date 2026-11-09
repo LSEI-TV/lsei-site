@@ -8,6 +8,8 @@ import { FEMMES_LANDING_SEASON } from '../data/billard/seasonsFemmes';
 import { MIXTE_LANDING_SEASON } from '../data/billard/seasonsMixte';
 import { ESPOIR_LANDING_SEASON } from '../data/billard/seasonsEspoir';
 import { JUNIOR_LANDING_SEASON } from '../data/billard/seasonsJunior';
+import { VETERAN_LANDING_SEASON } from '../data/billard/seasonsVeteran';
+import { PRESTIGE_LANDING_SEASON } from '../data/billard/seasonsPrestige';
 import { PARA_LANDING_SEASON } from '../data/billard/seasonsPara';
 import { PARAMV_LANDING_SEASON } from '../data/billard/seasonsParaMalvoyants';
 
@@ -20,6 +22,8 @@ const LANDING: Record<string, string> = {
   '/mixte': MIXTE_LANDING_SEASON,
   '/espoir': ESPOIR_LANDING_SEASON,
   '/junior': JUNIOR_LANDING_SEASON,
+  '/veteran': VETERAN_LANDING_SEASON,
+  '/prestige': PRESTIGE_LANDING_SEASON,
   '/para-billard': PARA_LANDING_SEASON,
   '/para-billard-malvoyants': PARAMV_LANDING_SEASON,
 };
@@ -29,6 +33,8 @@ const COMPS = [
   { root: '/mixte', label: 'Mixte' },
   { root: '/espoir', label: 'Espoir' },
   { root: '/junior', label: 'Junior' },
+  { root: '/veteran', label: 'Vétéran' },
+  { root: '/prestige', label: 'Prestige' },
   { root: '/para-billard', label: 'Para Fauteuil' },
   { root: '/para-billard-malvoyants', label: 'Para Malvoyants' },
 ];

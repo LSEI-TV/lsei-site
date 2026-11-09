@@ -88,6 +88,22 @@ const COMPETITIONS = [
     out: 'results-junior-2026-2027.json', competition: 'Junior', rankingId: 88637407, hasInvites: false,
     PTS: { 'Round 1': 60, 'Last sixteen': 80, 'Quarter final': 104, 'Semi final': 132 }, CHAMP: 164,
   },
+  {
+    // « Vétéran » SANS « Prestige » : le tiret devant « Vétéran » exclut « - Prestige Vétéran - ».
+    key: 'veteran',
+    tnRe: /-\s*V[ée]t[ée]ran\s*-/i,
+    cdfRe: /Championnat\s+de\s+France\s*-\s*V[ée]t[ée]ran\s*-/i,
+    out: 'results-veteran-2026-2027.json', competition: 'Vétéran', rankingId: 88637422, hasInvites: false,
+    PTS: { 'Round 1': 60, 'Last sixteen': 80, 'Quarter final': 104, 'Semi final': 132 }, CHAMP: 164,
+  },
+  {
+    // Prestige Vétéran (catégorie d'élite créée en 2026-2027) : nom « - Prestige Vétéran - ».
+    key: 'prestige',
+    tnRe: /-\s*Prestige\s+V[ée]t[ée]ran\s*-/i,
+    cdfRe: /Championnat\s+de\s+France\s*-\s*Prestige\s+V[ée]t[ée]ran\s*-/i,
+    out: 'results-prestige-2026-2027.json', competition: 'Prestige Vétéran', rankingId: 88637437, hasInvites: false,
+    PTS: { 'Round 1': 60, 'Last sixteen': 80, 'Quarter final': 104, 'Semi final': 132 }, CHAMP: 164,
+  },
 ];
 
 // Liste des tournois de l'organisation FF Billard (id → nom).

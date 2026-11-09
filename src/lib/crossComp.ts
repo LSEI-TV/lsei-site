@@ -13,6 +13,8 @@ import { getFemmesSeasons } from '../data/billard/seasonsFemmes';
 import { getMixteSeasons } from '../data/billard/seasonsMixte';
 import { getEspoirSeasons } from '../data/billard/seasonsEspoir';
 import { getJuniorSeasons } from '../data/billard/seasonsJunior';
+import { getVeteranSeasons } from '../data/billard/seasonsVeteran';
+import { getPrestigeSeasons } from '../data/billard/seasonsPrestige';
 import { getParaSeasons } from '../data/billard/seasonsPara';
 import { getParaMvSeasons } from '../data/billard/seasonsParaMalvoyants';
 import { playerSlugs } from './billardStats';
@@ -26,6 +28,8 @@ const DEFS: { root: string; label: string; epi: string; color: string; seasons: 
   { root: '/mixte', label: 'Mixte National', epi: 'Mixte National', color: '#D6397E', seasons: getMixteSeasons },
   { root: '/espoir', label: 'Espoir', epi: 'Espoir', color: '#2E9E5B', seasons: getEspoirSeasons },
   { root: '/junior', label: 'Junior', epi: 'Junior', color: '#0EA5C4', seasons: getJuniorSeasons },
+  { root: '/veteran', label: 'Vétéran', epi: 'Vétéran', color: '#3457D5', seasons: getVeteranSeasons },
+  { root: '/prestige', label: 'Prestige Vétéran', epi: 'Prestige Vétéran', color: '#C79A2E', seasons: getPrestigeSeasons },
   { root: '/para-billard', label: 'Para-billard fauteuil', epi: 'Para-billard fauteuil', color: '#14A38B', seasons: getParaSeasons },
   { root: '/para-billard-malvoyants', label: 'Para-billard malvoyants', epi: 'Para-billard malvoyants', color: '#E0563B', seasons: getParaMvSeasons },
 ];

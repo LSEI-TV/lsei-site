@@ -12,6 +12,8 @@ import { femmesShowcaseSeason, getFemmesPalmares, getFemmesSeasons } from '../..
 import { mixteShowcaseSeason, getMixtePalmares, getMixteSeasons } from '../../data/billard/seasonsMixte';
 import { espoirShowcaseSeason, getEspoirPalmares, getEspoirSeasons } from '../../data/billard/seasonsEspoir';
 import { juniorShowcaseSeason, getJuniorPalmares, getJuniorSeasons } from '../../data/billard/seasonsJunior';
+import { veteranShowcaseSeason, getVeteranPalmares, getVeteranSeasons } from '../../data/billard/seasonsVeteran';
+import { prestigeShowcaseSeason, getPrestigePalmares, getPrestigeSeasons } from '../../data/billard/seasonsPrestige';
 import { paraShowcaseSeason, getParaPalmares, getParaSeasons } from '../../data/billard/seasonsPara';
 import { paraMvShowcaseSeason, getParaMvPalmares, getParaMvSeasons } from '../../data/billard/seasonsParaMalvoyants';
 
@@ -34,6 +36,8 @@ const f = femmesShowcaseSeason();
 const mx = mixteShowcaseSeason();
 const es = espoirShowcaseSeason();
 const ju = juniorShowcaseSeason();
+const vt = veteranShowcaseSeason();
+const pr = prestigeShowcaseSeason();
 const pa = paraShowcaseSeason();
 const pamv = paraMvShowcaseSeason();
 const mPalm = getPalmares().find((p) => p.slug === m.slug);
@@ -41,6 +45,8 @@ const fPalm = getFemmesPalmares().find((p) => p.slug === f.slug);
 const mxPalm = getMixtePalmares().find((p) => p.slug === mx.slug);
 const esPalm = getEspoirPalmares().find((p) => p.slug === es.slug);
 const juPalm = getJuniorPalmares().find((p) => p.slug === ju.slug);
+const vtPalm = getVeteranPalmares().find((p) => p.slug === vt.slug);
+const prPalm = getPrestigePalmares().find((p) => p.slug === pr.slug);
 const paPalm = getParaPalmares().find((p) => p.slug === pa.slug);
 const pamvPalm = getParaMvPalmares().find((p) => p.slug === pamv.slug);
 
@@ -106,6 +112,30 @@ const comps = [
     palm: juPalm,
   },
   {
+    href: `/veteran`,
+    ficheBase: '/veteran/joueur/', slugs: playerSlugs(getVeteranSeasons()),
+    accent: '#3457D5', accentInk: '#ffffff', // bleu roi (Vétéran) — les +40 ans, l'expérience
+    eyebrow: 'Compétition',
+    title: 'Vétéran',
+    noun: 'joueurs',
+    desc: 'La catégorie Vétéran de la FFB : le circuit national des +40 ans, des Tournois Nationaux au Championnat de France. Beaucoup jouent aussi en Mixte National.',
+    R: vt.results!, season: vt.label, slug: vt.slug,
+    champSeasonLabel: 'Champion de saison', champFranceLabel: 'Champion de France',
+    palm: vtPalm,
+  },
+  {
+    href: `/prestige`,
+    ficheBase: '/prestige/joueur/', slugs: playerSlugs(getPrestigeSeasons()),
+    accent: '#C79A2E', accentInk: '#2a2205', // or (Prestige Vétéran) — l'élite des vétérans
+    eyebrow: 'Compétition',
+    title: 'Prestige Vétéran',
+    noun: 'joueurs',
+    desc: 'La catégorie Prestige Vétéran de la FFB : le circuit d\'élite des meilleurs vétérans, tout nouveau en 2026-2027.',
+    R: pr.results!, season: pr.label, slug: pr.slug,
+    champSeasonLabel: 'Champion de saison', champFranceLabel: 'Champion de France',
+    palm: prPalm,
+  },
+  {
     href: `/para-billard`,
     ficheBase: '/para-billard/joueur/', slugs: playerSlugs(getParaSeasons()),
     accent: '#14A38B', accentInk: '#ffffff', // turquoise (Para-billard fauteuil)
@@ -160,7 +190,7 @@ const arbitres = (arbitresData as { slug: string; file: string; seasons: string[
   .sort((a, b) => Number(b.active) - Number(a.active) || a.name.localeCompare(b.name, 'fr'));
 const nbActive = arbitres.filter((a) => a.active).length;
 ---
-<Base title="Billard — Le hub Blackball" description="Le hub Blackball de LSEI : choisissez la compétition Masters (hommes), Femmes, Mixte National, Espoir, Junior (jeunes), Para-billard fauteuil ou Para-billard malvoyants." preloadImage="/billard/blackball-hero.webp" active="disciplines" image="/og/discipline/billard.jpg">
+<Base title="Billard — Le hub Blackball" description="Le hub Blackball de LSEI : choisissez la compétition Masters (hommes), Femmes, Mixte National, Espoir, Junior, Vétéran, Prestige Vétéran, Para-billard fauteuil ou Para-billard malvoyants." preloadImage="/billard/blackball-hero.webp" active="disciplines" image="/og/discipline/billard.jpg">
   <HubSwitch />
 
   <section class="bb-hero">

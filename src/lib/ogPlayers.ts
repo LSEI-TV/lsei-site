@@ -6,6 +6,8 @@ import { getFemmesSeasons } from '../data/billard/seasonsFemmes';
 import { getMixteSeasons } from '../data/billard/seasonsMixte';
 import { getEspoirSeasons } from '../data/billard/seasonsEspoir';
 import { getJuniorSeasons } from '../data/billard/seasonsJunior';
+import { getVeteranSeasons } from '../data/billard/seasonsVeteran';
+import { getPrestigeSeasons } from '../data/billard/seasonsPrestige';
 import { getParaSeasons } from '../data/billard/seasonsPara';
 import { getParaMvSeasons } from '../data/billard/seasonsParaMalvoyants';
 import { playerSlugs, photoOf } from './billardStats';
@@ -53,7 +55,7 @@ export function playerPaths(): { params: { id: string }; props: { pid: number; n
   }
 
   // --- Femmes, Mixte, Espoir, Junior, Para-billard, Para-malvoyants : mêmes slugs que leurs fiches. ---
-  for (const getCat of [getFemmesSeasons, getMixteSeasons, getEspoirSeasons, getJuniorSeasons, getParaSeasons, getParaMvSeasons]) {
+  for (const getCat of [getFemmesSeasons, getMixteSeasons, getEspoirSeasons, getJuniorSeasons, getVeteranSeasons, getPrestigeSeasons, getParaSeasons, getParaMvSeasons]) {
     for (const { id, slug } of playerSlugs(getCat()).entries) { add(slug, id); add(String(id), id); }
   }
 
@@ -67,6 +69,8 @@ const CAT_LABEL: [() => any[], string][] = [
   [getMixteSeasons, 'Mixte National'],
   [getEspoirSeasons, 'Espoir'],
   [getJuniorSeasons, 'Junior'],
+  [getVeteranSeasons, 'Vétéran'],
+  [getPrestigeSeasons, 'Prestige Vétéran'],
   [getParaSeasons, 'Para-billard fauteuil'],
   [getParaMvSeasons, 'Para-billard malvoyants'],
 ];

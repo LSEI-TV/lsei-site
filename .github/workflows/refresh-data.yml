@@ -85,7 +85,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add src/data/cache/ src/content/social/ src/data/billard/results-2026-2027.json src/data/billard/results-femmes-2026-2027.json src/data/billard/results-mixte-2026-2027.json src/data/billard/results-espoir-2026-2027.json src/data/billard/results-junior-2026-2027.json src/data/billard/channel-billard.json
+          git add src/data/cache/ src/content/social/ src/data/billard/results-2026-2027.json src/data/billard/results-femmes-2026-2027.json src/data/billard/results-mixte-2026-2027.json src/data/billard/results-espoir-2026-2027.json src/data/billard/results-junior-2026-2027.json src/data/billard/results-veteran-2026-2027.json src/data/billard/results-prestige-2026-2027.json src/data/billard/channel-billard.json
           if git diff --staged --quiet; then
             echo "Rien de nouveau, aucun commit."
           else

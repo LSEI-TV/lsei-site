@@ -44,7 +44,7 @@ const IMG = /\.(png|webp|jpe?g)$/i;
 
 // --- Index des headshots : public/billard/blackball/<CAT>/<saison>/<fichier>. ---
 const shots = [];
-for (const cat of ['MASTERS', 'FEMMES', 'MIXTE', 'PARA-BILLARD', 'ESPOIR', 'JUNIOR']) {
+for (const cat of ['MASTERS', 'FEMMES', 'MIXTE', 'PARA-BILLARD', 'ESPOIR', 'JUNIOR', 'VETERAN', 'PRESTIGE']) {
   const base = join(HS, cat);
   if (!existsSync(base)) continue;
   for (const season of readdirSync(base).sort()) {
@@ -96,6 +96,8 @@ const CATROSTER = {
   'PARA-BILLARD': [/^results-para-/, /^results-paramv-/],
   ESPOIR: [/^results-espoir-/],
   JUNIOR: [/^results-junior-/],
+  VETERAN: [/^results-veteran-/],
+  PRESTIGE: [/^results-prestige-/],
 };
 const usedSlugs = new Set(Object.values(cutouts));
 let okExtra = 0; const ambig = [];

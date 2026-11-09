@@ -33,6 +33,8 @@ const CATS = {
   MIXTE: [/^results-mixte-/],
   ESPOIR: [/^results-espoir-/],
   JUNIOR: [/^results-junior-/],
+  VETERAN: [/^results-veteran-/],
+  PRESTIGE: [/^results-prestige-/],
   'PARA-BILLARD': [/^results-para-\d/, /^results-paramv-/],
 };
 
