@@ -6,11 +6,15 @@ import { join } from 'node:path';
 
 const W = 1200, H = 630;
 const esc = (s: string) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+// Taille de police qui garantit que `text` tient dans `maxWidth` (estimation largeur de glyphe
+// = factor × taille ; factor plus élevé si lettres espacées). Évite tout débordement/coupe.
+const fitSize = (text: string, maxWidth: number, maxSize: number, factor = 0.62) =>
+  Math.max(18, Math.min(maxSize, Math.floor(maxWidth / Math.max(1, (text || '').length * factor))));
 
 export async function renderPlayerCard(name: string, photo: string | null, subtitle: string = 'Blackball Master · Fiche carrière'): Promise<Buffer> {
   const upper = (name || '').toUpperCase();
-  // Taille auto pour que les noms longs tiennent sur une ligne.
-  const size = upper.length > 22 ? 54 : upper.length > 16 ? 66 : 82;
+  // Taille auto pour que les noms longs tiennent (le nom peut recouvrir la photo atténuée).
+  const size = fitSize(upper, 760, 82);
 
   let photoTag = '';
   if (photo) {
@@ -42,7 +46,11 @@ export async function renderPlayerCard(name: string, photo: string | null, subti
 // logo sur une pastille blanche à droite, nom + ville + kicker à gauche, marque LSEI.
 export async function renderClubCard(name: string, subtitle: string, city: string, logo: string | null, color: string = '#1E7BE0'): Promise<Buffer> {
   const upper = (name || '').toUpperCase();
-  const size = upper.length > 20 ? 58 : upper.length > 14 ? 72 : 88;
+  const subUpper = (subtitle || '').toUpperCase();
+  // Tailles auto : tout tient dans la colonne de gauche (avant la pastille du logo à x=675).
+  const size = fitSize(upper, 560, 88);
+  const subSize = fitSize(subUpper, 560, 25, 0.78);
+  const citySize = fitSize(city, 560, 27);
 
   let logoTag = '';
   if (logo) {
@@ -66,9 +74,9 @@ export async function renderClubCard(name: string, subtitle: string, city: strin
   <rect x="675" y="135" width="360" height="360" rx="40" fill="#ffffff"/>
   ${logoTag}
   <rect x="72" y="238" width="56" height="6" rx="3" fill="#ffffff"/>
-  <text x="72" y="300" font-family="Arial, sans-serif" font-size="25" font-weight="800" letter-spacing="2" fill="#ffffff" opacity="0.85">${esc((subtitle || '').toUpperCase())}</text>
+  <text x="72" y="300" font-family="Arial, sans-serif" font-size="${subSize}" font-weight="800" letter-spacing="1" fill="#ffffff" opacity="0.85">${esc(subUpper)}</text>
   <text x="72" y="372" font-family="Arial, sans-serif" font-size="${size}" font-weight="800" letter-spacing="-1" fill="#ffffff">${esc(upper)}</text>
-  <text x="72" y="420" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#ffffff" opacity="0.8">${esc(city)}</text>
+  <text x="72" y="420" font-family="Arial, sans-serif" font-size="${citySize}" font-weight="700" fill="#ffffff" opacity="0.8">${esc(city)}</text>
   <text x="72" y="560" font-family="Arial, sans-serif" font-size="24" font-weight="800" letter-spacing="2" fill="#ffffff">LSEI<tspan opacity="0.7">.TV</tspan></text>
 </svg>`;
 
