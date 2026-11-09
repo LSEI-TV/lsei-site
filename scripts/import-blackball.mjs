@@ -18,6 +18,9 @@ import { dirname, join } from 'node:path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA = join(__dirname, '..', 'src', 'data', 'billard');
 const DRY = process.argv.includes('--dry');
+// --only <clé[,clé…]> : ne traiter que ces compétitions (ex. --only para,paramv). Vide = toutes.
+const _onlyIdx = process.argv.indexOf('--only');
+const ONLY = _onlyIdx >= 0 ? (process.argv[_onlyIdx + 1] || '').split(',').filter(Boolean) : [];
 
 // Saison en cours (mettre à jour une fois par an à la bascule de saison).
 const SEASON = '2026/2027';
@@ -102,6 +105,24 @@ const COMPETITIONS = [
     tnRe: /-\s*Prestige\s+V[ée]t[ée]ran\s*-/i,
     cdfRe: /Championnat\s+de\s+France\s*-\s*Prestige\s+V[ée]t[ée]ran\s*-/i,
     out: 'results-prestige-2026-2027.json', competition: 'Prestige Vétéran', rankingId: 88637437, hasInvites: false,
+    PTS: { 'Round 1': 60, 'Last sixteen': 80, 'Quarter final': 104, 'Semi final': 132 }, CHAMP: 164,
+  },
+  {
+    // Para-billard FAUTEUIL : le circuit 2026-2027 est nommé « - Para-Billard - » sur Cuescore
+    // (c'était « Handi Billard » avant). Le fichier n'est (ré)écrit que quand des matchs sont joués.
+    key: 'para',
+    tnRe: /-\s*Para-?Billard\s*-/i,
+    cdfRe: /Championnat\s+de\s+France\s*-\s*Para-?billard\s+fauteuil/i,
+    out: 'results-para-2026-2027.json', competition: 'Blackball Para-billard fauteuil', rankingId: 88638310, hasInvites: false,
+    PTS: { 'Round 1': 60, 'Last sixteen': 80, 'Quarter final': 104, 'Semi final': 132 }, CHAMP: 164,
+  },
+  {
+    // Para-billard MALVOYANTS : catégorie à événement unique (CHF), pas de circuit TN. Prêt à capter
+    // un éventuel CHF 2026-2027 (rankingId à renseigner le cas échéant). Sinon : rien à importer.
+    key: 'paramv',
+    tnRe: /-\s*Para-?billard\s+malvoyants\s*-/i,
+    cdfRe: /Championnat\s+de\s+France\s*-\s*Para-?billard\s+malvoyants/i,
+    out: 'results-paramv-2026-2027.json', competition: 'Blackball Para-billard malvoyants', rankingId: null, hasInvites: false,
     PTS: { 'Round 1': 60, 'Last sixteen': 80, 'Quarter final': 104, 'Semi final': 132 }, CHAMP: 164,
   },
 ];
@@ -258,4 +279,7 @@ async function importCompetition(cfg, allTournaments) {
 
 const all = await ffbTournaments();
 console.log(`Organisation FFB : ${all.length} tournois listés.`);
-for (const cfg of COMPETITIONS) await importCompetition(cfg, all);
+for (const cfg of COMPETITIONS) {
+  if (ONLY.length && !ONLY.includes(cfg.key)) continue;
+  await importCompetition(cfg, all);
+}

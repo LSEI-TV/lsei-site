@@ -5,6 +5,7 @@
 //  Aucun circuit de Tournois Nationaux (contrairement aux Masters/Femmes/Fauteuil).
 // ============================================================
 import { calFrom, palmaresOf, type Season, type ResultsData } from './seasons';
+import rmv2627 from './results-paramv-2026-2027.json';
 import rmv2526 from './results-paramv-2025-2026.json';
 
 export const COMPETITION_PARAMV = 'Blackball Para-billard malvoyants';
@@ -12,8 +13,13 @@ export const COMPETITION_PARAMV = 'Blackball Para-billard malvoyants';
 // La 1re édition (2025/2026) EST le Championnat de France officiel — pas une promotion.
 export const PARAMV_CDF_FROM_SEASON = '2025-2026';
 
+// Catégorie à événement unique : 2026-2027 n'apparaît QUE si l'auto-refresh (import-blackball) y a
+// déposé un CHF joué. Sinon, seule 2025-2026 existe → promotion AUTOMATIQUE au prochain build.
+const has2627 = ((rmv2627 as ResultsData).tournaments?.length ?? 0) > 0;
+
 export const paraMvSeasons: Season[] = [
-  { slug: '2025-2026', label: '2025 / 2026', short: '25/26', status: 'current', competition: COMPETITION_PARAMV, calendar: calFrom(rmv2526 as ResultsData), results: rmv2526 as ResultsData },
+  ...(has2627 ? [{ slug: '2026-2027', label: '2026 / 2027', short: '26/27', status: 'current' as const, competition: COMPETITION_PARAMV, calendar: calFrom(rmv2627 as ResultsData), results: rmv2627 as ResultsData }] : []),
+  { slug: '2025-2026', label: '2025 / 2026', short: '25/26', status: has2627 ? 'past' : 'current', competition: COMPETITION_PARAMV, calendar: calFrom(rmv2526 as ResultsData), results: rmv2526 as ResultsData },
 ];
 
 export const PARAMV_DEFAULT_SEASON = '2025-2026';          // dernière saison avec données (réf. stats)

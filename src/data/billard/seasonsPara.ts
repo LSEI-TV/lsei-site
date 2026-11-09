@@ -3,6 +3,7 @@
 //  Même structure que Masters/Femmes — réutilise calFrom/palmaresOf.
 // ============================================================
 import { calFrom, palmaresOf, cal2627, type Season, type ResultsData, type SeasonEvent } from './seasons';
+import rp2627 from './results-para-2026-2027.json';
 import rp2526 from './results-para-2025-2026.json';
 import rp2425 from './results-para-2024-2025.json';
 import rp2324 from './results-para-2023-2024.json';
@@ -26,9 +27,14 @@ function paraCal(results: ResultsData, slug: string): SeasonEvent[] {
   );
 }
 
+// La saison 2026-2027 n'est « active » (affichée, vitrine, classement) que lorsque l'auto-refresh
+// (import-blackball) y a déposé des matchs joués. Tant qu'elle est vide, 2025-2026 reste la saison
+// en cours → promotion AUTOMATIQUE au prochain build dès le 1er résultat para validé sur Cuescore.
+const has2627 = ((rp2627 as ResultsData).tournaments?.length ?? 0) > 0;
+
 export const paraSeasons: Season[] = [
-  { slug: '2026-2027', label: '2026 / 2027', short: '26/27', status: 'upcoming', competition: COMPETITION_PARA, calendar: cal2627 },
-  { slug: '2025-2026', label: '2025 / 2026', short: '25/26', status: 'current', competition: COMPETITION_PARA, calendar: paraCal(rp2526 as ResultsData, '2025-2026'), results: rp2526 as ResultsData },
+  { slug: '2026-2027', label: '2026 / 2027', short: '26/27', status: has2627 ? 'current' : 'upcoming', competition: COMPETITION_PARA, calendar: has2627 ? paraCal(rp2627 as ResultsData, '2026-2027') : cal2627, ...(has2627 ? { results: rp2627 as ResultsData } : {}) },
+  { slug: '2025-2026', label: '2025 / 2026', short: '25/26', status: has2627 ? 'past' : 'current', competition: COMPETITION_PARA, calendar: paraCal(rp2526 as ResultsData, '2025-2026'), results: rp2526 as ResultsData },
   { slug: '2024-2025', label: '2024 / 2025', short: '24/25', status: 'past', competition: COMPETITION_PARA, calendar: paraCal(rp2425 as ResultsData, '2024-2025'), results: rp2425 as ResultsData },
   { slug: '2023-2024', label: '2023 / 2024', short: '23/24', status: 'past', competition: COMPETITION_PARA, calendar: paraCal(rp2324 as ResultsData, '2023-2024'), results: rp2324 as ResultsData },
 ];
