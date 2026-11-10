@@ -1,0 +1,70 @@
+---
+// Résultats d'un tournoi NOVA (nova.lsei.tv) affichés DANS la page : scores en direct,
+// classement, tableau final, planches. C'est la vue publique de NOVA en « mode intégré »
+// (live.html?embed=1), qui se met à jour toute seule toutes les 10 secondes.
+//
+// Utilisation : <NovaLive slug="tournoi-des-champions-2026" />
+//   slug  = la fin de l'adresse de la vue publique NOVA (live.html?t=<slug>)
+//   title = titre du bloc (par défaut « Résultats en direct »)
+//   live  = point rouge clignotant « en direct » (false pour un tournoi terminé / une archive)
+//   accent = couleur de l'édition (ex. '#1F4E9C') : NOVA prend l'habillage lsei.tv à cette couleur
+//
+// Le cadre prend tout seul la hauteur du contenu (NOVA lui envoie sa hauteur) : pas de double
+// barre de défilement. NOVA n'accepte d'être affiché que dans lsei.tv (et le site en test sur
+// l'ordinateur, localhost:4321). Aucun cookie, aucune donnée personnelle : le compteur de
+// spectateurs de NOVA est anonyme.
+// Pour tester avec NOVA lancé sur l'ordinateur : PUBLIC_NOVA_URL=http://localhost:8090 npm run dev
+interface Props {
+  slug: string;
+  title?: string;
+  live?: boolean;
+  accent?: string;
+}
+const { slug, title = 'Résultats en direct', live = true, accent = '#1E40E5' } = Astro.props;
+const acc = /^#?[0-9a-f]{6}$/i.test(accent) ? accent.replace('#', '') : '1E40E5';
+const base = (import.meta.env.PUBLIC_NOVA_URL || 'https://nova.lsei.tv').replace(/\/$/, '');
+const src = `${base}/live.html?t=${encodeURIComponent(slug)}&embed=1&theme=lsei&accent=${acc}`;
+const full = `${base}/live.html?t=${encodeURIComponent(slug)}`;
+---
+<section class="nova-live" data-nova-origin={new URL(base).origin} data-nova-slug={slug}>
+  <header class="nova-head">
+    <h2 class="nova-title">{live && <span class="dot" aria-hidden="true"></span>}{title}</h2>
+    <a class="nova-open" href={full} target="_blank" rel="noopener">Ouvrir en plein écran ↗</a>
+  </header>
+  <iframe
+    class="nova-frame"
+    src={src}
+    title={`${title} — NOVA`}
+    loading="lazy"
+    scrolling="no"
+    referrerpolicy="no-referrer"
+    style="height:900px"
+  ></iframe>
+  <p class="nova-foot">{live ? 'Scores mis à jour automatiquement · gestion du tournoi avec NOVA' : 'Résultats définitifs · gestion du tournoi avec NOVA'}</p>
+</section>
+
+<script>
+  // NOVA envoie la hauteur de son contenu : on ajuste le cadre correspondant (et lui seul).
+  window.addEventListener('message', (e) => {
+    const d = e.data;
+    if (!d || d.nova !== 'height' || typeof d.h !== 'number') return;
+    document.querySelectorAll<HTMLElement>('.nova-live').forEach((box) => {
+      if (box.dataset.novaOrigin !== e.origin || box.dataset.novaSlug !== d.t) return;
+      const f = box.querySelector<HTMLIFrameElement>('.nova-frame');
+      if (f && f.contentWindow === e.source) f.style.height = Math.max(200, Math.min(d.h, 20000)) + 'px';
+    });
+  });
+</script>
+
+<style>
+  .nova-live { margin: 28px 0; }
+  .nova-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; margin-bottom: 10px; }
+  .nova-title { display: flex; align-items: center; gap: 10px; margin: 0; font-family: var(--display); text-transform: uppercase; letter-spacing: .02em; font-size: 22px; }
+  .nova-title .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--live); box-shadow: 0 0 0 0 rgba(229, 52, 43, .6); animation: nova-pulse 1.8s infinite; }
+  @keyframes nova-pulse { 70% { box-shadow: 0 0 0 10px rgba(229, 52, 43, 0); } 100% { box-shadow: 0 0 0 0 rgba(229, 52, 43, 0); } }
+  @media (prefers-reduced-motion: reduce) { .nova-title .dot { animation: none; } }
+  .nova-open { font-size: 14px; color: var(--accent); text-decoration: none; font-weight: 600; }
+  .nova-open:hover { text-decoration: underline; }
+  .nova-frame { display: block; width: 100%; border: 0; background: transparent; color-scheme: light; transition: height .2s ease; }
+  .nova-foot { margin: 8px 0 0; font-size: 12px; color: var(--ink-faint); }
+</style>

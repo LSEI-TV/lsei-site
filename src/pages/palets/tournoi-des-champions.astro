@@ -5,6 +5,7 @@ import Base from '../../layouts/Base.astro';
 import { getDiscipline } from '../../data/site';
 import { editions, players, playerName, careerOf, QUALIFIED, ORGANIZER, type TdcEdition, type TdcMatch } from '../../data/palets/tournoi-champions';
 import { assetExists, assetUrl } from '../../lib/publicAssets';
+import NovaLive from '../../components/NovaLive.astro';
 
 const d = getDiscipline('palets');
 // Éditions JOUÉES (avec résultats) vs à venir. Le héros/palmarès portent sur la
@@ -123,6 +124,10 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
             )}
           </header>
 
+          {e.nova && (e.upcoming || !e.final
+            ? <NovaLive slug={e.nova} accent={e.color} />
+            : <NovaLive slug={e.nova} title={e.novaPool === false ? 'Tableau final · NOVA' : 'Toutes les parties · NOVA'} live={false} accent={e.color} />)}
+
           {e.upcoming || !e.final ? (
           <div class="tdc-soon">
             <figure class="tdc-soon-aff">
@@ -143,6 +148,8 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
             </div>
           </div>
           ) : (<>
+          {/* Édition présente dans NOVA : le tableau et la poule sont dans le bloc NOVA au-dessus (pas de doublon) */}
+          {!e.nova && (<>
           <h3 class="tdc-h3">Tableau final</h3>
           <div class="tdc-bracket">
             {rounds(e).map((r) => (
@@ -159,8 +166,10 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
               </div>
             ))}
           </div>
+          </>)}
 
-          <div class={`tdc-grid2${e.photo && assetExists(e.photo.src) ? '' : ' is-solo'}`}>
+          {e.nova && e.novaPool !== false ? null : (
+          <div class={`tdc-grid2${!e.nova && e.photo && assetExists(e.photo.src) ? '' : ' is-solo'}`}>
             <div>
               <h3 class="tdc-h3">Phase de poule <small>3 parties · les {QUALIFIED} premiers qualifiés</small></h3>
               <div class="tdc-table-wrap">
@@ -179,13 +188,14 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
                 </table>
               </div>
             </div>
-            {e.photo && assetExists(e.photo.src) && (
+            {!e.nova && e.photo && assetExists(e.photo.src) && (
               <figure class="tdc-group">
                 <img src={e.photo.src} alt={e.photo.caption} loading="lazy" />
                 <figcaption>{e.photo.caption}</figcaption>
               </figure>
             )}
           </div>
+          )}
 
           <h3 class="tdc-h3">Les 16 joueurs</h3>
           <div class="tdc-players">

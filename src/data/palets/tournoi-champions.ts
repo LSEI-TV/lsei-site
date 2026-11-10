@@ -57,6 +57,10 @@ export interface TdcEdition {
   affiche?: string;
   /** vidéo YouTube du live (id) */
   video?: string;
+  /** tournoi dans NOVA (slug de la vue publique nova.lsei.tv/live.html?t=<slug>) : toutes les parties, intégrées à la page */
+  nova?: string;
+  /** false = NOVA n'a que le tableau final (parties de poule inconnues) : la page garde son classement de poule officiel */
+  novaPool?: boolean;
   /** photo de l'édition (groupe, vainqueur…) affichée à côté de la poule */
   photo?: { src: string; caption: string };
   pool: TdcPoolRow[];
@@ -90,6 +94,7 @@ export const editions: TdcEdition[] = [
     color: '#1F4E9C',
     date: '2026-01-03',
     video: '1XzKh__Z6cM',
+    nova: 'tournoi-des-champions-2026',
     photo: { src: '/tournoi-des-champions/2026/finale.webp', caption: 'Cyrille Jouault (finaliste) et Jean-Marc Toutirais (vainqueur)' },
     pool: [
       { id: 'jean-marc-toutirais', w: 3, ga: 23 },
@@ -126,6 +131,8 @@ export const editions: TdcEdition[] = [
     color: '#E0533F',
     date: '2025-01-04',
     video: 'AsbZYgDvYY0',
+    nova: 'tournoi-des-champions-2025',
+    novaPool: false,
     photo: { src: '/tournoi-des-champions/2025/groupe.webp', caption: "Les 16 joueurs de l'édition 2025" },
     pool: [
       { id: 'cyrille-jouault', w: 3, ga: 28 },
