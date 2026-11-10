@@ -26,7 +26,8 @@
    "pf": 17,
    "pa": 10,
    "diff": 7,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 30796072,
@@ -42,7 +43,8 @@
    "pf": 16,
    "pa": 9,
    "diff": 7,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 31352491,
@@ -58,7 +60,8 @@
    "pf": 6,
    "pa": 5,
    "diff": 1,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 32023768,
@@ -74,7 +77,8 @@
    "pf": 6,
    "pa": 5,
    "diff": 1,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 9059049,
@@ -90,7 +94,8 @@
    "pf": 6,
    "pa": 7,
    "diff": -1,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 15796703,
@@ -106,7 +111,8 @@
    "pf": 3,
    "pa": 4,
    "diff": -1,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 49094455,
@@ -122,7 +128,8 @@
    "pf": 3,
    "pa": 4,
    "diff": -1,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 31690963,
@@ -138,7 +145,8 @@
    "pf": 2,
    "pa": 4,
    "diff": -2,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 7077794,
@@ -154,7 +162,8 @@
    "pf": 1,
    "pa": 4,
    "diff": -3,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 1383477,
@@ -170,7 +179,8 @@
    "pf": 1,
    "pa": 4,
    "diff": -3,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 30350302,
@@ -186,7 +196,8 @@
    "pf": 1,
    "pa": 4,
    "diff": -3,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 31591132,
@@ -202,7 +213,8 @@
    "pf": 0,
    "pa": 4,
    "diff": -4,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 32856943,
@@ -210,7 +222,7 @@
    "slug": "olivier-martre",
    "country": "FRA",
    "rank": 13,
-   "points": 0,
+   "points": 132,
    "played": 3,
    "wins": 2,
    "losses": 1,
@@ -218,7 +230,8 @@
    "pf": 10,
    "pa": 7,
    "diff": 3,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 30885673,
@@ -226,7 +239,7 @@
    "slug": "alexandre-rezende",
    "country": "FRA",
    "rank": 14,
-   "points": 0,
+   "points": 132,
    "played": 3,
    "wins": 2,
    "losses": 1,
@@ -234,31 +247,16 @@
    "pf": 10,
    "pa": 9,
    "diff": 1,
-   "tourns": 1
-  },
-  {
-   "id": 30598912,
-   "name": "Arménio Rodrigues Ribeiro",
-   "slug": "armenio-rodrigues-ribeiro",
-   "country": "PRT",
-   "rank": 15,
-   "points": 0,
-   "played": 1,
-   "wins": 0,
-   "losses": 1,
-   "winPct": 0,
-   "pf": 3,
-   "pa": 4,
-   "diff": -1,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 11307316,
    "name": "Fernando MENDES",
    "slug": "fernando-mendes",
    "country": "PRT",
-   "rank": 16,
-   "points": 0,
+   "rank": 15,
+   "points": 104,
    "played": 2,
    "wins": 1,
    "losses": 1,
@@ -266,7 +264,25 @@
    "pf": 5,
    "pa": 6,
    "diff": -1,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
+  },
+  {
+   "id": 30598912,
+   "name": "Arménio Rodrigues Ribeiro",
+   "slug": "armenio-rodrigues-ribeiro",
+   "country": "PRT",
+   "rank": 16,
+   "points": 60,
+   "played": 1,
+   "wins": 0,
+   "losses": 1,
+   "winPct": 0,
+   "pf": 3,
+   "pa": 4,
+   "diff": -1,
+   "tourns": 1,
+   "invite": false
   }
  ],
  "matches": [

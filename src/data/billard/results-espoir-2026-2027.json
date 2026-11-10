@@ -26,7 +26,8 @@
    "pf": 13,
    "pa": 6,
    "diff": 7,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 24796867,
@@ -42,7 +43,8 @@
    "pf": 15,
    "pa": 9,
    "diff": 6,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 32458693,
@@ -58,7 +60,8 @@
    "pf": 10,
    "pa": 7,
    "diff": 3,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 30506770,
@@ -74,7 +77,8 @@
    "pf": 9,
    "pa": 7,
    "diff": 2,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 33046759,
@@ -90,7 +94,8 @@
    "pf": 7,
    "pa": 5,
    "diff": 2,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 32512768,
@@ -106,7 +111,8 @@
    "pf": 5,
    "pa": 4,
    "diff": 1,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 30211959,
@@ -122,7 +128,8 @@
    "pf": 5,
    "pa": 6,
    "diff": -1,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 31362868,
@@ -138,7 +145,8 @@
    "pf": 5,
    "pa": 7,
    "diff": -2,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 49991029,
@@ -154,7 +162,8 @@
    "pf": 3,
    "pa": 4,
    "diff": -1,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 31591315,
@@ -170,7 +179,8 @@
    "pf": 2,
    "pa": 4,
    "diff": -2,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 36187549,
@@ -186,7 +196,8 @@
    "pf": 2,
    "pa": 4,
    "diff": -2,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 31362886,
@@ -202,7 +213,8 @@
    "pf": 2,
    "pa": 4,
    "diff": -2,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 31590757,
@@ -218,7 +230,8 @@
    "pf": 1,
    "pa": 4,
    "diff": -3,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 16148062,
@@ -234,7 +247,8 @@
    "pf": 0,
    "pa": 4,
    "diff": -4,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 41089132,
@@ -250,7 +264,8 @@
    "pf": 0,
    "pa": 4,
    "diff": -4,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   }
  ],
  "matches": [

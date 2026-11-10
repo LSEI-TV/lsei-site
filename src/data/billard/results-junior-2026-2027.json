@@ -26,7 +26,8 @@
    "pf": 13,
    "pa": 6,
    "diff": 7,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 24796867,
@@ -42,7 +43,8 @@
    "pf": 11,
    "pa": 10,
    "diff": 1,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 31590757,
@@ -58,7 +60,8 @@
    "pf": 7,
    "pa": 4,
    "diff": 3,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 31840159,
@@ -74,7 +77,8 @@
    "pf": 6,
    "pa": 4,
    "diff": 2,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 14646466,
@@ -90,7 +94,8 @@
    "pf": 4,
    "pa": 4,
    "diff": 0,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 26801929,
@@ -106,7 +111,8 @@
    "pf": 4,
    "pa": 4,
    "diff": 0,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 41089132,
@@ -122,7 +128,8 @@
    "pf": 3,
    "pa": 4,
    "diff": -1,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 77952112,
@@ -138,7 +145,8 @@
    "pf": 0,
    "pa": 4,
    "diff": -4,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 68863093,
@@ -154,7 +162,8 @@
    "pf": 0,
    "pa": 4,
    "diff": -4,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   },
   {
    "id": 90033949,
@@ -170,7 +179,8 @@
    "pf": 0,
    "pa": 4,
    "diff": -4,
-   "tourns": 1
+   "tourns": 1,
+   "invite": false
   }
  ],
  "matches": [
