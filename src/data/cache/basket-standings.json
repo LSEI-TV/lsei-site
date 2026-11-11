@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-11T16:27:10.332Z",
+  "updated": "2026-11-11T21:41:24.339Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/classement",
   "pool": "Poule B",
   "rows": [
@@ -26,8 +26,19 @@
       "diff": 119
     },
     {
-      "slug": "vitre",
+      "slug": "fougeres",
       "rank": 3,
+      "pts": 15,
+      "played": 10,
+      "w": 5,
+      "l": 5,
+      "pf": 714,
+      "pa": 773,
+      "diff": -59
+    },
+    {
+      "slug": "vitre",
+      "rank": 4,
       "pts": 14,
       "played": 9,
       "w": 5,
@@ -38,7 +49,7 @@
     },
     {
       "slug": "tours",
-      "rank": 4,
+      "rank": 5,
       "pts": 14,
       "played": 10,
       "w": 4,
@@ -49,7 +60,7 @@
     },
     {
       "slug": "tarbes",
-      "rank": 5,
+      "rank": 6,
       "pts": 13,
       "played": 8,
       "w": 5,
@@ -60,7 +71,7 @@
     },
     {
       "slug": "toulouse",
-      "rank": 6,
+      "rank": 7,
       "pts": 13,
       "played": 8,
       "w": 5,
@@ -71,7 +82,7 @@
     },
     {
       "slug": "sables",
-      "rank": 7,
+      "rank": 8,
       "pts": 13,
       "played": 9,
       "w": 4,
@@ -82,7 +93,7 @@
     },
     {
       "slug": "bordeaux",
-      "rank": 8,
+      "rank": 9,
       "pts": 13,
       "played": 10,
       "w": 3,
@@ -93,7 +104,7 @@
     },
     {
       "slug": "chartres",
-      "rank": 9,
+      "rank": 10,
       "pts": 13,
       "played": 9,
       "w": 4,
@@ -104,7 +115,7 @@
     },
     {
       "slug": "lorient",
-      "rank": 10,
+      "rank": 11,
       "pts": 13,
       "played": 9,
       "w": 4,
@@ -114,19 +125,19 @@
       "diff": -31
     },
     {
-      "slug": "fougeres",
-      "rank": 11,
-      "pts": 13,
-      "played": 9,
-      "w": 4,
-      "l": 5,
-      "pf": 645,
-      "pa": 707,
-      "diff": -62
+      "slug": "laval",
+      "rank": 12,
+      "pts": 12,
+      "played": 10,
+      "w": 2,
+      "l": 8,
+      "pf": 727,
+      "pa": 803,
+      "diff": -76
     },
     {
       "slug": "angers",
-      "rank": 12,
+      "rank": 13,
       "pts": 12,
       "played": 8,
       "w": 4,
@@ -134,17 +145,6 @@
       "pf": 574,
       "pa": 581,
       "diff": -7
-    },
-    {
-      "slug": "laval",
-      "rank": 13,
-      "pts": 11,
-      "played": 9,
-      "w": 2,
-      "l": 7,
-      "pf": 661,
-      "pa": 734,
-      "diff": -73
     }
   ]
 }

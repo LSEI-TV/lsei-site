@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-11T16:27:11.103Z",
+  "updated": "2026-11-11T21:41:25.046Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
   "pool": "Poule B",
   "matches": [
@@ -471,6 +471,8 @@
       "date": "2026-11-11",
       "homeSlug": "laval",
       "awaySlug": "fougeres",
+      "homeScore": 66,
+      "awayScore": 69,
       "journee": 10
     },
     {
