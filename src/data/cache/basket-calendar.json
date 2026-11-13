@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-13T16:39:12.999Z",
+  "updated": "2026-11-13T21:07:39.254Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
   "pool": "Poule B",
   "matches": [
@@ -479,6 +479,8 @@
       "date": "2026-11-13",
       "homeSlug": "angers",
       "awaySlug": "rennes",
+      "homeScore": 79,
+      "awayScore": 69,
       "journee": 11
     },
     {
