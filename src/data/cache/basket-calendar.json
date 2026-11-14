@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-13T21:07:39.254Z",
+  "updated": "2026-11-14T15:15:24.753Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
   "pool": "Poule B",
   "matches": [
@@ -487,24 +487,32 @@
       "date": "2026-11-13",
       "homeSlug": "bordeaux",
       "awaySlug": "challans",
+      "homeScore": 74,
+      "awayScore": 89,
       "journee": 11
     },
     {
       "date": "2026-11-13",
       "homeSlug": "lorient",
       "awaySlug": "tarbes",
+      "homeScore": 79,
+      "awayScore": 74,
       "journee": 11
     },
     {
       "date": "2026-11-13",
       "homeSlug": "vitre",
       "awaySlug": "sables",
+      "homeScore": 66,
+      "awayScore": 69,
       "journee": 11
     },
     {
       "date": "2026-11-13",
       "homeSlug": "toulouse",
       "awaySlug": "chartres",
+      "homeScore": 102,
+      "awayScore": 72,
       "journee": 11
     },
     {
