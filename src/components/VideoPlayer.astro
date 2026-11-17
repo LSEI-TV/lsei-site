@@ -45,7 +45,7 @@ const isDemo = id.startsWith('demo-');
         if (el.getAttribute('data-demo')) { el.classList.add('is-demo'); return; }
         var id = el.getAttribute('data-id');
         var f = document.createElement('iframe');
-        f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
+        f.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0';
         f.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
         f.setAttribute('allowfullscreen', '');
         f.setAttribute('title', 'Lecteur vidéo');

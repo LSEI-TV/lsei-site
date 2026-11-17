@@ -188,7 +188,7 @@ const onerr = (id: string) => `this.onerror=null;this.src='https://i.ytimg.com/v
         btn.addEventListener('click', function () {
           var player = btn.closest('.player');
           var id = btn.getAttribute('data-id');
-          var src = id ? 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0'
+          var src = id ? 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0'
             : 'https://www.youtube.com/embed/live_stream?channel=' + channel + '&autoplay=1';
           embed(player, src, 'Direct LSEI');
         });
@@ -198,7 +198,7 @@ const onerr = (id: string) => `this.onerror=null;this.src='https://i.ytimg.com/v
         tab.addEventListener('click', function () {
           tabs.forEach(function (t) { t.classList.toggle('active', t === tab); });
           var player = zone.querySelector('#live-main .player');
-          if (player) embed(player, 'https://www.youtube-nocookie.com/embed/' + tab.getAttribute('data-id') + '?autoplay=1&rel=0', tab.getAttribute('data-title'));
+          if (player) embed(player, 'https://www.youtube.com/embed/' + tab.getAttribute('data-id') + '?autoplay=1&rel=0', tab.getAttribute('data-title'));
           var titleEl = document.getElementById('live-main-title');
           var subEl = document.getElementById('live-main-sub');
           if (titleEl) titleEl.textContent = tab.getAttribute('data-title') || '';
@@ -271,6 +271,16 @@ const onerr = (id: string) => `this.onerror=null;this.src='https://i.ytimg.com/v
       if (!lives.length && !ok) {
         var started = SCHED.filter(function (u) { var t = new Date(u.scheduled).getTime(); return t <= now && now < t + LIVE_GRACE; });
         if (started.length) lives = started.map(function (u) { return { id: u.id, title: u.title, discipline: u.discipline }; });
+      }
+      // REPLI 3 (live.json JOIGNABLE mais EN RETARD) : le cron GitHub est souvent throttlé
+      // (exécutions espacées de plusieurs heures au lieu de 5 min) → au démarrage d'un direct,
+      // live.json dit encore « live:false » avec le match dans `upcoming`. Dès que son heure de
+      // début est passée, on le considère EN DIRECT, sans attendre la prochaine exécution du cron.
+      // SÛR : l'`upcoming` de live.json est fiable — un match TERMINÉ en sort (actualEndTime) →
+      // aucun faux positif sur un match fini (contrairement à SCHED figé au build).
+      if (!lives.length && ok && s && s.upcoming && s.upcoming.length) {
+        var startedJson = s.upcoming.filter(function (u) { var t = new Date(u.scheduled).getTime(); return t <= now && now < t + LIVE_GRACE; });
+        if (startedJson.length) lives = startedJson.map(function (u) { return { id: u.id, title: u.title, discipline: u.discipline }; });
       }
       var liveIds = {};
       lives.forEach(function (l) { liveIds[l.id] = 1; });
