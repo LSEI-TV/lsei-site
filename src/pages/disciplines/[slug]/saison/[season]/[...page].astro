@@ -13,6 +13,7 @@ import { clubForDiscipline } from '../../../../../data/clubs';
 export const getStaticPaths = (async ({ paginate }) => {
   const routes = [];
   for (const d of disciplines) {
+    if (d.slug === 'bowling') continue; // page dédiée BPT : src/pages/disciplines/bowling.astro
     const all = await getReplays({ discipline: d.slug });
     const seasons = await getSeasonCounts(d.slug);
     for (const s of seasons) {

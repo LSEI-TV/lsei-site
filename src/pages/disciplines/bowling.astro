@@ -1,0 +1,274 @@
+---
+// Page « site dans le site » du BOWLING PRO-MOTION TOUR (BPT) — /disciplines/bowling.
+// Direction « Broadcast TV » : hero sombre immersif (piste + quilles), puis sections
+// claires thématisées (violet bowling #6E4AD1). Données : src/data/bowling-bpt.ts.
+// Remplace la page générique de discipline pour le bowling (exclu de la route [slug]).
+import Base from '../../layouts/Base.astro';
+import LiveNow from '../../components/LiveNow.astro';
+import VideoModal from '../../components/VideoModal.astro';
+import { getReplays } from '../../lib/youtube';
+import { parseProgTitle } from '../../lib/programmeTitle';
+import { currentEdition, palmares, partners, mediaFigures, contact, BPT_NATIONS_2026 } from '../../data/bowling-bpt';
+
+const ed = currentEdition();
+const replays = (await getReplays({ discipline: 'bowling' })).slice(0, 8);
+const fmtDate = (iso?: string) =>
+  iso ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${iso.slice(0, 10)}T12:00:00Z`)) : '';
+---
+<Base
+  title="Bowling Pro-Motion Tour — Bowling"
+  description={`Le Bowling Pro-Motion Tour sur LSEI : ${ed.editionLabel}, ${ed.datesLabel}. 7 étapes, ${ed.tvMatches} matchs TV, 10 nations. Programme, favoris, palmarès et replays.`}
+  active="disciplines"
+  image="/og/discipline/bowling.jpg"
+>
+  <LiveNow sport="bowling" />
+
+  <section class="bpt-hero">
+    <div class="bpt-lane" aria-hidden="true"></div>
+    <div class="bpt-pins" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <div class="wrap bpt-hero-in">
+      <div class="bpt-crumb"><a href="/disciplines/">Disciplines</a><span aria-hidden="true">›</span>Bowling</div>
+      <div class="bpt-eyebrow">{ed.editionLabel} · {ed.approved}</div>
+      <h1 class="bpt-h">Bowling<br />Pro-Motion Tour<span>{ed.datesLabel} · de Fontaine-le-Comte à Cap Malo</span></h1>
+      <p class="bpt-sub">{ed.blurb}</p>
+      <div class="bpt-cta">
+        <a class="bpt-btn p" href="/direct/">▸ Regarder le direct</a>
+        <a class="bpt-btn g" href="#programme">Le programme</a>
+        {ed.status === 'upcoming' && <span class="bpt-cd" data-bpt-count={ed.startIso}><b>—</b><small>avant le coup d'envoi</small></span>}
+      </div>
+    </div>
+    <div class="wrap bpt-stats">
+      <div><b>7</b><span>étapes</span></div>
+      <div><b class="hl">{ed.tvMatches}</b><span>matchs TV</span></div>
+      <div><b>{ed.nations.length}</b><span>nations</span></div>
+      <div><b>{mediaFigures.subscribers}</b><span>abonnés YouTube</span></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="bpt-sechead" id="programme">
+        <div class="eyebrow">Le voyage · {ed.datesLabel}</div>
+        <h2>Les <em>7 étapes</em> du Tour</h2>
+      </div>
+      <ol class="bpt-stages">
+        {ed.stages.map((s) => (
+          <li class={s.tv ? 'is-tv' : undefined}>
+            <span class="st-date">{s.dates}</span>
+            <span class="st-body"><b class="st-city">{s.city}</b><span class="st-label">{s.label}</span></span>
+            {s.tv && <span class="st-tag">12 matchs TV</span>}
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section bpt-alt">
+    <div class="wrap">
+      <div class="bpt-sechead">
+        <div class="eyebrow">Les favoris 2026</div>
+        <h2>Qui pour <em>le titre</em> ?</h2>
+      </div>
+      <div class="bpt-favs">
+        {ed.favorites.map((f, i) => (
+          <article class="bpt-fav">
+            <span class="fav-rank">{String(i + 1).padStart(2, '0')}</span>
+            <span class="fav-av">{f.initials}</span>
+            <h3>{f.name}</h3>
+            <p class="fav-country">{f.country}</p>
+            <p class="fav-note">{f.note}</p>
+          </article>
+        ))}
+      </div>
+      <div class="bpt-nations">
+        <span class="nat-k">10 nations sur les pistes</span>
+        <div class="nat-list">{BPT_NATIONS_2026.map((n) => <span class="nat">{n}</span>)}</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="bpt-sechead">
+        <div class="eyebrow">Histoire</div>
+        <h2>Le <em>palmarès</em> récent</h2>
+      </div>
+      <div class="bpt-palm">
+        <div class="palm-head"><span>Année</span><span>Masters</span><span>Séries féminines</span></div>
+        {palmares.map((p) => (
+          <div class="palm-row"><span class="palm-y">{p.year}</span><span>{p.masters}</span><span>{p.women}</span></div>
+        ))}
+      </div>
+      <p class="bpt-note">Vainqueurs « Race for the Title » et séries féminines depuis 2010. Source : press kit officiel BPT.</p>
+    </div>
+  </section>
+
+  {replays.length > 0 && (
+    <section class="section bpt-alt">
+      <div class="wrap">
+        <div class="bpt-sechead">
+          <div class="eyebrow">Vidéothèque</div>
+          <h2>Les matchs <em>en vidéo</em></h2>
+        </div>
+        <div class="bpt-replays">
+          {replays.map((v) => {
+            const main = parseProgTitle(v.title).main || v.title;
+            return (
+              <a class="card bpt-replay" href={`/replay/${v.id}`} aria-label={main}>
+                <span class="rp-thumb">
+                  <img src={`https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg`} alt={main} loading="lazy" onerror={`this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'`} />
+                  <span class="rp-play" aria-hidden="true">▸</span>
+                </span>
+                <h3 class="rp-t">{main}</h3>
+                {v.date && <span class="rp-d">{fmtDate(v.date)}</span>}
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="section">
+    <div class="wrap">
+      <div class="bpt-sechead">
+        <div class="eyebrow">Autour du Tour</div>
+        <h2>Partenaires &amp; <em>diffuseurs</em></h2>
+      </div>
+      <div class="bpt-partners">
+        <div class="pt-block"><span class="pt-k">Sponsor titre</span><div class="pt-list"><span class="pt big">{partners.title}</span></div></div>
+        <div class="pt-block"><span class="pt-k">Officiels</span><div class="pt-list">{partners.official.map((p) => <span class="pt">{p}</span>)}</div></div>
+        <div class="pt-block"><span class="pt-k">Institutionnels</span><div class="pt-list">{partners.institutional.map((p) => <span class="pt">{p}</span>)}</div></div>
+        <div class="pt-block"><span class="pt-k">Diffuseurs</span><div class="pt-list">{partners.broadcasters.map((p) => <span class={p.startsWith('LSEI') ? 'pt is-lsei' : 'pt'}>{p}</span>)}</div></div>
+      </div>
+      <p class="bpt-note">Renseignements : <a href={`mailto:${contact.email}`}>{contact.email}</a> · <a href={`https://www.${contact.site}`} target="_blank" rel="noopener">{contact.site}</a> — LSEI est partenaire média du Tour.</p>
+    </div>
+  </section>
+
+  <VideoModal />
+
+  <script is:inline>
+    (function () {
+      var el = document.querySelector('[data-bpt-count]');
+      if (!el) return;
+      var target = new Date(el.getAttribute('data-bpt-count')).getTime();
+      var b = el.querySelector('b'), s = el.querySelector('small');
+      function upd() {
+        var t = target - Date.now();
+        if (t <= 0) { b.textContent = 'En cours'; if (s) s.textContent = 'le Tour a commencé'; return; }
+        var d = Math.floor(t / 86400000);
+        if (d >= 1) { b.textContent = 'J-' + d; }
+        else { var h = Math.floor(t / 3600000); b.textContent = h + 'h'; }
+      }
+      upd(); setInterval(upd, 60000);
+    })();
+  </script>
+</Base>
+
+<style>
+  /* ---------- HERO broadcast (sombre, immersif) ---------- */
+  .bpt-hero {
+    position: relative; overflow: hidden; isolation: isolate;
+    background:
+      radial-gradient(1100px 440px at 80% -8%, rgba(124, 77, 214, .42), transparent 60%),
+      radial-gradient(640px 420px at 102% 118%, rgba(53, 224, 224, .14), transparent 60%),
+      linear-gradient(180deg, #0b0817, #0a0712);
+    color: #f4f1fb;
+  }
+  .bpt-lane {
+    position: absolute; right: -4%; top: -10%; width: 50%; height: 160%; z-index: 0; opacity: .7;
+    background: repeating-linear-gradient(90deg, rgba(124, 77, 214, .16) 0 2px, transparent 2px 26px);
+    transform: perspective(620px) rotateY(-34deg); transform-origin: right;
+  }
+  .bpt-pins { position: absolute; right: 8%; top: 16%; display: flex; gap: 9px; z-index: 1; }
+  .bpt-pins span { width: 15px; height: 38px; border-radius: 8px 8px 5px 5px; background: linear-gradient(#fff, #d9d2ee); box-shadow: 0 0 18px rgba(255, 255, 255, .22); position: relative; }
+  .bpt-pins span::after { content: ""; position: absolute; top: 8px; left: 0; right: 0; height: 5px; background: #e5342b; }
+  @media (max-width: 680px) { .bpt-pins { display: none; } }
+  .bpt-hero-in { position: relative; z-index: 2; padding-top: 42px; padding-bottom: 26px; }
+  .bpt-crumb { font-size: 12.5px; color: rgba(255, 255, 255, .62); display: flex; gap: 8px; align-items: center; }
+  .bpt-crumb a { color: rgba(255, 255, 255, .62); text-decoration: none; }
+  .bpt-crumb a:hover { color: #fff; }
+  .bpt-eyebrow { margin-top: 18px; font-family: var(--display); font-weight: 800; font-size: 12px; letter-spacing: .26em; text-transform: uppercase; color: #35e0e0; }
+  .bpt-h { font-family: var(--display); font-weight: 800; letter-spacing: -.01em; text-transform: uppercase; font-size: clamp(34px, 7.4vw, 72px); line-height: .94; margin: 12px 0 0; }
+  .bpt-h span { display: block; font-size: clamp(13px, 1.5vw, 17px); letter-spacing: .04em; text-transform: none; font-weight: 600; color: rgba(255, 255, 255, .72); margin-top: 12px; }
+  .bpt-sub { color: rgba(255, 255, 255, .78); font-family: var(--serif); font-size: 15.5px; line-height: 1.55; max-width: 56ch; margin: 16px 0 0; }
+  .bpt-cta { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 22px; }
+  .bpt-btn { font-family: var(--display); font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; padding: 13px 22px; border-radius: 10px; text-decoration: none; }
+  .bpt-btn.p { background: #6E4AD1; color: #fff; }
+  .bpt-btn.p:hover { background: #7C4DD6; }
+  .bpt-btn.g { border: 1px solid rgba(255, 255, 255, .22); color: #fff; }
+  .bpt-btn.g:hover { border-color: #fff; }
+  .bpt-cd { display: inline-flex; flex-direction: column; line-height: 1.05; padding-left: 16px; border-left: 1px solid rgba(255, 255, 255, .18); }
+  .bpt-cd b { font-family: var(--display); font-weight: 800; font-size: 22px; color: #35e0e0; }
+  .bpt-cd small { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .5); margin-top: 3px; }
+  .bpt-stats { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgba(255, 255, 255, .12); margin-top: 26px; }
+  .bpt-stats div { padding: 18px 4px; border-right: 1px solid rgba(255, 255, 255, .12); }
+  .bpt-stats div:last-child { border-right: 0; }
+  .bpt-stats b { display: block; font-family: var(--display); font-weight: 800; font-size: 30px; }
+  .bpt-stats b.hl { color: #b79bff; }
+  .bpt-stats span { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: rgba(255, 255, 255, .55); margin-top: 6px; display: block; }
+  @media (max-width: 640px) { .bpt-stats { grid-template-columns: repeat(2, 1fr); } .bpt-stats div:nth-child(2) { border-right: 0; } .bpt-stats div { border-bottom: 1px solid rgba(255, 255, 255, .12); } }
+
+  /* ---------- Sections (thématisées, claires/sombres selon le thème) ---------- */
+  .bpt-alt { background: var(--surface); }
+  .bpt-sechead { margin-bottom: 22px; }
+  .bpt-sechead .eyebrow { color: #6E4AD1; }
+  .bpt-sechead h2 em { color: #6E4AD1; font-style: normal; }
+
+  /* Étapes */
+  .bpt-stages { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .bpt-stages li { display: flex; align-items: center; gap: 16px; padding: 15px 18px; border-bottom: 1px solid var(--line); }
+  .bpt-stages li:last-child { border-bottom: 0; }
+  .bpt-stages li.is-tv { background: color-mix(in srgb, #6E4AD1 8%, transparent); }
+  .st-date { font-family: var(--mono); font-weight: 800; font-size: 13px; color: #6E4AD1; min-width: 72px; }
+  .st-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .st-city { font-weight: 800; font-size: 16px; color: var(--ink); }
+  .st-label { font-size: 13px; color: var(--ink-soft); }
+  .st-tag { margin-left: auto; font-family: var(--display); font-weight: 800; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: #fff; background: #6E4AD1; padding: 5px 11px; border-radius: 999px; white-space: nowrap; }
+  @media (max-width: 560px) { .st-tag { margin-left: 0; } .bpt-stages li { flex-wrap: wrap; } }
+
+  /* Favoris */
+  .bpt-favs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 680px) { .bpt-favs { grid-template-columns: 1fr; } }
+  .bpt-fav { position: relative; border: 1px solid var(--line); border-radius: 14px; padding: 20px; background: var(--surface-2, var(--surface)); overflow: hidden; }
+  .fav-rank { position: absolute; top: 14px; right: 16px; font-family: var(--display); font-weight: 800; font-size: 34px; color: color-mix(in srgb, #6E4AD1 18%, transparent); }
+  .fav-av { display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background: #6E4AD1; color: #fff; font-family: var(--display); font-weight: 800; font-size: 17px; }
+  .bpt-fav h3 { margin: 14px 0 2px; font-family: var(--display); font-weight: 800; font-size: 20px; text-transform: uppercase; letter-spacing: .01em; color: var(--ink); }
+  .fav-country { margin: 0; font-weight: 800; font-size: 12px; letter-spacing: .08em; color: #6E4AD1; }
+  .fav-note { margin: 8px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+
+  .bpt-nations { margin-top: 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .nat-k { font-family: var(--display); font-weight: 800; font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .nat-list { display: flex; flex-wrap: wrap; gap: 7px; }
+  .nat { font-size: 12.5px; border: 1px solid var(--line); color: var(--ink-soft); padding: 5px 11px; border-radius: 999px; }
+
+  /* Palmarès */
+  .bpt-palm { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .palm-head, .palm-row { display: grid; grid-template-columns: 72px 1fr 1fr; gap: 14px; padding: 12px 18px; }
+  .palm-head { background: color-mix(in srgb, #6E4AD1 10%, transparent); font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+  .palm-row { border-top: 1px solid var(--line); font-size: 14px; color: var(--ink); align-items: baseline; }
+  .palm-y { font-family: var(--mono); font-weight: 800; color: #6E4AD1; }
+  @media (max-width: 560px) { .palm-head { display: none; } .palm-row { grid-template-columns: 56px 1fr; } .palm-row span:nth-child(3) { grid-column: 2; color: var(--ink-soft); font-size: 13px; } }
+
+  .bpt-note { margin: 14px 0 0; font-size: 13px; color: var(--ink-faint); }
+  .bpt-note a { color: #6E4AD1; }
+
+  /* Replays */
+  .bpt-replays { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .bpt-replay { text-decoration: none; color: inherit; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface-2, var(--surface)); transition: border-color .15s; display: block; }
+  .bpt-replay:hover { border-color: color-mix(in srgb, #6E4AD1 55%, var(--line)); }
+  .rp-thumb { position: relative; display: block; aspect-ratio: 16/9; background: #140f22; }
+  .rp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .rp-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 46px; height: 46px; border-radius: 50%; background: rgba(110, 74, 209, .9); color: #fff; display: grid; place-items: center; font-size: 18px; }
+  .rp-t { font-weight: 800; font-size: 14.5px; line-height: 1.25; margin: 11px 12px 2px; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .rp-d { display: block; margin: 0 12px 12px; font-size: 12px; color: var(--ink-faint); }
+
+  /* Partenaires */
+  .bpt-partners { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+  .pt-block { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+  .pt-k { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+  .pt-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .pt { font-size: 13px; font-weight: 600; color: var(--ink); border: 1px solid var(--line); padding: 6px 12px; border-radius: 8px; }
+  .pt.big { font-family: var(--display); font-weight: 800; font-size: 15px; letter-spacing: .02em; }
+  .pt.is-lsei { background: #6E4AD1; color: #fff; border-color: #6E4AD1; }
+</style>

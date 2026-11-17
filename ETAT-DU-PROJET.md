@@ -36,7 +36,7 @@ Déjà posé : `/basket`, `/billard/hub`, `/billard/blackball`, `/palets/tournoi
 - **Tournoi des Champions (palets)** : résultats via NOVA (`NovaLive`).
 
 ## 📌 À faire ensuite / points ouverts
-- **Bowling Promotion Tour** : transformer `/disciplines/bowling/` en « site dans le site » (édition **BPT 2026**) — **propositions de design à faire valider** (c'était la demande en cours avant le direct). Press kit `public/bowling promotion tour/` (PDF 20 Mo, non committé) ; logo `public/partenaires/ffppb.webp` (non committé).
+- *(FAIT)* **Bowling Promotion Tour** : `/disciplines/bowling/` est désormais la page « site dans le site » du BPT (Direction A « Broadcast TV » validée par Marc). Page dédiée `src/pages/disciplines/bowling.astro` + données `src/data/bowling-bpt.ts` ; bowling exclu des routes génériques `disciplines/[slug]`. Hero sombre + 7 étapes + favoris + 10 nations + palmarès + replays + partenaires. Reste à enrichir : vraies photos des favoris (initiales pour l'instant), logos partenaires (texte). Press kit `public/bowling promotion tour/` (PDF 20 Mo, non committé).
 - **Optionnel direct** : créer un 2e secret `YOUTUBE_API_KEY_LIVE` (quota YouTube isolé) ; faire aussi basculer l'encadré « Prochain match » basket en EN DIRECT (en plus du bandeau).
 - **Hygiène** : le token `pinger-live-lsei-cf` est apparu dans des captures → le régénérer + mettre à jour le secret du Worker (optionnel, périmètre minuscule).
 

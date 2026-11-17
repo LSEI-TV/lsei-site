@@ -19,6 +19,7 @@ import { latestChampion } from '../../../data/palets/tournoi-champions';
 export const getStaticPaths = (async ({ paginate }) => {
   const routes = [];
   for (const d of disciplines) {
+    if (d.slug === 'bowling') continue; // page dédiée BPT : src/pages/disciplines/bowling.astro
     const videos = await getReplays({ discipline: d.slug });
     routes.push(...paginate(videos, { params: { slug: d.slug }, props: { disc: d }, pageSize: 24 }));
   }
