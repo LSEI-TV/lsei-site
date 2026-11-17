@@ -789,13 +789,20 @@ const slides = programme
         var cal = hero.querySelector('.hero-cal'); if (cal) cal.style.display = 'none';
       }
       function revertSelf() {
-        if (!_orig) return;
-        if (pill) { pill.innerHTML = _orig.pill; pill.className = _orig.pillCls; }
-        if (playBtn) playBtn.textContent = _orig.btn;
         var shot = hero.querySelector('.mhero-shot');
-        var tg = shot && shot.querySelector('.mhero-shot-tag'); if (tg) { tg.textContent = _orig.tag; tg.className = _orig.tagCls; tg.style.display = _orig.tagDisp; }
-        if (count) count.style.display = _orig.count;
-        var cal = hero.querySelector('.hero-cal'); if (cal) cal.style.display = _orig.cal;
+        if (_orig) {
+          if (pill) { pill.innerHTML = _orig.pill; pill.className = _orig.pillCls; }
+          if (playBtn) playBtn.textContent = _orig.btn;
+          var tg = shot && shot.querySelector('.mhero-shot-tag'); if (tg) { tg.textContent = _orig.tag; tg.className = _orig.tagCls; tg.style.display = _orig.tagDisp; }
+          if (count) count.style.display = _orig.count;
+          var cal = hero.querySelector('.hero-cal'); if (cal) cal.style.display = _orig.cal;
+        } else {
+          // Hero construit EN DIRECT au build (le match était fini à l'arrivée du visiteur) :
+          // aucun snapshot à restaurer → on l'ÉTEINT proprement (le direct devient un replay).
+          if (pill) { pill.classList.remove('is-live'); pill.classList.add('is-soon'); pill.textContent = 'À revoir'; }
+          var tg2 = shot && shot.querySelector('.mhero-shot-tag'); if (tg2) { tg2.classList.remove('is-live'); tg2.style.display = 'none'; }
+          if (playBtn) playBtn.textContent = '▸ Voir le replay';
+        }
         resetInline(shot); curLiveId = null;
       }
       // --- Lecture du direct SUR PLACE (comme /direct/) : un clic sur la vignette OU sur

@@ -14,3 +14,24 @@ const items = await getTicker();
     </div>
   </div>
 )}
+
+<!-- Le ticker est 100% « en direct » (construit au build). S'il n'y a plus de direct selon
+     live.json (source fiable, maj par le pinger), on le masque — même si la page a été
+     construite pendant un direct. Si live.json est injoignable, on garde l'état du build. -->
+<script is:inline>
+  (function () {
+    var t = document.querySelector('.ticker');
+    if (!t) return;
+    function sync() {
+      fetch('/live.json', { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          if (!d || d.error === true) return; // injoignable/KO → on garde l'état du build
+          var lives = d.lives ? d.lives : (d.live && d.id ? [1] : []);
+          t.style.display = lives.length ? '' : 'none';
+        })
+        .catch(function () {});
+    }
+    sync(); setInterval(sync, 60000);
+  })();
+</script>

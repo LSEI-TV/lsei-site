@@ -19,6 +19,7 @@ Contexte : la vidéo ne s'affichait pas sur `/direct`, le badge restait « coll�
 3. **Accueil — lecture SUR PLACE** : clic sur la vignette / bouton → lecteur YouTube **inline** (single + multi-live), au lieu d'ouvrir YouTube.
 4. **Embeds `youtube-nocookie.com` → `youtube.com`** (direct, accueil, modale, player) : réduit la barrière YouTube « confirmez que vous n'êtes pas un robot ».
 5. **🟥 Bandeau « EN DIRECT » par sport — `src/components/LiveNow.astro`** : `<LiveNow sport="<slug>" />` affiche un bandeau rouge (match + « Regarder » → /direct/) quand CE sport est en direct, masqué sinon. Détail dans [[lsei-direct-detection]].
+6. **Accueil + ticker qui s'éteignent** (fix 17/11 soir) : le hero d'accueil et le bandeau haut `Ticker.astro` étaient *figés au build* (« EN DIRECT » écrit dans le HTML si la page était construite pendant un direct) → ils restaient allumés après le match. Désormais ils relisent `live.json` : le hero « dé-live » (pill « À revoir », bouton « Voir le replay ») même sans snapshot, et le ticker se masque s'il n'y a plus de direct.
 
 ### ⭐ CONVENTION pour TOUT nouveau sport déployé
 Sur chaque nouvelle page de sport (hub, discipline…), ajouter :
