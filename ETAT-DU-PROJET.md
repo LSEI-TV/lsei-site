@@ -15,6 +15,7 @@ Problème constaté en direct : la vidéo ne s'affichait pas sur `/direct/` ni l
 1. **`/direct/` auto-cicatrisant** : un match encore dans `live.json.upcoming` dont l'heure de début est passée s'affiche **EN DIRECT même si `live.json` est en retard** (plus seulement quand il est injoignable). Plus besoin de « Run workflow » à la main.
 2. **Embeds YouTube `nocookie` → `youtube.com`** (direct, accueil, modale, player replays) : réduit fortement la barrière « confirmez que vous n'êtes pas un robot » qui bloquait les spectateurs **sans compte YouTube**.
 3. **Accueil — lecture du direct SUR PLACE** (comme `/direct/`) : clic sur la vignette ou « Regarder le direct » → la vignette devient le **lecteur inline** (au lieu d'ouvrir YouTube). Fonctionne aussi en **multi-live** (chaque carte « N directs en cours » devient son propre lecteur). Repli href YouTube si JS KO. Testé en local (single + multi) avant déploiement.
+4. **Bandeau « EN DIRECT » sur toutes les pages de sport** — nouveau composant `src/components/LiveNow.astro` : `<LiveNow sport="basket" />` affiche en haut de page un bandeau rouge « EN DIRECT · <match> · Regarder → /direct/ » **quand CE sport est en direct** (lu de `live.json`, maj 60 s), masqué sinon. Posé sur `/basket`, `/billard/hub`, `/billard/blackball`, `/palets/tournoi-des-champions` et la route générique `/disciplines/<slug>` (couvre bowling, football, beach, subbuteo). Testé (visible sur le sport live, masqué sinon).
 
 ## 📄 Doc créé
 - `docs/pinger-direct-live.md` : guide pour un **pinger externe** (cron-job.org ou Worker Cloudflare) qui déclenche `live-status.yml` toutes les 2-3 min → capte le **lancement réel** du direct sur YouTube, indépendamment du throttling GitHub. Nécessite un token GitHub (fine-grained, Actions:write, ce repo) que le user crée. **À mettre en place par Marc.**
@@ -26,7 +27,7 @@ Problème constaté en direct : la vidéo ne s'affichait pas sur `/direct/` ni l
 
 ## 📌 À faire ensuite / points ouverts
 - **Pinger externe** (doc prêt) : Marc crée le token + le job cron-job.org (ou Worker Cloudflare, je peux l'écrire).
-- **Badge « EN DIRECT » sur `/basket/`** : encore à faire (l'encadré « Prochain match » est statique, ne lit pas `live.json`). À ajouter (petit script client).
+- *(FAIT)* Bandeau « EN DIRECT » sur toutes les pages de sport (`LiveNow.astro`). Option restante possible : faire aussi basculer l'encadré « Prochain match » du basket lui-même (il affiche « Aujourd'hui » pendant le live) — à voir avec Marc.
 - **Bowling Promotion Tour** : page `/disciplines/bowling/` à transformer en « site dans le site » (édition BPT 2026) — propositions de design à faire valider. Press kit dans `public/bowling promotion tour/` (PDF 20 Mo, non committé). Logo FFPPB converti : `public/partenaires/ffppb.webp` (non committé).
 - Fichiers **non committés à NE PAS pousser** sans accord : PDF bowling, `ffppb.webp`, photos TdC 2025/2026/2027 (`public/tournoi-des-champions/…`), fichiers PC2 (`cdm-blackball-2026-*`, article bilan).
 

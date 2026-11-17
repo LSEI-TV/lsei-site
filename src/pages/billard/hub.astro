@@ -3,6 +3,7 @@
 // - Blackball : compétitions FFB structurées (Masters/Femmes/Para) -> sous-hub /billard/blackball
 // - Snooker & Billard américain : uniquement des vidéos -> vidéothèque de la catégorie
 import Base from '../../layouts/Base.astro';
+import LiveNow from '../../components/LiveNow.astro';
 import { getReplays } from '../../lib/youtube';
 import { getSeasons, cal2627 } from '../../data/billard/seasons';
 
@@ -51,6 +52,7 @@ const ICONS: Record<string, string> = {
 };
 ---
 <Base title="Billard — Le hub" description="Le hub Billard de LSEI : Blackball (Masters, Femmes, Para), Snooker et Billard américain." preloadImage="/billard-hero.webp" active="disciplines" image="/og/discipline/billard.jpg">
+  <LiveNow sport="billard" />
   <!-- HERO pleine largeur (image dans public/billard-hero.webp, repli sombre sinon) -->
   <section class="bh-hero">
     <div class="bh-hero-media" aria-hidden="true"></div>

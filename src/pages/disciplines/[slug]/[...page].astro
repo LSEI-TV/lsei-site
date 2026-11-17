@@ -1,5 +1,6 @@
 ---
 import Base from '../../../layouts/Base.astro';
+import LiveNow from '../../../components/LiveNow.astro';
 import HubNav from '../../../components/HubNav.astro';
 import VideoGrid from '../../../components/VideoGrid.astro';
 import FilterMenu from '../../../components/FilterMenu.astro';
@@ -54,6 +55,7 @@ const categoryOptions = [
 ];
 ---
 <Base title={club ? club.name : disc.name} description={club ? club.blurb : disc.blurb} preloadImage={club?.hero ?? (assetExists(disc.hero) ? disc.hero : undefined)} active="disciplines" image={`/og/discipline/${disc.slug}.jpg`}>
+  <LiveNow sport={disc.slug} />
   {disc.slug === 'billard' && <HubNav season={LANDING_SEASON} dataSeason={DEFAULT_SEASON} active="videos" />}
 
   {club ? (

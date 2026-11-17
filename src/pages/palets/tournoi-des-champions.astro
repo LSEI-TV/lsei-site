@@ -2,6 +2,7 @@
 // TOURNOI DES CHAMPIONS (palets) — page annuelle : palmarès + une édition à la fois
 // (onglets, sans changement de page). Données : src/data/palets/tournoi-champions.ts.
 import Base from '../../layouts/Base.astro';
+import LiveNow from '../../components/LiveNow.astro';
 import { getDiscipline } from '../../data/site';
 import { editions, players, playerName, careerOf, QUALIFIED, ORGANIZER, type TdcEdition, type TdcMatch } from '../../data/palets/tournoi-champions';
 import { assetExists, assetUrl } from '../../lib/publicAssets';
@@ -48,6 +49,7 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
   active="disciplines"
   image={latest.video ? `https://i.ytimg.com/vi/${latest.video}/maxresdefault.jpg` : undefined}
 >
+  <LiveNow sport="palets" />
   <section class="tdc-hero" style={`--dc:${d.colorVar}`}>
     <div class="wrap tdc-hero-in">
       <div>

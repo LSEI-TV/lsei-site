@@ -2,6 +2,7 @@
 // Hub BLACKBALL : on choisit la compétition (Masters, Femmes ou Para), avec un
 // résumé de chacune (chiffres, podium, champion en titre). Sous-niveau du Hub Billard.
 import Base from '../../layouts/Base.astro';
+import LiveNow from '../../components/LiveNow.astro';
 import HubSwitch from '../../components/HubSwitch.astro';
 import { getReplays } from '../../lib/youtube';
 import { showcaseSeason, getPalmares, cal2627, LANDING_SEASON, getSeasons } from '../../data/billard/seasons';
@@ -191,6 +192,7 @@ const arbitres = (arbitresData as { slug: string; file: string; seasons: string[
 const nbActive = arbitres.filter((a) => a.active).length;
 ---
 <Base title="Billard — Le hub Blackball" description="Le hub Blackball de LSEI : choisissez la compétition Masters (hommes), Femmes, Mixte National, Espoir, Junior, Vétéran, Prestige Vétéran, Para-billard fauteuil ou Para-billard malvoyants." preloadImage="/billard/blackball-hero.webp" active="disciplines" image="/og/discipline/billard.jpg">
+  <LiveNow sport="billard" />
   <HubSwitch />
 
   <section class="bb-hero">
