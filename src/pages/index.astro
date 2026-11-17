@@ -721,6 +721,7 @@ const slides = programme
       function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt) e.textContent = txt; return e; }
       function showMulti(list) {
         if (!multi) return;
+        curLiveId = null;
         var grid = multi.querySelector('.mhero-multi-grid'), nb = multi.querySelector('[data-n]');
         if (nb) nb.textContent = list.length;
         grid.innerHTML = ''; grid.setAttribute('data-count', Math.min(list.length, 4));
@@ -740,6 +741,8 @@ const slides = programme
           if (l.place) meta.appendChild(el('span', 'mm-place', '📍 ' + l.place));
           meta.appendChild(el('span', 'mm-btn', '▸ Regarder'));
           a.appendChild(shot); a.appendChild(meta); grid.appendChild(a);
+          // Clic sur une carte multi-live → lecture SUR PLACE dans sa propre vignette.
+          (function (sEl, vid) { a.addEventListener('click', function (e) { e.preventDefault(); playInline(sEl, vid); }); })(shot, l.id);
         });
         if (list[0] && list[0].discipline) setSport(list[0].discipline);
         if (singleIn) singleIn.style.display = 'none';
@@ -780,6 +783,7 @@ const slides = programme
         if (pill) { pill.textContent = '● En direct'; pill.classList.add('is-live'); pill.classList.remove('is-soon'); }
         if (playBtn) playBtn.textContent = '▸ Regarder le direct';
         var shot = hero.querySelector('.mhero-shot');
+        var _hv = (shot && shot.getAttribute('href')) || (playBtn && playBtn.getAttribute('href')) || ''; var _mv = _hv.match(/[?&]v=([^&]+)/); if (_mv) curLiveId = _mv[1];
         var tg = shot && shot.querySelector('.mhero-shot-tag'); if (tg) { tg.textContent = '● En direct'; tg.classList.add('is-live'); tg.style.display = ''; }
         if (count) count.style.display = 'none';
         var cal = hero.querySelector('.hero-cal'); if (cal) cal.style.display = 'none';
@@ -792,7 +796,35 @@ const slides = programme
         var tg = shot && shot.querySelector('.mhero-shot-tag'); if (tg) { tg.textContent = _orig.tag; tg.className = _orig.tagCls; tg.style.display = _orig.tagDisp; }
         if (count) count.style.display = _orig.count;
         var cal = hero.querySelector('.hero-cal'); if (cal) cal.style.display = _orig.cal;
+        resetInline(shot); curLiveId = null;
       }
+      // --- Lecture du direct SUR PLACE (comme /direct/) : un clic sur la vignette OU sur
+      //     « Regarder le direct » transforme la vignette en lecteur YouTube, sans quitter la
+      //     page. Le href YouTube reste posé en repli (JS désactivé / lecteur en échec).
+      var curLiveId = null;
+      function playInline(container, id) {
+        if (!container || !id || container.dataset.playing) return;
+        container.dataset.playing = '1';
+        if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
+        var img = container.querySelector('img'); if (img) img.style.display = 'none';
+        var pl = container.querySelector('.mhero-shot-play, .mm-play'); if (pl) pl.style.display = 'none';
+        var f = document.createElement('iframe');
+        f.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0';
+        f.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
+        f.setAttribute('allowfullscreen', ''); f.setAttribute('title', 'Direct LSEI');
+        f.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;z-index:4';
+        container.appendChild(f);
+      }
+      function resetInline(container) {
+        if (!container || !container.dataset.playing) return;
+        container.removeAttribute('data-playing');
+        var f = container.querySelector('iframe'); if (f) f.remove();
+        var img = container.querySelector('img'); if (img) img.style.display = '';
+        var pl = container.querySelector('.mhero-shot-play, .mm-play'); if (pl) pl.style.display = '';
+      }
+      var _shotEl = hero.querySelector('.mhero-shot');
+      if (_shotEl) _shotEl.addEventListener('click', function (e) { if (curLiveId) { e.preventDefault(); playInline(_shotEl, curLiveId); } });
+      if (playBtn) playBtn.addEventListener('click', function (e) { var s = hero.querySelector('.mhero-shot'); if (curLiveId && s) { e.preventDefault(); playInline(s, curLiveId); try { s.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {} } });
       function sync() {
         fetch('/live.json', { cache: 'no-store' })
           .then(function (r) { return r.ok ? r.json() : null; })
@@ -810,6 +842,7 @@ const slides = programme
               return;
             }
             var l = lives[0];
+            curLiveId = l.id;
             if (l.discipline) setSport(l.discipline);
             // Contexte « guide TV » (compétition · phase · saison) + lieu, depuis live.json enrichi.
             var ctx = l.context || '';
