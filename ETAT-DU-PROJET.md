@@ -4,32 +4,40 @@
 
 | | |
 |---|---|
-| **Dernière mise à jour** | 2026-11-17 ~21h30 (heure de Paris) |
+| **Dernière mise à jour** | 2026-11-17 ~23h30 (heure de Paris) |
 | **Machine** | PC1 |
-| **Dernier push** | hotfix direct (voir ci-dessous), sur `main` |
+| **Dernier push** | suivi (ETAT + mémoire + doc pinger) |
 | **État déploiement** | poussé sur `main` → GitHub Actions « Build & Deploy OVH » |
 | **Build local** | OK (5584 pages) |
 
-## 🔧 Session du 17/11/2026 — fiabilisation du DIRECT (pendant une diffusion)
-Problème constaté en direct : la vidéo ne s'affichait pas sur `/direct/` ni le badge sur `/basket/`. **Cause racine** : le workflow `live-status.yml` (régénère `live.json`) est planifié toutes les 5 min mais **GitHub throttle le `schedule`** (exécutions espacées de plusieurs heures) → `live.json` périmé. Correctifs :
-1. **`/direct/` auto-cicatrisant** : un match encore dans `live.json.upcoming` dont l'heure de début est passée s'affiche **EN DIRECT même si `live.json` est en retard** (plus seulement quand il est injoignable). Plus besoin de « Run workflow » à la main.
-2. **Embeds YouTube `nocookie` → `youtube.com`** (direct, accueil, modale, player replays) : réduit fortement la barrière « confirmez que vous n'êtes pas un robot » qui bloquait les spectateurs **sans compte YouTube**.
-3. **Accueil — lecture du direct SUR PLACE** (comme `/direct/`) : clic sur la vignette ou « Regarder le direct » → la vignette devient le **lecteur inline** (au lieu d'ouvrir YouTube). Fonctionne aussi en **multi-live** (chaque carte « N directs en cours » devient son propre lecteur). Repli href YouTube si JS KO. Testé en local (single + multi) avant déploiement.
-4. **Bandeau « EN DIRECT » sur toutes les pages de sport** — nouveau composant `src/components/LiveNow.astro` : `<LiveNow sport="basket" />` affiche en haut de page un bandeau rouge « EN DIRECT · <match> · Regarder → /direct/ » **quand CE sport est en direct** (lu de `live.json`, maj 60 s), masqué sinon. Posé sur `/basket`, `/billard/hub`, `/billard/blackball`, `/palets/tournoi-des-champions` et la route générique `/disciplines/<slug>` (couvre bowling, football, beach, subbuteo). Testé (visible sur le sport live, masqué sinon).
+## 🔴 Système DIRECT — refondu et fiabilisé le 17/11/2026 (pendant un direct basket)
+Contexte : la vidéo ne s'affichait pas sur `/direct`, le badge restait « collé » après le match, et un spectateur sans compte YouTube était bloqué. Cause de fond : le cron GitHub `live-status.yml` est **throttlé** (tourne toutes les plusieurs heures, pas toutes les 5 min) → `live.json` périmé.
 
-## 📄 Doc créé
-- `docs/pinger-direct-live.md` : guide pour un **pinger externe** (cron-job.org ou Worker Cloudflare) qui déclenche `live-status.yml` toutes les 2-3 min → capte le **lancement réel** du direct sur YouTube, indépendamment du throttling GitHub. Nécessite un token GitHub (fine-grained, Actions:write, ce repo) que le user crée. **À mettre en place par Marc.**
+**Ce qui est en place maintenant :**
+1. **Pinger Cloudflare `lsei-live-pinger`** (compte Marc) : Cron Trigger **toutes les 2 min** → déclenche `live-status.yml` via l'API GitHub (token `pinger-live-lsei-cf`, Actions:write, en secret `GITHUB_TOKEN`). ✅ **Vérifié** : `live.json` se met à jour en ≤ 2 min au **lancement ET à la fin** du direct. Plus jamais besoin de « Run workflow » à la main. Guide : `docs/pinger-direct-live.md`.
+2. **`/direct` auto-cicatrisant** (`effective()` REPLI 3) : un match programmé dont l'heure est passée s'affiche EN DIRECT même si `live.json` est en retard.
+3. **Accueil — lecture SUR PLACE** : clic sur la vignette / bouton → lecteur YouTube **inline** (single + multi-live), au lieu d'ouvrir YouTube.
+4. **Embeds `youtube-nocookie.com` → `youtube.com`** (direct, accueil, modale, player) : réduit la barrière YouTube « confirmez que vous n'êtes pas un robot ».
+5. **🟥 Bandeau « EN DIRECT » par sport — `src/components/LiveNow.astro`** : `<LiveNow sport="<slug>" />` affiche un bandeau rouge (match + « Regarder » → /direct/) quand CE sport est en direct, masqué sinon. Détail dans [[lsei-direct-detection]].
 
-## 🔄 Automatisation en place
-- **Blackball** : 9 compétitions auto-refresh 2×/jour depuis Cuescore (Masters, Femmes, Mixte, Espoir, Junior, Vétéran, Prestige, Para×2 en auto-promotion).
-- **Tournoi des Champions (palets)** : résultats via NOVA (`NovaLive`, mode intégré).
-- **Direct** : `live.json` via `live-status.yml` (throttlé par GitHub → pinger externe recommandé, voir ci-dessus) + `/direct/` et accueil désormais auto-cicatrisants.
+### ⭐ CONVENTION pour TOUT nouveau sport déployé
+Sur chaque nouvelle page de sport (hub, discipline…), ajouter :
+```astro
+import LiveNow from '<chemin>/components/LiveNow.astro';
+...
+<Base ...>
+  <LiveNow sport="<slug>" />   <!-- basket · billard · palets · bowling · football · beach · subbuteo -->
+```
+Déjà posé : `/basket`, `/billard/hub`, `/billard/blackball`, `/palets/tournoi-des-champions`, route générique `/disciplines/[slug]`.
+
+## 🔄 Autres automatisations
+- **Blackball** : 9 compétitions auto-refresh 2×/jour depuis Cuescore.
+- **Tournoi des Champions (palets)** : résultats via NOVA (`NovaLive`).
 
 ## 📌 À faire ensuite / points ouverts
-- **Pinger externe** (doc prêt) : Marc crée le token + le job cron-job.org (ou Worker Cloudflare, je peux l'écrire).
-- *(FAIT)* Bandeau « EN DIRECT » sur toutes les pages de sport (`LiveNow.astro`). Option restante possible : faire aussi basculer l'encadré « Prochain match » du basket lui-même (il affiche « Aujourd'hui » pendant le live) — à voir avec Marc.
-- **Bowling Promotion Tour** : page `/disciplines/bowling/` à transformer en « site dans le site » (édition BPT 2026) — propositions de design à faire valider. Press kit dans `public/bowling promotion tour/` (PDF 20 Mo, non committé). Logo FFPPB converti : `public/partenaires/ffppb.webp` (non committé).
-- Fichiers **non committés à NE PAS pousser** sans accord : PDF bowling, `ffppb.webp`, photos TdC 2025/2026/2027 (`public/tournoi-des-champions/…`), fichiers PC2 (`cdm-blackball-2026-*`, article bilan).
+- **Bowling Promotion Tour** : transformer `/disciplines/bowling/` en « site dans le site » (édition **BPT 2026**) — **propositions de design à faire valider** (c'était la demande en cours avant le direct). Press kit `public/bowling promotion tour/` (PDF 20 Mo, non committé) ; logo `public/partenaires/ffppb.webp` (non committé).
+- **Optionnel direct** : créer un 2e secret `YOUTUBE_API_KEY_LIVE` (quota YouTube isolé) ; faire aussi basculer l'encadré « Prochain match » basket en EN DIRECT (en plus du bandeau).
+- **Hygiène** : le token `pinger-live-lsei-cf` est apparu dans des captures → le régénérer + mettre à jour le secret du Worker (optionnel, périmètre minuscule).
 
 ## ⚠️ Rappels (détail dans CLAUDE.md)
-`git add` explicite (jamais `-A`) ; routine pré-commit (reset caches, `rm -f live.json`, fetch, divergence) ; ne jamais committer `public/live.json` (écraserait le `live.json` runtime en prod) ; FileZilla sans mot de passe.
+`git add` explicite (jamais `-A`) ; routine pré-commit (reset caches, `rm -f live.json`, fetch, divergence) ; **ne JAMAIS committer `public/live.json`** (écraserait le live.json runtime en prod) ; ne pas committer : PDF/`ffppb.webp` bowling, photos TdC, fichiers PC2 (`cdm-blackball-2026-*`, article bilan) ; FileZilla sans mot de passe.

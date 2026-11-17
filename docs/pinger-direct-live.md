@@ -1,5 +1,7 @@
 # Pinger externe — rafraîchir `live.json` en continu (détection direct fiable)
 
+> ✅ **EN PLACE depuis le 17/11/2026** — option **Cloudflare Worker** retenue : Worker **`lsei-live-pinger`** (compte Marc, `marc-poolos.workers.dev`), Cron Trigger **toutes les 2 min**, token fine-grained **`pinger-live-lsei-cf`** (Actions:write sur lsei-site) en secret **`GITHUB_TOKEN`**. Vérifié : `live.json` se met à jour en ≤ 2 min au lancement ET à la fin d'un direct. Le guide ci-dessous reste la référence (recréation / dépannage / variante cron-job.org).
+
 ## Pourquoi
 Le workflow **`live-status.yml`** interroge YouTube et régénère `live.json` (→ la vidéo s'affiche sur `/direct/` et le badge « EN DIRECT »). Il est planifié toutes les 5 min, mais **GitHub throttle les `schedule`** (exécutions espacées de plusieurs heures). Résultat : au lancement d'un direct, `live.json` est souvent périmé.
 
