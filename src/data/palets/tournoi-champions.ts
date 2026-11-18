@@ -35,6 +35,13 @@ export const players: Record<string, TdcPlayer> = {
   'steven-bonneau': { first: 'Steven', last: 'Bonneau', club: 'Méral' },
   'sylvain-pechot': { first: 'Sylvain', last: 'Pechot', club: 'Saulnières' },
   'thomas-gauthier': { first: 'Thomas', last: 'Gauthier', club: 'Saint-Just' },
+  // Plateau 2027 — nouveaux qualifiés (prénoms/accents déduits des noms de photos, à vérifier avec l'organisateur ; club inconnu).
+  'anthony-palluet': { first: 'Anthony', last: 'Palluet' },
+  'gwendal-maine': { first: 'Gwendal', last: 'Maine' },
+  'helena-fromont': { first: 'Héléna', last: 'Fromont' },
+  'kevin-lenoble': { first: 'Kévin', last: 'Lenoble' },
+  'maxence-morio': { first: 'Maxence', last: 'Morio' },
+  'sebastien-brochard': { first: 'Sébastien', last: 'Brochard' },
 };
 
 /** Ligne du classement de poule (ordre = position). ga = goal average. */
@@ -55,6 +62,8 @@ export interface TdcEdition {
   upcoming?: boolean;
   /** affiche de l'édition (visible tant qu'elle est à venir) */
   affiche?: string;
+  /** plateau publié d'une édition À VENIR : les 16 qualifiés (ids), affichés avant les résultats */
+  roster?: string[];
   /** vidéo YouTube du live (id) */
   video?: string;
   /** tournoi dans NOVA (slug de la vue publique nova.lsei.tv/live.html?t=<slug>) : toutes les parties, intégrées à la page */
@@ -85,6 +94,7 @@ export const editions: TdcEdition[] = [
     date: '2027-01-02',
     upcoming: true,
     affiche: '/tournoi-des-champions/2027/affiche%202027.jpg',
+    roster: ['adrien-morel', 'anthony-palluet', 'benoit-dufil', 'cyrille-jouault', 'elody-guillot', 'eric-jeusset', 'gwendal-maine', 'helena-fromont', 'jean-francois-chasse', 'jean-marc-toutirais', 'kevin-lenoble', 'louhenvel-adam', 'maxence-morio', 'nathan-rehel', 'sebastien-brochard', 'sylvain-pechot'],
     pool: [],
     quarters: [],
     semis: [],

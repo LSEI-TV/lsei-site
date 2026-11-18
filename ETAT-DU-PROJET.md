@@ -36,9 +36,10 @@ Déjà posé : `/basket`, `/billard/hub`, `/billard/blackball`, `/palets/tournoi
 - **Tournoi des Champions (palets)** : résultats via NOVA (`NovaLive`).
 
 ## 📌 À faire ensuite / points ouverts
+- *(FAIT 18/11)* **TdC 2027 — accord organisateur obtenu** : les **16 qualifiés** sont publiés (champ `roster` de l'édition à venir → plateau affiché avant résultats ; 6 nouveaux joueurs ajoutés au registre + photos). ⚠️ Prénoms/accents des 6 nouveaux **déduits des noms de fichiers** (Héléna, Kévin, Sébastien… à vérifier avec l'organisateur ; club inconnu → « Sans club »). **Gala jeunes NON publié** (accord parental photos mineurs à venir).
 - *(FAIT)* **Bowling Promotion Tour** : `/disciplines/bowling/` est désormais la page « site dans le site » du BPT (Direction A « Broadcast TV » validée par Marc). Page dédiée `src/pages/disciplines/bowling.astro` + données `src/data/bowling-bpt.ts` ; bowling exclu des routes génériques `disciplines/[slug]`. Hero sombre + 7 étapes + favoris + 10 nations + palmarès + replays + partenaires. Reste à enrichir : vraies photos des favoris (initiales pour l'instant), logos partenaires (texte). Press kit `public/bowling promotion tour/` (PDF 20 Mo, non committé).
 - **Optionnel direct** : créer un 2e secret `YOUTUBE_API_KEY_LIVE` (quota YouTube isolé) ; faire aussi basculer l'encadré « Prochain match » basket en EN DIRECT (en plus du bandeau).
 - **Hygiène** : le token `pinger-live-lsei-cf` est apparu dans des captures → le régénérer + mettre à jour le secret du Worker (optionnel, périmètre minuscule).
 
 ## ⚠️ Rappels (détail dans CLAUDE.md)
-`git add` explicite (jamais `-A`) ; routine pré-commit (reset caches, `rm -f live.json`, fetch, divergence) ; **ne JAMAIS committer `public/live.json`** (écraserait le live.json runtime en prod) ; ne pas committer : PDF/`ffppb.webp` bowling, photos TdC, fichiers PC2 (`cdm-blackball-2026-*`, article bilan) ; FileZilla sans mot de passe.
+`git add` explicite (jamais `-A`) ; routine pré-commit (reset caches, `rm -f live.json`, fetch, divergence) ; **ne JAMAIS committer `public/live.json`** (écraserait le live.json runtime en prod) ; ne pas committer : PDF/`ffppb.webp` bowling, **gala jeunes TdC 2027** (`tournoi-des-champions/2027/gala`, mineurs — attend accord parental) + `/commentateurs`, fichiers PC2 (`cdm-blackball-2026-*`, article bilan) ; FileZilla sans mot de passe.

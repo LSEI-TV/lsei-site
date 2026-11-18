@@ -130,7 +130,7 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
             ? <NovaLive slug={e.nova} accent={e.color} />
             : <NovaLive slug={e.nova} title={e.novaPool === false ? 'Tableau final · NOVA' : 'Toutes les parties · NOVA'} live={false} accent={e.color} />)}
 
-          {e.upcoming || !e.final ? (
+          {e.upcoming || !e.final ? (<>
           <div class="tdc-soon">
             <figure class="tdc-soon-aff">
               {e.affiche
@@ -140,7 +140,7 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
             <div class="tdc-soon-body">
               <span class="tdc-soon-tag">Prochain rendez-vous</span>
               <div class="tdc-soon-count" data-tdc-count={e.date}><b data-tdc-days>J-—</b><span>avant le coup d'envoi</span></div>
-              <p class="tdc-soon-p">16 champions, 3 parties de poule, les {QUALIFIED} meilleurs en quarts de finale, puis la finale en 15 points. Le tableau final, le classement de poule et les 16 joueurs s'afficheront ici une fois le tournoi disputé.</p>
+              <p class="tdc-soon-p">16 champions, 3 parties de poule, les {QUALIFIED} meilleurs en quarts de finale, puis la finale en 15 points. Le tableau final et le classement de poule s'afficheront ici une fois le tournoi disputé.</p>
               {assetExists(ORGANIZER.logo) && (
                 <a class="tdc-soon-org" href={ORGANIZER.url} target="_blank" rel="noopener">
                   <span class="tdc-soon-org-logo"><img src={ORGANIZER.logo} alt={ORGANIZER.name} /></span>
@@ -149,7 +149,24 @@ const rounds = (e: TdcEdition): { name: string; games: TdcMatch[] }[] => [
               )}
             </div>
           </div>
-          ) : (<>
+          {e.roster && e.roster.length > 0 && (<>
+          <h3 class="tdc-h3">Le plateau <small>{e.roster.length} qualifiés</small></h3>
+          <div class="tdc-players">
+            {e.roster.map((id) => {
+              const img = photo(id);
+              return (
+                <div class="tdc-pl">
+                  <div class="tdc-pl-img">{img ? <img src={img} alt={playerName(id)} loading="lazy" /> : <span class="tdc-ini">{initials(id)}</span>}</div>
+                  <div class="tdc-pl-body">
+                    <b>{players[id]?.first} <span>{players[id]?.last}</span></b>
+                    <small>{club(id)}</small>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          </>)}
+          </>) : (<>
           {/* Édition présente dans NOVA : le tableau et la poule sont dans le bloc NOVA au-dessus (pas de doublon) */}
           {!e.nova && (<>
           <h3 class="tdc-h3">Tableau final</h3>
