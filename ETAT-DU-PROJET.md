@@ -4,42 +4,47 @@
 
 | | |
 |---|---|
-| **Dernière mise à jour** | 2026-11-17 ~23h30 (heure de Paris) |
-| **Machine** | PC1 |
-| **Dernier push** | suivi (ETAT + mémoire + doc pinger) |
+| **Dernière mise à jour** | 2026-11-20 (heure de Paris) |
+| **Machine** | PC2 |
+| **Dernier push** | SEO : correction du champ `location` manquant (Search Console) |
 | **État déploiement** | poussé sur `main` → GitHub Actions « Build & Deploy OVH » |
-| **Build local** | OK (5584 pages) |
+| **Build local** | OK (exit 0, `/programme/` régénéré et vérifié) |
 
-## 🔴 Système DIRECT — refondu et fiabilisé le 17/11/2026 (pendant un direct basket)
-Contexte : la vidéo ne s'affichait pas sur `/direct`, le badge restait « collé » après le match, et un spectateur sans compte YouTube était bloqué. Cause de fond : le cron GitHub `live-status.yml` est **throttlé** (tourne toutes les plusieurs heures, pas toutes les 5 min) → `live.json` périmé.
+## 🟢 Correction du 20/11/2026 — Search Console : « champ location manquant » sur `/programme/`
+Google Search Console signalait **7 éléments invalides** (type *Événement*) sur `https://lsei.tv/programme/`, tous nommés « Albi » — première détection 18/11/2026.
 
-**Ce qui est en place maintenant :**
-1. **Pinger Cloudflare `lsei-live-pinger`** (compte Marc) : Cron Trigger **toutes les 2 min** → déclenche `live-status.yml` via l'API GitHub (token `pinger-live-lsei-cf`, Actions:write, en secret `GITHUB_TOKEN`). ✅ **Vérifié** : `live.json` se met à jour en ≤ 2 min au **lancement ET à la fin** du direct. Plus jamais besoin de « Run workflow » à la main. Guide : `docs/pinger-direct-live.md`.
-2. **`/direct` auto-cicatrisant** (`effective()` REPLI 3) : un match programmé dont l'heure est passée s'affiche EN DIRECT même si `live.json` est en retard.
-3. **Accueil — lecture SUR PLACE** : clic sur la vignette / bouton → lecteur YouTube **inline** (single + multi-live), au lieu d'ouvrir YouTube.
-4. **Embeds `youtube-nocookie.com` → `youtube.com`** (direct, accueil, modale, player) : réduit la barrière YouTube « confirmez que vous n'êtes pas un robot ».
-5. **🟥 Bandeau « EN DIRECT » par sport — `src/components/LiveNow.astro`** : `<LiveNow sport="<slug>" />` affiche un bandeau rouge (match + « Regarder » → /direct/) quand CE sport est en direct, masqué sinon. Détail dans [[lsei-direct-detection]].
-6. **Accueil + ticker qui s'éteignent** (fix 17/11 soir) : le hero d'accueil et le bandeau haut `Ticker.astro` étaient *figés au build* (« EN DIRECT » écrit dans le HTML si la page était construite pendant un direct) → ils restaient allumés après le match. Désormais ils relisent `live.json` : le hero « dé-live » (pill « À revoir », bouton « Voir le replay ») même sans snapshot, et le ticker se masque s'il n'y a plus de direct.
+**Cause** : dans le JSON-LD (`src/pages/programme.astro`), les diffusions **annoncées sans lieu physique** (`confirmed: true`, pas de `place`) étaient marquées `MixedEventAttendanceMode` (événement à la fois sur place **et** en ligne) mais avec une `VirtualLocation` seule. Google exige un **lieu physique** pour les modes `Mixed` / `Offline` → il considérait le `location` comme manquant.
+
+**Fix** : `eventAttendanceMode` et `location` sont désormais toujours cohérents :
+- diffusé **en ligne seul** (pas de lieu) → `OnlineEventAttendanceMode` + `VirtualLocation`
+- **lieu physique connu**, non diffusé → `OfflineEventAttendanceMode` + `Place`
+- **les deux** → `MixedEventAttendanceMode` + `[Place, VirtualLocation]`
+
+Vérifié sur le build : **22 SportsEvents, 0 sans location**. Même robustesse appliquée au `BroadcastEvent` des pages `/replay/[id]` (ajout d'une `VirtualLocation`).
+➡️ **À faire côté Marc** : dans Search Console, cliquer **« VALIDER LA CORRECTION »** une fois le déploiement OVH terminé (Google re-explore ensuite).
+
+## 🔴 Système DIRECT — refondu et fiabilisé le 17/11/2026 (toujours en place)
+Cause de fond passée : le cron GitHub `live-status.yml` était throttlé → `live.json` périmé. Ce qui est en place :
+1. **Pinger Cloudflare `lsei-live-pinger`** : Cron Trigger **toutes les 2 min** → déclenche `live-status.yml` via l'API GitHub. ✅ `live.json` à jour en ≤ 2 min au lancement ET à la fin du direct. Guide : `docs/pinger-direct-live.md`.
+2. **`/direct` auto-cicatrisant** : un match programmé dont l'heure est passée s'affiche EN DIRECT même si `live.json` est en retard.
+3. **Accueil — lecture SUR PLACE** : clic vignette/bouton → lecteur YouTube **inline** (single + multi-live).
+4. **Embeds `youtube.com`** (plus `nocookie`) : réduit la barrière « confirmez que vous n'êtes pas un robot ».
+5. **🟥 Bandeau « EN DIRECT » par sport — `src/components/LiveNow.astro`** : `<LiveNow sport="<slug>" />`.
+6. **Accueil + ticker qui s'éteignent** : hero et `Ticker.astro` relisent `live.json` (plus figés au build).
 
 ### ⭐ CONVENTION pour TOUT nouveau sport déployé
-Sur chaque nouvelle page de sport (hub, discipline…), ajouter :
-```astro
-import LiveNow from '<chemin>/components/LiveNow.astro';
-...
-<Base ...>
-  <LiveNow sport="<slug>" />   <!-- basket · billard · palets · bowling · football · beach · subbuteo -->
-```
+Sur chaque nouvelle page de sport, ajouter `<LiveNow sport="<slug>" />` sous `<Base>` (slugs : basket · billard · palets · bowling · football · beach · subbuteo).
 Déjà posé : `/basket`, `/billard/hub`, `/billard/blackball`, `/palets/tournoi-des-champions`, route générique `/disciplines/[slug]`.
 
-## 🔄 Autres automatisations
+## 🔄 Automatisations
 - **Blackball** : 9 compétitions auto-refresh 2×/jour depuis Cuescore.
 - **Tournoi des Champions (palets)** : résultats via NOVA (`NovaLive`).
 
 ## 📌 À faire ensuite / points ouverts
-- *(FAIT 18/11)* **TdC 2027 — accord organisateur obtenu** : les **16 qualifiés** sont publiés (champ `roster` de l'édition à venir → plateau affiché avant résultats ; 6 nouveaux joueurs ajoutés au registre + photos). ⚠️ Prénoms/accents des 6 nouveaux **déduits des noms de fichiers** (Héléna, Kévin, Sébastien… à vérifier avec l'organisateur ; club inconnu → « Sans club »). **Gala jeunes NON publié** (accord parental photos mineurs à venir).
-- *(FAIT)* **Bowling Promotion Tour** : `/disciplines/bowling/` est désormais la page « site dans le site » du BPT (Direction A « Broadcast TV » validée par Marc). Page dédiée `src/pages/disciplines/bowling.astro` + données `src/data/bowling-bpt.ts` ; bowling exclu des routes génériques `disciplines/[slug]`. Hero sombre + 7 étapes + favoris + 10 nations + palmarès + replays + partenaires. Reste à enrichir : vraies photos des favoris (initiales pour l'instant), logos partenaires (texte). Press kit `public/bowling promotion tour/` (PDF 20 Mo, non committé).
-- **Optionnel direct** : créer un 2e secret `YOUTUBE_API_KEY_LIVE` (quota YouTube isolé) ; faire aussi basculer l'encadré « Prochain match » basket en EN DIRECT (en plus du bandeau).
-- **Hygiène** : le token `pinger-live-lsei-cf` est apparu dans des captures → le régénérer + mettre à jour le secret du Worker (optionnel, périmètre minuscule).
+- **TdC 2027** : accord organisateur obtenu (18/11) → **16 qualifiés publiés** (champ `roster` de l'édition à venir + 6 nouveaux joueurs au registre + photos). ⚠️ **Gala jeunes NON publié** (mineurs — accord parental photos en attente) ; **commentateurs NON publiés**. Le lot complet (sections commentateurs/gala + rendu de page) reste préservé sur la branche **locale PC2** `wip/edition-2027-attente-orga` ; à fusionner quand l'accord parental arrive (prévoir quelques conflits sur `tournoi-champions.ts` / `tournoi-des-champions.astro` à cause du roster déjà intégré).
+- **Bowling Promotion Tour** : `/disciplines/bowling/` en place (Direction A « Broadcast TV »). Reste à enrichir : vraies photos des favoris, logos partenaires.
+- **Optionnel direct** : 2e secret `YOUTUBE_API_KEY_LIVE` (quota isolé) ; encadré « Prochain match » basket à basculer en EN DIRECT.
+- **Hygiène** : régénérer le token `pinger-live-lsei-cf` (apparu dans des captures) + MAJ secret du Worker.
 
 ## ⚠️ Rappels (détail dans CLAUDE.md)
-`git add` explicite (jamais `-A`) ; routine pré-commit (reset caches, `rm -f live.json`, fetch, divergence) ; **ne JAMAIS committer `public/live.json`** (écraserait le live.json runtime en prod) ; ne pas committer : PDF/`ffppb.webp` bowling, **gala jeunes TdC 2027** (`tournoi-des-champions/2027/gala`, mineurs — attend accord parental) + `/commentateurs`, fichiers PC2 (`cdm-blackball-2026-*`, article bilan) ; FileZilla sans mot de passe.
+`git add` explicite (jamais `-A`) ; routine pré-commit (reset caches, `rm -f live.json`, fetch, divergence) ; **ne JAMAIS committer `public/live.json`** ; ne pas committer : PDF/photos bowling, **gala jeunes TdC 2027** (`tournoi-des-champions/2027/gala`, mineurs) + `/commentateurs`, fichiers PC2 (`cdm-blackball-2026-*`, article bilan) ; FileZilla sans mot de passe.
