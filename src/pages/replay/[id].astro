@@ -97,7 +97,7 @@ const videoLd = {
     `https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`,
   ],
   uploadDate: uploadIso,
-  ...(upcoming ? { publication: { '@type': 'BroadcastEvent', isLiveBroadcast: true, startDate: new Date(_startMs).toISOString(), endDate: new Date(_startMs + 2 * 3600 * 1000).toISOString() } } : {}),
+  ...(upcoming ? { publication: { '@type': 'BroadcastEvent', isLiveBroadcast: true, startDate: new Date(_startMs).toISOString(), endDate: new Date(_startMs + 2 * 3600 * 1000).toISOString(), location: { '@type': 'VirtualLocation', url: new URL(`/replay/${video.id}`, Astro.site).href } } } : {}),
   ...(video.duration ? { duration: video.duration } : {}),
   embedUrl: `https://www.youtube.com/embed/${video.id}`,
   contentUrl: `https://www.youtube.com/watch?v=${video.id}`,

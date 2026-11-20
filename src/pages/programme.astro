@@ -152,12 +152,19 @@ const eventsLd = events.map((e) => {
   const endIso = e.endDay ? e.endDay : e.date ? new Date(e.date.valueOf() + 2.5 * 3600 * 1000).toISOString() : e.day;
   const watch = e.link || (e.page ? abs(e.page) : programmeUrl);
   const matchLabel = e.tm ? `${e.tm[0].name} – ${e.tm[1].name}` : e.title;
+  // location ⇄ eventAttendanceMode doivent être cohérents, sinon Search Console signale
+  // « champ location manquant » : un événement « Mixed » ou « Offline » SANS lieu physique est
+  // invalide. Lieu connu → Place ; diffusé en ligne → VirtualLocation ; les deux → Mixed.
+  const place = e.place ? { '@type': 'Place', name: e.place, address: e.place } : null;
+  const virtual = { '@type': 'VirtualLocation', url: watch };
+  const online = !!(e.live || e.confirmed || e.link || e.page);
+  const attendanceMode = place ? (online ? 'Mixed' : 'Offline') : 'Online';
   return {
     '@context': 'https://schema.org', '@type': 'SportsEvent', name: e.title,
     startDate: e.date ? e.date.toISOString() : e.day, endDate: endIso,
     eventStatus: 'https://schema.org/EventScheduled',
-    eventAttendanceMode: e.confirmed ? 'https://schema.org/MixedEventAttendanceMode' : 'https://schema.org/OfflineEventAttendanceMode',
-    location: e.place ? { '@type': 'Place', name: e.place, address: e.place } : { '@type': 'VirtualLocation', url: watch },
+    eventAttendanceMode: `https://schema.org/${attendanceMode}EventAttendanceMode`,
+    location: place ? (online ? [place, virtual] : place) : virtual,
     image: e.thumb ? [e.thumb] : [abs(e.disc.hero || '/og-image.jpg')],
     description: `${[e.kicker, matchLabel].filter(Boolean).join(' · ')}. ${e.live || e.confirmed ? 'En direct' : 'Au programme'} sur LSEI — Le Sport en Image${e.place ? `, ${e.place}` : ''}.`,
     performer: e.tm
