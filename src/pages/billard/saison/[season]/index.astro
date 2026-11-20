@@ -14,6 +14,8 @@ import SportIcon from '../../../../components/SportIcon.astro';
 import PlayerSearch from '../../../../components/PlayerSearch.astro';
 import { getSeasons, getPalmares, DEFAULT_SEASON, mastersGuests2627, type Season } from '../../../../data/billard/seasons';
 import AffichesTournois from '../../../../components/AffichesTournois.astro';
+import NovaLive from '../../../../components/NovaLive.astro';
+import { novaStageOf } from '../../../../data/billard/nova';
 import rmixte2526 from '../../../../data/billard/results-mixte-2025-2026.json';
 import rmixte2425 from '../../../../data/billard/results-mixte-2024-2025.json';
 import rmixte2324 from '../../../../data/billard/results-mixte-2023-2024.json';
@@ -55,6 +57,9 @@ const nCal = calSeason.calendar.length;
 const { nextIdx, nextJx } = seasonNext(calSeason.calendar);
 const tourById = (tid: string) => (hasData ? R.tournaments.find((t: any) => t.id === tid) : undefined);
 
+// Tableau NOVA (nova.lsei.tv) de la dernière étape suivie en direct : « en direct » jusqu'au dernier jour, puis tableau final
+const nova = novaStageOf(season.slug);
+const novaLive = !!nova && new Date().toISOString().slice(0, 10) <= nova.to;
 const seasonVideoKey = season.slug.replace('-', '/');
 // Uniquement les vidéos du MASTERS de cette saison (pas les régionales / Femmes / Para).
 const vids = (await getReplays({ discipline: 'billard' })).filter((v) => v.season === seasonVideoKey && v.category === 'Masters');
@@ -387,6 +392,14 @@ if (!hasData) {
       </aside>
     </div>
   </section>
+
+  {nova && (
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <NovaLive slug={nova.slug} title={`${nova.tn} · ${nova.city} · ${novaLive ? 'tableau en direct' : 'tableau final'}`} live={novaLive} accent="#1E7BE0" />
+      </div>
+    </section>
+  )}
 
   {newcomers.length > 0 && (
     <section class="section" style="padding-top:0">
