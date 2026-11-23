@@ -6,9 +6,16 @@
 |---|---|
 | **Dernière mise à jour** | 2026-11-23 (heure de Paris) |
 | **Machine** | PC1 |
-| **Dernier push** | Billard : correctif « Prochain rendez-vous / En cours » (composant AffichesTournois) |
+| **Dernier push** | Billard : invités Masters CALCULÉS automatiquement (top 4 du Mixte National de l'étape précédente) |
 | **État déploiement** | poussé sur `main` → GitHub Actions « Build & Deploy OVH » |
 | **Build local** | OK (5 687 pages, exit 0) |
+
+## 🟢 23/11/2026 (2) — Invités Masters automatisés (feeder Mixte National)
+Les 4 invités (wildcards) de chaque étape du Blackball Master étaient saisis **à la main** (`mastersGuests2627`). Règle sportive identifiée et vérifiée : **invités Masters TN(n) = TOP 4 du Mixte National TN(n-1)**. Contrôle : top 4 du Mixte TN1 Fumel (Lechat, Bounif, Robert, Abdou) = exactement les invités du Masters TN2. ✔
+- **Nouveau module** `src/data/billard/mastersGuests.ts` : calcule les invités par étape depuis `results-mixte-2026-2027.json` (podium = champion + finaliste + 2 perdants de demie). `seasons.ts` ré-exporte `mastersGuests2627`. `tn1` reste manuel (feeder = dernière étape de la saison précédente).
+- **100% automatique** : `results-mixte-2026-2027.json` est rafraîchi 2×/jour depuis Cuescore (l'import découvre tous les TN Mixte via la regex `/- Mixte National -/`). Dès qu'une étape Mixte est jouée, les invités de l'étape Masters suivante apparaissent seuls (étape Mixte non finie → aucune finale décidée → pas d'invité). Plus rien à saisir.
+- Résultat actuel : TN3 (St-Nicolas) invités = **Crespin, Angelier, Loncle, Boughanzai** (top 4 du Mixte TN2 Albi). TN4→France se rempliront au fil des étapes Mixte.
+- Les cartes invités pointent vers la fiche **Mixte** du joueur (`/mixte/joueur/<slug>`), pas de fiche Masters auto-créée.
 
 ## 🟢 23/11/2026 — Correctif « Prochain rendez-vous » (billard)
 Le cadre « Prochain rendez-vous » (composant réutilisable `src/components/AffichesTournois.astro`, présent sur les pages saison billard + les 4 hubs) restait **« En cours » 1 jour de trop** : au lendemain de la fin d'un tournoi, il affichait encore l'étape passée (ex. TN2 Albi « En cours » le 23/11 alors que le tournoi finissait le 22/11).

@@ -109,13 +109,10 @@ export const roster2627: RosterEntry[] = [
   { name: 'Yasser Amrani Hanchi', country: 'MAR' },
 ];
 
-// Invités (wildcards) par étape du Masters 2026/2027. Chaque Tournoi National
-// accueille 4 invités EN PLUS des 28 permanents ; ils changent à chaque étape.
-// Clé = slug de l'étape (cf. cal2627). Spécifique au Masters (pas Femmes/Para).
-export const mastersGuests2627: Record<string, string[]> = {
-  tn1: ['Kevin Lefrançois', 'Arthur Crespin', 'Fabien Langlet', 'Frédéric Moreau'],
-  tn2: ['Christophe Lechat', 'Amine Bounif', 'Adlaine Abdou', 'Thomas Robert'],
-};
+// Invités (wildcards) par étape du Masters 2026/2027 : 4 invités EN PLUS des 28 permanents,
+// différents à chaque étape. Désormais CALCULÉS automatiquement (top 4 du Mixte National de
+// l'étape précédente) — voir ./mastersGuests. Clé = slug de l'étape (cf. cal2627).
+export { mastersGuests2627 } from './mastersGuests';
 
 // La plus récente en premier.
 export const seasons: Season[] = [
