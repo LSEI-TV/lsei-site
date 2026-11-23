@@ -4,11 +4,18 @@
 
 | | |
 |---|---|
-| **Dernière mise à jour** | 2026-11-20 (heure de Paris) |
-| **Machine** | PC2 |
-| **Dernier push** | Billard Masters : tableau NOVA du TN2 d'Albi intégré à la page de la saison 2026/2027 |
+| **Dernière mise à jour** | 2026-11-23 (heure de Paris) |
+| **Machine** | PC1 |
+| **Dernier push** | Billard : correctif « Prochain rendez-vous / En cours » (composant AffichesTournois) |
 | **État déploiement** | poussé sur `main` → GitHub Actions « Build & Deploy OVH » |
-| **Build local** | OK (5 579 pages, exit 0) ; affichage vérifié ordinateur + téléphone 360 px |
+| **Build local** | OK (5 687 pages, exit 0) |
+
+## 🟢 23/11/2026 — Correctif « Prochain rendez-vous » (billard)
+Le cadre « Prochain rendez-vous » (composant réutilisable `src/components/AffichesTournois.astro`, présent sur les pages saison billard + les 4 hubs) restait **« En cours » 1 jour de trop** : au lendemain de la fin d'un tournoi, il affichait encore l'étape passée (ex. TN2 Albi « En cours » le 23/11 alors que le tournoi finissait le 22/11).
+- **Cause** : le script client gardait un rendez-vous « focus » pendant `début + 3 jours` (grâce fixe ancrée sur la date de **début**), au lieu de sa vraie date de fin.
+- **Fix** : calcul d'une **date de fin** côté serveur (`endIso`, jour de fin lu dans la chaîne « 20-22 nov. 2026 » + année/mois de `start`) → un rendez-vous reste affiché **tant qu'aujourd'hui ≤ son dernier jour**, puis bascule au suivant. Le calcul « J-X / En cours » en dessous est inchangé.
+- Rappel métier : les **invités Masters** (`mastersGuests2627`, 4 wildcards/étape) sont saisis **à la main depuis Cuescore** une fois annoncés — TN3 (Saint-Nicolas-de-Port) pas encore renseigné = normal, pas un bug.
+
 
 ## 🟢 20/11/2026 (soir) — Tableau NOVA du TN2 Masters · Albi sur lsei.tv
 Marc teste NOVA (nova.lsei.tv) en parallèle de Cuescore sur le **TN2 Masters à Albi (21-22/11/2026, salle du Cosec)**.

@@ -21,6 +21,18 @@ const datePhrase = (d: string) => {
   const m = d.match(/^(\d+)\s*-\s*(\d+)\s+(.+)$/);
   return m ? `du ${m[1]} au ${m[2]} ${m[3]}` : d;
 };
+// Date de FIN ISO d'un rendez-vous : jour de fin lu dans la chaîne « 20-22 nov. 2026 »,
+// combiné à l'année/mois du début (ISO). Sert à ne garder un rendez-vous « en cours »
+// que jusqu'à son dernier jour inclus (et pas 3 jours après son début).
+const endIso = (e: SeasonEvent): string | undefined => {
+  if (!e.start) return e.start;
+  const m = e.date.match(/^\s*\d+\s*-\s*(\d+)/);
+  if (!m) return e.start;
+  const [y, mo, d0] = e.start.split('-').map(Number);
+  let endDay = Number(m[1]), y2 = y, mo2 = mo;
+  if (endDay < d0) { mo2 += 1; if (mo2 > 12) { mo2 = 1; y2 += 1; } } // franchit un mois
+  return `${y2}-${String(mo2).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
+};
 const posters = calendar
   .map((e) => {
     const path = e.poster ?? `${folder}/${seasonSlug}/${evSlug(e)}.webp`;
@@ -30,7 +42,7 @@ const posters = calendar
 const showPosters = posters.length > 0 || seasonStatus === 'upcoming';
 const upcomingEvents = calendar
   .filter((e) => e.start)
-  .map((e) => ({ slug: evSlug(e), start: e.start, short: e.short, place: e.place, date: datePhrase(e.date) }));
+  .map((e) => ({ slug: evSlug(e), start: e.start, end: endIso(e), short: e.short, place: e.place, date: datePhrase(e.date) }));
 ---
 {showPosters && (
   <div class="hub-card aff-card" data-aff-card>
@@ -141,15 +153,17 @@ const upcomingEvents = calendar
   const grid = document.querySelector('[data-aff-grid]') as HTMLElement | null;
   const dataEl = document.querySelector('[data-aff-events]');
   if (card && panel && dataEl) {
-    const GRACE = 3 * 86400000; // durée approx. d'un tournoi (jours) avant de le considérer passé
-    let events: { slug: string; start: string; short: string; place: string; date: string }[] = [];
+    let events: { slug: string; start: string; end?: string; short: string; place: string; date: string }[] = [];
     try { events = JSON.parse(dataEl.textContent || '[]'); } catch { events = []; }
     const now = new Date(); now.setHours(0, 0, 0, 0);
+    // Prochain rendez-vous = le 1er (par date de début) dont le DERNIER JOUR n'est pas
+    // encore passé. Un tournoi s'affiche « en cours » pendant ses dates, puis disparaît
+    // dès le lendemain de sa fin (fini le « collé 1 jour de trop »).
     const focus = events
-      .map((e) => ({ ...e, d: new Date(e.start + 'T00:00:00') }))
+      .map((e) => ({ ...e, d: new Date(e.start + 'T00:00:00'), dEnd: new Date((e.end || e.start) + 'T23:59:59') }))
       .filter((e) => !isNaN(e.d.getTime()))
       .sort((a, b) => a.d.getTime() - b.d.getTime())
-      .find((e) => e.d.getTime() + GRACE >= now.getTime());
+      .find((e) => e.dEnd.getTime() >= now.getTime());
 
     // Affiches : ne montrer que celle du prochain tournoi (si elle existe).
     const affs = [...card.querySelectorAll('.aff')] as HTMLElement[];
