@@ -6,9 +6,9 @@
 |---|---|
 | **Dernière mise à jour** | 2026-11-23 (heure de Paris) |
 | **Machine** | PC2 |
-| **Dernier push** | Photo joueur Cédric Angelier (Masters) + règle « placement photo » dans CLAUDE.md |
-| **État déploiement** | poussé sur `main` → GitHub Actions « Build & Deploy OVH » |
-| **Build local** | OK (exit 0, cutout régénéré via `npm run assets`) |
+| **Dernier push** | Suivi : erreur SEO « location » confirmée RÉSOLUE côté Google (Search Console) |
+| **État déploiement** | doc de suivi uniquement (pas de changement de site) |
+| **Build local** | n/a (aucune modif de code) |
 
 ## 🟢 Mise à jour du 23/11/2026 — nouvelle photo Cédric Angelier + règle de placement
 Nouvelle photo de **Cédric Angelier** (joueur **Mixte National invité au Masters**) intégrée via `npm run assets`.
@@ -41,9 +41,9 @@ Marc teste NOVA (nova.lsei.tv) en parallèle de Cuescore sur le **TN2 Masters à
 - Les **résultats officiels restent Cuescore** (import auto) ; NOVA est un essai.
 - Branché dans `src/pages/billard/saison/[season]/index.astro` (import `NovaLive` + `novaStageOf`).
 
-## 🟢 20/11/2026 — Search Console : « champ location manquant » sur `/programme/` (corrigé)
+## ✅ 20/11/2026 — Search Console : « champ location manquant » sur `/programme/` — RÉSOLU
 JSON-LD de `src/pages/programme.astro` : `eventAttendanceMode` et `location` toujours cohérents (en ligne seul → `Online` + `VirtualLocation` ; lieu seul → `Offline` + `Place` ; les deux → `Mixed` + `[Place, VirtualLocation]`). Même robustesse sur `/replay/[id]`.
-➡️ **À faire côté Marc** (si pas encore fait) : Search Console → **« VALIDER LA CORRECTION »**.
+➡️ **Résolu côté Google (vérifié le 23/11/2026)** : rapport Search Console *Améliorations → Événements* de la propriété `https://lsei.tv/` (compte **webtvlesportenimage@gmail.com**) → erreur **« Champ location manquant » : 0 élément concerné**, validation « Sans objet ». Google a re-exploré après le déploiement (dernière MAJ du rapport 22/11) et a fait retomber le compteur à 0 **tout seul** → aucun bouton « Valider la correction » à cliquer, l'erreur est auto-résolue. Rapport Événements : **15 valides, 0 non valide**.
 
 ## 🔴 Système DIRECT — refondu et fiabilisé le 17/11/2026 (toujours en place)
 1. **Pinger Cloudflare `lsei-live-pinger`** : Cron Trigger **toutes les 2 min** → déclenche `live-status.yml` via l'API GitHub. `live.json` à jour en ≤ 2 min. Guide : `docs/pinger-direct-live.md`.
