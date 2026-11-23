@@ -5,10 +5,19 @@
 | | |
 |---|---|
 | **Dernière mise à jour** | 2026-11-23 (heure de Paris) |
-| **Machine** | PC1 |
-| **Dernier push** | Billard : invités Masters CALCULÉS automatiquement (top 4 du Mixte National de l'étape précédente) |
+| **Machine** | PC2 |
+| **Dernier push** | Photo joueur Cédric Angelier (Masters) + règle « placement photo » dans CLAUDE.md |
 | **État déploiement** | poussé sur `main` → GitHub Actions « Build & Deploy OVH » |
-| **Build local** | OK (5 687 pages, exit 0) |
+| **Build local** | OK (exit 0, cutout régénéré via `npm run assets`) |
+
+## 🟢 Mise à jour du 23/11/2026 — nouvelle photo Cédric Angelier + règle de placement
+Nouvelle photo de **Cédric Angelier** (joueur **Mixte National invité au Masters**) intégrée via `npm run assets`.
+
+**Point technique confirmé (important)** : le pipeline `build-player-assets.mjs` (PASSE 2) donne **priorité à la catégorie MASTERS** et ne résout la récence qu'**à l'intérieur** de la catégorie gagnante. Comme Cédric garde un historique `MASTERS/2024-2025`, une photo rangée dans `MIXTE/` serait **masquée** par l'ancienne photo Masters et ne s'afficherait jamais. → Sa photo active **doit** rester dans `MASTERS/2026-2027`. Vérifié : cutout `public/billard/cutouts/cedric-angelier.png` reflète bien la nouvelle photo.
+
+**Règle notée dans `CLAUDE.md`** (section « 📸 Photos joueurs — convention catégorie ») :
+- **Archive perso `D:\BLACKBALL\joueurs`** (non lue par le site) : nommer par **catégorie d'origine** (`mixte - prenom nom` pour un invité), promotion en `masters - …` seulement à la **vraie qualification**.
+- **Photo DANS LE DÉPÔT** : **catégorie de plus haute priorité** où le joueur participe cette saison (donc **MASTERS** pour un invité à historique Masters), sinon masquée par le pipeline.
 
 ## 🟢 23/11/2026 (2) — Invités Masters automatisés (feeder Mixte National)
 Les 4 invités (wildcards) de chaque étape du Blackball Master étaient saisis **à la main** (`mastersGuests2627`). Règle sportive identifiée et vérifiée : **invités Masters TN(n) = TOP 4 du Mixte National TN(n-1)**. Contrôle : top 4 du Mixte TN1 Fumel (Lechat, Bounif, Robert, Abdou) = exactement les invités du Masters TN2. ✔
