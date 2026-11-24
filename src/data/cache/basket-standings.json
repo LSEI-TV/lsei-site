@@ -1,55 +1,88 @@
 {
-  "updated": "2026-11-19T22:31:46.484Z",
+  "updated": "2026-11-24T19:37:16.752Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/classement",
   "pool": "Poule B",
   "rows": [
     {
       "slug": "rennes",
       "rank": 1,
-      "pts": 19,
-      "played": 11,
-      "w": 8,
+      "pts": 21,
+      "played": 12,
+      "w": 9,
       "l": 3,
-      "pf": 928,
-      "pa": 857,
-      "diff": 71
+      "pf": 1015,
+      "pa": 934,
+      "diff": 81
     },
     {
       "slug": "challans",
       "rank": 2,
-      "pts": 19,
-      "played": 11,
-      "w": 8,
+      "pts": 21,
+      "played": 12,
+      "w": 9,
       "l": 3,
-      "pf": 949,
-      "pa": 823,
-      "diff": 126
+      "pf": 1055,
+      "pa": 910,
+      "diff": 145
     },
     {
       "slug": "fougeres",
       "rank": 3,
-      "pts": 17,
-      "played": 11,
-      "w": 6,
+      "pts": 19,
+      "played": 12,
+      "w": 7,
       "l": 5,
-      "pf": 785,
-      "pa": 843,
-      "diff": -58
+      "pf": 851,
+      "pa": 903,
+      "diff": -52
     },
     {
       "slug": "sables",
       "rank": 4,
+      "pts": 19,
+      "played": 12,
+      "w": 7,
+      "l": 5,
+      "pf": 979,
+      "pa": 924,
+      "diff": 55
+    },
+    {
+      "slug": "angers",
+      "rank": 5,
+      "pts": 18,
+      "played": 11,
+      "w": 7,
+      "l": 4,
+      "pf": 800,
+      "pa": 791,
+      "diff": 9
+    },
+    {
+      "slug": "tours",
+      "rank": 6,
+      "pts": 17,
+      "played": 12,
+      "w": 5,
+      "l": 7,
+      "pf": 938,
+      "pa": 915,
+      "diff": 23
+    },
+    {
+      "slug": "toulouse",
+      "rank": 7,
       "pts": 17,
       "played": 11,
       "w": 6,
       "l": 5,
-      "pf": 880,
-      "pa": 851,
-      "diff": 29
+      "pf": 910,
+      "pa": 900,
+      "diff": 10
     },
     {
       "slug": "vitre",
-      "rank": 5,
+      "rank": 8,
       "pts": 17,
       "played": 11,
       "w": 6,
@@ -59,92 +92,59 @@
       "diff": -6
     },
     {
-      "slug": "toulouse",
-      "rank": 6,
-      "pts": 16,
-      "played": 10,
-      "w": 6,
-      "l": 4,
-      "pf": 823,
-      "pa": 794,
-      "diff": 29
-    },
-    {
-      "slug": "angers",
-      "rank": 7,
-      "pts": 16,
-      "played": 10,
-      "w": 6,
-      "l": 4,
-      "pf": 724,
-      "pa": 720,
-      "diff": 4
+      "slug": "chartres",
+      "rank": 9,
+      "pts": 17,
+      "played": 12,
+      "w": 5,
+      "l": 7,
+      "pf": 933,
+      "pa": 985,
+      "diff": -52
     },
     {
       "slug": "lorient",
-      "rank": 8,
-      "pts": 16,
-      "played": 11,
+      "rank": 10,
+      "pts": 17,
+      "played": 12,
       "w": 5,
-      "l": 6,
-      "pf": 804,
-      "pa": 844,
-      "diff": -40
-    },
-    {
-      "slug": "chartres",
-      "rank": 9,
-      "pts": 16,
-      "played": 11,
-      "w": 5,
-      "l": 6,
-      "pf": 873,
-      "pa": 919,
-      "diff": -46
+      "l": 7,
+      "pf": 875,
+      "pa": 920,
+      "diff": -45
     },
     {
       "slug": "tarbes",
-      "rank": 10,
-      "pts": 15,
-      "played": 10,
-      "w": 5,
-      "l": 5,
-      "pf": 819,
-      "pa": 787,
-      "diff": 32
-    },
-    {
-      "slug": "tours",
       "rank": 11,
-      "pts": 15,
+      "pts": 16,
       "played": 11,
-      "w": 4,
-      "l": 7,
-      "pf": 847,
-      "pa": 858,
-      "diff": -11
+      "w": 5,
+      "l": 6,
+      "pf": 876,
+      "pa": 878,
+      "diff": -2
     },
     {
       "slug": "bordeaux",
       "rank": 12,
-      "pts": 14,
-      "played": 11,
+      "pts": 15,
+      "played": 12,
       "w": 3,
-      "l": 8,
-      "pf": 817,
-      "pa": 858,
-      "diff": -41
+      "l": 9,
+      "pf": 894,
+      "pa": 945,
+      "diff": -51
     },
     {
       "slug": "laval",
       "rank": 13,
-      "pts": 13,
-      "played": 11,
+      "pts": 14,
+      "played": 12,
       "w": 2,
-      "l": 9,
-      "pf": 803,
-      "pa": 892,
-      "diff": -89
+      "l": 10,
+      "pf": 876,
+      "pa": 991,
+      "diff": -115
     }
   ]
 }
