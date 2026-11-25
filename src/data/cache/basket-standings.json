@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T19:37:16.752Z",
+  "updated": "2026-11-24T23:42:32.800Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/classement",
   "pool": "Poule B",
   "rows": [
@@ -37,8 +37,19 @@
       "diff": -52
     },
     {
-      "slug": "sables",
+      "slug": "vitre",
       "rank": 4,
+      "pts": 19,
+      "played": 12,
+      "w": 7,
+      "l": 5,
+      "pf": 921,
+      "pa": 915,
+      "diff": 6
+    },
+    {
+      "slug": "sables",
+      "rank": 5,
       "pts": 19,
       "played": 12,
       "w": 7,
@@ -49,18 +60,18 @@
     },
     {
       "slug": "angers",
-      "rank": 5,
-      "pts": 18,
-      "played": 11,
+      "rank": 6,
+      "pts": 19,
+      "played": 12,
       "w": 7,
-      "l": 4,
-      "pf": 800,
-      "pa": 791,
-      "diff": 9
+      "l": 5,
+      "pf": 869,
+      "pa": 872,
+      "diff": -3
     },
     {
       "slug": "tours",
-      "rank": 6,
+      "rank": 7,
       "pts": 17,
       "played": 12,
       "w": 5,
@@ -71,7 +82,7 @@
     },
     {
       "slug": "toulouse",
-      "rank": 7,
+      "rank": 8,
       "pts": 17,
       "played": 11,
       "w": 6,
@@ -79,17 +90,6 @@
       "pf": 910,
       "pa": 900,
       "diff": 10
-    },
-    {
-      "slug": "vitre",
-      "rank": 8,
-      "pts": 17,
-      "played": 11,
-      "w": 6,
-      "l": 5,
-      "pf": 840,
-      "pa": 846,
-      "diff": -6
     },
     {
       "slug": "chartres",

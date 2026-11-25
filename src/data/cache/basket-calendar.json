@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24T19:37:17.526Z",
+  "updated": "2026-11-24T23:42:33.586Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
   "pool": "Poule B",
   "matches": [
@@ -615,6 +615,8 @@
       "date": "2026-11-24",
       "homeSlug": "vitre",
       "awaySlug": "angers",
+      "homeScore": 81,
+      "awayScore": 69,
       "journee": 13
     },
     {
