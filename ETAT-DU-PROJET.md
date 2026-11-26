@@ -6,9 +6,16 @@
 |---|---|
 | **Dernière mise à jour** | 2026-11-23 (heure de Paris) |
 | **Machine** | PC2 |
-| **Dernier push** | Suivi : erreur SEO « location » confirmée RÉSOLUE côté Google (Search Console) |
-| **État déploiement** | doc de suivi uniquement (pas de changement de site) |
-| **Build local** | n/a (aucune modif de code) |
+| **Dernier push** | Actualités : bandeau « dossier CDM » transformé en **carte** (comme un article) |
+| **État déploiement** | poussé sur `main` → GitHub Actions « Build & Deploy OVH » |
+| **Build local** | rendu vérifié en dev (aucune erreur console) |
+
+## 🟢 Mise à jour du 26/11/2026 — bandeau dossier CDM → carte « comme un article »
+Dans `src/pages/actualites/index.astro`, le **bandeau horizontal** du dossier « Championnat du monde de blackball 2026 » (ancien `.cdm-band`) a été transformé en **carte verticale au format article** (`.nw-card`), placée **en tête de la grille « Les articles »**.
+- Couverture = affiche `public/uploads/cdm-blackball-2026.jpg` (Londres), distincte de la carte « médailles » voisine.
+- Chip bleu **« Dossier »** (ou « ● En cours » si `CDM.live`), **liseré doré** (`.nw-card--dossier`) pour la distinguer comme entrée de dossier, lien **« Voir le dossier → »**.
+- Ancien CSS `.cdm-band*` (+ animation de brillance) supprimé ; ne reste que l'accent `.nw-card--dossier` + le point live `.cdm-dot`.
+- La carte apparaît tant que `CDM.show` (jusqu'au 30/11/2026). Hérite des variables de thème (clair/sombre) comme les autres cartes.
 
 ## 🟢 Mise à jour du 23/11/2026 — nouvelle photo Cédric Angelier + règle de placement
 Nouvelle photo de **Cédric Angelier** (joueur **Mixte National invité au Masters**) intégrée via `npm run assets`.

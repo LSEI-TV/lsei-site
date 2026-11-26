@@ -88,6 +88,7 @@ const SHOW_ARTICLES = true;
 const CDM = {
   href: '/billard/championnat-du-monde-blackball-2026',
   nb: articles.filter((a) => a.id.startsWith('championnat-du-monde-blackball-2026')).length,
+  cover: '/uploads/cdm-blackball-2026.jpg',
   live: Date.now() <= new Date('2026-10-29T00:00:00+01:00').valueOf(),
   show: Date.now() <= new Date('2026-11-30T23:59:59+01:00').valueOf(),
 };
@@ -105,22 +106,6 @@ const CDM = {
     </div>
   </section>
 
-  {CDM.show && (
-    <section class="cdm-band-wrap">
-      <div class="wrap">
-        <a class="cdm-band" href={CDM.href}>
-          <span class="cdm-band-ic" aria-hidden="true">🎱</span>
-          <span class="cdm-band-txt">
-            <span class="cdm-band-k">{CDM.live ? <Fragment><i class="cdm-band-dot"></i>En cours · </Fragment> : 'Dossier · '}Londres · 20 – 28 octobre 2026</span>
-            <span class="cdm-band-t">Championnat du monde de billard blackball 2026</span>
-            <span class="cdm-band-s">🇫🇷 Tous les résultats des équipes de France, jour après jour · {CDM.nb} articles</span>
-          </span>
-          <span class="cdm-band-btn">Voir le dossier <span aria-hidden="true">→</span></span>
-        </a>
-      </div>
-    </section>
-  )}
-
   <!-- À LA UNE — articles éditoriaux, TOUJOURS en haut, le plus récent d'abord. -->
   {SHOW_ARTICLES && articles.length > 0 && (
     <section class="section nw-articles">
@@ -128,6 +113,20 @@ const CDM = {
         <div class="sec-head"><div><div class="eyebrow">À la une</div><h2>Les <em>articles</em></h2></div></div>
         <!-- Même carte que le fil (nw-card) : texte avec marges intérieures, liseré couleur sous l'image. -->
         <div class="nw-grid">
+          {CDM.show && (
+            <a class="nw-card nw-card--dossier" href={CDM.href} style="--dc:#1f4fd8">
+              <span class="nw-card-img">
+                <img src={CDM.cover} alt="Championnat du monde de billard blackball 2026 — Londres" loading="lazy" />
+                <span class="nw-tag nw-tag--on">{CDM.live ? <Fragment><i class="cdm-dot"></i>En cours</Fragment> : 'Dossier'}</span>
+              </span>
+              <span class="nw-card-body">
+                <span class="nw-date">🎱 Londres · 20 – 28 octobre 2026</span>
+                <span class="nw-card-t">Championnat du monde de billard blackball 2026</span>
+                <span class="nw-card-ex">🇫🇷 Tous les résultats des équipes de France, jour après jour · {CDM.nb} articles</span>
+                <span class="nw-more">Voir le dossier →</span>
+              </span>
+            </a>
+          )}
           {articles.map((a) => {
             const d = discOf(a.data.discipline);
             const cover = articleCover(a);
@@ -385,27 +384,12 @@ const CDM = {
 </Base>
 
 <style>
-  .cdm-band-wrap { padding: 22px 0 0; }
-  .cdm-band { display: flex; align-items: center; gap: 20px; padding: 18px 22px; border-radius: 16px; text-decoration: none; color: #fff;
-    background: linear-gradient(110deg, #0b1d5c 0%, #1f4fd8 55%, #2f6bff 100%); border: 2px solid #ffd77a;
-    box-shadow: 0 18px 40px -18px rgba(31, 79, 216, .7); transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden; }
-  .cdm-band::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.18) 50%, transparent 70%);
-    transform: translateX(-100%); animation: cdmShine 4s ease-in-out infinite; pointer-events: none; }
-  @keyframes cdmShine { 0%, 60% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-  .cdm-band:hover { transform: translateY(-3px); box-shadow: 0 24px 50px -18px rgba(31, 79, 216, .9); }
-  .cdm-band-ic { flex: none; font-size: 42px; line-height: 1; }
-  .cdm-band-txt { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-  .cdm-band-k { font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #ffd77a; display: flex; align-items: center; gap: 6px; }
-  .cdm-band-dot { width: 9px; height: 9px; border-radius: 50%; background: #ff4d5a; box-shadow: 0 0 0 0 rgba(255,77,90,.7); animation: cdmPulse 1.6s infinite; }
-  @keyframes cdmPulse { 70% { box-shadow: 0 0 0 8px rgba(255,77,90,0); } 100% { box-shadow: 0 0 0 0 rgba(255,77,90,0); } }
-  .cdm-band-t { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(20px, 2.6vw, 30px); line-height: 1.05; }
-  .cdm-band-s { font-size: 15px; color: rgba(255,255,255,.88); }
-  .cdm-band-btn { flex: none; background: #ffd77a; color: #0b1d5c; font-weight: 800; font-size: 15px; padding: 12px 18px; border-radius: 999px; white-space: nowrap; }
-  .cdm-band:hover .cdm-band-btn { background: #fff; }
-  @media (max-width: 640px) {
-    .cdm-band { flex-wrap: wrap; gap: 12px; padding: 16px; }
-    .cdm-band-ic { font-size: 32px; }
-    .cdm-band-btn { width: 100%; text-align: center; }
-  }
-  @media (prefers-reduced-motion: reduce) { .cdm-band::after, .cdm-band-dot { animation: none; } }
+  /* Carte « dossier » (Championnat du monde) : même format que les cartes d'article,
+     distinguée par un liseré doré. */
+  .nw-card--dossier { border: 2px solid #ffd77a; box-shadow: 0 16px 36px -20px rgba(31, 79, 216, .55); }
+  .nw-card--dossier:hover { box-shadow: 0 24px 46px -18px rgba(31, 79, 216, .7); }
+  .cdm-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ff4d5a; margin-right: 5px;
+    box-shadow: 0 0 0 0 rgba(255,77,90,.7); animation: cdmPulse 1.6s infinite; }
+  @keyframes cdmPulse { 70% { box-shadow: 0 0 0 7px rgba(255,77,90,0); } 100% { box-shadow: 0 0 0 0 rgba(255,77,90,0); } }
+  @media (prefers-reduced-motion: reduce) { .cdm-dot { animation: none; } }
 </style>
