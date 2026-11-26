@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-25T18:44:53.480Z",
+  "updated": "2026-11-25T23:26:21.405Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/calendrier",
   "pool": "Poule B",
   "matches": [
@@ -623,6 +623,8 @@
       "date": "2026-11-25",
       "homeSlug": "tarbes",
       "awaySlug": "toulouse",
+      "homeScore": 75,
+      "awayScore": 81,
       "journee": 4
     },
     {

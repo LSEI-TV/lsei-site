@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-25T18:44:52.751Z",
+  "updated": "2026-11-25T23:26:20.662Z",
   "source": "https://nm1.ffbb.com/saison-reguliere/classement",
   "pool": "Poule B",
   "rows": [
@@ -37,15 +37,15 @@
       "diff": -52
     },
     {
-      "slug": "vitre",
+      "slug": "angers",
       "rank": 4,
       "pts": 19,
       "played": 12,
       "w": 7,
       "l": 5,
-      "pf": 921,
-      "pa": 915,
-      "diff": 6
+      "pf": 869,
+      "pa": 872,
+      "diff": -3
     },
     {
       "slug": "sables",
@@ -59,19 +59,30 @@
       "diff": 55
     },
     {
-      "slug": "angers",
+      "slug": "toulouse",
       "rank": 6,
       "pts": 19,
       "played": 12,
       "w": 7,
       "l": 5,
-      "pf": 869,
-      "pa": 872,
-      "diff": -3
+      "pf": 991,
+      "pa": 975,
+      "diff": 16
+    },
+    {
+      "slug": "vitre",
+      "rank": 7,
+      "pts": 19,
+      "played": 12,
+      "w": 7,
+      "l": 5,
+      "pf": 921,
+      "pa": 915,
+      "diff": 6
     },
     {
       "slug": "tours",
-      "rank": 7,
+      "rank": 8,
       "pts": 17,
       "played": 12,
       "w": 5,
@@ -81,30 +92,8 @@
       "diff": 23
     },
     {
-      "slug": "toulouse",
-      "rank": 8,
-      "pts": 17,
-      "played": 11,
-      "w": 6,
-      "l": 5,
-      "pf": 910,
-      "pa": 900,
-      "diff": 10
-    },
-    {
-      "slug": "chartres",
-      "rank": 9,
-      "pts": 17,
-      "played": 12,
-      "w": 5,
-      "l": 7,
-      "pf": 933,
-      "pa": 985,
-      "diff": -52
-    },
-    {
       "slug": "lorient",
-      "rank": 10,
+      "rank": 9,
       "pts": 17,
       "played": 12,
       "w": 5,
@@ -115,14 +104,25 @@
     },
     {
       "slug": "tarbes",
-      "rank": 11,
-      "pts": 16,
-      "played": 11,
+      "rank": 10,
+      "pts": 17,
+      "played": 12,
       "w": 5,
-      "l": 6,
-      "pf": 876,
-      "pa": 878,
-      "diff": -2
+      "l": 7,
+      "pf": 951,
+      "pa": 959,
+      "diff": -8
+    },
+    {
+      "slug": "chartres",
+      "rank": 11,
+      "pts": 17,
+      "played": 12,
+      "w": 5,
+      "l": 7,
+      "pf": 933,
+      "pa": 985,
+      "diff": -52
     },
     {
       "slug": "bordeaux",
