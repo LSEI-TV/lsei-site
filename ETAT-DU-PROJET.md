@@ -4,11 +4,17 @@
 
 | | |
 |---|---|
-| **Dernière mise à jour** | 2026-11-23 (heure de Paris) |
+| **Dernière mise à jour** | 2026-11-27 (heure de Paris) |
 | **Machine** | PC2 |
-| **Dernier push** | Nouvelle page `/billard/arbitres/` (corrige un 403 Search Console) |
+| **Dernier push** | Billard Prestige Vétéran : 4 totaux faux corrigés (import Cuescore, classement Race commun) |
 | **État déploiement** | poussé sur `main` → GitHub Actions « Build & Deploy OVH » |
-| **Build local** | rendu vérifié en dev (aucune erreur console) |
+| **Build local** | non relancé (script d'import + 1 fichier de résultats ; structure des données inchangée) |
+
+## 🟢 Mise à jour du 27/11/2026 (soir) — Prestige Vétéran : 4 totaux faux corrigés
+Sur `/prestige` (saison 2026-2027), 4 invités venus du Vétéran avaient un **total faux** : Fernando Mendes 104 au lieu de **264**, Alexandre Rezende et Olivier Martre 132 au lieu de **242**, Arménio Rodrigues Ribeiro 60 au lieu de **186** (repéré en recoupant avec NOVA).
+- **Cause** : le code sportif FFB 2026-27 fait un **classement Race UNIQUE Vétéran + Prestige**. Le classement Cuescore « Prestige Vétéran » (88637437) **oublie ces 4 joueurs** ; le classement « Vétéran » (88637422) les a, avec les bons totaux. Absents du classement officiel, ils recevaient les points « de secours », calculés avec le barème Vétéran (et sans la finale).
+- **Correctif** (`scripts/import-blackball.mjs`) : Vétéran et Prestige ont un `altRankingId` (l'autre moitié du Race) → un joueur absent de son classement officiel prend ses points officiels dans l'autre ; pour ces deux catégories, l'ordre suit les points (puis le rang officiel). Barèmes de secours corrigés : Prestige 286/240/198/160/126, Vétéran 164/132/104/80/60/44 (finale comprise).
+- Résultat : `results-prestige-2026-2027.json` régénéré — Mendes 11e (264), Martre 15e et Rezende 16e (242), Rodrigues Ribeiro 20e (186). Fichier Vétéran inchangé. Se maintient seul au rafraîchissement 2×/jour.
 
 ## 🟢 Mise à jour du 27/11/2026 — page dédiée « Les arbitres » (corrige 403 Search Console)
 Search Console signalait `https://lsei.tv/billard/arbitres/` en **« Bloquée en raison d'une interdiction d'accès (403) »** (1ʳᵉ détection 24/11).

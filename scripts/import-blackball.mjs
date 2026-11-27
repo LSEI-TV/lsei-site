@@ -97,7 +97,10 @@ const COMPETITIONS = [
     tnRe: /-\s*V[ée]t[ée]ran\s*-/i,
     cdfRe: /Championnat\s+de\s+France\s*-\s*V[ée]t[ée]ran\s*-/i,
     out: 'results-veteran-2026-2027.json', competition: 'Vétéran', rankingId: 88637422, hasInvites: false,
-    PTS: { 'Round 1': 60, 'Last sixteen': 80, 'Quarter final': 104, 'Semi final': 132 }, CHAMP: 164,
+    // Classement Race UNIQUE Vétéran + Prestige (code sportif FFB 2026-27) : un joueur absent de ce classement Cuescore
+    // est cherché dans celui du Prestige (mêmes totaux).
+    altRankingId: 88637437,
+    PTS: { 'Round 1': 44, 'Last sixteen': 60, 'Quarter final': 80, 'Semi final': 104, 'Final': 132 }, CHAMP: 164,
   },
   {
     // Prestige Vétéran (catégorie d'élite créée en 2026-2027) : nom « - Prestige Vétéran - ».
@@ -105,7 +108,11 @@ const COMPETITIONS = [
     tnRe: /-\s*Prestige\s+V[ée]t[ée]ran\s*-/i,
     cdfRe: /Championnat\s+de\s+France\s*-\s*Prestige\s+V[ée]t[ée]ran\s*-/i,
     out: 'results-prestige-2026-2027.json', competition: 'Prestige Vétéran', rankingId: 88637437, hasInvites: false,
-    PTS: { 'Round 1': 60, 'Last sixteen': 80, 'Quarter final': 104, 'Semi final': 132 }, CHAMP: 164,
+    // Le classement Cuescore « Prestige Vétéran » (= Race commun Vétéran + Prestige) oublie des invités venus du Vétéran
+    // (27/11/2026 : Mendes, Rezende, Martre, Rodrigues Ribeiro) ; leurs totaux sont dans le classement Vétéran → repris de là.
+    altRankingId: 88637422,
+    // Barème FFB Prestige Vétéran (tableau de 16) — secours seulement.
+    PTS: { 'Round 1': 126, 'Quarter final': 160, 'Semi final': 198, 'Final': 240 }, CHAMP: 286,
   },
   {
     // Para-billard FAUTEUIL : le circuit 2026-2027 est nommé « - Para-Billard - » sur Cuescore
@@ -229,9 +236,15 @@ async function importCompetition(cfg, allTournaments) {
 
   // Classement OFFICIEL : rang + points officiels, et statut invité (absent du classement officiel).
   const official = await officialRanking(cfg.rankingId);
+  const alt = official && cfg.altRankingId ? await officialRanking(cfg.altRankingId) : null;
   for (const p of players.values()) {
     const off = official ? (official.byId.get(String(p.id)) ?? official.byName.get(mk(p.rawName))) : undefined;
     if (off) { p.points = off.points; p.offRank = off.rank; }     // rang + points officiels
+    else if (alt) {
+      // Absent du classement officiel de la catégorie, présent dans l'autre moitié du Race commun : ses points officiels
+      const a = alt.byId.get(String(p.id)) ?? alt.byName.get(mk(p.rawName));
+      if (a) p.points = a.points;
+    }
     if (cfg.hasInvites) {
       p.invite = official ? !off : !PERMANENTS_MASTER.has(mk(p.rawName));
     } else {
@@ -252,7 +265,7 @@ async function importCompetition(cfg, allTournaments) {
   // Rangs : non-invités uniquement, dans l'ORDRE officiel Cuescore (rang officiel puis départage),
   // numérotés en SÉQUENTIEL 1..N (chaque joueur un rang unique, pas d'ex-aequo affiché).
   const ranked = [...players.values()].filter((p) => !p.invite)
-    .sort((a, b) => (a.offRank ?? 1e9) - (b.offRank ?? 1e9) || b.points - a.points || (b.pf - b.pa) - (a.pf - a.pa) || (a.name < b.name ? -1 : 1));
+    .sort((a, b) => (cfg.altRankingId ? b.points - a.points : 0) || (a.offRank ?? 1e9) - (b.offRank ?? 1e9) || b.points - a.points || (b.pf - b.pa) - (a.pf - a.pa) || (a.name < b.name ? -1 : 1));
   ranked.forEach((p, i) => { p.rank = i + 1; });
   const guests = [...players.values()].filter((p) => p.invite).sort((a, b) => b.points - a.points);
   guests.forEach((p) => { p.rank = null; });
