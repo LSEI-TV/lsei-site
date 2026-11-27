@@ -284,6 +284,7 @@ const nbActive = arbitres.filter((a) => a.active).length;
           <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Sur les tables du circuit</div><h2 id="refs-h">Les <em>arbitres</em></h2></div></div>
           <div class="refs-head">
             <p class="refs-sub">Ils officient sur les tables du circuit national{nbActive ? <> · <b>{nbActive} en activité en {shortSeason(LANDING_SEASON)}</b></> : null}</p>
+            <a class="refs-link" href="/billard/arbitres">Tous les arbitres →</a>
           </div>
           <div class="refs-grid">
             {arbitres.map((a) => (
@@ -416,6 +417,8 @@ const nbActive = arbitres.filter((a) => a.active).length;
   .refs-title { font-family: var(--display); font-size: clamp(22px, 3vw, 30px); font-weight: 800; margin: 0; text-align: start; }
   .refs-sub { margin: 0; color: var(--ink-soft); font-size: 14px; text-align: start; }
   .refs-sub b { color: var(--c-billard); }
+  .refs-link { margin-left: auto; font-size: 14px; font-weight: 700; color: var(--c-billard); text-decoration: none; white-space: nowrap; }
+  .refs-link:hover { text-decoration: underline; }
   .refs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
   .ref-card { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; transition: transform .2s, box-shadow .2s; }
   .ref-card:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(10, 30, 60, .14); }

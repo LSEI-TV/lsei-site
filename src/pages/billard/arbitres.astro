@@ -1,0 +1,82 @@
+---
+// Page dédiée « Les arbitres du Blackball ».
+// Reprend les données et le rendu de la section arbitres du hub (/billard/blackball),
+// pour donner aux arbitres une vraie page indexable (évite le 403 du dossier d'assets nu).
+import Base from '../../layouts/Base.astro';
+import LiveNow from '../../components/LiveNow.astro';
+import arbitresData from '../../data/billard/arbitres.json';
+import { assetUrl } from '../../lib/publicAssets';
+import { LANDING_SEASON } from '../../data/billard/seasons';
+
+// Nom affiché « Prénom NOM » ; les noms de fichiers n'ont pas d'accents → prénoms courants rétablis.
+const ACCENTS: Record<string, string> = { aurelie: 'Aurélie', nadege: 'Nadège', valerie: 'Valérie', jerome: 'Jérôme', helene: 'Hélène', stephane: 'Stéphane', frederic: 'Frédéric', sebastien: 'Sébastien', gerard: 'Gérard', remi: 'Rémi', cedric: 'Cédric', angelique: 'Angélique', melanie: 'Mélanie', regis: 'Régis', jeremy: 'Jérémy', emilie: 'Émilie' };
+const refName = (raw: string) => {
+  const w = raw.trim().split(/\s+/), first = w[0].toLowerCase();
+  return [ACCENTS[first] || first.charAt(0).toUpperCase() + first.slice(1), ...w.slice(1).map((x) => x.toUpperCase())].join(' ');
+};
+const shortSeason = (s: string) => s.replace(/^20(\d\d)-20(\d\d)$/, '$1-$2');
+const arbitres = (arbitresData as { slug: string; file: string; seasons: string[]; photo: string }[])
+  .map((a) => ({ ...a, name: refName(a.file), active: a.seasons.includes(LANDING_SEASON), photo: assetUrl(a.photo) }))
+  .sort((a, b) => Number(b.active) - Number(a.active) || a.name.localeCompare(b.name, 'fr'));
+const nbActive = arbitres.filter((a) => a.active).length;
+const title = 'Les arbitres du Blackball';
+const description = "Les arbitres officiels du circuit national Blackball (FFB) qui officient sur les tables des Masters, Femmes, Mixte et autres compétitions, saison par saison.";
+---
+<Base title={title} description={description} active="disciplines" image="/og/discipline/billard.jpg">
+  <LiveNow sport="billard" />
+
+  <section class="section arb">
+    <div class="wrap">
+      <div class="arb-crumb"><a href="/disciplines/">Disciplines</a><span aria-hidden="true">›</span><a href="/billard/hub">Billard</a><span aria-hidden="true">›</span><a href="/billard/blackball">Blackball</a><span aria-hidden="true">›</span>Arbitres</div>
+      <div class="sec-head"><div><div class="eyebrow" style="color:var(--c-billard)">Sur les tables du circuit</div><h1>Les <em>arbitres</em></h1></div></div>
+      <p class="arb-sub">Ils officient sur les tables du circuit national Blackball{nbActive ? <> · <b>{nbActive} en activité en {shortSeason(LANDING_SEASON)}</b></> : null}.</p>
+
+      {arbitres.length > 0 ? (
+        <div class="refs-grid">
+          {arbitres.map((a) => (
+            <figure class={`ref-card ${a.active ? 'on' : ''}`}>
+              <div class="ref-ph"><img src={a.photo} alt={`${a.name}, arbitre de billard blackball`} loading="lazy" width="480" height="480" /></div>
+              <figcaption>
+                <span class="ref-name">{a.name}</span>
+                <span class="ref-seasons">
+                  {a.seasons.map((s) => <span class={`ref-s ${s === LANDING_SEASON ? 'cur' : ''}`}>{shortSeason(s)}</span>)}
+                </span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      ) : (
+        <p class="arb-empty">La liste des arbitres arrive bientôt.</p>
+      )}
+
+      <p class="arb-back"><a href="/billard/blackball">← Retour au hub Blackball</a></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .arb-crumb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-soft); margin-bottom: 14px; }
+  .arb-crumb a { color: var(--ink-soft); text-decoration: none; }
+  .arb-crumb a:hover { color: var(--c-billard); }
+  .arb-crumb span { color: var(--ink-faint); }
+  .arb-sub { margin: 0 0 22px; color: var(--ink-soft); font-size: 15px; text-align: start; }
+  .arb-sub b { color: var(--c-billard); }
+
+  /* ---- Grille des arbitres (identique au hub Blackball) ---- */
+  .refs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+  .ref-card { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; transition: transform .2s, box-shadow .2s; }
+  .ref-card:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(10, 30, 60, .14); }
+  .ref-ph { aspect-ratio: 1 / 1; background: radial-gradient(ellipse at 50% 30%, #2b5f99 0%, #0d2c49 70%); display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
+  .ref-ph img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+  .ref-card:not(.on) .ref-ph img { filter: grayscale(.35); opacity: .9; }
+  .ref-card figcaption { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 6px; }
+  .ref-name { font-weight: 800; font-size: 15px; line-height: 1.2; }
+  .ref-seasons { display: flex; flex-wrap: wrap; gap: 5px; }
+  .ref-s { font-size: 11px; font-weight: 700; letter-spacing: .03em; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--ink-soft); border: 1px solid var(--line); }
+  .ref-s.cur { background: var(--c-billard); border-color: var(--c-billard); color: #fff; }
+  .arb-empty { color: var(--ink-soft); }
+  .arb-back { margin-top: 28px; }
+  .arb-back a { color: var(--c-billard); font-weight: 700; text-decoration: none; }
+  .arb-back a:hover { text-decoration: underline; }
+  @media (max-width: 440px) { .refs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .ref-name { font-size: 14px; } }
+</style>

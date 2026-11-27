@@ -6,9 +6,16 @@
 |---|---|
 | **Dernière mise à jour** | 2026-11-23 (heure de Paris) |
 | **Machine** | PC2 |
-| **Dernier push** | Actualités : bandeau « dossier CDM » transformé en **carte** (comme un article) |
+| **Dernier push** | Nouvelle page `/billard/arbitres/` (corrige un 403 Search Console) |
 | **État déploiement** | poussé sur `main` → GitHub Actions « Build & Deploy OVH » |
 | **Build local** | rendu vérifié en dev (aucune erreur console) |
+
+## 🟢 Mise à jour du 27/11/2026 — page dédiée « Les arbitres » (corrige 403 Search Console)
+Search Console signalait `https://lsei.tv/billard/arbitres/` en **« Bloquée en raison d'une interdiction d'accès (403) »** (1ʳᵉ détection 24/11).
+- **Cause** : `/billard/arbitres/` n'était pas une page mais le **dossier de photos** `public/billard/arbitres/*.webp` (sans index). Googlebot « remonte » depuis une image → OVH renvoie 403 (listing interdit). Même cas pour `/billard/cutouts/`, `/uploads/`, `/tournoi-des-champions/` (dossiers d'assets nus).
+- **Correctif (choix de Marc) : en faire une vraie page.** Nouveau fichier **`src/pages/billard/arbitres.astro`** → `/billard/arbitres/` renvoie désormais **200** (fil d'Ariane, H1, grille des arbitres par saison, SEO). L'`index.html` et les `.webp` cohabitent dans le même dossier du build.
+- Maillage : lien **« Tous les arbitres → »** ajouté dans la section arbitres du hub `src/pages/billard/blackball.astro`.
+- ➡️ **À faire côté Marc** : après déploiement, Search Console → **« Valider la correction »** sur le motif 403.
 
 ## 🟢 Mise à jour du 26/11/2026 — bandeau dossier CDM → carte « comme un article »
 Dans `src/pages/actualites/index.astro`, le **bandeau horizontal** du dossier « Championnat du monde de blackball 2026 » (ancien `.cdm-band`) a été transformé en **carte verticale au format article** (`.nw-card`), placée **en tête de la grille « Les articles »**.
