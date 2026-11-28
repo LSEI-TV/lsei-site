@@ -4,11 +4,18 @@
 
 | | |
 |---|---|
-| **Dernière mise à jour** | 2026-11-27 (heure de Paris) |
+| **Dernière mise à jour** | 2026-11-28 (heure de Paris) |
 | **Machine** | PC2 |
-| **Dernier push** | Billard Prestige Vétéran : 4 totaux faux corrigés (import Cuescore, classement Race commun) |
+| **Dernier push** | Résultats Blackball Masters publiés en JSON sous `/billard/donnees/` (pour le site de Christophe Lambert) |
 | **État déploiement** | poussé sur `main` → GitHub Actions « Build & Deploy OVH » |
-| **Build local** | non relancé (script d'import + 1 fichier de résultats ; structure des données inchangée) |
+| **Build local** | relancé le 28/11 : OK, 11 fichiers `dist/billard/donnees/*.json` produits, absents du sitemap |
+
+## 🟢 Mise à jour du 28/11/2026 — données Masters en JSON pour le site Lambert
+Le site de Christophe Lambert (christophelambert8pool.com, dépôt privé `c8lambert/site-lambert`) met désormais à jour **tout seul** son palmarès et sa page Résultats après chaque tournoi. Il lit pour cela les résultats Masters de lsei.tv.
+- **Nouveau** : `src/lib/donneesMasters.ts` + `src/pages/billard/donnees/[fichier].json.ts` et `index.json.ts` → `https://lsei.tv/billard/donnees/index.json` (liste des saisons) et `…/results-AAAA-AAAA.json` (une par saison, **Masters uniquement**).
+- Ce sont **les mêmes fichiers** que `src/data/billard/results-*.json`, servis tels quels au build : aucune donnée nouvelle rendue publique. Ils suivent Cuescore grâce au rebuild 2×/jour de `refresh-data.yml`.
+- Côté Lambert : `.github/workflows/maj-resultats.yml` les lit 2×/jour (~10h15 et ~16h45 Paris, après nos refresh) et republie si nouveau résultat.
+- ⚠️ **Ne pas renommer ni supprimer `/billard/donnees/`** sans adapter `_maj-resultats.py` du site Lambert.
 
 ## 🟢 Mise à jour du 27/11/2026 (soir) — Prestige Vétéran : 4 totaux faux corrigés
 Sur `/prestige` (saison 2026-2027), 4 invités venus du Vétéran avaient un **total faux** : Fernando Mendes 104 au lieu de **264**, Alexandre Rezende et Olivier Martre 132 au lieu de **242**, Arménio Rodrigues Ribeiro 60 au lieu de **186** (repéré en recoupant avec NOVA).
