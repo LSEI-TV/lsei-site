@@ -6,9 +6,12 @@
 |---|---|
 | **Dernière mise à jour** | 2026-11-28 (heure de Paris) |
 | **Machine** | PC2 |
-| **Dernier push** | Résultats Blackball Masters publiés en JSON sous `/billard/donnees/` (pour le site de Christophe Lambert) |
+| **Dernier push** | Vidéos de Christophe Lambert publiées en JSON (`/billard/donnees/videos-lambert.json`) pour son site |
 | **État déploiement** | poussé sur `main` → GitHub Actions « Build & Deploy OVH » |
 | **Build local** | relancé le 28/11 : OK, 11 fichiers `dist/billard/donnees/*.json` produits, absents du sitemap |
+
+## 🟢 Mise à jour du 28/11/2026 (2) — vidéos Lambert en JSON
+Nouveau `src/pages/billard/donnees/videos-lambert.json.ts` → `https://lsei.tv/billard/donnees/videos-lambert.json` : les vidéos de `channel-billard.json` dont le titre contient « lambert » (109 au 28/11), dédoublonnées, de la plus récente à la plus ancienne (`id`, `title`, `date`). Lu 2×/jour par le site de Christophe Lambert (`_maj-videos.py`, page Vidéos + accueil). Hors sitemap. ⚠️ Ne pas renommer.
 
 ## 🟢 Mise à jour du 28/11/2026 — données Masters en JSON pour le site Lambert
 Le site de Christophe Lambert (christophelambert8pool.com, dépôt privé `c8lambert/site-lambert`) met désormais à jour **tout seul** son palmarès et sa page Résultats après chaque tournoi. Il lit pour cela les résultats Masters de lsei.tv.
